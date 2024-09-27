@@ -1,0 +1,296 @@
+.Create_Template {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.template_detail_box {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.title_as_to_div {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+
+    .title_as,
+    .title_to {
+        margin: 0 2rem;
+        font-weight: bold;
+        color: #333;
+        font-size: 1.5rem;
+    }
+}
+
+.file-upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0;
+
+    .file-upload-label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .file-upload-input-container {
+        position: relative;
+
+        .file-upload-input {
+            display: none; // Hide the default file input
+        }
+
+        .file-upload-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+    }
+}
+
+.as_was_to_be_div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    list-style: none;
+
+    .num_type {
+        display: flex;
+        align-items: center;
+
+        .ppt_no_col {
+            display: flex;
+            align-items: center;
+
+            .ppt_no {
+                margin-right: 0.5rem;
+                font-weight: bold;
+                color: #555;
+            }
+
+            .ppt_no_text {
+                width: 50px;
+                padding: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                transition: border-color 0.3s;
+
+                &:focus {
+                    border-color: #007bff;
+                    outline: none;
+                }
+            }
+        }
+    }
+
+    .as_was_div,
+    .to_be_div {
+        width: 40%;
+
+        .code-textarea {
+            background-color: #e4e4e4;
+            width: 100%;
+            color: black;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            height: 100px;
+            padding: 0.5rem;
+            transition: border-color 0.3s;
+
+            &:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+        }
+    }
+}
+
+.add_more_div {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+
+    .add_more_button {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #0056b3;
+        }
+
+        .add_button_text {
+            margin-left: 0.5rem;
+        }
+    }
+}
+
+.save_button_div {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+
+    .save_button {
+        background-color: #000000;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:disabled {
+            background-color: #ccc; // Gray out the button when disabled
+            cursor: not-allowed;
+        }
+
+        &:hover {
+            background-color: #4a75d4;
+        }
+    }
+}
+
+.remove_button {
+    margin-top: 0rem;
+    margin-bottom: 1.5rem;
+    margin-left: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #f44336;
+        color: white;
+    }
+}
+
+
+.file-upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0;
+
+    .file-upload-label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .file-upload-input-container {
+        position: relative;
+
+        .file-upload-input {
+            display: none; // Hide the default file input
+        }
+
+        .file-upload-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+    }
+
+}
+
+.check_button {
+    background-color: #4caf50; // Green color
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #45a049; // Darker green on hover
+    }
+}
+
+.file-upload-section {
+    //display: flex;
+
+    //flex-direction: column;
+    //align-items: flex-start;
+    //margin-bottom: 2rem;
+    //background-color: #4caf50;
+
+    .file-upload-label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .file-upload-input {
+        display: none; // 원래 버튼 숨기기
+    }
+
+    .file-upload-input-container {
+        // position: relative;
+        // width: 100%;
+    }
+
+    .file-upload-button {
+        padding: 0.5rem 1rem;
+        background-color: #007bff; // Primary color
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        font-size: 16px; // Increase font size
+        margin-top: 0.5rem;
+
+        &:hover {
+            background-color: #0056b3; // Darker blue on hover
+            transform: translateY(-2px); // Slight lift effect
+        }
+
+        &:active {
+            transform: translateY(0); // Reset lift effect on click
+        }
+    }
+}

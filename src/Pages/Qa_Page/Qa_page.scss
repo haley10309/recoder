@@ -1,0 +1,68 @@
+.qa_page {
+    .template_detail_box {
+        background-color: #ffff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+
+    .check_true_div {
+        margin-left: 2rem;
+        margin-top: 2rem;
+        color: green;
+
+    }
+
+    .check_false_div {
+        margin-left: 2rem;
+        margin-top: 2rem;
+        color: red;
+    }
+
+    .filter_dropdown {
+        margin: 1rem 0; // Add some margin for spacing
+        display: flex;
+        //justify-content: center; // Center the dropdown
+        margin-left: 2rem;
+        width: 250px; // Fixed width for consistency
+    }
+
+    // .dropdown {
+    //     width: 250px; // Fixed width for consistency
+    //     border: 1px solid #ddd;
+    //     border-radius: 8px;
+    //     padding: 0.5rem 1rem;
+    //     font-size: 16px;
+    //     background-color: #ffffff;
+    //     transition: border-color 0.3s ease, box-shadow 0.3s ease; // Smooth transition for focus effect
+
+    //     &:focus {
+    //         outline: none; // Remove default outline
+    //         border-color: #007bff; // Change border color on focus
+    //         box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); // Add a subtle shadow
+    //     }
+    // }
+
+    .custom-dropdown {
+        width: 8rem; // Fixed width for consistency
+        height: 2rem;
+
+        background-color: #ffffff; // Customize dropdown background color
+        border-radius: 8px; // Rounded corners
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
+
+        .p-dropdown-item {
+            padding: 0.5rem 1rem; // Add padding to dropdown items
+            font-size: 16px; // Ensure consistent font size
+        }
+
+        .p-dropdown-item:hover {
+            background-color: #f0f0f0; // Change background on hover
+        }
+    }
+
+}
