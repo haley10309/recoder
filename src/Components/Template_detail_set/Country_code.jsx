@@ -1,10 +1,10 @@
-import { useState } from "react";
+import React from "react";
 import "./Country_code.scss";
 import CheckIcon from "@mui/icons-material/Check";
 import { Dropdown } from "primereact/dropdown";
 
 const Country_code = ({ country_code, setCountry_code }) => {
-  const coutry_code = [
+  const countryOptions = [
     { name: "AE", code: "ae" },
     { name: "AE_AR", code: "ae_ar" },
     { name: "AFRICA_EN", code: "africa_en" },
@@ -25,14 +25,6 @@ const Country_code = ({ country_code, setCountry_code }) => {
     { name: "CA_FR", code: "ca_fr" },
     { name: "CL", code: "cl" },
     { name: "CN", code: "cn" },
-    { name: "BG", code: "bg" },
-    { name: "BR", code: "br" },
-    { name: "CA", code: "ca" },
-    { name: "CA_FR", code: "ca_fr" },
-    { name: "CH", code: "ch" },
-    { name: "CH_FR", code: "ch_fr" },
-    { name: "CL", code: "cl" },
-    { name: "CN", code: "cn" },
     { name: "CO", code: "co" },
     { name: "CZ", code: "cz" },
     { name: "DE", code: "de" },
@@ -45,7 +37,6 @@ const Country_code = ({ country_code, setCountry_code }) => {
     { name: "GE", code: "ge" },
     { name: "GR", code: "gr" },
     { name: "HK", code: "hk" },
-    { name: "HK_EN", code: "hk_en" },
     { name: "HR", code: "hr" },
     { name: "HU", code: "hu" },
     { name: "ID", code: "id" },
@@ -56,13 +47,10 @@ const Country_code = ({ country_code, setCountry_code }) => {
     { name: "IQ_KU", code: "iq_ku" },
     { name: "IRAN", code: "iran" },
     { name: "IT", code: "it" },
-    { name: "JF", code: "jf" },
     { name: "KZ_KZ", code: "kz_kz" },
     { name: "KZ_RU", code: "kz_ru" },
     { name: "LATIN", code: "latin" },
-    { name: "LATIN_EN", code: "latin_en" },
     { name: "LEVANT", code: "levant" },
-    { name: "LEVANT_AR", code: "levant_ar" },
     { name: "LT", code: "lt" },
     { name: "LV", code: "lv" },
     { name: "MK", code: "mk" },
@@ -87,7 +75,6 @@ const Country_code = ({ country_code, setCountry_code }) => {
     { name: "SA", code: "sa" },
     { name: "SA_EN", code: "sa_en" },
     { name: "SE", code: "se" },
-    { name: "SEC", code: "sec" },
     { name: "SG", code: "sg" },
     { name: "SI", code: "si" },
     { name: "SK", code: "sk" },
@@ -102,6 +89,38 @@ const Country_code = ({ country_code, setCountry_code }) => {
     { name: "UZ_UZ", code: "uz_uz" },
     { name: "VN_ZA", code: "vn_za" },
   ];
+
+  const selectedCountryTemplate = (option) => {
+    if (option) {
+      return (
+        <div className="flex align-items-center">
+          <img
+            alt={option.name}
+            src="https://primefaces.org/cdn/primereact/images/flag/flag_placeholder.png"
+            className={`mr-2 flag flag-${option.code.toLowerCase()}`}
+            style={{ width: '18px' }}
+          />
+          <div>{option.name}</div>
+        </div>
+      );
+    }
+    return <span>Select a Country</span>;
+  };
+
+  const countryOptionTemplate = (option) => {
+    return (
+      <div className="flex align-items-center">
+        <img
+          alt={option.name}
+          src="https://primefaces.org/cdn/primereact/images/flag/flag_placeholder.png"
+          className={`mr-2 flag flag-${option.code.toLowerCase()}`}
+          style={{ width: '18px' }}
+        />
+        <div>{option.name}</div>
+      </div>
+    );
+  };
+
   return (
     <div className="country_code_button">
       <div className="segment-start">
@@ -115,12 +134,15 @@ const Country_code = ({ country_code, setCountry_code }) => {
       <div className="segment-end">
         <div className="container2">
           <Dropdown
-            value={country_code} // This should be the country code object
-            options={coutry_code}
+            value={countryOptions.find(option => option.code === country_code)} // Find the selected country object
+            options={countryOptions}
             onChange={(e) => setCountry_code(e.value.code)} // Set the code directly
             optionLabel="name" // Display the 'name' in the dropdown
-            placeholder={country_code}
-            className="dropdown"
+            placeholder="Select a Country" 
+            className="dropdown" 
+            filter
+            valueTemplate={selectedCountryTemplate}
+            itemTemplate={countryOptionTemplate}
           />
         </div>
       </div>
