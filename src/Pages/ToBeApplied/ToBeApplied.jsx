@@ -3,6 +3,7 @@ import axios from 'axios';
 import BasicInput from "../../Components/ToBeApplied/Input";
 import Process from '../../assets/uim_process.png';
 import BasicTextarea from "../../Components/ToBeApplied/Textarea";
+import Country_code from "../../Components/Template_detail_set/Country_code";
 
 const ToBeApplied = () => {
   const [projectName, setProjectName] = useState('');
@@ -14,6 +15,7 @@ const ToBeApplied = () => {
   const [changeResults, setChangeResults] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false); 
   const [codePairs, setCodePairs] = useState([]);
+  const [country_code, setCountry_code] = useState("");
 
   const handleProjectNameChange = (projectName) => {
     setProjectName(projectName);
@@ -50,7 +52,6 @@ const ToBeApplied = () => {
   };
 
   const handleDeleteTextarea = (index) => {
-    alert('삭제하시겠습니까?')
     const newTextareas = textareas.filter((_, i) => i !== index);
     setTextareas(newTextareas);
   };
@@ -156,7 +157,7 @@ const ToBeApplied = () => {
   return (
     <>
       <div className="bg-white">
-        <div className="flex w-full p-14 justify-between gap-10 bg-[#f6f6f6]">
+        <div className="flex w-full p-14 justify-between gap-10 bg-[#f6f6f6] shadow-xl">
           <div className="flex gap-10">
             <BasicInput
               _inputProps={{ placeholder: 'S24' }}
@@ -175,13 +176,11 @@ const ToBeApplied = () => {
               _title={'Product Name'}
               _onChange={handleProductNameChange}
               _value={productName}
+            />            
+            <Country_code
+              country_code={country_code}
+              setCountry_code={setCountry_code}
             />
-            {/* <BasicInput
-              _inputProps={{ placeholder: 'UK' }}
-              _title={'국가'}
-              _onChange={handleEmailChange}
-              _value={value}
-            /> */}
           </div>
           <button className="bg-black text-white font-semibold text-[14px] rounded-[20px] w-[150px]"
           onClick={handleSetting}>
@@ -222,7 +221,7 @@ const ToBeApplied = () => {
         <div className="bg-[#f6f6f6]">
           <div className="flex justify-between p-20 font-bold">
             <h1 className="w-[12.5%] flex items-center justify-center">PPT NO.</h1>   
-            <h1 className="w-[6.25%] flex items-center justify-center">삭제</h1>  
+            <h1 className="w-[6.25%] flex items-center justify-center">항목 삭제</h1>  
             <h1 className="w-[28%] flex items-center justify-center">As-Was Code</h1> 
             <h1 className="w-[28%] flex items-center justify-center">To-Be Code</h1> 
             <h1 className="w-[18.75%] flex items-center justify-center">To-Be 적용 여부</h1>
