@@ -1,0 +1,124 @@
+.pdp_segmented_button,
+.pdp_segmented_button * {
+  box-sizing: border-box;
+
+}
+
+.pdp_segmented_button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 333px;
+  height: 48px;
+  position: relative;
+  //background-color: #1d192b;
+
+  .segment-start {
+    padding: 4px 0;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+    flex: 0.7;
+    height: 48px;
+    position: relative;
+    margin-left: 2rem; //항목마다 거리 두기
+  }
+
+  .container {
+    background: var(--schemes-secondary-container, #dee1f8);
+    border-radius: 100px 0 0 100px;
+    border-style: solid;
+    border-color: var(--schemes-outline, #79747e);
+    border-width: 1px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .state-layer {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    flex: 1;
+    position: relative;
+  }
+
+  .label-text {
+    color: var(--schemes-on-secondary-container, #1d192b);
+    text-align: center;
+    font-family: var(--m3-label-large-font-family, "Roboto-Medium", sans-serif);
+    font-size: var(--m3-label-large-font-size, 12px);
+    line-height: var(--m3-label-large-large-line-height, 20px);
+    letter-spacing: var(--m3-label-large-letter-spacing, 0.1px);
+    font-weight: var(--m3-label-large-font-weight, 500);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .segment-end {
+    margin: 0 0 0 -1px;
+    padding: 4px 0;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 48px;
+    position: relative;
+    margin-right: 2rem;
+  }
+
+  .container2 {
+    border-radius: 0 100px 100px 0;
+    border-style: solid;
+    border-color: var(--schemes-outline, #79747e);
+    border-width: 1px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .text-area {
+    width: 100%;
+    height: 48px;
+    /* 고정된 높이 */
+    border: none;
+    resize: none;
+    /* 크기 조절 비활성화 */
+    padding: 10px;
+    font-family: var(--m3-label-large-font-family, "Roboto-Medium", sans-serif);
+    font-size: var(--m3-label-large-font-size, 14px);
+    line-height: var(--m3-label-large-line-height, 20px);
+    color: var(--schemes-on-surface, #1d1b20);
+    background: transparent;
+    /* 배경 투명 */
+    overflow: hidden;
+    /* 스크롤바 숨기기 */
+  }
+
+  .text-area::placeholder {
+    color: var(--schemes-on-surface, #1d1b20);
+  }
+}
