@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import "./qa_page.scss";
-import Input_Project from "../../Components/Template_detail_set/Input_Project";
-import Input_pdp from "../../Components/Template_detail_set/Input_pdp";
-import Input_product_name from "../../Components/Template_detail_set/Input_product_name";
 import Input_date from "../../Components/Template_detail_set/Input_date";
 import Country_code from "../../Components/Template_detail_set/Country_code";
 import axios from "axios";
-import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import { Dropdown } from "primereact/dropdown";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 
 const Qa_page = () => {
+  const [_value, _setValue] = useState("");
+
   const [projectName, setProjectName] = useState("");
   const [PDP, setPDP] = useState("");
   const [productName, setProductName] = useState("");
@@ -21,8 +20,6 @@ const Qa_page = () => {
 
   const [asWasCodes, setAsWasCodes] = useState([]);
   const [toBeCodes, setToBeCodes] = useState([]);
-  const [updatedAsWasCodes, setUpdatedAsWasCodes] = useState([]);
-  const [updatedToBeCodes, setUpdatedToBeCodes] = useState([]);
   const [pptNos, setPptNos] = useState([]);
   const [file, setFile] = useState(null);
   const [fileContent, setFileContent] = useState("");
@@ -177,14 +174,29 @@ const Qa_page = () => {
   return (
     <div className="qa_page">
       <div className="template_detail_box">
-        <Input_Project
-          projectName={projectName}
-          setProjectName={setProjectName}
+        <SettingDropdown
+        _inputProps={{ placeholder: 'S24' }}
+        _title='프로젝트명'
+        _onChange={()=>{}}
+        _value={projectName}
+        _setValue={setProjectName}
+        _url='projects'
         />
-        <Input_pdp PDP={PDP} setPDP={setPDP} />
-        <Input_product_name
-          productName={productName}
-          setProductName={setProductName}
+        <SettingDropdown
+        _inputProps={{ placeholder: 'Feature' }}
+        _title='PDP'
+        _onChange={()=>{}}
+        _value={PDP}
+        _setValue={setPDP}
+        _url='pdps'
+        />
+        <SettingDropdown
+        _inputProps={{ placeholder: 'B5' }}
+        _title='Product Name'
+        _onChange={()=>{}}
+        _value={productName}
+        _setValue={setProductName}
+        _url='products'
         />
         <Input_date createDate={createDate} setCreateDate={setCreateDate} />
         <Country_code
