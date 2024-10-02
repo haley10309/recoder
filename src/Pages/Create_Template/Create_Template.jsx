@@ -69,6 +69,20 @@ const Create_template = () => {
       if (response.data.length > 0) {
         alert("이미 존재하는 템플릿이 있습니다.");
         setSave_type("update");
+        const detailsResponse = await axios.post(
+          "http://localhost:5000/get-template-details",
+          {
+            projectName,
+            PDP,
+            productName,
+          }
+        );
+
+        // Update state with the fetched data
+        const details = detailsResponse.data; // This is an array of objects
+        setPptNos(details.map((item) => item.ppt_no));
+        setAsWasCodes(details.map((item) => item.aswas_code));
+        setToBeCodes(details.map((item) => item.tobe_code));
       } else {
         alert("새로운 템플릿을 추가할 수 있습니다.");
         setSave_type("create");
@@ -361,7 +375,8 @@ const Create_template = () => {
             onClick={handleSave}
             disabled={!allFieldsFilled()}
           >
-            저장
+            {save_type == "update" && `수정`}
+            {save_type == "create" && `생성`}
           </button>
         </div>
       </form>

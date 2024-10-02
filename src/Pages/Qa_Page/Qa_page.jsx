@@ -123,7 +123,6 @@ const Qa_page = () => {
             projectName,
             PDP,
             productName,
-            createDate: formattedDate,
           }
         );
 
@@ -186,7 +185,7 @@ const Qa_page = () => {
           productName={productName}
           setProductName={setProductName}
         />
-        <Input_date createDate={createDate} setCreateDate={setCreateDate} />
+        {/* <Input_date createDate={createDate} setCreateDate={setCreateDate} /> */}
         <Country_code
           country_code={country_code}
           setCountry_code={setCountry_code}
