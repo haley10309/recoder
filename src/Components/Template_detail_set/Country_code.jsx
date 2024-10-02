@@ -91,6 +91,7 @@ const Country_code = ({ country_code, setCountry_code }) => {
   ];
 
   const selectedCountryTemplate = (option) => {
+    //드롭다운에서 선택된 국가를 어떻게 표시할지를 정의
     if (option) {
       return (
         <div className="flex align-items-center">
@@ -98,23 +99,24 @@ const Country_code = ({ country_code, setCountry_code }) => {
             alt={option.name}
             src="https://primefaces.org/cdn/primereact/images/flag/flag_placeholder.png"
             className={`mr-2 flag flag-${option.code.toLowerCase()}`}
-            style={{ width: '18px' }}
+            style={{ width: "18px" }}
           />
           <div>{option.name}</div>
         </div>
       );
     }
-    return <span>Select a Country</span>;
+    return <span>선택</span>;
   };
 
   const countryOptionTemplate = (option) => {
+    //드롭다운 목록에서 각 국가 옵션을 어떻게 표시할지를 정의
     return (
       <div className="flex align-items-center">
         <img
           alt={option.name}
           src="https://primefaces.org/cdn/primereact/images/flag/flag_placeholder.png"
           className={`mr-2 flag flag-${option.code.toLowerCase()}`}
-          style={{ width: '18px' }}
+          style={{ width: "18px" }}
         />
         <div>{option.name}</div>
       </div>
@@ -134,12 +136,14 @@ const Country_code = ({ country_code, setCountry_code }) => {
       <div className="segment-end">
         <div className="container2">
           <Dropdown
-            value={countryOptions.find(option => option.code === country_code)} // Find the selected country object
+            value={countryOptions.find(
+              (option) => option.code === country_code
+            )} // Find the selected country object
             options={countryOptions}
             onChange={(e) => setCountry_code(e.value.code)} // Set the code directly
             optionLabel="name" // Display the 'name' in the dropdown
-            placeholder="Select a Country" 
-            className="dropdown" 
+            placeholder="Select a Country"
+            className="dropdown"
             filter
             valueTemplate={selectedCountryTemplate}
             itemTemplate={countryOptionTemplate}

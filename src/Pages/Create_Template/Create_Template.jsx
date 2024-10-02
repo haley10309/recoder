@@ -4,6 +4,7 @@ import Input_Project from "../../Components/Template_detail_set/Input_Project";
 import Input_pdp from "../../Components/Template_detail_set/Input_pdp";
 import Input_product_name from "../../Components/Template_detail_set/Input_product_name";
 import Input_date from "../../Components/Template_detail_set/Input_date";
+import BasicInput from "../../Components/ToBeApplied/Input";
 
 import { Dropdown } from "primereact/dropdown";
 import AddIcon from "@mui/icons-material/Add";
@@ -208,19 +209,44 @@ const Create_template = () => {
       originalCode.slice(realEndIndex + 1);
     return newCode;
   }
+  const handleProjectNameChange = (projectName) => {
+    setProjectName(projectName);
+  };
+  const handlePdpChange = (PDP) => {
+    setPDP(PDP);
+  };
+  const handleProductNameChange = (productName) => {
+    setProductName(productName);
+  };
 
   return (
     <div className="Create_Template">
       <div className="template_detail_box">
-        <Input_Project
-          projectName={projectName}
-          setProjectName={setProjectName}
-        />
-        <Input_pdp PDP={PDP} setPDP={setPDP} />
-        <Input_product_name
-          productName={productName}
-          setProductName={setProductName}
-        />
+        <div>
+          <BasicInput
+            _inputProps={{ placeholder: "hotfix 1.0" }}
+            _title={"프로젝트명"}
+            _onChange={handleProjectNameChange}
+            _value={projectName}
+          />
+        </div>
+        <div>
+          <BasicInput
+            _inputProps={{ placeholder: "Features" }}
+            _title={"PDP"}
+            _onChange={handlePdpChange}
+            _value={PDP}
+          />
+        </div>
+        <div>
+          <BasicInput
+            _inputProps={{ placeholder: "B5" }}
+            _title={"Product Name"}
+            _onChange={handleProductNameChange}
+            _value={productName}
+          />
+        </div>
+
         <button
           type="button"
           className="check_button"
