@@ -1,0 +1,41 @@
+.footer {
+    background-color: #282c34;
+    /* Dark background */
+    color: #ffffff;
+    /* White text */
+    padding: 20px 0;
+    /* Padding for top and bottom */
+    text-align: center;
+
+    /* Center align text */
+    .footer-content {
+        max-width: 1200px;
+        /* Limit the width */
+        margin: 0 auto;
+        /* Center the footer */
+    }
+
+    .footer-links {
+        margin-bottom: 10px;
+        /* Space below the links */
+    }
+
+    .footer-links a {
+        color: #ffffff;
+        /* White text for links */
+        margin: 0 15px;
+        /* Space between links */
+        text-decoration: none;
+        /* Remove underline */
+    }
+
+    .footer-links a:hover {
+        text-decoration: underline;
+        /* Underline on hover for links */
+    }
+
+    .footer-copy {
+        font-size: 14px;
+        /* Smaller font size for copyright */
+    }
+}
