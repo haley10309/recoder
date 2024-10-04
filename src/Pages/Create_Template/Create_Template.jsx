@@ -15,6 +15,10 @@ const Create_template = () => {
   const [toBeCodes, setToBeCodes] = useState(["", "", ""]);
   const [pptNos, setPptNos] = useState(["", "", ""]);
 
+  const initialPptNos = ["", "", ""];
+  const initialAsWasCodes = ["", "", ""];
+  const initialToBeCodes = ["", "", ""];
+
   const [file, setFile] = useState(null); // State for the uploaded file
   const [fileContent, setFileContent] = useState(""); //original code file
   const [save_type, setSave_type] = useState("");
@@ -84,7 +88,11 @@ const Create_template = () => {
         setAsWasCodes(details.map((item) => item.aswas_code));
         setToBeCodes(details.map((item) => item.tobe_code));
       } else {
-        alert("새로운 템플릿을 추가할 수 있습니다.");
+        alert("새로운 템플릿을 추가할 수 있습니다."); //새로운 템플릿 생성일 때, 모든 변수들을 초기화
+        setPptNos(initialPptNos);
+        setAsWasCodes(initialAsWasCodes);
+        setToBeCodes(initialToBeCodes);
+
         setSave_type("create");
       }
     } catch (error) {
@@ -266,14 +274,21 @@ const Create_template = () => {
           className="check_button"
           onClick={checkForExistingTemplate}
         >
-          확인
+          템플릿 조회
         </button>
       </div>
 
       <div className="file-upload-section">
-        <label htmlFor="file-upload" className="file-upload-label">
-          Upload Original Code File Below
-        </label>
+        {file ? (
+          <label htmlFor="file-upload" className="file-upload-label">
+            {file.name}
+          </label>
+        ) : (
+          <label htmlFor="file-upload" className="file-upload-label">
+            As-was 코드 확인용 Original 코드 업로드
+          </label>
+        )}
+
         <div className="file-upload-input-container">
           <input
             type="file"
@@ -353,7 +368,7 @@ const Create_template = () => {
               onClick={() => removeTextArea(index)}
               className="remove_button"
             >
-              열 삭제
+              삭제
             </button>
           </div>
         ))}
@@ -377,6 +392,7 @@ const Create_template = () => {
           >
             {save_type == "update" && `수정`}
             {save_type == "create" && `생성`}
+            {save_type != "update" && save_type != "create" && `저장`}
           </button>
         </div>
       </form>

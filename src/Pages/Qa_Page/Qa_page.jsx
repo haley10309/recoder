@@ -15,7 +15,7 @@ const Qa_page = () => {
   const [projectName, setProjectName] = useState("");
   const [PDP, setPDP] = useState("");
   const [productName, setProductName] = useState("");
-  const [createDate, setCreateDate] = useState(dayjs()); // Initialize as current date
+  const [createDate, setCreateDate] = useState(dayjs());
   const [country_code, setCountry_code] = useState("");
 
   const [asWasCodes, setAsWasCodes] = useState([]);
@@ -54,7 +54,6 @@ const Qa_page = () => {
     return occurrenceCount; // Return the total count of occurrences
   };
 
-  // Normalize function
   function normalizeCode(code) {
     let normalized = ""; // Initialize an empty string to hold the normalized result
 
@@ -83,37 +82,31 @@ const Qa_page = () => {
 
   const checkForExistingTemplate = async () => {
     try {
-      // Log the current createDate value
-      console.log("Current createDate:", createDate);
-
-      // Ensure createDate is not empty or invalid
-      if (!createDate || !createDate.isValid()) {
-        alert("Please select a valid create date.");
-        return; // Exit if createDate is not set or is invalid
-      }
-
-      // Format createDate to YYYY-MM-DD
-      const formattedDate = createDate.format("YYYY-MM-DD");
-
+      // console.log("Current createDate:", createDate);
+      // if (!createDate || !createDate.isValid()) {
+      //   alert("Please select a valid create date.");
+      //   return;
+      // }
+      // const formattedDate = createDate.format("YYYY-MM-DD");
       console.log("Sending data to /check-template:", {
         projectName,
         PDP,
         productName,
-        createDate: formattedDate,
       });
 
       const response = await axios.post(
+        //원하는 템플릿이 존재하는 지 여부 확인
         "http://localhost:5000/check-template",
         {
           projectName,
           PDP,
           productName,
-          createDate: formattedDate,
         }
       );
 
       if (response.data.length > 0) {
-        // Fetch the template details
+        //원하는 템플릿이 존재함을 확인했을 때 템플릿 정보 호출
+
         const detailsResponse = await axios.post(
           "http://localhost:5000/get-template-details",
           {
@@ -123,8 +116,7 @@ const Qa_page = () => {
           }
         );
 
-        // Update state with the fetched data
-        const details = detailsResponse.data; // This is an array of objects
+        const details = detailsResponse.data;
         setPptNos(details.map((item) => item.ppt_no));
         setAsWasCodes(details.map((item) => item.aswas_code));
         setToBeCodes(details.map((item) => item.tobe_code));
@@ -137,77 +129,54 @@ const Qa_page = () => {
     }
   };
 
-  const filteredItems = asWasCodes
-    .map((code, index) => {
-      const occurrenceCount = countOccurrences(toBeCodes[index]);
-
-      if (selectedViewOption === "적용 완료" && occurrenceCount === 1) {
-        return {
-          asWasCode: code,
-          toBeCode: toBeCodes[index],
-          pptNo: pptNos[index],
-          occurrenceCount,
-        };
-      } else if (
-        selectedViewOption === "적용 미완료" &&
-        occurrenceCount !== 1
-      ) {
-        return {
-          asWasCode: code,
-          toBeCode: toBeCodes[index],
-          pptNo: pptNos[index],
-          occurrenceCount,
-        };
-      } else if (selectedViewOption === "전체") {
-        return {
-          asWasCode: code,
-          toBeCode: toBeCodes[index],
-          pptNo: pptNos[index],
-          occurrenceCount,
-        };
-      }
-      return null;
-    })
-    .filter((item) => item !== null); // Remove any null items from the filtered array
-
   return (
     <div className="qa_page">
       <div className="template_detail_box">
-        <SettingDropdown
-        _inputProps={{ placeholder: 'S24' }}
-        _title='프로젝트명'
-        _onChange={()=>{}}
-        _value={projectName}
-        _setValue={setProjectName}
-        _url='projects'
-        />
-        <SettingDropdown
-        _inputProps={{ placeholder: 'Feature' }}
-        _title='PDP'
-        _onChange={()=>{}}
-        _value={PDP}
-        _setValue={setPDP}
-        _url='pdps'
-        />
-        <SettingDropdown
-        _inputProps={{ placeholder: 'B5' }}
-        _title='Product Name'
-        _onChange={()=>{}}
-        _value={productName}
-        _setValue={setProductName}
-        _url='products'
-        />
+        <div>
+          <SettingDropdown
+            _inputProps={{ placeholder: "S24" }}
+            _title="프로젝트명"
+            _onChange={() => {}}
+            _value={projectName}
+            _setValue={setProjectName}
+            _url="projects"
+          />
+        </div>
+
+        <div>
+          <SettingDropdown
+            _inputProps={{ placeholder: "Feature" }}
+            _title="PDP"
+            _onChange={() => {}}
+            _value={PDP}
+            _setValue={setPDP}
+            _url="pdps"
+          />
+        </div>
+
+        <div>
+          <SettingDropdown
+            _inputProps={{ placeholder: "B5" }}
+            _title="Product Name"
+            _onChange={() => {}}
+            _value={productName}
+            _setValue={setProductName}
+            _url="products"
+          />
+        </div>
+
         {/* <Input_date createDate={createDate} setCreateDate={setCreateDate} /> */}
         <Country_code
           country_code={country_code}
           setCountry_code={setCountry_code}
         />
+
         <button
           type="button"
           className="check_button"
           onClick={checkForExistingTemplate}
         >
-          확인
+          템플릿 조회
         </button>
       </div>
       <div className="file-upload-section">
@@ -333,6 +302,12 @@ const Qa_page = () => {
             </div>
           );
         })}
+        {asWasCodes == "" && ( // 아무 것도 없을 때 푸터가 위로 올라오는 것을 방지
+          <div className="nothing_rendered">
+            {" "}
+            <br />
+          </div>
+        )}
       </form>
     </div>
   );

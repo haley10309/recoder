@@ -1,4 +1,9 @@
 .qa_page {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
     .template_detail_box {
         background-color: #ffff;
         padding: 1.5rem;
@@ -7,6 +12,7 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 2rem;
+        gap: 10px;
     }
 
 
@@ -48,6 +54,7 @@
     // }
 
     .custom-dropdown {
+        //
         width: 8rem; // Fixed width for consistency
         height: 2rem;
 
@@ -63,6 +70,10 @@
         .p-dropdown-item:hover {
             background-color: #f0f0f0; // Change background on hover
         }
+    }
+
+    .nothing_rendered {
+        height: 20rem;
     }
 
 }

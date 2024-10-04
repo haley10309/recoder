@@ -37,8 +37,8 @@ const Input_product_name = ({ productName, setProductName }) => {
       <div className="segment-start">
         <div className="container">
           <div className="state-layer">
-            <CheckIcon />
-            <div className="label-text">Product Name</div>
+            <CheckIcon className="check-icon" />
+            <div className="label-text">제품 명</div>
           </div>
         </div>
       </div>
