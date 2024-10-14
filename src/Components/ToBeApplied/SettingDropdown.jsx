@@ -6,13 +6,11 @@ import Check from "../../assets/check.png";
 
 const divWrapperClasses = {
   dropdown:
-    "bg-[#DEE1F8] rounded-[20px] ring-1 ring-[#747D7E] flex h-[35px] gap-2 text-[10px] w-full",
+    "bg-[#E4F7BA] rounded-[20px] ring-1 ring-[#747D7E] flex h-[35px] gap-2 text-[12px] w-full",
 };
 const divClasses = {
-  default:
-    "focus-within:bg-none w-full bg-white focus:outline-none focus:ring-0",
-  "default-font":
-    "font-noto placeholder:text-[#787878] text-[12px] font-normal leading-normal",
+  default:"focus-within:bg-none w-full bg-white focus:outline-none focus:ring-0",
+  "default-font":"font-noto placeholder:text-[#787878] text-[12px] font-normal leading-normal",
 };
 
 const SettingDropdown = ({
@@ -62,9 +60,9 @@ const SettingDropdown = ({
         "flex items-center"
       )}
     >
-      <div className="flex flex-[0.5] gap-2 justify-center">
+      <div className="flex flex-[0.5] gap-2 justify-center items-center">
         <img
-          className="w-[14px] h-[12px] align-center "
+          className="w-[14px] h-[12px] align-center"
           src={Check}
           alt="check"
         />

@@ -9,6 +9,8 @@ import BasicInput from "../../Components/ToBeApplied/Input";
 import { Dropdown } from "primereact/dropdown";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
+import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
+import Country_code from "../../Components/Template_detail_set/Country_code";
 
 const Create_template = () => {
   const [asWasCodes, setAsWasCodes] = useState(["", "", ""]);
@@ -243,7 +245,7 @@ const Create_template = () => {
 
   return (
     <div className="Create_Template">
-      <div className="template_detail_box">
+      {/* <div className="template_detail_box">
         <div>
           <BasicInput
             _inputProps={{ placeholder: "hotfix 1.0" }}
@@ -276,126 +278,165 @@ const Create_template = () => {
         >
           템플릿 조회
         </button>
-      </div>
-
-      <div className="file-upload-section">
-        {file ? (
-          <label htmlFor="file-upload" className="file-upload-label">
-            {file.name}
-          </label>
-        ) : (
-          <label htmlFor="file-upload" className="file-upload-label">
-            As-was 코드 확인용 Original 코드 업로드
-          </label>
-        )}
-
-        <div className="file-upload-input-container">
-          <input
-            type="file"
-            id="file-upload"
-            onChange={handleFileChange}
-            accept=".js,.html,.css"
-            className="file-upload-input"
-          />
-          <button
-            type="button"
-            className="file-upload-button"
-            onClick={() => document.getElementById("file-upload").click()}
-          >
-            파일 업로드
-          </button>
-        </div>
-      </div>
-
-      <div className="title_as_to_div">
-        <h4 className="title_as">As_Was Code</h4>
-        <h4 className="title_to">To-be Code</h4>
-      </div>
-
-      <form>
-        {asWasCodes.map((_, index) => (
-          <div key={index} className="as_was_to_be_div">
-            <div className="num_type">
-              <div className="ppt_no_col">
-                <label className="ppt_no">PPT NO.</label>
-                <input
-                  type="text"
-                  className="ppt_no_text"
-                  value={pptNos[index]}
-                  onChange={(e) => {
-                    const newPptNos = [...pptNos];
-                    newPptNos[index] = e.target.value;
-                    setPptNos(newPptNos);
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="as_was_div">
-              <textarea
-                id={`asWasCode${index}`}
-                rows="5"
-                value={asWasCodes[index]}
-                onChange={(e) => {
-                  const newCodes = [...asWasCodes];
-                  newCodes[index] = e.target.value;
-                  setAsWasCodes(newCodes);
-                }}
-                placeholder="Enter the as-was code here"
-                className="code-textarea"
-              />
-              <div className="duplicate-count">
-                중복 횟수: {countOccurrences(asWasCodes[index])}
-              </div>
-            </div>
-
-            <div className="to_be_div">
-              <textarea
-                id={`toBeCode${index}`}
-                rows="5"
-                value={toBeCodes[index]}
-                onChange={(e) => {
-                  const newCodes = [...toBeCodes];
-                  newCodes[index] = e.target.value;
-                  setToBeCodes(newCodes);
-                }}
-                placeholder="Enter the to-be code here"
-                className="code-textarea"
-              />
-            </div>
+      </div> */}
+      <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
+          <div className="flex w-full gap-14 justify-center items-center">
+            <SettingDropdown
+              _inputProps={{ placeholder: "S24" }}
+              _title="프로젝트명"
+              _onChange={() => {}}
+              _value={projectName}
+              _setValue={setProjectName}
+              _url="projects"
+            />
+            <SettingDropdown
+              _inputProps={{ placeholder: "Feature" }}
+              _title="PDP"
+              _onChange={() => {}}
+              _value={PDP}
+              _setValue={setPDP}
+              _url="pdps"
+            />
+            <SettingDropdown
+              _inputProps={{ placeholder: "B5" }}
+              _title="Product Name"
+              _onChange={() => {}}
+              _value={productName}
+              _setValue={setProductName}
+              _url="products"
+            />
+          </div>
+          <div className="flex justify-center items-center">
             <button
-              type="button"
-              onClick={() => removeTextArea(index)}
-              className="remove_button"
+              className="bg-black text-white font-semibold text-[14px] rounded-[20px] w-[150px] shadow-xl h-[35px]"
+              onClick={checkForExistingTemplate}
             >
-              삭제
+              템플릿 조회
             </button>
           </div>
-        ))}
+        </div>
 
-        <div className="add_more_div">
-          <button
-            type="button"
-            onClick={addTextArea}
-            className="add_more_button"
-          >
-            <AddIcon />
-            <h8 className="add_button_text">항목 추가</h8>
-          </button>
+        <div className="content-div">
+          <div className="file-upload-section">
+                {file ? (
+                  <label htmlFor="file-upload" className="file-upload-label">
+                    {file.name}
+                  </label>
+                ) : (
+                  <label htmlFor="file-upload" className="file-upload-label">
+                    As-was 코드 확인용 Original 코드 업로드
+                  </label>
+                )}
+
+                <div className="file-upload-input-container">
+                  <input
+                    type="file"
+                    id="file-upload"
+                    onChange={handleFileChange}
+                    accept=".js,.html,.css"
+                    className="file-upload-input"
+                  />
+                  <button
+                    type="button"
+                    className="file-upload-button"
+                    onClick={() => document.getElementById("file-upload").click()}
+                  >
+                    파일 업로드
+                  </button>
+                </div>
+              </div>
+
+              <div className="title_as_to_div">
+                <h4 className="title_as">As_Was Code</h4>
+                <h4 className="title_to">To-be Code</h4>
+              </div>
+
+              <form>
+                {asWasCodes.map((_, index) => (
+                  <div key={index} className="as_was_to_be_div">
+                    <div className="num_type">
+                      <div className="ppt_no_col">
+                        <label className="ppt_no">PPT NO.</label>
+                        <input
+                          type="text"
+                          className="ppt_no_text"
+                          value={pptNos[index]}
+                          onChange={(e) => {
+                            const newPptNos = [...pptNos];
+                            newPptNos[index] = e.target.value;
+                            setPptNos(newPptNos);
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="as_was_div">
+                      <textarea
+                        id={`asWasCode${index}`}
+                        rows="5"
+                        value={asWasCodes[index]}
+                        onChange={(e) => {
+                          const newCodes = [...asWasCodes];
+                          newCodes[index] = e.target.value;
+                          setAsWasCodes(newCodes);
+                        }}
+                        placeholder="Enter the as-was code here"
+                        className="code-textarea"
+                      />
+                      <div className="duplicate-count">
+                        중복 횟수: {countOccurrences(asWasCodes[index])}
+                      </div>
+                    </div>
+
+                    <div className="to_be_div">
+                      <textarea
+                        id={`toBeCode${index}`}
+                        rows="5"
+                        value={toBeCodes[index]}
+                        onChange={(e) => {
+                          const newCodes = [...toBeCodes];
+                          newCodes[index] = e.target.value;
+                          setToBeCodes(newCodes);
+                        }}
+                        placeholder="Enter the to-be code here"
+                        className="code-textarea"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeTextArea(index)}
+                      className="remove_button"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                ))}
+
+                <div className="add_more_div">
+                  <button
+                    type="button"
+                    onClick={addTextArea}
+                    className="add_more_button"
+                  >
+                    <AddIcon />
+                    <h8 className="add_button_text">항목 추가</h8>
+                  </button>
+                </div>
+                <div className="save_button_div">
+                  <button
+                    type="button"
+                    className="save_button"
+                    onClick={handleSave}
+                    disabled={!allFieldsFilled()}
+                  >
+                    {save_type == "update" && `수정`}
+                    {save_type == "create" && `생성`}
+                    {save_type != "update" && save_type != "create" && `저장`}
+                  </button>
+                </div>
+              </form>
         </div>
-        <div className="save_button_div">
-          <button
-            type="button"
-            className="save_button"
-            onClick={handleSave}
-            disabled={!allFieldsFilled()}
-          >
-            {save_type == "update" && `수정`}
-            {save_type == "create" && `생성`}
-            {save_type != "update" && save_type != "create" && `저장`}
-          </button>
-        </div>
-      </form>
+     
     </div>
   );
 };
