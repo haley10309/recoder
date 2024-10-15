@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import "./qa_page.scss";
-import Input_date from "../../Components/Template_detail_set/Input_date";
-import Country_code from "../../Components/Template_detail_set/Country_code";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import { Dropdown } from "primereact/dropdown";
 import dayjs from "dayjs";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
-import Before_upload from "./Before_upload";
+import Country_code from "../../Components/Template_detail_set/Country_code";
 
 const Qa_page = () => {
   const [_value, _setValue] = useState("");
@@ -132,8 +130,8 @@ const Qa_page = () => {
 
   return (
     <div className="qa_page">
-      <div className="template_detail_box">
-        <div>
+      {/* <div className="template_detail_box">
+        <div className="flex w-full">
           <SettingDropdown
             _inputProps={{ placeholder: "S24" }}
             _title="프로젝트명"
@@ -144,7 +142,7 @@ const Qa_page = () => {
           />
         </div>
 
-        <div>
+        <div className="flex w-full">
           <SettingDropdown
             _inputProps={{ placeholder: "Feature" }}
             _title="PDP"
@@ -155,7 +153,7 @@ const Qa_page = () => {
           />
         </div>
 
-        <div>
+        <div className="flex w-full">
           <SettingDropdown
             _inputProps={{ placeholder: "B5" }}
             _title="Product Name"
@@ -165,8 +163,7 @@ const Qa_page = () => {
             _url="products"
           />
         </div>
-
-        {/* <Input_date createDate={createDate} setCreateDate={setCreateDate} /> */}
+        
         <Country_code
           country_code={country_code}
           setCountry_code={setCountry_code}
@@ -179,138 +176,181 @@ const Qa_page = () => {
         >
           템플릿 조회
         </button>
-      </div>
-      <div className="file-upload-section">
-        {file ? (
-          `uploaded file : ${file.name}`
-        ) : (
-          <label>QA 대상 파일 업로드</label>
-        )}
+      </div> */}
 
-        <div className="file-upload-input-container">
-          <input
-            type="file"
-            id="file-upload"
-            onChange={handleFileChange}
-            accept=".js,.html,.css"
-            className="file-upload-input"
+      <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
+        <div className="flex w-full gap-14 justify-center items-center">
+          <SettingDropdown
+            _inputProps={{ placeholder: "S24" }}
+            _title="프로젝트명"
+            _onChange={() => {}}
+            _value={projectName}
+            _setValue={setProjectName}
+            _url="projects"
           />
+          <SettingDropdown
+            _inputProps={{ placeholder: "Feature" }}
+            _title="PDP"
+            _onChange={() => {}}
+            _value={PDP}
+            _setValue={setPDP}
+            _url="pdps"
+          />
+          <SettingDropdown
+            _inputProps={{ placeholder: "B5" }}
+            _title="Product Name"
+            _onChange={() => {}}
+            _value={productName}
+            _setValue={setProductName}
+            _url="products"
+          />
+          <Country_code
+            country_code={country_code}
+            setCountry_code={setCountry_code}
+          />
+        </div>
+        <div className="flex justify-center items-center">
           <button
-            type="button"
-            className="file-upload-button"
-            onClick={() => document.getElementById("file-upload").click()}
+            className="bg-black text-white font-semibold text-[14px] rounded-[20px] w-[150px] shadow-xl h-[35px]"
+            onClick={checkForExistingTemplate}
           >
-            첨부 파일 업로드
+            템플릿 조회
           </button>
         </div>
       </div>
-      <div className="filter_dropdown">
-        <Dropdown
-          value={selectedViewOption}
-          options={view_options}
-          onChange={(e) => setSelectedViewOption(e.value.name)}
-          optionLabel="name"
-          placeholder={selectedViewOption}
-          className="custom-dropdown"
-        />
-      </div>
-      <form>
-        {asWasCodes.map((_, index) => {
-          // Ensure country_code is available before replacement
-          const updatedAsWasCode = asWasCodes[index].replace(
-            /\/site\//g,
-            `/${country_code}/`
-          );
-          const updatedToBeCode = toBeCodes[index].replace(
-            /\/site\//g,
-            `/${country_code}/`
-          );
 
-          const occurrenceCount = countOccurrences(updatedToBeCode);
+      <div className="content-div">
+        <div className="file-upload-section">
+          {file ? (
+            `uploaded file : ${file.name}`
+          ) : (
+            <label>QA 대상 파일 업로드</label>
+          )}
 
-          // Determine if it should be displayed based on the selected view option
-          const isApplied = occurrenceCount === 1; // "적용 완료"
-          const shouldDisplay =
-            selectedViewOption === "전체" ||
-            (selectedViewOption === "적용 완료" && isApplied) ||
-            (selectedViewOption === "적용 미완료" && !isApplied);
+          <div className="file-upload-input-container">
+            <input
+              type="file"
+              id="file-upload"
+              onChange={handleFileChange}
+              accept=".js,.html,.css"
+              className="file-upload-input"
+            />
+            <button
+              type="button"
+              className="file-upload-button"
+              onClick={() => document.getElementById("file-upload").click()}
+            >
+              첨부 파일 업로드
+            </button>
+          </div>
+        </div>
+        <div className="filter_dropdown">
+          <Dropdown
+            value={selectedViewOption}
+            options={view_options}
+            onChange={(e) => setSelectedViewOption(e.value.name)}
+            optionLabel="name"
+            placeholder={selectedViewOption}
+            className="custom-dropdown"
+          />
+        </div>
+        <form>
+          {asWasCodes.map((_, index) => {
+            // Ensure country_code is available before replacement
+            const updatedAsWasCode = asWasCodes[index].replace(
+              /\/site\//g,
+              `/${country_code}/`
+            );
+            const updatedToBeCode = toBeCodes[index].replace(
+              /\/site\//g,
+              `/${country_code}/`
+            );
 
-          if (!shouldDisplay) {
-            return null; // Skip rendering this item if it doesn't meet the filter criteria
-          }
+            const occurrenceCount = countOccurrences(updatedToBeCode);
 
-          return (
-            <div key={index} className="as_was_to_be_div">
-              <div className="num_type">
-                <div className="ppt_no_col">
-                  <label className="ppt_no">PPT NO.</label>
-                  <input
-                    type="text"
-                    className="ppt_no_text"
-                    value={pptNos[index]}
+            // Determine if it should be displayed based on the selected view option
+            const isApplied = occurrenceCount === 1; // "적용 완료"
+            const shouldDisplay =
+              selectedViewOption === "전체" ||
+              (selectedViewOption === "적용 완료" && isApplied) ||
+              (selectedViewOption === "적용 미완료" && !isApplied);
+
+            if (!shouldDisplay) {
+              return null; // Skip rendering this item if it doesn't meet the filter criteria
+            }
+
+            return (
+              <div key={index} className="as_was_to_be_div">
+                <div className="num_type">
+                  <div className="ppt_no_col">
+                    <label className="ppt_no">PPT NO.</label>
+                    <input
+                      type="text"
+                      className="ppt_no_text"
+                      value={pptNos[index]}
+                      onChange={(e) => {
+                        const newPptNos = [...pptNos];
+                        newPptNos[index] = e.target.value;
+                        setPptNos(newPptNos);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="as_was_div">
+                  <textarea
+                    id={`asWasCode${index}`}
+                    rows="5"
+                    value={updatedAsWasCode} // Use the updated code
                     onChange={(e) => {
-                      const newPptNos = [...pptNos];
-                      newPptNos[index] = e.target.value;
-                      setPptNos(newPptNos);
+                      const newCodes = [...asWasCodes];
+                      newCodes[index] = e.target.value;
+                      setAsWasCodes(newCodes);
                     }}
+                    placeholder="Enter the as-was code here"
+                    className="code-textarea"
                   />
                 </div>
-              </div>
 
-              <div className="as_was_div">
-                <textarea
-                  id={`asWasCode${index}`}
-                  rows="5"
-                  value={updatedAsWasCode} // Use the updated code
-                  onChange={(e) => {
-                    const newCodes = [...asWasCodes];
-                    newCodes[index] = e.target.value;
-                    setAsWasCodes(newCodes);
-                  }}
-                  placeholder="Enter the as-was code here"
-                  className="code-textarea"
-                />
-              </div>
-
-              <div className="to_be_div">
-                <textarea
-                  id={`toBeCode${index}`}
-                  rows="5"
-                  value={updatedToBeCode} // Use the updated code
-                  onChange={(e) => {
-                    const newCodes = [...toBeCodes];
-                    newCodes[index] = e.target.value;
-                    setToBeCodes(newCodes);
-                  }}
-                  placeholder="Enter the to-be code here"
-                  className="code-textarea"
-                />
-                <div className="duplicate-count">
-                  중복 횟수: {occurrenceCount}
+                <div className="to_be_div">
+                  <textarea
+                    id={`toBeCode${index}`}
+                    rows="5"
+                    value={updatedToBeCode} // Use the updated code
+                    onChange={(e) => {
+                      const newCodes = [...toBeCodes];
+                      newCodes[index] = e.target.value;
+                      setToBeCodes(newCodes);
+                    }}
+                    placeholder="Enter the to-be code here"
+                    className="code-textarea"
+                  />
+                  <div className="duplicate-count">
+                    중복 횟수: {occurrenceCount}
+                  </div>
+                </div>
+                <div>
+                  {isApplied ? (
+                    <div className="check_true_div">
+                      <DoneIcon color="green" />
+                    </div>
+                  ) : (
+                    <div className="check_false_div">
+                      <CloseIcon />
+                    </div>
+                  )}
                 </div>
               </div>
-              <div>
-                {isApplied ? (
-                  <div className="check_true_div">
-                    <DoneIcon color="green" />
-                  </div>
-                ) : (
-                  <div className="check_false_div">
-                    <CloseIcon />
-                  </div>
-                )}
-              </div>
+            );
+          })}
+          {asWasCodes == "" && ( // 아무 것도 없을 때 푸터가 위로 올라오는 것을 방지
+            <div className="nothing_rendered">
+              {" "}
+              <br />
             </div>
-          );
-        })}
-        {asWasCodes == "" && ( // 아무 것도 없을 때 푸터가 위로 올라오는 것을 방지
-          <div className="nothing_rendered">
-            {/* <Before_upload /> */}
-            pick a template
-            <br />
-          </div>
-        )}
-      </form>
+          )}
+        </form>
+      </div>
     </div>
   );
 };

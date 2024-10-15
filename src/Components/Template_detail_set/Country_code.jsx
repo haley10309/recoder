@@ -140,7 +140,7 @@ const Country_code = ({ country_code, setCountry_code }) => {
             options={countryOptions}
             onChange={(e) => setCountry_code(e.value.code)}
             optionLabel="name"
-            placeholder="Select a Country"
+            placeholder="선택"
             filter
             valueTemplate={selectedCountryTemplate}
             itemTemplate={countryOptionTemplate}

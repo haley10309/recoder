@@ -2,15 +2,15 @@ import { useState } from "react";
 import axios from "axios";
 import Process from "../../assets/uim_process.png";
 import BasicTextarea from "../../Components/ToBeApplied/Textarea";
-import Country_code from "../../Components/Template_detail_set/Country_code";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
+import Country_code from "../../Components/Template_detail_set/Country_code";
 
 const ToBeApplied = () => {
   const [projectName, setProjectName] = useState("");
   const [pdp, setPdp] = useState("");
   const [productName, setProductName] = useState("");
   const [originalFile, setOriginalFile] = useState(null);
-  const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "" }]);
+  const [textareas, setTextareas] = useState([{ asWasCode: null, toBeCode: null }]);
   const [downloadLink, setDownloadLink] = useState("");
   const [changeResults, setChangeResults] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -173,8 +173,8 @@ const ToBeApplied = () => {
   return (
     <>
       <div className="bg-white">
-        <div className="flex w-full p-14 justify-between gap-10 bg-[#f6f6f6] shadow-xl">
-          <div className="flex gap-10">
+        <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
+          <div className="flex w-full gap-14 justify-center items-center">
             <SettingDropdown
               _inputProps={{ placeholder: "S24" }}
               _title="프로젝트명"
@@ -199,17 +199,19 @@ const ToBeApplied = () => {
               _setValue={setProductName}
               _url="products"
             />
-            <Country_code
-              country_code={country_code}
-              setCountry_code={setCountry_code}
-            />
+              <Country_code
+                country_code={country_code}
+                setCountry_code={setCountry_code}
+              />
           </div>
-          <button
-            className="bg-black text-white font-semibold text-[14px] rounded-[20px] w-[150px]"
-            onClick={handleSetting}
-          >
-            세팅 가져오기
-          </button>
+          <div className="flex justify-center items-center">
+            <button
+              className="bg-black text-white font-semibold text-[14px] rounded-[20px] w-[150px] shadow-xl h-[35px]"
+              onClick={handleSetting}
+            >
+              세팅 가져오기
+            </button>
+          </div>
         </div>
 
         <div className="flex justify-center items-center gap-20 p-14">
@@ -268,32 +270,31 @@ const ToBeApplied = () => {
               To-Be 적용 여부
             </h1>
           </div>
-
-          {textareas && textareas.length > 0 ? (
-            textareas.map((textarea, index) => (
-              <BasicTextarea
-                key={index}
-                pptNo={codePairs[index]?.ppt_no}
-                asWasCode={textarea.asWasCode}
-                setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-                toBeCode={textarea.toBeCode}
-                setToBeCode={(value) => handleToBeCodeChange(index, value)}
-                changed={{
-                  index: index,
-                  changed: changeResults[index]
-                    ? changeResults[index].changed
-                    : null,
-                }}
-                onDelete={() => handleDeleteTextarea(index)}
-              />
-            ))
-          ) : (
-            <div className="flex justify-center">
-              <p>코드 쌍이 없습니다.</p>
-            </div>
-          )}
+            {textareas && textareas.length > 0 ? (
+              textareas.map((textarea, index) => (
+                <BasicTextarea
+                  key={index}
+                  pptNo={codePairs[index]?.ppt_no}
+                  asWasCode={textarea.asWasCode}
+                  setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
+                  toBeCode={textarea.toBeCode}
+                  setToBeCode={(value) => handleToBeCodeChange(index, value)}
+                  changed={{
+                    index: index,
+                    changed: changeResults[index]
+                      ? changeResults[index].changed
+                      : null,
+                  }}
+                  onDelete={() => handleDeleteTextarea(index)}
+                />
+              ))
+            ) : (
+              <div className="flex justify-center">
+                <p>aswascode 및 tobecode가 존재하지 않습니다.</p>
+              </div>
+            )}
+          </div>          
         </div>
-      </div>
     </>
   );
 };
