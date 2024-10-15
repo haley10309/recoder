@@ -8,6 +8,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import { Dropdown } from "primereact/dropdown";
 import dayjs from "dayjs";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
+import Before_upload from "./Before_upload";
 
 const Qa_page = () => {
   const [_value, _setValue] = useState("");
@@ -304,7 +305,8 @@ const Qa_page = () => {
         })}
         {asWasCodes == "" && ( // 아무 것도 없을 때 푸터가 위로 올라오는 것을 방지
           <div className="nothing_rendered">
-            {" "}
+            {/* <Before_upload /> */}
+            pick a template
             <br />
           </div>
         )}
