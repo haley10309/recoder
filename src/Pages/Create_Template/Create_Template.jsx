@@ -280,32 +280,27 @@ const Create_template = () => {
           템플릿 조회
         </button>
       </div> */}
+   
       <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
           <div className="flex w-full gap-14 justify-center items-center">
-            <SettingDropdown
+          <BasicInput
               _inputProps={{ placeholder: "S24" }}
-              _title="프로젝트명"
-              _onChange={() => {}}
-              _value={projectName}
-              _setValue={setProjectName}
-              _url="projects"
-            />
-            <SettingDropdown
-              _inputProps={{ placeholder: "Feature" }}
-              _title="PDP"
-              _onChange={() => {}}
-              _value={PDP}
-              _setValue={setPDP}
-              _url="pdps"
-            />
-            <SettingDropdown
-              _inputProps={{ placeholder: "B5" }}
-              _title="Product Name"
-              _onChange={() => {}}
-              _value={productName}
-              _setValue={setProductName}
-              _url="products"
-            />
+            _title={"프로젝트명"}
+            _onChange={handleProjectNameChange}
+            _value={projectName}
+          />
+           <BasicInput
+            _inputProps={{ placeholder: "Features" }}
+            _title={"PDP"}
+            _onChange={handlePdpChange}
+            _value={PDP}
+          />
+           <BasicInput
+            _inputProps={{ placeholder: "B5" }}
+            _title={"Product Name"}
+            _onChange={handleProductNameChange}
+            _value={productName}
+          />
           </div>
           <div className="flex justify-center items-center">
             <button
@@ -316,7 +311,6 @@ const Create_template = () => {
             </button>
           </div>
         </div>
-
         <div className="content-div">
           <div className="file-upload-section">
                 {file ? (

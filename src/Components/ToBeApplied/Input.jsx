@@ -4,7 +4,7 @@ import Check from '../../assets/check.png'
 
 const inputWrapperClasses = {
   tobe:
-    'bg-[#CCEDFF] rounded-[20px] ring-1 ring-[#747D7E] flex h-[35px] gap-2 text-[10px] w-full',
+    'bg-[#E4F7BA] rounded-[20px] ring-1 ring-[#747D7E] flex h-[35px] gap-2 text-[10px] w-full',
   template: 'bg-[#E8DEF8] ring-[#f3f3f3] focus-within:bg-[#f3f3f3]',
 };
 const inputClasses = {

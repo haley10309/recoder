@@ -4,6 +4,7 @@ import Process from "../../assets/uim_process.png";
 import BasicTextarea from "../../Components/ToBeApplied/Textarea";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
+import NoValuePage from "./NoValuePage";
 
 const ToBeApplied = () => {
   const [projectName, setProjectName] = useState("");
@@ -253,6 +254,8 @@ const ToBeApplied = () => {
         </div>
 
         <div className="bg-[#f6f6f6]">
+          
+          <div>
           <div className="flex justify-between p-20 font-bold">
             <h1 className="w-[12.5%] flex items-center justify-center">
               PPT NO.
@@ -290,9 +293,10 @@ const ToBeApplied = () => {
               ))
             ) : (
               <div className="flex justify-center">
-                <p>aswascode 및 tobecode가 존재하지 않습니다.</p>
+                <NoValuePage />
               </div>
             )}
+            </div>
           </div>          
         </div>
     </>
