@@ -7,6 +7,8 @@ import { Dropdown } from "primereact/dropdown";
 import dayjs from "dayjs";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
+import call_template from "../../assets/search_for_template.png";
+import sad_face from "../../assets/no_value.png";
 
 const Qa_page = () => {
   const [_value, _setValue] = useState("");
@@ -23,6 +25,7 @@ const Qa_page = () => {
   const [file, setFile] = useState(null);
   const [fileContent, setFileContent] = useState("");
   const [selectedViewOption, setSelectedViewOption] = useState("전체");
+  const [call_template_fail, setCall_template_fail] = useState(false);
 
   const view_options = [
     { name: "전체", code: "all" },
@@ -121,10 +124,12 @@ const Qa_page = () => {
         setToBeCodes(details.map((item) => item.tobe_code));
       } else {
         alert("해당 조건의 템플릿이 없습니다.");
+        setCall_template_fail(true);
       }
     } catch (error) {
       console.error("Error checking for existing templates:", error);
       alert("템플릿 확인 중 오류가 발생했습니다.");
+      setCall_template_fail(true);
     }
   };
 
@@ -343,12 +348,33 @@ const Qa_page = () => {
               </div>
             );
           })}
-          {asWasCodes == "" && ( // 아무 것도 없을 때 푸터가 위로 올라오는 것을 방지
-            <div className="nothing_rendered">
-              {" "}
-              <br />
-            </div>
-          )}
+          {asWasCodes == "" &&
+            call_template_fail && ( // 아무 것도 없을 때 푸터가 위로 올라오는 것을 방지
+              <>
+                <div className="nothing_rendered">
+                  {" "}
+                  <h4>Try again!</h4>
+                </div>
+                <div className="nothing_rendered">
+                  <img src={sad_face} />
+
+                  <br />
+                </div>
+              </>
+            )}
+          {asWasCodes == "" &&
+            call_template_fail == false && ( // 아무 것도 없을 때 푸터가 위로 올라오는 것을 방지
+              <>
+                <div class="nothing_rendered">
+                  <h2>원하는 템플릿을 불러오세요.</h2>
+                </div>
+
+                <div className="nothing_rendered">
+                  <img src={call_template} />
+                  <br />
+                </div>
+              </>
+            )}
         </form>
       </div>
     </div>
