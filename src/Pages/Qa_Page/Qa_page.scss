@@ -72,7 +72,16 @@
     }
 
     .nothing_rendered {
-        height: 20rem;
+        display: flex;
+        justify-content: center;
+        font-size: 30px;
+
+        img {
+            height: 200px;
+            /* Adjust this value to make the image smaller */
+            width: auto;
+            /* Keeps the aspect ratio */
+        }
     }
 
 }
