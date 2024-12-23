@@ -1,6 +1,7 @@
 import Yes from '../../assets/tobe_yes.png';
 import No from '../../assets/tobe_no.png';
 import Delete from '../../assets/mi_delete.svg';
+import NoValuePage from "../../Pages/ToBeApplied/NoValuePage";
 
 const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, changed, onDelete }) => {
 
@@ -10,36 +11,52 @@ const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, 
     }
   };
 
+  const isEmpty = !pptNo && !asWasCode && !toBeCode;
   
   return (
-    <div className="flex items-center justify-between px-20 py-10 font-medium">
-      <h2 className='flex justify-center w-[12.5%] text-black text-[14px]'>Slide &nbsp;<span className='font-bold'> p.{pptNo}</span></h2>
-      <button 
-        className="flex justify-center w-[6.25%]"
-        onClick={handleDeleteClick}>
-          <div className='flex jusfiy-center p-2 rounded-xl'>
-             <img fill='#FF4747' className='w-10 h-10' src={Delete} alt="Delete image" />
+    <div>
+      {isEmpty ? (
+        <NoValuePage />
+      ) : (
+        <>
+          <div className="flex justify-between p-20 font-bold">
+            <h1 className="w-[12.5%] flex items-center justify-center">PPT NO.</h1>
+            <h1 className="w-[6.25%] flex items-center justify-center">항목 삭제</h1>
+            <h1 className="w-[28%] flex items-center justify-center">As-Was Code</h1>
+            <h1 className="w-[28%] flex items-center justify-center">To-Be Code</h1>
+            <h1 className="w-[18.75%] flex items-center justify-center">To-Be 적용 여부</h1>
           </div>
-          </button>
-      <textarea
-        className="flex justify-center w-[28%] h-[200px] bg-[#D9D9D9] resize-none p-4"
-        value={asWasCode}
-        onChange={(e) => setAsWasCode(e.target.value)}
-        placeholder="As-Was code를 입력하세요."
-      />
-      <textarea
-        value={toBeCode}
-        className="flex justify-center w-[28%] h-[200px] bg-[#D9D9D9] resize-none p-4"
-        onChange={(e) => setToBeCode(e.target.value)}
-        placeholder="To-Be code를 입력하세요."
-      />
-      <div className='flex justify-center w-[18.75%]'>
-        {changed !== null && changed.changed === true ? (
-          <img className='w-[50px] h-[50px] align-center' src={Yes} alt="yes" />
-        ) : (
-          <img className='w-[50px] h-[50px] align-center' src={No} alt="no" />
-        )}
-      </div>
+          <div className="flex items-center justify-between px-20 py-10 font-medium">
+            <h2 className='flex justify-center w-[12.5%] text-black text-[14px]'>
+              Slide &nbsp;<span className='font-bold'> p.{pptNo}</span>
+            </h2>
+            <button className="flex justify-center w-[6.25%]" onClick={handleDeleteClick}>
+              <div className='flex justify-center p-2 rounded-xl'>
+                <img fill='#FF4747' className='w-10 h-10' src={Delete} alt="Delete image" />
+              </div>
+            </button>
+            <textarea
+              className="flex justify-center w-[28%] h-[200px] bg-[#D9D9D9] resize-none p-4"
+              value={asWasCode}
+              onChange={(e) => setAsWasCode(e.target.value)}
+              placeholder="As-Was code를 입력하세요."
+            />
+            <textarea
+              value={toBeCode}
+              className="flex justify-center w-[28%] h-[200px] bg-[#D9D9D9] resize-none p-4"
+              onChange={(e) => setToBeCode(e.target.value)}
+              placeholder="To-Be code를 입력하세요."
+            />
+            <div className='flex justify-center w-[18.75%]'>
+              {changed !== null && changed.changed === true ? (
+                <img className='w-[50px] h-[50px] align-center' src={Yes} alt="yes" />
+              ) : (
+                <img className='w-[50px] h-[50px] align-center' src={No} alt="no" />
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

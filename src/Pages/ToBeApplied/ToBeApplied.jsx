@@ -18,18 +18,6 @@ const ToBeApplied = () => {
   const [codePairs, setCodePairs] = useState([]);
   const [country_code, setCountry_code] = useState("");
 
-  const handleProjectNameChange = (projectName) => {
-    setProjectName(projectName);
-  };
-
-  const handlePdpChange = (pdp) => {
-    setPdp(pdp);
-  };
-
-  const handleProductNameChange = (productName) => {
-    setProductName(productName);
-  };
-
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -80,7 +68,6 @@ const ToBeApplied = () => {
 
       if (response.data.success) {
         const pairs = response.data.codePairs;
-
         const newTextareas = pairs.map((pair) => ({
           asWasCode: pair.aswas_code,
           toBeCode: pair.tobe_code,
@@ -98,49 +85,47 @@ const ToBeApplied = () => {
   };
 
   const handleExecute = async () => {
-    // 모든 textareas의 asWasCode와 toBeCode가 비어있지 않은지 확인
     if (
       originalFile &&
       textareas.every(({ asWasCode, toBeCode }) => asWasCode && toBeCode)
     ) {
       const formData = new FormData();
-      formData.append("file", originalFile); // 원본 파일 추가
+      formData.append("file", originalFile);
 
-      // asWasCode와 toBeCode를 country_code에 따라 업데이트하여 codePairs 생성
       const codePairs = textareas.map((textarea) => {
         return {
           asWasCode: textarea.asWasCode.replace(
             /\/site\//g,
             `/${country_code}/`
-          ), // asWasCode 업데이트
-          toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`), // toBeCode 업데이트
+          ), 
+          toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
         };
       });
 
-      // codePairs를 formData에 추가
-      formData.append("codePairs", JSON.stringify(codePairs)); // JSON 문자열로 변환하여 추가
+      
+      formData.append("codePairs", JSON.stringify(codePairs)); 
 
       try {
-        setIsProcessing(true); // 처리 중 상태 설정
+        setIsProcessing(true);
         const response = await axios.post(
           `http://localhost:5000/api/process-file`,
           formData
-        ); // API 호출
+        );
 
-        const { downloadLink, changeResults } = response.data; // 응답 데이터 구조 분해 할당
-        setChangeResults(changeResults); // 변경 결과 설정
-        handleChangeResults(changeResults); // 변경 결과 처리 함수 호출
+        const { downloadLink, changeResults } = response.data; 
+        setChangeResults(changeResults); 
+        handleChangeResults(changeResults); 
 
         if (downloadLink) {
-          setDownloadLink(downloadLink); // 다운로드 링크 설정
+          setDownloadLink(downloadLink); 
         }
       } catch (error) {
-        console.error("Error processing file", error); // 에러 처리
+        console.error("Error processing file", error);
       } finally {
-        setIsProcessing(false); // 처리 완료 상태 설정
+        setIsProcessing(false); 
       }
     } else {
-      alert("파일 선택과 asWasCode와 toBeCode를 입력은 필수입니다."); // 경고 메시지
+      alert("파일 선택과 asWasCode와 toBeCode를 입력은 필수입니다."); 
     }
   };
 
@@ -150,9 +135,8 @@ const ToBeApplied = () => {
       return;
     }
 
-    // Use the country_code to create a dynamic filename
-    const formattedCountryCode = country_code.replace(/\s+/g, "_"); // Replace spaces with underscores
-    const filename = `${formattedCountryCode}_changed_to-be.html`; // Create the filename
+    const formattedCountryCode = country_code.replace(/\s+/g, "_");
+    const filename = `${formattedCountryCode}_changed_to-be.html`;
 
     try {
       const downloadResponse = await axios.get(downloadLink, {
@@ -162,7 +146,7 @@ const ToBeApplied = () => {
       const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", filename); // Set the dynamic filename
+      link.setAttribute("download", filename);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -254,25 +238,7 @@ const ToBeApplied = () => {
         </div>
 
         <div className="bg-[#f6f6f6]">
-          
           <div>
-          <div className="flex justify-between p-20 font-bold">
-            <h1 className="w-[12.5%] flex items-center justify-center">
-              PPT NO.
-            </h1>
-            <h1 className="w-[6.25%] flex items-center justify-center">
-              항목 삭제
-            </h1>
-            <h1 className="w-[28%] flex items-center justify-center">
-              As-Was Code
-            </h1>
-            <h1 className="w-[28%] flex items-center justify-center">
-              To-Be Code
-            </h1>
-            <h1 className="w-[18.75%] flex items-center justify-center">
-              To-Be 적용 여부
-            </h1>
-          </div>
             {textareas && textareas.length > 0 ? (
               textareas.map((textarea, index) => (
                 <BasicTextarea
