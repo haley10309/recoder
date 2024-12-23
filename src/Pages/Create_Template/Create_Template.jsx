@@ -9,6 +9,7 @@ import Alert from "@mui/material/Alert";
 
 import { Dropdown } from "primereact/dropdown";
 import AddIcon from "@mui/icons-material/Add";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
@@ -18,9 +19,9 @@ const Create_template = () => {
   const [toBeCodes, setToBeCodes] = useState(["", "", ""]);
   const [pptNos, setPptNos] = useState(["", "", ""]);
 
-  const initialPptNos = ["", "", ""];
-  const initialAsWasCodes = ["", "", ""];
-  const initialToBeCodes = ["", "", ""];
+  const initialPptNos = ["", "", ""]; //초기화 할 때 입힐 변수
+  const initialAsWasCodes = ["", "", ""];//초기화 할 때 입힐 변수
+  const initialToBeCodes = ["", "", ""];//초기화 할 때 입힐 변수
 
   const [file, setFile] = useState(null); // State for the uploaded file
   const [fileContent, setFileContent] = useState(""); //original code file
@@ -32,20 +33,17 @@ const Create_template = () => {
   const [projectName, setProjectName] = useState("");
   const [PDP, setPDP] = useState("");
   const [productName, setProductName] = useState("");
-  const [createDate, setCreateDate] = useState(Date);
 
   const addTextArea = () => {
     setAsWasCodes([...asWasCodes, ""]);
     setToBeCodes([...toBeCodes, ""]);
     setPptNos([...pptNos, ""]);
-    setCodeTypes([...codeTypes, "선택"]); // 빈 값 추가
   };
 
   const removeTextArea = (index) => {
     setAsWasCodes(asWasCodes.filter((_, i) => i !== index));
     setToBeCodes(toBeCodes.filter((_, i) => i !== index));
     setPptNos(pptNos.filter((_, i) => i !== index));
-    setCodeTypes(codeTypes.filter((_, i) => i !== index)); // 코드 종류 제거
   };
   // Function to handle save button click
   const handleFileChange = (e) => {
@@ -62,6 +60,7 @@ const Create_template = () => {
       console.log("No file selected"); // Debugging
     }
   };
+  
   const checkForExistingTemplate = async () => {
     try {
       const response = await axios.post(
@@ -105,16 +104,11 @@ const Create_template = () => {
   };
 
   const handleSave = async () => {
-    const aswasTobeList = [];
-
-    // Construct aswasTobeList based on the current inputs
-    asWasCodes.forEach((_, index) => {
-      aswasTobeList.push({
-        ppt_no: pptNos[index],
-        aswas_code: asWasCodes[index],
-        tobe_code: toBeCodes[index],
-      });
-    });
+    const aswasTobeList = asWasCodes.map((_, index) => ({
+      ppt_no: pptNos[index],
+      aswas_code: asWasCodes[index],
+      tobe_code: toBeCodes[index],
+    }));
 
     // Create FormData object for multipart/form-data
     const formData = new FormData();
@@ -151,14 +145,35 @@ const Create_template = () => {
       }
 
       console.log("Data sent successfully", response.data);
-      alert("Template saved successfully.");
+      alert("템플릿이 성공적으로 저장되었습니다");
     } catch (error) {
       console.error(
         "Error sending data",
         error.response ? error.response.data : error
       );
-      alert("An error occurred while saving the template.");
+      alert("템플릿 저장 중 오류가 발생하였습니다");
     }
+  };
+  const onDragEnd = (result) => {
+    if (!result.destination) return; // If dropped outside, do nothing
+
+    const reorderArray = (list, startIndex, endIndex) => {
+      const result = Array.from(list);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return result;
+    };
+
+    setAsWasCodes((prev) => reorderArray(prev, result.source.index, result.destination.index));
+    setToBeCodes((prev) => reorderArray(prev, result.source.index, result.destination.index));
+    setPptNos((prev) => reorderArray(prev, result.source.index, result.destination.index));
+  };
+  const handleInputChange = (setter, index, value) => {
+    setter((prev) => {
+      const newArray = [...prev];
+      newArray[index] = value;
+      return newArray;
+    });
   };
 
   const countOccurrences = (asWasCode) => {
@@ -346,7 +361,7 @@ const Create_template = () => {
                 <h4 className="title_to">To-be Code</h4>
               </div>
 
-              <form>
+              {/* <form>
                 {asWasCodes.map((_, index) => (
                   <div key={index} className="as_was_to_be_div">
                     <div className="num_type">
@@ -429,7 +444,267 @@ const Create_template = () => {
                     {save_type != "update" && save_type != "create" && `저장`}
                   </button>
                 </div>
-              </form>
+              </form> */}
+              
+      {/* <div className="as_was_to_be_row">
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="asWasToBeList">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {asWasCodes.map((_, index) => (
+                <Draggable key={index} draggableId={`item-${index}`} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="as_was_to_be_div"
+                    >
+                      <div className="num_type">
+                        <div className="ppt_no_col">
+                          <label className="ppt_no">PPT NO.</label>
+                          <input
+                            type="text"
+                            className="ppt_no_text"
+                            value={pptNos[index]}
+                            onChange={(e) => {
+                              const newPptNos = [...pptNos];
+                              newPptNos[index] = e.target.value;
+                              setPptNos(newPptNos);
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="as_was_div">
+                        <textarea
+                          id={`asWasCode${index}`}
+                          rows="5"
+                          value={asWasCodes[index]}
+                          onChange={(e) => {
+                            const newCodes = [...asWasCodes];
+                            newCodes[index] = e.target.value;
+                            setAsWasCodes(newCodes);
+                          }}
+                          placeholder="Enter the as-was code here"
+                          className="code-textarea"
+                        />
+                        <div className="duplicate-count">
+                        중복 횟수: {countOccurrences(asWasCodes[index])}
+                      </div>
+                      </div>
+
+                      <div className="to_be_div">
+                        <textarea
+                          id={`toBeCode${index}`}
+                          rows="5"
+                          value={toBeCodes[index]}
+                          onChange={(e) => {
+                            const newCodes = [...toBeCodes];
+                            newCodes[index] = e.target.value;
+                            setToBeCodes(newCodes);
+                          }}
+                          placeholder="Enter the to-be code here"
+                          className="code-textarea"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeTextArea(index)}
+                        className="remove_button"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+
+      <div className="add_more_div">
+        <button type="button" onClick={addTextArea} className="add_more_button">
+          <AddIcon />
+          <span className="add_button_text">항목 추가</span>
+        </button>
+      </div>
+
+      <div className="save_button_div">
+        <button
+          type="button"
+          className="save_button"
+          onClick={handleSave}
+        >
+          {save_type === "update" && `수정`}
+          {save_type === "create" && `생성`}
+          {save_type !== "update" && save_type !== "create" && `저장`}
+        </button>
+      </div>
+    </div> */}
+     <DragDropContext onDragEnd={onDragEnd}>
+      <div className="Create_Template">
+        <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
+          <div className="flex w-full gap-14 justify-center items-center">
+            <BasicInput
+              _inputProps={{ placeholder: "S24" }}
+              _title={"프로젝트명"}
+              _onChange={(e) => setProjectName(e.target.value)}
+              _value={projectName}
+            />
+            <BasicInput
+              _inputProps={{ placeholder: "Features" }}
+              _title={"PDP"}
+              _onChange={(e) => setPDP(e.target.value)}
+              _value={PDP}
+            />
+            <BasicInput
+              _inputProps={{ placeholder: "B5" }}
+              _title={"Product Name"}
+              _onChange={(e) => setProductName(e.target.value)}
+              _value={productName}
+            />
+          </div>
+          <div className="flex justify-center items-center">
+            <button
+              className="bg-black text-white font-semibold text-[14px] rounded-[20px] w-[150px] shadow-xl h-[35px]"
+              onClick={() => console.log("Check Template")}
+            >
+              템플릿 조회
+            </button>
+          </div>
+        </div>
+
+        <div className="content-div">
+          {/* <div className="file-upload-section">
+            {file ? (
+              <label htmlFor="file-upload" className="file-upload-label">
+                {file.name}
+              </label>
+            ) : (
+              <label htmlFor="file-upload" className="file-upload-label">
+                As-was 코드 확인용 Original 코드 업로드
+              </label>
+            )}
+            <div className="file-upload-input-container">
+              <input
+                type="file"
+                id="file-upload"
+                onChange={(e) => setFile(e.target.files[0])}
+                accept=".js,.html,.css"
+                className="file-upload-input"
+              />
+              <button
+                type="button"
+                className="file-upload-button"
+                onClick={() => document.getElementById("file-upload").click()}
+              >
+                파일 업로드
+              </button>
+            </div>
+          </div> */}
+
+          {/* <div className="title_as_to_div">
+            <h4 className="title_as">As_Was Code</h4>
+            <h4 className="title_to">To-be Code</h4>
+          </div> */}
+
+          <Droppable droppableId="as_was_to_be_div">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {asWasCodes.map((_, index) => (
+                  <Draggable key={index} draggableId={`item-${index}`} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="as_was_to_be_div"
+                      >
+                        <div className="num_type">
+                          <div className="ppt_no_col">
+                            <label className="ppt_no">PPT NO.</label>
+                            <input
+                              type="text"
+                              className="ppt_no_text"
+                              value={pptNos[index]}
+                              onChange={(e) => {
+                                const newPptNos = [...pptNos];
+                                newPptNos[index] = e.target.value;
+                                setPptNos(newPptNos);
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="as_was_div">
+                          <textarea
+                            id={`asWasCode${index}`}
+                            rows="5"
+                            value={asWasCodes[index]}
+                            onChange={(e) => {
+                              const newCodes = [...asWasCodes];
+                              newCodes[index] = e.target.value;
+                              setAsWasCodes(newCodes);
+                            }}
+                            placeholder="Enter the as-was code here"
+                            className="code-textarea"
+                          />
+                        </div>
+
+                        <div className="to_be_div">
+                          <textarea
+                            id={`toBeCode${index}`}
+                            rows="5"
+                            value={toBeCodes[index]}
+                            onChange={(e) => {
+                              const newCodes = [...toBeCodes];
+                              newCodes[index] = e.target.value;
+                              setToBeCodes(newCodes);
+                            }}
+                            placeholder="Enter the to-be code here"
+                            className="code-textarea"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeTextArea(index)}
+                          className="remove_button"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder} {/* Important for spacing */}
+              </div>
+            )}
+          </Droppable>
+
+          <div className="add_more_div">
+            <button type="button" onClick={addTextArea} className="add_more_button">
+              <AddIcon />
+              <span className="add_button_text">항목 추가</span>
+            </button>
+          </div>
+
+          <div className="save_button_div">
+            <button
+              type="button"
+              className="save_button"
+              onClick={() => console.log("Save Template")}
+            >
+              {save_type === "update" && `수정`}
+              {save_type === "create" && `생성`}
+              {save_type !== "update" && save_type !== "create" && `저장`}
+            </button>
+          </div>
+        </div>
+      </div>
+    </DragDropContext>
         </div>
      
     </div>
