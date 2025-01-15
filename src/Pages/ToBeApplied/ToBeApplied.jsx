@@ -5,6 +5,7 @@ import BasicTextarea from "../../Components/ToBeApplied/Textarea";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
 import NoValuePage from "./NoValuePage";
+import { countOccurrences } from "../utils/codeUtils";
 
 const ToBeApplied = () => {
   const [projectName, setProjectName] = useState("");
@@ -17,12 +18,18 @@ const ToBeApplied = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [codePairs, setCodePairs] = useState([]);
   const [country_code, setCountry_code] = useState("");
+  const [fileContent, setFileContent] = useState(""); //original code file
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setOriginalFile(selectedFile);
-      console.log("Selected file:", selectedFile);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setFileContent(event.target.result); // Store the file content in state
+        console.log("File content read successfully:", event.target.result); // Debugging
+      };
+      reader.readAsText(selectedFile); // Read the file as text
     } else {
       console.warn("No file selected");
     }
@@ -238,32 +245,44 @@ const ToBeApplied = () => {
         </div>
 
         <div className="bg-[#f6f6f6]">
-          <div>
-            {textareas && textareas.length > 0 ? (
-              textareas.map((textarea, index) => (
-                <BasicTextarea
-                  key={index}
-                  pptNo={codePairs[index]?.ppt_no}
-                  asWasCode={textarea.asWasCode}
-                  setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-                  toBeCode={textarea.toBeCode}
-                  setToBeCode={(value) => handleToBeCodeChange(index, value)}
-                  changed={{
-                    index: index,
-                    changed: changeResults[index]
-                      ? changeResults[index].changed
-                      : null,
-                  }}
-                  onDelete={() => handleDeleteTextarea(index)}
-                />
-              ))
-            ) : (
-              <div className="flex justify-center">
-                <NoValuePage />
-              </div>
-            )}
-            </div>
-          </div>          
+  {/* Render the header once */}
+  <div className="flex justify-between p-20 font-bold">
+    <h1 className="w-[12.5%] flex items-center justify-center">PPT NO.</h1>
+    <h1 className="w-[6.25%] flex items-center justify-center">항목 삭제</h1>
+    <h1 className="w-[28%] flex items-center justify-center">As-Was Code</h1>
+    <h1 className="w-[28%] flex items-center justify-center">To-Be Code</h1>
+    <h1 className="w-[18.75%] flex items-center justify-center">To-Be 적용 여부</h1>
+  </div>
+
+  {/* Render the list of textareas */}
+  <div>
+    {textareas && textareas.length > 0 ? (
+      textareas.map((textarea, index) => (
+        <BasicTextarea
+          key={index}
+          pptNo={codePairs[index]?.ppt_no}
+          asWasCode={textarea.asWasCode}
+          setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
+          toBeCode={textarea.toBeCode}
+          setToBeCode={(value) => handleToBeCodeChange(index, value)}
+          changed={{
+            index: index,
+            changed: changeResults[index]
+              ? changeResults[index].changed
+              : null,
+          }}
+          fileContent={fileContent}
+          onDelete={() => handleDeleteTextarea(index)}
+        />
+      ))
+    ) : (
+      <div className="flex justify-center">
+        <NoValuePage />
+      </div>
+    )}
+  </div>
+</div>
+   
         </div>
     </>
   );
