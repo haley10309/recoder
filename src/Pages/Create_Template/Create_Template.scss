@@ -68,6 +68,45 @@
     }
 }
 
+.Run_Test_File_Upload {
+    display: flex;
+    
+    flex-direction: row; /* 수평으로 배치 */
+    justify-content: space-between; /* 양쪽 끝에 배치 */
+    align-items: center; /* 수직 중앙 정렬 */
+    margin: 2rem 0;
+    .file-upload-label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .Run_test_button {
+        position: relative;
+
+        .file-upload-input {
+            display: none; // Hide the default file input
+        }
+
+        .file-upload-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+    }
+}
+
 .as_was_to_be_div {
     display: flex;
     justify-content: space-between;
