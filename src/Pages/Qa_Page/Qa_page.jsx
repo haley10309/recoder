@@ -3,12 +3,15 @@ import "./qa_page.scss";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
+import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import { Dropdown } from "primereact/dropdown";
 import dayjs from "dayjs";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
 import call_template from "../../assets/search_for_template.png";
 import sad_face from "../../assets/no_value.png";
+import { countOccurrences } from "../utils/codeUtils";
+
 
 const Qa_page = () => {
   const [_value, _setValue] = useState("");
@@ -21,6 +24,7 @@ const Qa_page = () => {
 
   const [asWasCodes, setAsWasCodes] = useState([]);
   const [toBeCodes, setToBeCodes] = useState([]);
+  const [site_ToBeCodes, setSite_ToBeCodes] = useState([]); //site -> 권역 코드로 바뀐 to be 코드드
   const [pptNos, setPptNos] = useState([]);
   const [file, setFile] = useState(null);
   const [fileContent, setFileContent] = useState("");
@@ -33,42 +37,10 @@ const Qa_page = () => {
     { name: "적용 미완료", code: "false" },
   ];
 
-  const countOccurrences = (toBeCodes) => {
-    if (!fileContent || !toBeCodes) return "null";
-
-    const normalizedAsWasCode = normalizeCode(toBeCodes);
-    const normalizedFileContent = normalizeCode(fileContent);
-
-    let occurrenceCount = 0;
-    let startIndex = 0;
-
-    // Loop to find all occurrences of normalizedAsWasCode in normalizedFileContent
-    while (
-      (startIndex = normalizedFileContent.indexOf(
-        normalizedAsWasCode,
-        startIndex
-      )) !== -1
-    ) {
-      occurrenceCount++;
-      startIndex += normalizedAsWasCode.length; // Move index forward to find next occurrence
-    }
-
-    return occurrenceCount; // Return the total count of occurrences
+  const normalizeCode = (code) => {
+    // Remove irrelevant characters for normalization
+    return code.replace(/[\s;"']/g, '');
   };
-
-  function normalizeCode(code) {
-    let normalized = ""; // Initialize an empty string to hold the normalized result
-
-    for (let i = 0; i < code.length; i++) {
-      // Ignore spaces, semicolons, and quotes
-      if (/[\s;"']/.test(code[i])) {
-        continue; // Skip these characters
-      }
-      normalized += code[i]; // Append the character to the normalized string
-    }
-
-    return normalized; // Return the normalized string
-  }
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -84,20 +56,13 @@ const Qa_page = () => {
 
   const checkForExistingTemplate = async () => {
     try {
-      // console.log("Current createDate:", createDate);
-      // if (!createDate || !createDate.isValid()) {
-      //   alert("Please select a valid create date.");
-      //   return;
-      // }
-      // const formattedDate = createDate.format("YYYY-MM-DD");
       console.log("Sending data to /check-template:", {
         projectName,
         PDP,
         productName,
       });
-
+  
       const response = await axios.post(
-        //원하는 템플릿이 존재하는 지 여부 확인
         "http://localhost:5000/check-template",
         {
           projectName,
@@ -105,10 +70,8 @@ const Qa_page = () => {
           productName,
         }
       );
-
+  
       if (response.data.length > 0) {
-        //원하는 템플릿이 존재함을 확인했을 때 템플릿 정보 호출
-
         const detailsResponse = await axios.post(
           "http://localhost:5000/get-template-details",
           {
@@ -117,11 +80,16 @@ const Qa_page = () => {
             productName,
           }
         );
-
+  
         const details = detailsResponse.data;
         setPptNos(details.map((item) => item.ppt_no));
         setAsWasCodes(details.map((item) => item.aswas_code));
         setToBeCodes(details.map((item) => item.tobe_code));
+  
+        // After setting the toBeCodes, create site_ToBeCodes
+        setSite_ToBeCodes(details.map((item) => item.tobe_code.replace(/\/site\//g, `/${country_code}/`)));
+
+  
       } else {
         alert("해당 조건의 템플릿이 없습니다.");
         setCall_template_fail(true);
@@ -132,57 +100,51 @@ const Qa_page = () => {
       setCall_template_fail(true);
     }
   };
+  const updateToBeCodes = (updatedToBeCode) => {
+    const asset_ToBeCodes = toBeCodes
+      .filter(code => code.trim().startsWith("//"))
+      .map(code => code.replace(/\/site\//g, `/${country_code}/`));
+  
+    const asset_AsWasCodes = asWasCodes
+      .filter(code => code.trim().startsWith("//"))
+      .map(code => code.replace(/\/site\//g, `/${country_code}/`));
+  
+    // Ensure both arrays are not empty
+    if (asset_ToBeCodes.length === 0 || asset_AsWasCodes.length === 0) {
+      console.warn("No valid asset codes found for replacement.");
+      return updatedToBeCode; // Return the original code if no valid codes
+    }
+  
+    for (let i = 0; i < asset_AsWasCodes.length; i++) {
+      const asWasCode = asset_AsWasCodes[i];
+      const toBeCode = asset_ToBeCodes[i];
+  
+      if (countOccurrences(updatedToBeCode, asWasCode) > 0) {
+        // Use a regex to replace all occurrences of asWasCode with toBeCode
+        const regex = new RegExp(asWasCode, 'g'); // Global regex to replace all occurrences
+        updatedToBeCode = updatedToBeCode.replace(regex, toBeCode);
+      }
+    }
+  
+    return updatedToBeCode; // Return the modified code
+  };
+  
 
+  // 에쎗 경로 배열 구분 //
+  const asset_ToBeCodes = toBeCodes
+  .filter((code) => code.trim().startsWith("//"))
+  .map((code) => code.replace(/\/site\//g, `/${country_code}/`));
+
+const asset_AsWasCodes = asWasCodes
+  .filter((code) => code.trim().startsWith("//"))
+  .map((code) => code.replace(/\/site\//g, `/${country_code}/`));
+
+
+  
+  
   return (
     <div className="qa_page">
-      {/* <div className="template_detail_box">
-        <div className="flex w-full">
-          <SettingDropdown
-            _inputProps={{ placeholder: "S24" }}
-            _title="프로젝트명"
-            _onChange={() => {}}
-            _value={projectName}
-            _setValue={setProjectName}
-            _url="projects"
-          />
-        </div>
-
-        <div className="flex w-full">
-          <SettingDropdown
-            _inputProps={{ placeholder: "Feature" }}
-            _title="PDP"
-            _onChange={() => {}}
-            _value={PDP}
-            _setValue={setPDP}
-            _url="pdps"
-          />
-        </div>
-
-        <div className="flex w-full">
-          <SettingDropdown
-            _inputProps={{ placeholder: "B5" }}
-            _title="Product Name"
-            _onChange={() => {}}
-            _value={productName}
-            _setValue={setProductName}
-            _url="products"
-          />
-        </div>
-        
-        <Country_code
-          country_code={country_code}
-          setCountry_code={setCountry_code}
-        />
-
-        <button
-          type="button"
-          className="check_button"
-          onClick={checkForExistingTemplate}
-        >
-          템플릿 조회
-        </button>
-      </div> */}
-
+      {/* ... (Rest of your component code) ... */}
       <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
         <div className="flex w-full gap-14 justify-center items-center">
           <SettingDropdown
@@ -223,11 +185,10 @@ const Qa_page = () => {
           </button>
         </div>
       </div>
-
       <div className="content-div">
         <div className="file-upload-section">
           {file ? (
-            `uploaded file : ${file.name}`
+            `uploaded file: ${file.name}`
           ) : (
             <label>QA 대상 파일 업로드</label>
           )}
@@ -247,6 +208,7 @@ const Qa_page = () => {
             >
               첨부 파일 업로드
             </button>
+            
           </div>
         </div>
         <div className="filter_dropdown">
@@ -260,28 +222,23 @@ const Qa_page = () => {
           />
         </div>
         <form>
-          {asWasCodes.map((_, index) => {
-            // Ensure country_code is available before replacement
+          {site_ToBeCodes.map((_, index) => {
             const updatedAsWasCode = asWasCodes[index].replace(
               /\/site\//g,
               `/${country_code}/`
             );
-            const updatedToBeCode = toBeCodes[index].replace(
-              /\/site\//g,
-              `/${country_code}/`
-            );
-
-            const occurrenceCount = countOccurrences(updatedToBeCode);
-
-            // Determine if it should be displayed based on the selected view option
-            const isApplied = occurrenceCount === 1; // "적용 완료"
+            const updatedToBeCode = site_ToBeCodes[index];  // Use the correct value
+            const finalUpdatedToBeCode = updateToBeCodes(updatedToBeCode);
+            const occurrenceCount = countOccurrences(fileContent, finalUpdatedToBeCode);
+            
+            const isApplied = occurrenceCount === 1;
             const shouldDisplay =
               selectedViewOption === "전체" ||
               (selectedViewOption === "적용 완료" && isApplied) ||
               (selectedViewOption === "적용 미완료" && !isApplied);
 
             if (!shouldDisplay) {
-              return null; // Skip rendering this item if it doesn't meet the filter criteria
+              return null;
             }
 
             return (
@@ -306,7 +263,7 @@ const Qa_page = () => {
                   <textarea
                     id={`asWasCode${index}`}
                     rows="5"
-                    value={updatedAsWasCode} // Use the updated code
+                    value={updatedAsWasCode}
                     onChange={(e) => {
                       const newCodes = [...asWasCodes];
                       newCodes[index] = e.target.value;
@@ -321,62 +278,68 @@ const Qa_page = () => {
                   <textarea
                     id={`toBeCode${index}`}
                     rows="5"
-                    value={updatedToBeCode} // Use the updated code
+                    value={updatedToBeCode}
                     onChange={(e) => {
-                      const newCodes = [...toBeCodes];
-                      newCodes[index] = e.target.value;
-                      setToBeCodes(newCodes);
+                      const newSiteToBeCodes = [...site_ToBeCodes];
+                      newSiteToBeCodes[index] = e.target.value;
+                      setSite_ToBeCodes(newSiteToBeCodes);
                     }}
                     placeholder="Enter the to-be code here"
                     className="code-textarea"
                   />
                   <div className="duplicate-count">
-                    중복 횟수: {occurrenceCount}
+                    이 코드가 포함된 횟수: {countOccurrences(fileContent, updatedToBeCode)}
                   </div>
                 </div>
+
                 <div>
                   {isApplied ? (
                     <div className="check_true_div">
                       <DoneIcon color="green" />
                     </div>
                   ) : (
-                    <div className="check_false_div">
-                      <CloseIcon />
-                    </div>
+                    countOccurrences(fileContent, updatedToBeCode) > 1 ? (
+                      <div className="check_triangle_div">
+                        <ChangeHistoryIcon />
+                      </div>
+                    ) : (
+                      <div className="check_false_div">
+                        <CloseIcon />
+                      </div>
+                    )
                   )}
                 </div>
+
               </div>
             );
           })}
-          {asWasCodes == "" &&
-            call_template_fail && ( // 아무 것도 없을 때 푸터가 위로 올라오는 것을 방지
-              <>
-                <div className="nothing_rendered">
-                  {" "}
-                  <h4>Try again!</h4>
-                </div>
-                <div className="nothing_rendered">
-                  <img src={sad_face} />
-
-                  <br />
-                </div>
-              </>
-            )}
-          {asWasCodes == "" &&
-            call_template_fail == false && ( // 아무 것도 없을 때 푸터가 위로 올라오는 것을 방지
-              <>
-                <div class="nothing_rendered">
-                  <h2>원하는 템플릿을 불러오세요.</h2>
-                </div>
-
-                <div className="nothing_rendered">
-                  <img src={call_template} />
-                  <br />
-                </div>
-              </>
-            )}
         </form>
+        {asWasCodes.length === 0 && call_template_fail && (
+        <>
+          <div className="nothing_rendered">
+            <h4>Try again!</h4>
+          </div>
+          <div className="nothing_rendered">
+            <img src={sad_face} />
+            <br />
+          </div>
+        </>
+      )}
+      {asWasCodes.length === 0 && !call_template_fail && (
+        <>
+          <div className="nothing_rendered">
+            <h2>원하는 템플릿을 불러오세요.</h2>
+          </div>
+          <div className="nothing_rendered">
+            <img src={call_template} />
+            <br />
+          </div>
+        </>
+      )}
       </div>
+
+      
+      
     </div>
   );
 };
