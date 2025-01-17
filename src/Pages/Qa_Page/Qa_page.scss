@@ -16,21 +16,25 @@
 
 
     .check_true_div {
-        margin-left: 2rem;
+       
         margin-top: 2rem;
         color: green;
-
     }
-
+    
     .check_false_div {
-        margin-left: 2rem;
+        
         margin-top: 2rem;
         color: red;
     }
-    .check_triangle_div{
-        margin-left: 2rem;
+    
+    .check_triangle_div {
+       
         margin-top: 2rem;
         color: rgb(248, 211, 1);
+    }
+    .check_icon{
+        width: 2rem;
+        height: 2rem;
     }
 
     .filter_dropdown {
@@ -88,8 +92,53 @@
             /* Keeps the aspect ratio */
         }
     }
+    .as_was_div,
+.to_be_div {
+    width: 40%;
 
+    .QA-textarea {
+        background-color: #ffffff;
+        width: 100%;
+        color: black;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: none;
+        height: 100px;
+        padding: 0.5rem;
+        transition: border-color 0.3s;
+
+        // Hide scrollbar by default
+        overflow: hidden; // Prevents the scrollbar from appearing
+        &::-webkit-scrollbar {
+            width: 0; // Set width to 0 to hide it
+            background: transparent; // Transparent background
+        }
+
+        // Show scrollbar on hover
+        &:hover {
+            overflow: auto; // Allow scrolling
+        }
+
+        &:hover::-webkit-scrollbar {
+            width: 8px; // Show scrollbar width when hovered
+        }
+
+        &:hover::-webkit-scrollbar-thumb {
+            background: #ccc; // Color of the scrollbar thumb
+            border-radius: 4px; // Optional: rounding the scrollbar thumb
+        }
+
+        &:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+    }
 }
+
+    
+}
+
+
 
 .content-div {
     padding: 2rem;

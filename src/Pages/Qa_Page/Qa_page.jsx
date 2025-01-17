@@ -264,13 +264,9 @@ const asset_AsWasCodes = asWasCodes
                     id={`asWasCode${index}`}
                     rows="5"
                     value={updatedAsWasCode}
-                    onChange={(e) => {
-                      const newCodes = [...asWasCodes];
-                      newCodes[index] = e.target.value;
-                      setAsWasCodes(newCodes);
-                    }}
+                    readOnly 
                     placeholder="Enter the as-was code here"
-                    className="code-textarea"
+                    className="QA-textarea"
                   />
                 </div>
 
@@ -279,32 +275,28 @@ const asset_AsWasCodes = asWasCodes
                     id={`toBeCode${index}`}
                     rows="5"
                     value={updatedToBeCode}
-                    onChange={(e) => {
-                      const newSiteToBeCodes = [...site_ToBeCodes];
-                      newSiteToBeCodes[index] = e.target.value;
-                      setSite_ToBeCodes(newSiteToBeCodes);
-                    }}
+                    readOnly 
                     placeholder="Enter the to-be code here"
-                    className="code-textarea"
+                    className="QA-textarea"
                   />
                   <div className="duplicate-count">
-                    이 코드가 포함된 횟수: {countOccurrences(fileContent, updatedToBeCode)}
+                    이 코드가 포함된 횟수: {occurrenceCount}
                   </div>
                 </div>
 
                 <div>
                   {isApplied ? (
                     <div className="check_true_div">
-                      <DoneIcon color="green" />
+                      <DoneIcon color="green" className="check_icon"/>
                     </div>
                   ) : (
                     countOccurrences(fileContent, updatedToBeCode) > 1 ? (
                       <div className="check_triangle_div">
-                        <ChangeHistoryIcon />
+                        <ChangeHistoryIcon className="check_icon"/>
                       </div>
                     ) : (
                       <div className="check_false_div">
-                        <CloseIcon />
+                        <CloseIcon className="check_icon"/>
                       </div>
                     )
                   )}
