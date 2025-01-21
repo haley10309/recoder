@@ -1,7 +1,7 @@
 .country_code_button,
 .country_code_button * {
     box-sizing: border-box;
-
+    
 }
 
 .country_code_button {
@@ -56,17 +56,10 @@
             position: relative;
 
             .label-text {
-                color: var(--schemes-on-secondary-container, #1d192b);
+                color: #1d192b;
+                font-size: 14px; /* 폰트 크기 조정 */
+                font-weight: 500;
                 text-align: center;
-                // font-family: var(--m3-label-large-font-family, "Roboto-Medium", sans-serif);
-                font-size: var(--m3-label-large-font-size, 12px);
-                line-height: var(--m3-label-large-large-line-height, 20px);
-                letter-spacing: var(--m3-label-large-letter-spacing, 0.1px);
-                font-weight: var(--m3-label-large-font-weight, 500);
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: center;
             }
         }
     }
@@ -104,6 +97,13 @@
             overflow: hidden;
             background-color: white;
             width: 8rem;
+            .dropdown {
+                width: 100%; /* 드롭다운 너비 조정 */
+                .p-dropdown-panel {
+                    border-radius: 8px; /* 드롭다운 패널 모서리 라운드 */
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+                }
+            }
         }
 
         /* Style for the dropdown panel (list) */
@@ -126,14 +126,17 @@
     /* Ensure it's on top of other elements */
 }
 
-/* Additional styles for dropdown items */
 .p-dropdown-item {
     background-color: white;
-    /* Background for each item */
     color: #000;
-    /* Text color */
-    padding-left: 5px;
+    padding: 10px; /* 패딩 추가 */
+    transition: background-color 0.3s; /* 부드러운 전환 효과 */
+
+    &:hover {
+        background-color: #e9ecef; /* 호버 시 배경색 변경 */
+    }
 }
+
 
 .p-dropdown-item:hover {
     background-color: #f0f0f0;

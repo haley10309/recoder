@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Create_Template.scss";
+import Asset_Template from './Asset_template';
 import Input_Project from "../../Components/Template_detail_set/Input_Project";
 import Input_pdp from "../../Components/Template_detail_set/Input_pdp";
 import Input_product_name from "../../Components/Template_detail_set/Input_product_name";
@@ -20,13 +21,13 @@ const Create_template = () => {
   const [asWasCodes, setAsWasCodes] = useState(["", "", ""]);
   const [toBeCodes, setToBeCodes] = useState(["", "", ""]);
   const [pptNos, setPptNos] = useState(["", "", ""]);
-
-  const initialPptNos = ["", "", ""]; //초기화 할 때 입힐 변수
-  const initialAsWasCodes = ["", "", ""];//초기화 할 때 입힐 변수
-  const initialToBeCodes = ["", "", ""];//초기화 할 때 입힐 변수
+  const [asset_asWas, setAsset_asWas] = useState(["", "", ""]);
+  const [asset_toBe, setAsset_toBe] = useState(["", "", ""]);
+  const [asset_pptNo, setAsset_pptNo] = useState(["", "", ""]);
 
   const [file, setFile] = useState(null); // State for the uploaded file
   const [fileContent, setFileContent] = useState(""); //original code file
+  const [isTemplateAvailable, setIsTemplateAvailable] = useState(false); //템플릿을 사용할 수 있을 지에 여부
   const [save_type, setSave_type] = useState("");
   const initial_droppable_id = "as_was_to_be_row";//droppable id 초기 변수
   // HTML 관련 데이터
@@ -36,16 +37,32 @@ const Create_template = () => {
   const [PDP, setPDP] = useState("");
   const [productName, setProductName] = useState("");
 
+  const handleAssetSave = () => {
+    // You can handle the logic for saving asset data here
+    console.log('Assets saved successfully.');
+    // You can perform any additional actions like sending data to the server
+  };
+
   const addTextArea = () => {
     setAsWasCodes([...asWasCodes, ""]);
     setToBeCodes([...toBeCodes, ""]);
     setPptNos([...pptNos, ""]);
   };
+  const addAssetArea = () =>{
+    setAsset_asWas((prev) => [...prev,""]);
+    setAsset_toBe((prev) => [...prev,""] );
+    setAsset_pptNo((prev) => [...prev,""]);
+  }
 
   const removeTextArea = (index) => {
     setAsWasCodes(asWasCodes.filter((_, i) => i !== index));
     setToBeCodes(toBeCodes.filter((_, i) => i !== index));
     setPptNos(pptNos.filter((_, i) => i !== index));
+  };
+  const removeAssetArea = (index) => {
+    setAsset_asWas(asset_asWas.filter((_, i) => i !== index));
+    setAsset_toBe(asset_toBe.filter((_, i) => i !== index));
+    setAsset_pptNo(asset_pptNo.filter((_, i) => i !== index));
   };
   // Function to handle save button click
   const handleFileChange = (e) => {
@@ -85,17 +102,61 @@ const Create_template = () => {
             productName,
           }
         );
-
+        setPptNos([]);
+        setAsWasCodes([]);
+        setToBeCodes([]);
+        setAsset_asWas([]);
+        setAsset_toBe([]);
+        setAsset_pptNo([]);
+                
         // Update state with the fetched data
         const details = detailsResponse.data; // This is an array of objects
-        setPptNos(details.map((item) => item.ppt_no));
-        setAsWasCodes(details.map((item) => item.aswas_code));
-        setToBeCodes(details.map((item) => item.tobe_code));
+        // setPptNos(details.map((item) => item.ppt_no));
+        // setAsWasCodes(details.map((item) => item.aswas_code));
+        // setToBeCodes(details.map((item) => item.tobe_code));
+        
+        details.forEach(item => {
+          // Add ppt_no to the state
+        
+          // setPptNos(details.map((item) => item.ppt_no));
+          // setAsWasCodes(details.map((item) => item.aswas_code));
+          // setToBeCodes(details.map((item) => item.tobe_code));
+          // Check if aswas_code starts with "//"
+          // if (item.aswas_code.trim().startsWith("//")) {
+          //   setAsset_asWas(details.map((item) => item.aswas_code));
+          //   setAsset_pptNo(details.map((item) => item.ppt_no));
+          // } else {
+          //   setAsWasCodes(details.map((item) => item.aswas_code));
+          //   setPptNos(details.map((item) => item.ppt_no));
+          // }
+  
+          // // Check if tobe_code starts with "//"
+          // if (item.tobe_code.trim().startsWith("//")) {
+          //   setAsset_toBe(details.map((item) => item.tobe_code));
+            
+          // } else {
+          //   setToBeCodes(details.map((item) => item.tobe_code));
+          // }
+          if (item.aswas_code.trim().startsWith("//")) {
+            setAsset_asWas(prev => [...prev, item.aswas_code]);
+            setAsset_pptNo(prev => [...prev, item.ppt_no]);
+          } else {
+            setAsWasCodes(prev => [...prev, item.aswas_code]);
+            setPptNos(prev => [...prev, item.ppt_no]);
+          }
+  
+          // Check if tobe_code starts with "//"
+          if (item.tobe_code.trim().startsWith("//")) {
+            setAsset_toBe(prev => [...prev, item.tobe_code]);
+          } else {
+            setToBeCodes(prev => [...prev, item.tobe_code]);
+          }
+        });
       } else {
         alert("새로운 템플릿을 추가할 수 있습니다."); //새로운 템플릿 생성일 때, 모든 변수들을 초기화
-        setPptNos(initialPptNos);
-        setAsWasCodes(initialAsWasCodes);
-        setToBeCodes(initialToBeCodes);
+        // setPptNos(initialPptNos);
+        // setAsWasCodes(initialAsWasCodes);
+        // setToBeCodes(initialToBeCodes);
 
         setSave_type("create");
       }
@@ -106,26 +167,28 @@ const Create_template = () => {
   };
 
   const handleSave = async () => {
-    const aswasTobeList = asWasCodes.map((_, index) => ({
-      ppt_no: pptNos[index],
-      aswas_code: asWasCodes[index],
-      tobe_code: toBeCodes[index],
+    // Combine the original and asset-related arrays
+    const combinedPptNos = [...pptNos, ...asset_pptNo];
+    const combinedAsWasCodes = [...asWasCodes, ...asset_asWas];
+    const combinedToBeCodes = [...toBeCodes, ...asset_toBe];
+  
+    // Create a combined list of asWas and toBe codes
+    const aswasTobeList = combinedAsWasCodes.map((_, index) => ({
+      ppt_no: combinedPptNos[index],
+      aswas_code: combinedAsWasCodes[index],
+      tobe_code: combinedToBeCodes[index],
     }));
-
+  
     // Create FormData object for multipart/form-data
     const formData = new FormData();
     formData.append("hotfix_name", projectName);
     formData.append("pdp_name", PDP);
     formData.append("product", productName);
-
-    // Format createDate to YYYY-MM-DD
+  
     const formattedDate = new Date().toISOString().split("T")[0]; // Get current date as YYYY-MM-DD
     formData.append("create_date", formattedDate); // Use formatted date
-    formData.append("aswas_tobe_list", JSON.stringify(aswasTobeList));
-    // if (file) {
-    //   formData.append("file", file);
-    // }
-
+    formData.append("aswas_tobe_list", JSON.stringify(aswasTobeList)); // Append the combined list
+  
     try {
       let response;
       if (save_type === "create") {
@@ -145,8 +208,8 @@ const Create_template = () => {
           }
         );
       }
-
-      console.log("Data sent successfully", response.data);
+  
+      console.log("Data sent successfully", aswasTobeList);
       alert("템플릿이 성공적으로 저장되었습니다");
     } catch (error) {
       console.error(
@@ -156,6 +219,7 @@ const Create_template = () => {
       alert("템플릿 저장 중 오류가 발생하였습니다");
     }
   };
+  
   
 
   const onDragEnd = (result) => {
@@ -273,7 +337,27 @@ const Create_template = () => {
   const handleProductNameChange = (productName) => {
     setProductName(productName);
   };
-
+  const handleAssetAsWasChange = (index, value) => {
+    setAsset_asWas(prev => {
+      const newAssetAsWas = [...prev];
+      newAssetAsWas[index] = value;
+      return newAssetAsWas;
+    });
+  };
+  const handleAssetToBeChange = (index, value) => {
+    setAsset_toBe(prev => {
+      const newAssetToBe = [...prev];
+      newAssetToBe[index] = value;
+      return newAssetToBe;
+    });
+  };
+  const handleAssetPptNoChange =(index, value) =>{
+    setAsset_pptNo(prev => {
+      const newAssetPptNo = [...prev];
+      newAssetPptNo[index] = value;
+      return newAssetPptNo;
+    });
+  }
   return (
     <div className="Create_Template">
       
@@ -311,12 +395,7 @@ const Create_template = () => {
         <div className="content-div">
           
 
-              <div className="title_as_to_div">
-                <h4 className="title_as">As_Was Code</h4>
-                <h4 className="title_to">To-be Code</h4>
-              </div>
-
-
+             
               <div className="Run_Test_File_Upload">
                 {file ? (
                   <label htmlFor="file-upload" className="file-upload-label">
@@ -343,8 +422,28 @@ const Create_template = () => {
                   >
                     Run Test
                   </button>
+                  <Asset_Template 
+                    asset_pptNo={asset_pptNo}
+                    asset_asWas={asset_asWas} 
+                    asset_toBe={asset_toBe} 
+
+                    addAssetArea={addAssetArea} 
+                    removeAssetArea={removeAssetArea}
+                    isTemplateAvailable={isTemplateAvailable}
+                    setAsset_asWas={handleAssetAsWasChange} // Pass down the handler
+                    setAsset_toBe={handleAssetToBeChange}   // Pass down the handler
+                    setAsset_pptNo={handleAssetPptNoChange}
+                    fileContent={fileContent}
+                    onSave={handleAssetSave} 
+                  />
                 </div>
               </div>
+              <div className="title_as_to_div">
+              <div className="Out_div"><h4 className="title_as">Out</h4></div>
+              <div className="In_div"><h4 className="title_to">In</h4></div>
+              
+              
+            </div>
 
 
              

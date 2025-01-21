@@ -1,0 +1,147 @@
+
+.asset_as_was_to_be_div {
+    overflow-y: auto;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    transition: background-color 0.2s ease;
+    
+    .num_type {
+        display: flex;
+        align-items: center;
+
+        .ppt_no_col {
+            display: flex;
+            align-items: center;
+
+            .ppt_no {
+                margin-right: 0.5rem;
+                font-weight: bold;
+                color: #555;
+            }
+
+            .ppt_no_text {
+                width: 50px;
+                padding: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                transition: border-color 0.3s;
+
+                &:focus {
+                    border-color: #002fff;
+                    outline: none;
+                }
+            }
+        }
+    }
+   
+      
+
+    .as_was_div,
+    .to_be_div {
+        width: 40%;
+
+        .code-textarea {
+            background-color: #e4e4e4;
+            width: 100%;
+            color: black;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            height: 100px;
+            padding: 0.5rem;
+            transition: border-color 0.3s;
+
+            &:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+            &::-webkit-scrollbar {
+                width: 0; // Set width to 0 to hide it
+                background: transparent; // Transparent background
+            }
+    
+            // Show scrollbar on hover
+            &:hover {
+                overflow: auto; // Allow scrolling
+            }
+    
+            &:hover::-webkit-scrollbar {
+                width: 8px; // Show scrollbar width when hovered
+            }
+    
+            &:hover::-webkit-scrollbar-thumb {
+                background: #ccc; // Color of the scrollbar thumb
+                border-radius: 4px; // Optional: rounding the scrollbar thumb
+            }
+    
+            
+        }
+    }
+}
+
+
+.asset_upload_button {
+    background-color: #f0e000; // Primary button color
+    color: white; // Button text color
+    border: none; // Remove default border
+    border-radius: 8px; // Rounded corners
+    padding: 0.75rem 1.25rem; // Increased padding for a better size
+    font-size: 1rem; // Font size
+    cursor: pointer; // Pointer cursor on hover
+    transition: background-color 0.3s ease, transform 0.2s ease; // Transition for hover effect
+
+    &:hover {
+        background-color: #dac400; // Darker shade on hover
+        transform: translateY(-2px); // Lift effect on hover
+    }
+
+    &:active {
+        transform: translateY(0); // Reset lift effect on click
+    }
+}
+
+.asset_button_div {
+    display: flex; // Flex layout for alignment
+    justify-content: space-between; // Space out buttons
+    margin-top: 20px; // Add some space above the button div
+
+    .add_more_button, .asset_save_button {
+        background-color: #007bff; // Primary button color
+        color: white; // Text color
+        border: none; // Remove default border
+        border-radius: 8px; // Rounded corners
+        padding: 0.75rem 1.25rem; // Consistent padding
+        font-size: 1rem; // Font size
+        cursor: pointer; // Pointer cursor on hover
+        transition: background-color 0.3s ease, transform 0.2s ease; // Transition for hover effect
+
+        &:hover {
+            background-color: #0056b3; // Darker shade for hover effect
+            transform: translateY(-2px); // Lift effect on hover
+        }
+
+        &:active {
+            transform: translateY(0); // Reset lift effect on click
+        }
+
+        &.add_more_button {
+            background-color: #28a745; // Green color for add button
+            &:hover {
+                background-color: #218838; // Darker green on hover
+            }
+        }
+        
+        &.asset_save_button {
+            background-color: #17a2b8; // Teal color for save button
+            &:hover {
+                background-color: #138496; // Darker teal on hover
+            }
+        }
+    }
+}

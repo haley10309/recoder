@@ -28,7 +28,7 @@ const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, 
                 onChange={(e) => setAsWasCode(e.target.value)}
                 placeholder="As-Was code를 입력하세요."
               />
-          <div className="duplicate-count">중복 횟수: {occurrences}</div>
+          <div className="duplicate-count">이 코드가 포함된 횟수: {occurrences}</div>
       </div>
       
       <textarea
