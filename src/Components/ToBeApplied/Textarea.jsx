@@ -38,13 +38,6 @@ const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, 
               onChange={(e) => setToBeCode(e.target.value)}
               placeholder="To-Be code를 입력하세요."
             />
-            <div className='flex justify-center w-[18.75%]'>
-              {isApplied === 'yes' ? (
-                <img className='w-[50px] h-[50px] align-center' src={Yes} alt="yes" />
-              ) : (
-                <img className='w-[50px] h-[50px] align-center' src={No} alt="no" />
-              )}
-            </div>
           </div>
         </>
       )}
