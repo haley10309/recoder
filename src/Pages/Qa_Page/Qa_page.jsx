@@ -100,7 +100,11 @@ const Qa_page = () => {
       setCall_template_fail(true);
     }
   };
-  const updateToBeCodes = (updatedToBeCode) => {
+
+  const updateToBeCodes = (updatedToBeCode) => {//tobe 코드 site코드 나라 권역으로 바꾸고, to be 에쎗으로 업데이트
+
+    
+  // 에쎗 경로 배열 구분 //
     const asset_ToBeCodes = toBeCodes
       .filter(code => code.trim().startsWith("//"))
       .map(code => code.replace(/\/site\//g, `/${country_code}/`));
@@ -111,10 +115,10 @@ const Qa_page = () => {
   
     // Ensure both arrays are not empty
     if (asset_ToBeCodes.length === 0 || asset_AsWasCodes.length === 0) {
-      console.warn("No valid asset codes found for replacement.");
+      console.warn("에쎗 코드 없음.");
       return updatedToBeCode; // Return the original code if no valid codes
     }
-  
+  //에쎗 코드로 한 번 더  to be 코드를 교체
     for (let i = 0; i < asset_AsWasCodes.length; i++) {
       const asWasCode = asset_AsWasCodes[i];
       const toBeCode = asset_ToBeCodes[i];
@@ -131,13 +135,13 @@ const Qa_page = () => {
   
 
   // 에쎗 경로 배열 구분 //
-  const asset_ToBeCodes = toBeCodes
-  .filter((code) => code.trim().startsWith("//"))
-  .map((code) => code.replace(/\/site\//g, `/${country_code}/`));
+//   const asset_ToBeCodes = toBeCodes
+//   .filter((code) => code.trim().startsWith("//"))
+//   .map((code) => code.replace(/\/site\//g, `/${country_code}/`));
 
-const asset_AsWasCodes = asWasCodes
-  .filter((code) => code.trim().startsWith("//"))
-  .map((code) => code.replace(/\/site\//g, `/${country_code}/`));
+// const asset_AsWasCodes = asWasCodes
+//   .filter((code) => code.trim().startsWith("//"))
+//   .map((code) => code.replace(/\/site\//g, `/${country_code}/`));
 
 
   

@@ -91,7 +91,7 @@ class Asset_Template extends React.Component {
                     <button
                       type="button"
                       onClick={() => this.props.removeAssetArea(index)}
-                      className="remove_button"
+                      className="asset_remove_button"
                     >
                       삭제
                     </button>

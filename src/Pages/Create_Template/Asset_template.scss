@@ -14,13 +14,14 @@
     .num_type {
         display: flex;
         align-items: center;
+        margin-right : 1rem;
 
         .ppt_no_col {
             display: flex;
             align-items: center;
 
             .ppt_no {
-                margin-right: 0.5rem;
+                //margin-right: 0.5rem;
                 font-weight: bold;
                 color: #555;
             }
@@ -81,6 +82,23 @@
             }
     
             
+        }
+        
+    }
+    .asset_remove_button{
+        margin-top: 0rem;
+        margin-bottom: 3.3rem;
+        margin-left: 1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #f44336;
+            color: white;
         }
     }
 }
