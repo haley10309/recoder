@@ -194,11 +194,11 @@ const ToBeApplied = () => {
   
     const formData = new FormData();
     formData.append("file", originalFile);
-  
     formData.append("codePairs", JSON.stringify(checkedCodePairs));
   
     try {
       setIsProcessing(true);
+  
       const response = await axios.post("http://localhost:5000/api/process-file", formData);
       const { downloadLink, changeResults } = response.data;
   
@@ -211,7 +211,6 @@ const ToBeApplied = () => {
   
       const downloadResponse = await axios.get(downloadLink, {
         responseType: "blob",
-        params: { codePairs: JSON.stringify(checkedCodePairs) },
       });
   
       const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
