@@ -12,7 +12,7 @@ const ToBeApplied = () => {
   const [productName, setProductName] = useState("");
   const [originalFile, setOriginalFile] = useState(null);
   const [textareas, setTextareas] = useState([
-    { asWasCode: "", toBeCode: "", checked: false }
+    { asWasCode: "", toBeCode: "", checked: false, isApplied: null }
   ]);
   const [downloadLink, setDownloadLink] = useState("");
   const [changeResults, setChangeResults] = useState([]);
@@ -52,8 +52,10 @@ const ToBeApplied = () => {
   
       if (isAsWasCodeExist) {
         updatedTextareas[pairIndex].changed = changed; 
+        updatedTextareas[pairIndex].isApplied = changed ? 'yes' : 'no';
       } else {
         updatedTextareas[pairIndex].changed = false;
+        updatedTextareas[pairIndex].isApplied = 'no';
       }
     });
   
@@ -343,6 +345,7 @@ const ToBeApplied = () => {
                     index: index,
                     changed: textarea.changed,
                   }}
+                  isApplied={textarea.isApplied} 
                   onCheckedChange={() => handleCheckedChange(index)}
                   checked={textarea.checked}
                   filter={filter}

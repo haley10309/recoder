@@ -2,7 +2,7 @@ import Yes from '../../assets/tobe_yes.png';
 import No from '../../assets/tobe_no.png';
 import NoValuePage from "../../Pages/ToBeApplied/NoValuePage";
 
-const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, checked, onCheckedChange, filter }) => {
+const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, isApplied, checked, onCheckedChange, filter }) => {
   const isEmpty = !pptNo && !asWasCode && !toBeCode;
 
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
@@ -38,6 +38,13 @@ const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, 
               onChange={(e) => setToBeCode(e.target.value)}
               placeholder="To-Be code를 입력하세요."
             />
+            <div className='flex justify-center w-[18.75%]'>
+              {isApplied === 'yes' ? (
+                <img className='w-[50px] h-[50px] align-center' src={Yes} alt="yes" />
+              ) : (
+                <img className='w-[50px] h-[50px] align-center' src={No} alt="no" />
+              )}
+            </div>
           </div>
         </>
       )}
