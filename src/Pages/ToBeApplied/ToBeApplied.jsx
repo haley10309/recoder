@@ -183,8 +183,8 @@ const ToBeApplied = () => {
     const checkedCodePairs = textareas
       .filter((textarea) => textarea.checked)
       .map((textarea) => ({
-        asWasCode: textarea.asWasCode.replace(/\/site\//g, `${country_code}`),
-        toBeCode: textarea.toBeCode.replace(/\/site\//g, `${country_code}`),
+        asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
+        toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
       }));
   
     if (checkedCodePairs.length === 0) {
