@@ -3,7 +3,7 @@ import axios from "axios";
 import Process from "../../assets/uim_process.png";
 import BasicTextarea from "../../Components/ToBeApplied/Textarea";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
-import Country_code from "../../Components/Template_detail_set/Country_code";
+import Country_code from "../../Components/ToBeApplied/CountryCode";
 import NoValuePage from "./NoValuePage";
 
 const ToBeApplied = () => {
@@ -239,9 +239,10 @@ const ToBeApplied = () => {
   
   return (
     <>
-      <div className="bg-white">
-        <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
-          <div className="flex w-full gap-14 justify-center items-center">
+      <div className="bg-white mx-60">
+        <h1 className="font-bold text-black my-10 text-[30px]">HOTFIX TO-BE 적용 페이지</h1>
+        <div className="flex p-10 bg-white rounded-[20px] ring-2 ring-black">
+          <div className="flex w-full justify-center items-center gap-0">
             <SettingDropdown
               _inputProps={{ placeholder: "S24" }}
               _title="프로젝트명"
@@ -273,10 +274,10 @@ const ToBeApplied = () => {
           </div>
           <div className="flex justify-center items-center">
             <button
-              className="bg-black text-white font-semibold text-[14px] rounded-[20px] w-[150px] shadow-xl h-[35px]"
+              className="bg-[#009900] text-white font-semibold text-[14px] rounded-[10px] w-[120px] h-[40px]"
               onClick={handleSetting}
             >
-              세팅 가져오기
+              불러오기
             </button>
           </div>
         </div>
@@ -295,7 +296,7 @@ const ToBeApplied = () => {
             onClick={handleExecute}
             disabled={isProcessing}
           >
-            {isProcessing ? "실행 중 .." : "실행"}
+            {isProcessing ? "코드 변환 중 .." : "코드 변환"}
             <img
               className="w-[19px] align-center"
               src={Process}
@@ -319,18 +320,17 @@ const ToBeApplied = () => {
           </div>
         </div>
         
-        <div className="bg-[#f6f6f6]">
-          <div>
-          <div className="flex justify-between p-20 font-bold">
-          <select onChange={handleFilterChange} value={filter} className="border border-gray-300 rounded px-4 py-2">
-            <option value="all">전체 항목</option>
-            <option value="checked">체크된 항목</option>
-            <option value="unchecked">체크되지 않은 항목</option>
-          </select>
-            <h1 className="w-[6.25%] flex items-center justify-center">PPT NO.</h1>
-            <h1 className="w-[28%] flex items-center justify-center">As-Was Code</h1>
-            <h1 className="w-[28%] flex items-center justify-center">To-Be Code</h1>
-            <h1 className="w-[18.75%] flex items-center justify-center">To-Be 적용 여부</h1>
+        <div className="bg-[#f6f6f6] mb-20">
+          <div className="flex justify-between p-4 bg-[#495057] text-white border-b border-gray-300">
+            <select onChange={handleFilterChange} value={filter} className="w-[12.5%] border border-gray-300 rounded px-4 text-black h-10 text-center">
+              <option value="all">전체 항목</option>
+              <option value="checked">체크된 항목</option>
+              <option value="unchecked">체크되지 않은 항목</option>
+            </select>
+            <h1 className="w-[12.5%] flex items-center justify-center text-[14px] font-[500]">PPT NO.</h1>
+            <h1 className="w-[28%] flex items-center justify-center text-[14px] font-[500]">As-Was Code</h1>
+            <h1 className="w-[28%] flex items-center justify-center text-[14px] font-[500]">To-Be Code</h1>
+            <h1 className="w-[18.75%] flex items-center justify-center text-[14px] font-[500]">To-Be 적용 여부</h1>
           </div>
 
           {filteredTextareas().length > 0 ? (
@@ -363,8 +363,7 @@ const ToBeApplied = () => {
             </div>
           )}
             </div>
-          </div>          
-        </div>
+          </div>
     </>
   );
 };
