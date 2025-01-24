@@ -2,10 +2,13 @@ import Yes from '../../assets/tobe_yes.png';
 import No from '../../assets/tobe_no.png';
 import NoValuePage from "../../Pages/ToBeApplied/NoValuePage";
 
-const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, isApplied, checked, onCheckedChange, filter }) => {
+const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, isApplied, checked, onCheckedChange, filter, country_code }) => {
   const isEmpty = !pptNo && !asWasCode && !toBeCode;
 
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
+
+  const transformedAsWasCode = asWasCode?.replace(/\/site\//g, `/${country_code}/`);
+  const transformedToBeCode = toBeCode?.replace(/\/site\//g, `/${country_code}/`);
   
   return (
     <div>
@@ -28,13 +31,13 @@ const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, 
             </h2>
             <textarea
               className="flex justify-center w-[28%] h-[200px] bg-[#D9D9D9] resize-none p-4"
-              value={asWasCode}
+              value={transformedAsWasCode}
               onChange={(e) => setAsWasCode(e.target.value)}
               placeholder="As-Was code를 입력하세요."
             />
             <textarea
-              value={toBeCode}
               className="flex justify-center w-[28%] h-[200px] bg-[#D9D9D9] resize-none p-4"
+              value={transformedToBeCode}
               onChange={(e) => setToBeCode(e.target.value)}
               placeholder="To-Be code를 입력하세요."
             />

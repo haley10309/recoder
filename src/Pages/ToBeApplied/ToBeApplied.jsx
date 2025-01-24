@@ -53,6 +53,9 @@ const ToBeApplied = () => {
       if (isAsWasCodeExist) {
         updatedTextareas[pairIndex].changed = changed; 
         updatedTextareas[pairIndex].isApplied = changed ? 'yes' : 'no';
+
+        updatedTextareas[pairIndex].asWasCode = updatedTextareas[pairIndex].asWasCode.replace(/\/site\//g, `/${country_code}/`);
+        updatedTextareas[pairIndex].toBeCode = updatedTextareas[pairIndex].toBeCode.replace(/\/site\//g, `/${country_code}/`);
       } else {
         updatedTextareas[pairIndex].changed = false;
         updatedTextareas[pairIndex].isApplied = 'no';
@@ -133,6 +136,8 @@ const ToBeApplied = () => {
     const updatedTextareas = textareas.map((textarea) => {
       return {
         ...textarea,
+        asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
+        toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
         changed: textarea.asWasCode !== "" && textarea.toBeCode !== "",
       };
     });
@@ -147,8 +152,8 @@ const ToBeApplied = () => {
       const codePairs = updatedTextareas
         .filter((textarea) => textarea.changed)
         .map((textarea) => ({
-          asWasCode: textarea.asWasCode.replace(/\/site\//g, `${country_code}`),
-          toBeCode: textarea.toBeCode.replace(/\/site\//g, `${country_code}`),
+          asWasCode: textarea.asWasCode,
+          toBeCode: textarea.toBeCode, 
         }));
   
       formData.append("codePairs", JSON.stringify(codePairs));
@@ -336,9 +341,9 @@ const ToBeApplied = () => {
                 <BasicTextarea
                   key={index}
                   pptNo={matchedPptNo}
-                  asWasCode={textarea.asWasCode}
+                  asWasCode={textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`)}
                   setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-                  toBeCode={textarea.toBeCode}
+                  toBeCode={textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`)}
                   setToBeCode={(value) => handleToBeCodeChange(index, value)}
                   changed={{
                     index: index,
@@ -348,6 +353,7 @@ const ToBeApplied = () => {
                   onCheckedChange={() => handleCheckedChange(index)}
                   checked={textarea.checked}
                   filter={filter}
+                  country_code={country_code}
                 />
               );
             })
