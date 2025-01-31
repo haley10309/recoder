@@ -64,6 +64,7 @@ const Create_template = () => {
     setAsset_toBe(asset_toBe.filter((_, i) => i !== index));
     setAsset_pptNo(asset_pptNo.filter((_, i) => i !== index));
   };
+  
   // Function to handle save button click
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0]; // Get the first selected file
@@ -167,6 +168,11 @@ const Create_template = () => {
   };
 
   const handleSave = async () => {
+
+    if (!allFieldsFilled()) {
+      alert("공백 없이 모든 필드를 채워야 합니다.");
+      return;
+    }
     // Combine the original and asset-related arrays
     const combinedPptNos = [...pptNos, ...asset_pptNo];
     const combinedAsWasCodes = [...asWasCodes, ...asset_asWas];
@@ -286,7 +292,9 @@ const Create_template = () => {
     // Check if all asWasCodes and toBeCodes are filled
     return (
       asWasCodes.every((code) => code.trim() !== "") &&
-      toBeCodes.every((code) => code.trim() !== "")
+      toBeCodes.every((code) => code.trim() !== "")&&
+      asset_asWas.every((code) => code.trim() !== "")&&
+      asset_toBe.every((code) => code.trim() !== "")
     );
   };
 
@@ -534,15 +542,16 @@ const Create_template = () => {
         </div>
 
         <div className="save_button_div">
-          <button
-            type="button"
-            className="save_button"
-            onClick={handleSave}
-          >
-            {save_type === "update" && `수정`}
-            {save_type === "create" && `생성`}
-            {save_type !== "update" && save_type !== "create" && `저장`}
-          </button>
+        <button
+          type="button"
+          className="save_button"
+          onClick={handleSave}
+          disabled={!allFieldsFilled()} // Disable button if not all fields are filled
+        >
+          {save_type === "update" && `수정`}
+          {save_type === "create" && `생성`}
+          {save_type !== "update" && save_type !== "create" && `저장`}
+        </button>
         </div>
 
      
