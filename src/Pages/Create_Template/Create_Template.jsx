@@ -21,9 +21,9 @@ const Create_template = () => {
   const [asWasCodes, setAsWasCodes] = useState(["", "", ""]);
   const [toBeCodes, setToBeCodes] = useState(["", "", ""]);
   const [pptNos, setPptNos] = useState(["", "", ""]);
-  const [asset_asWas, setAsset_asWas] = useState(["", "", ""]);
-  const [asset_toBe, setAsset_toBe] = useState(["", "", ""]);
-  const [asset_pptNo, setAsset_pptNo] = useState(["", "", ""]);
+  const [asset_asWas, setAsset_asWas] = useState([]);
+  const [asset_toBe, setAsset_toBe] = useState([]);
+  const [asset_pptNo, setAsset_pptNo] = useState([]);
 
   const [file, setFile] = useState(null); // State for the uploaded file
   const [fileContent, setFileContent] = useState(""); //original code file
