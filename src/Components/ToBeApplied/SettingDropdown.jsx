@@ -6,11 +6,10 @@ import Check from "../../assets/check.png";
 
 const divWrapperClasses = {
   dropdown:
-    "bg-[#E4F7BA] rounded-[20px] ring-1 ring-[#747D7E] flex h-[35px] gap-2 text-[12px] w-full",
+    "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] mr-10 flex flex-col",
 };
 const divClasses = {
-  default:"focus-within:bg-none w-full bg-white focus:outline-none focus:ring-0",
-  "default-font":"font-noto placeholder:text-[#787878] text-[12px] font-normal leading-normal",
+  default:"focus-within:bg-none h-full p-4 ring-1 ring-black flex justify-center align-center items-center font-[500]",
 };
 
 const SettingDropdown = ({
@@ -22,7 +21,6 @@ const SettingDropdown = ({
   _setValue,
   _url,
 }) => {
-  const [isValidFormat, setIsValidFormat] = useState(true);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,18 +54,17 @@ const SettingDropdown = ({
         divWrapperClasses.dropdown,
         _state ? divWrapperClasses[_state] : "",
         _wrapperProps?.className,
-        //   isValidFormat ? "" : divWrapperClasses.default,
-        "flex items-center"
+        "flex items-start justify-center"
       )}
     >
-      <div className="flex flex-[0.5] gap-2 justify-center items-center">
-        <img
+      <div className="flex gap-2 justify-center items-start">
+        {/* <img
           className="w-[14px] h-[12px] align-center"
           src={Check}
           alt="check"
-        />
+        /> */}
         {_title && (
-          <div className="flex items-center font-medium px-4 gap-2">
+          <div className="flex items-start font-[600] gap-2">
             {_title}
           </div>
         )}
@@ -79,8 +76,6 @@ const SettingDropdown = ({
           {..._divProps}
           className={twMerge(
             divClasses.default,
-            divClasses["default-font"],
-            "flex justify-center align-center items-center flex-[0.5] h-full rounded-tr-[20px] rounded-br-[20px] font-medium border-l border-[#747D7E]",
             _divProps?.className
           )}
         >

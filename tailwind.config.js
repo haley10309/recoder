@@ -6,7 +6,8 @@ export default {
   ],
   theme: {
     extend: {
-      screens: {
+      fontFamily: {
+        sans: ['Noto Sans KR', 'sans-serif'],
       },
     },
   },
