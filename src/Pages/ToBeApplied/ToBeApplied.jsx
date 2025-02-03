@@ -138,7 +138,7 @@ const ToBeApplied = () => {
         ...textarea,
         asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
         toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
-        changed: textarea.asWasCode !== "" && textarea.toBeCode !== "",
+        changed: textarea.asWasCode !== "",
       };
     });
   
@@ -224,7 +224,7 @@ const ToBeApplied = () => {
       const today = new Date();
       const formattedDate = today.toISOString().slice(0, 10).replace(/-/g, "").slice(2);
       const formattedCountryCode = country_code.replace(/\s+/g, "_");
-      const filename = `${formattedCountryCode}_to-be_${formattedDate}.html`;
+      const filename = `${productName}_${formattedCountryCode}_to-be_${formattedDate}.html`;
       link.setAttribute("download", filename);
       document.body.appendChild(link);
       link.click();

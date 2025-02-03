@@ -58,6 +58,7 @@ const CountryCode = ({ country_code, setCountry_code }) => {
     { name: "KZ_RU", code: "kz_ru" },
     { name: "LATIN", code: "latin" },
     { name: "LEVANT", code: "levant" },
+    { name: "LATIN_EN", code: "latin_en" },    
     { name: "LT", code: "lt" },
     { name: "LV", code: "lv" },
     { name: "MK", code: "mk" },
