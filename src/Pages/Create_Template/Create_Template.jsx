@@ -24,6 +24,7 @@ const Create_template = () => {
   const [asset_asWas, setAsset_asWas] = useState([]);
   const [asset_toBe, setAsset_toBe] = useState([]);
   const [asset_pptNo, setAsset_pptNo] = useState([]);
+  const [templateID, setTemplateID] = useState("");
 
   const [file, setFile] = useState(null); // State for the uploaded file
   const [fileContent, setFileContent] = useState(""); //original code file
@@ -80,85 +81,69 @@ const Create_template = () => {
       console.log("No file selected"); // Debugging
     }
   };
-  
   const checkForExistingTemplate = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/check-template",
-        {
-          projectName,
-          PDP,
-          productName,
-        }
-      );
-
+      const response = await axios.post("http://localhost:5000/check-template", {
+        projectName,
+        PDP,
+        productName,
+      });
+  
       if (response.data.length > 0) {
         alert("이미 존재하는 템플릿이 있습니다.");
         setSave_type("update");
-        const detailsResponse = await axios.post(
-          "http://localhost:5000/get-template-details",
-          {
-            projectName,
-            PDP,
-            productName,
-          }
-        );
+  
+        const detailsResponse = await axios.post("http://localhost:5000/get-template-details", {
+          projectName,
+          PDP,
+          productName,
+        });
+  
+        console.log("Server Response:", detailsResponse.data); // Debugging
+        const templateId = detailsResponse.data?.templateId;
+        setTemplateID(templateId);
+  
+        // Extract the aswas_tobe_list array from response
+        const details = detailsResponse.data?.aswas_tobe_list || [];
+  
+        if (!Array.isArray(details)) {
+          throw new Error("Invalid data format: Expected an array but got " + typeof details);
+        }
+  
+        // Reset states before updating
         setPptNos([]);
         setAsWasCodes([]);
         setToBeCodes([]);
         setAsset_asWas([]);
         setAsset_toBe([]);
         setAsset_pptNo([]);
-                
-        // Update state with the fetched data
-        const details = detailsResponse.data; // This is an array of objects
-        // setPptNos(details.map((item) => item.ppt_no));
-        // setAsWasCodes(details.map((item) => item.aswas_code));
-        // setToBeCodes(details.map((item) => item.tobe_code));
-        
-        details.forEach(item => {
-          // Add ppt_no to the state
-        
-          // setPptNos(details.map((item) => item.ppt_no));
-          // setAsWasCodes(details.map((item) => item.aswas_code));
-          // setToBeCodes(details.map((item) => item.tobe_code));
-          // Check if aswas_code starts with "//"
-          // if (item.aswas_code.trim().startsWith("//")) {
-          //   setAsset_asWas(details.map((item) => item.aswas_code));
-          //   setAsset_pptNo(details.map((item) => item.ppt_no));
-          // } else {
-          //   setAsWasCodes(details.map((item) => item.aswas_code));
-          //   setPptNos(details.map((item) => item.ppt_no));
-          // }
   
-          // // Check if tobe_code starts with "//"
-          // if (item.tobe_code.trim().startsWith("//")) {
-          //   setAsset_toBe(details.map((item) => item.tobe_code));
-            
-          // } else {
-          //   setToBeCodes(details.map((item) => item.tobe_code));
-          // }
-          if (item.aswas_code.trim().startsWith("//")) {
-            setAsset_asWas(prev => [...prev, item.aswas_code]);
-            setAsset_pptNo(prev => [...prev, item.ppt_no]);
-          } else {
-            setAsWasCodes(prev => [...prev, item.aswas_code]);
-            setPptNos(prev => [...prev, item.ppt_no]);
-          }
+        // Process response data
+        setPptNos((prev) => [...prev, ...details.map((item) => item.ppt_no || "")]);
+        setAsWasCodes((prev) => [
+          ...prev,
+          ...details.filter((item) => !(item.aswas_code?.trim().startsWith("//"))).map((item) => item.aswas_code?.trim() || ""),
+        ]);
+        setToBeCodes((prev) => [
+          ...prev,
+          ...details.filter((item) => !(item.tobe_code?.trim().startsWith("//"))).map((item) => item.tobe_code?.trim() || ""),
+        ]);
   
-          // Check if tobe_code starts with "//"
-          if (item.tobe_code.trim().startsWith("//")) {
-            setAsset_toBe(prev => [...prev, item.tobe_code]);
-          } else {
-            setToBeCodes(prev => [...prev, item.tobe_code]);
-          }
-        });
+        setAsset_asWas((prev) => [
+          ...prev,
+          ...details.filter((item) => item.aswas_code?.trim().startsWith("//")).map((item) => item.aswas_code?.trim() || ""),
+        ]);
+        setAsset_pptNo((prev) => [
+          ...prev,
+          ...details.filter((item) => item.aswas_code?.trim().startsWith("//")).map((item) => item.ppt_no || ""),
+        ]);
+        setAsset_toBe((prev) => [
+          ...prev,
+          ...details.filter((item) => item.tobe_code?.trim().startsWith("//")).map((item) => item.tobe_code?.trim() || ""),
+        ]);
+        
       } else {
-        alert("새로운 템플릿을 추가할 수 있습니다."); //새로운 템플릿 생성일 때, 모든 변수들을 초기화
-        // setPptNos(initialPptNos);
-        // setAsWasCodes(initialAsWasCodes);
-        // setToBeCodes(initialToBeCodes);
-
+        alert("새로운 템플릿을 추가할 수 있습니다.");
         setSave_type("create");
       }
     } catch (error) {
@@ -166,6 +151,8 @@ const Create_template = () => {
       alert("템플릿 확인 중 오류가 발생했습니다.");
     }
   };
+  
+  
 
   const handleSave = async () => {
 
@@ -187,6 +174,7 @@ const Create_template = () => {
   
     // Create FormData object for multipart/form-data
     const formData = new FormData();
+    formData.append("templateId",templateID);
     formData.append("hotfix_name", projectName);
     formData.append("pdp_name", PDP);
     formData.append("product", productName);
