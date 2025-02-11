@@ -30,6 +30,8 @@ const CountryCode = ({ country_code, setCountry_code }) => {
     { name: "BR", code: "br" },
     { name: "CA", code: "ca" },
     { name: "CA_FR", code: "ca_fr" },
+    { name: "CH", code: "ch" },
+    { name: "CH_FR", code: "ch_fr" },
     { name: "CL", code: "cl" },
     { name: "CN", code: "cn" },
     { name: "CO", code: "co" },
@@ -54,11 +56,14 @@ const CountryCode = ({ country_code, setCountry_code }) => {
     { name: "IQ_KU", code: "iq_ku" },
     { name: "IRAN", code: "iran" },
     { name: "IT", code: "it" },
+    { name: "JP", code: "jp" },
     { name: "KZ_KZ", code: "kz_kz" },
     { name: "KZ_RU", code: "kz_ru" },
     { name: "LATIN", code: "latin" },
     { name: "LEVANT", code: "levant" },
+    { name: "LEVANT_AR", code: "levant_ar" },
     { name: "LATIN_EN", code: "latin_en" },    
+    { name: "LB", code: "lb" },
     { name: "LT", code: "lt" },
     { name: "LV", code: "lv" },
     { name: "MK", code: "mk" },
@@ -95,7 +100,9 @@ const CountryCode = ({ country_code, setCountry_code }) => {
     { name: "UY", code: "uy" },
     { name: "UZ_RU", code: "uz_ru" },
     { name: "UZ_UZ", code: "uz_uz" },
+    { name: "VN", code: "vn" },
     { name: "VN_ZA", code: "vn_za" },
+    { name: "ZA", code: "za" },
   ];
 
   
