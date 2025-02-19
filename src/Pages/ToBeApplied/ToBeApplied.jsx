@@ -22,6 +22,7 @@ const ToBeApplied = () => {
   const [filter, setFilter] = useState("all");
   const [isExecuted, setIsExecuted] = useState(false); 
 
+
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -44,16 +45,19 @@ const ToBeApplied = () => {
     setTextareas(newTextareas);
   };
 
+
   const handleChangeResults = (changeResults) => {
     const updatedTextareas = [...textareas];
   
-    changeResults.forEach(({ pairIndex, changed }) => {
+    changeResults.forEach(({ pairIndex, changed, matchedPart }) => {
       const isAsWasCodeExist = checkAsWasCodeInOriginalFile(updatedTextareas[pairIndex].asWasCode);
   
       if (isAsWasCodeExist) {
         updatedTextareas[pairIndex].changed = changed; 
         updatedTextareas[pairIndex].isApplied = changed ? 'yes' : 'no';
-
+  
+        updatedTextareas[pairIndex].matchedPart = matchedPart;
+  
         updatedTextareas[pairIndex].asWasCode = updatedTextareas[pairIndex].asWasCode.replace(/\/site\//g, `/${country_code}/`);
         updatedTextareas[pairIndex].toBeCode = updatedTextareas[pairIndex].toBeCode.replace(/\/site\//g, `/${country_code}/`);
       } else {
@@ -64,6 +68,7 @@ const ToBeApplied = () => {
   
     setTextareas(updatedTextareas);
   };
+  
   
   
   const checkAsWasCodeInOriginalFile = (asWasCode) => {
@@ -164,6 +169,20 @@ const ToBeApplied = () => {
         const { downloadLink, changeResults } = response.data;
   
         setChangeResults(changeResults);
+          
+        const updatedTextareasWithMatch = updatedTextareas.map((textarea, index) => {
+          const matchedResult = changeResults.find(result => result.pairIndex === index);
+          const matchedPart = matchedResult ? matchedResult.matchedPart : '';
+          console.log(`Matched part for index ${index}:`, matchedPart);
+        
+          return {
+            ...textarea,
+            matchedPart,
+          };
+        });
+        setTextareas(updatedTextareasWithMatch);
+        
+  
         await handleChangeResults(changeResults);
   
         if (codePairs.length > 0) {
@@ -178,6 +197,7 @@ const ToBeApplied = () => {
       alert("파일 선택과 asWasCode와 toBeCode를 입력은 필수입니다.");
     }
   };
+  
   
   const handleDownload = async () => {
     if (!downloadLink) {
@@ -241,6 +261,7 @@ const ToBeApplied = () => {
     <>
       <div className="bg-white mx-60">
         <h1 className="font-bold text-black my-10 text-[30px]">HOTFIX TO-BE 적용 페이지</h1>
+        
         <div className="flex p-10 bg-white rounded-[20px] ring-2 ring-black">
           <div className="flex w-full justify-center items-center gap-0">
             <SettingDropdown
@@ -338,25 +359,27 @@ const ToBeApplied = () => {
               const matchedPptNo = codePairs.find(pair => pair.aswas_code === textarea.asWasCode)?.ppt_no;
 
               return (
-                <BasicTextarea
-                  key={index}
-                  pptNo={matchedPptNo}
-                  asWasCode={textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`)}
-                  setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-                  toBeCode={textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`)}
-                  setToBeCode={(value) => handleToBeCodeChange(index, value)}
-                  changed={{
-                    index: index,
-                    changed: textarea.changed,
-                  }}
-                  isApplied={textarea.isApplied} 
-                  onCheckedChange={() => handleCheckedChange(index)}
-                  checked={textarea.checked}
-                  filter={filter}
-                  country_code={country_code}
-                />
-              );
-            })
+                <div key={index}>
+                  <BasicTextarea
+                    pptNo={matchedPptNo}
+                    asWasCode={textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`)}
+                    setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
+                    toBeCode={textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`)}
+                    setToBeCode={(value) => handleToBeCodeChange(index, value)}
+                    changed={{
+                      index: index,
+                      changed: textarea.changed,
+                    }}
+                    isApplied={textarea.isApplied} 
+                    onCheckedChange={() => handleCheckedChange(index)}
+                    checked={textarea.checked}
+                    filter={filter}
+                    country_code={country_code}
+                    matchedPart={textarea.matchedPart} 
+                  />
+                </div>
+        );
+      })
           ) : (
             <div className="flex justify-center">
               <NoValuePage />
