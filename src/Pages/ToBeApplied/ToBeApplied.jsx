@@ -5,6 +5,8 @@ import BasicTextarea from "../../Components/ToBeApplied/Textarea";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/ToBeApplied/CountryCode";
 import NoValuePage from "./NoValuePage";
+import { useRecoilState } from "recoil";
+import { fileExecute, templateSearch, processFileForDownload, downloadFile } from "../../apis/apis"
 
 const ToBeApplied = () => {
   const [projectName, setProjectName] = useState("");
@@ -20,14 +22,15 @@ const ToBeApplied = () => {
   const [codePairs, setCodePairs] = useState([]);
   const [country_code, setCountry_code] = useState("");
   const [filter, setFilter] = useState("all");
-  const [isExecuted, setIsExecuted] = useState(false); 
+  const [filterTobe, setFilterTobe] = useState("all");
+  const [isExecuted, setIsExecuted] = useState(false);
 
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setOriginalFile(selectedFile);
-      console.log("Selected file:", selectedFile);
+      // console.log("Selected file:", selectedFile);
     } else {
       console.warn("No file selected");
     }
@@ -70,7 +73,6 @@ const ToBeApplied = () => {
   };
   
   
-  
   const checkAsWasCodeInOriginalFile = (asWasCode) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -90,6 +92,10 @@ const ToBeApplied = () => {
     setFilter(e.target.value);
   };
 
+  const hangdleFilterTobeChange = (e) => {
+    setFilterTobe(e.target.value);
+  }
+
   
   const handleCheckedChange = (index) => {
     const newTextareas = [...textareas];
@@ -106,161 +112,106 @@ const ToBeApplied = () => {
     return textareas;
   };
   
-  
+  // 템플릿 조회
   const handleSetting = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/search-setting",
-        {
-          hotfix_name: projectName,
-          pdp_name: pdp,
-          product: productName,
-        }
-      );
-
-      if (response.data.success) {
-        const pairs = response.data.codePairs;
-        const newTextareas = pairs.map((pair) => ({
-          asWasCode: pair.aswas_code,
-          toBeCode: pair.tobe_code,
-          checked:true
-        }));
-
-        setTextareas(newTextareas);
-        setCodePairs(pairs);
-        console.log("Code pairs:", pairs);
-      } else {
-        alert("해당 값이 존재하지 않습니다.");
-      }
-    } catch (error) {
-      console.error("Error fetching code pairs:", error);
-    }
+    templateSearch(projectName, pdp, productName, setTextareas, setCodePairs);
   };
-  
-  const handleExecute = async () => {
-    const updatedTextareas = textareas.map((textarea) => {
-      return {
-        ...textarea,
-        asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
-        toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
-        changed: textarea.asWasCode !== "",
-      };
-    });
-  
-    setTextareas(updatedTextareas);
-    setIsExecuted(true);
-  
-    if (originalFile && updatedTextareas.every(({ asWasCode, toBeCode }) => asWasCode && toBeCode)) {
-      const formData = new FormData();
-      formData.append("file", originalFile);
-  
-      const codePairs = updatedTextareas
-        .filter((textarea) => textarea.changed)
-        .map((textarea) => ({
-          asWasCode: textarea.asWasCode,
-          toBeCode: textarea.toBeCode, 
-        }));
-  
-      formData.append("codePairs", JSON.stringify(codePairs));
-  
-      try {
-        setIsProcessing(true);
-        const response = await axios.post("http://localhost:5000/api/process-file", formData);
-        const { downloadLink, changeResults } = response.data;
-  
-        setChangeResults(changeResults);
-          
-        const updatedTextareasWithMatch = updatedTextareas.map((textarea, index) => {
-          const matchedResult = changeResults.find(result => result.pairIndex === index);
-          const matchedPart = matchedResult ? matchedResult.matchedPart : '';
-          console.log(`Matched part for index ${index}:`, matchedPart);
-        
-          return {
-            ...textarea,
-            matchedPart,
-          };
-        });
-        setTextareas(updatedTextareasWithMatch);
-        
-  
-        await handleChangeResults(changeResults);
-  
-        if (codePairs.length > 0) {
-          setDownloadLink(downloadLink);
-        }
-      } catch (error) {
-        console.error("Error processing file", error);
-      } finally {
-        setIsProcessing(false);
-      }
-    } else {
-      alert("파일 선택과 asWasCode와 toBeCode를 입력은 필수입니다.");
-    }
-  };
-  
-  
-  const handleDownload = async () => {
-    if (!downloadLink) {
-      console.warn("Download link is not set");
-      return;
-    }
-  
-    const checkedCodePairs = textareas
-      .filter((textarea) => textarea.checked)
-      .map((textarea) => ({
-        asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
-        toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
-      }));
-  
-    if (checkedCodePairs.length === 0) {
-      console.warn("No checked code pairs to download");
-      return;
-    }
-  
+
+const updateTextareasWithResults = (updatedTextareas, changeResults) => {
+  const updatedTextareasWithMatch = updatedTextareas.map((textarea, index) => {
+    const matchedResult = changeResults.find(result => result.pairIndex === index);
+    const matchedPart = matchedResult ? matchedResult.matchedPart : '';
+    // console.log(`일치한 부분 for index ${index}:`, matchedPart);
+    
+    return {
+      ...textarea,
+      matchedPart,
+    };
+  });
+
+  setTextareas(updatedTextareasWithMatch);
+};
+
+
+const handleExecute = async () => {
+  const updatedTextareas = textareas.map((textarea) => {
+    return {
+      ...textarea,
+      asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
+      toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
+      changed: textarea.asWasCode !== "",
+    };
+  });
+
+  setTextareas(updatedTextareas);
+  setIsExecuted(true);
+
+  if (originalFile && updatedTextareas.every(({ asWasCode, toBeCode }) => asWasCode && toBeCode)) {
     const formData = new FormData();
     formData.append("file", originalFile);
-    formData.append("codePairs", JSON.stringify(checkedCodePairs));
-  
-    try {
-      setIsProcessing(true);
-  
-      const response = await axios.post("http://localhost:5000/api/process-file", formData);
-      const { downloadLink, changeResults } = response.data;
-  
-      setChangeResults(changeResults);
-      await handleChangeResults(changeResults);
-  
-      if (downloadLink) {
-        setDownloadLink(downloadLink);
-      }
-  
-      const downloadResponse = await axios.get(downloadLink, {
-        responseType: "blob",
-      });
-  
-      const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      const today = new Date();
-      const formattedDate = today.toISOString().slice(0, 10).replace(/-/g, "").slice(2);
-      const formattedCountryCode = country_code.replace(/\s+/g, "_");
-      const filename = `${productName}_${formattedCountryCode}_to-be_${formattedDate}.html`;
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Error processing and downloading file", error);
-    } finally {
-      setIsProcessing(false);
+
+    const codePairs = updatedTextareas
+      .filter((textarea) => textarea.changed)
+      .map((textarea) => ({
+        asWasCode: textarea.asWasCode,
+        toBeCode: textarea.toBeCode,
+      }));
+
+    formData.append("codePairs", JSON.stringify(codePairs));
+
+    fileExecute(setChangeResults, setDownloadLink, handleChangeResults, setIsProcessing, formData, updatedTextareas, setTextareas, codePairs, updateTextareasWithResults);
+
+  } else {
+    alert("파일 선택과 asWasCode와 toBeCode를 입력은 필수입니다.");
+  }
+};
+
+const handleDownload = async () => {
+  if (!downloadLink) {
+    console.warn("Download link is not set");
+    return;
+  }
+
+  const checkedCodePairs = textareas
+    .filter((textarea) => textarea.checked)
+    .map((textarea) => ({
+      asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
+      toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
+    }));
+
+  if (checkedCodePairs.length === 0) {
+    console.warn("No checked code pairs to download");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", originalFile);
+  formData.append("codePairs", JSON.stringify(checkedCodePairs));
+
+  try {
+    setIsProcessing(true);
+
+    const { downloadLink, changeResults } = await processFileForDownload(formData);
+    
+    setChangeResults(changeResults);
+    await handleChangeResults(changeResults);
+
+    if (downloadLink) {
+      setDownloadLink(downloadLink);
     }
-  };
-  
-  
+
+    await downloadFile(downloadLink, country_code, productName);
+  } catch (error) {
+    console.error("Error in download process", error);
+  } finally {
+    setIsProcessing(false);
+  }
+};
+
   return (
     <>
       <div className="bg-white mx-60">
-        <h1 className="font-bold text-black my-10 text-[30px]">HOTFIX TO-BE 적용 페이지</h1>
+        <h1 className="font-bold text-black my-10 text-[30px]">HOTFIX TO-BE 적용 페이지</h1>        
         
         <div className="flex p-10 bg-white rounded-[20px] ring-2 ring-black">
           <div className="flex w-full justify-center items-center gap-0">
@@ -341,13 +292,22 @@ const ToBeApplied = () => {
           </div>
         </div>
         
-        <div className="bg-[#f6f6f6] mb-20">
-          <div className="flex justify-between p-4 bg-[#495057] text-white border-b border-gray-300">
-            <select onChange={handleFilterChange} value={filter} className="w-[12.5%] border border-gray-300 rounded px-4 text-black h-10 text-center">
+        <div className="flex gap-4">
+            <select onChange={handleFilterChange} value={filter} className="rounded text-black h-10 text-center">
               <option value="all">전체 항목</option>
               <option value="checked">체크된 항목</option>
               <option value="unchecked">체크되지 않은 항목</option>
             </select>
+            <select onChange={hangdleFilterTobeChange} value={filterTobe} className="rounded text-black h-10 text-center">
+              <option value="all">To-Be 적용 여부</option>
+              <option value="yes">To-Be 적용</option>
+              <option value="no">To-Be 미적용</option>
+            </select>
+        </div>
+        
+        <div className="bg-[#f6f6f6] mb-20">
+          <div className="flex justify-between p-4 bg-[#495057] text-white border-b border-gray-300">
+            <h1 className="w-[12.5%] flex items-center justify-center text-[14px] font-[500]">항목</h1>
             <h1 className="w-[12.5%] flex items-center justify-center text-[14px] font-[500]">PPT NO.</h1>
             <h1 className="w-[28%] flex items-center justify-center text-[14px] font-[500]">As-Was Code</h1>
             <h1 className="w-[28%] flex items-center justify-center text-[14px] font-[500]">To-Be Code</h1>
@@ -372,7 +332,7 @@ const ToBeApplied = () => {
                     }}
                     isApplied={textarea.isApplied} 
                     onCheckedChange={() => handleCheckedChange(index)}
-                    checked={textarea.checked}
+                    checked={textarea.checked} // checkbox 선택 여부
                     filter={filter}
                     country_code={country_code}
                     matchedPart={textarea.matchedPart} 
