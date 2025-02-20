@@ -10,20 +10,9 @@ export const countryCodeState = atom({
   default: '',
 });
 
-export const tobeResultState = atom({
-    key: 'tobeResultState',
-    default: {
-      id: '',
-      pptNo: '',
-      asWasCode:'',
-      toBecode:'',
-      setToBeCode:'',
-      changed:[],
-      isApplied:'',
-      onCheckedChange:{},
-      checked:'',
-      filter:'',
-      country_code:'',
-      matchedPart:''      
-    },
-  });
+export const textareasState = atom({
+  key: "textareasState", 
+  default: [
+    { asWasCode: "", toBeCode: "", checked: false, isApplied: null }
+  ]
+});

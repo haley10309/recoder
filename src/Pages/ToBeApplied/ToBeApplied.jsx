@@ -3,25 +3,27 @@ import BasicTextarea from "../../Components/ToBeApplied/Textarea";
 import NoValuePage from "./NoValuePage";
 import SearchTemplate from "./SearchTemplate";
 import FileConvert from "./FileConvert";
+import { useRecoilState } from "recoil";
+import { textareasState } from "../../recoil/atoms/state";
 
 const ToBeApplied = () => {
-  const [textareas, setTextareas] = useState([
-    { asWasCode: "", toBeCode: "", checked: false, isApplied: null }
-  ]);
+  const [textareas, setTextareas] = useRecoilState(textareasState);
   const [codePairs, setCodePairs] = useState([]);
   const [country_code, setCountry_code] = useState("");
   const [filter, setFilter] = useState("all");
   const [filterTobe, setFilterTobe] = useState("all");
 
   const handleAsWasCodeChange = (index, value) => {
-    const newTextareas = [...textareas];
-    newTextareas[index].asWasCode = value;
+    const newTextareas = textareas.map((textarea, i) =>
+      i === index ? { ...textarea, asWasCode: value } : textarea
+    );
     setTextareas(newTextareas);
   };
-
+  
   const handleToBeCodeChange = (index, value) => {
-    const newTextareas = [...textareas];
-    newTextareas[index].toBeCode = value;
+    const newTextareas = textareas.map((textarea, i) =>
+      i === index ? { ...textarea, toBeCode: value } : textarea
+    );
     setTextareas(newTextareas);
   };
   
@@ -42,12 +44,23 @@ const ToBeApplied = () => {
   };
   
   const filteredTextareas = () => {
+    let filtered = textareas;
+
+    // 필터링된 항목을 먼저 처리
     if (filter === "checked") {
-      return textareas.filter((textarea) => textarea.checked);
+      filtered = filtered.filter((textarea) => textarea.checked);
     } else if (filter === "unchecked") {
-      return textareas.filter((textarea) => !textarea.checked);
+      filtered = filtered.filter((textarea) => !textarea.checked);
     }
-    return textareas;
+
+    // To-Be 적용 여부 필터링 처리
+    if (filterTobe === "yes") {
+      filtered = filtered.filter((textarea) => textarea.isApplied === "yes");
+    } else if (filterTobe === "no") {
+      filtered = filtered.filter((textarea) => textarea.isApplied === "no");
+    }
+
+    return filtered;
   };
   
 
@@ -58,14 +71,14 @@ const ToBeApplied = () => {
         
         <SearchTemplate setTextareas={setTextareas} setCodePairs={setCodePairs} />
         <FileConvert textareas={textareas} setTextareas={setTextareas} />
-        <div className="flex gap-4">
+        <div className="flex justify-between gap-4">
             <select onChange={handleFilterChange} value={filter} className="rounded text-black h-10 text-center">
               <option value="all">전체 항목</option>
               <option value="checked">체크된 항목</option>
               <option value="unchecked">체크되지 않은 항목</option>
             </select>
             <select onChange={hangdleFilterTobeChange} value={filterTobe} className="rounded text-black h-10 text-center">
-              <option value="all">To-Be 적용 여부</option>
+              <option value="all">To-Be 적용 여부 확인</option>
               <option value="yes">To-Be 적용</option>
               <option value="no">To-Be 미적용</option>
             </select>
