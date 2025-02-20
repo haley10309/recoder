@@ -58,7 +58,7 @@
 //==================================================================
 export const normalizeCode = (code) => {
   // Remove whitespace, newlines, semicolons, double quotes, single quotes, and parentheses
-  return code.replace(/[\s;"'()]/g, '');
+  return code.replace(/[\s;"',()]/g, '');
 };
 export const kind_normalizeCode = (code) => {
   // Remove whitespace, newlines, semicolons, double quotes, single quotes, and parentheses

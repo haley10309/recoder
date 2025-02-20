@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef  } from "react";
 import "./Create_Template.scss";
 import Asset_Template from './Asset_template';
 import Input_Project from "../../Components/Template_detail_set/Input_Project";
@@ -17,6 +17,7 @@ import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
 import { kind_countOccurrences as countOccurrencesUtil } from "../utils/codeUtils";
 
+
 const Create_template = () => {
   const [asWasCodes, setAsWasCodes] = useState(["", "", ""]);
   const [toBeCodes, setToBeCodes] = useState(["", "", ""]);
@@ -26,23 +27,116 @@ const Create_template = () => {
   const [asset_pptNo, setAsset_pptNo] = useState([]);
   const [templateID, setTemplateID] = useState("");
 
+  const [txtFile, setTxtFile]  = useState(null); // 템플릿 호출 파일
+  const fileInputRef = useRef(null);
   const [file, setFile] = useState(null); // State for the uploaded file
   const [fileContent, setFileContent] = useState(""); //original code file
   const [isTemplateAvailable, setIsTemplateAvailable] = useState(false); //템플릿을 사용할 수 있을 지에 여부
   const [save_type, setSave_type] = useState("");
   const initial_droppable_id = "as_was_to_be_row";//droppable id 초기 변수
   // HTML 관련 데이터
+  const [notes, setNotes] = useState([]);//ppt 내용 저장 배열
 
   //프로젝트 정보 (컴포넌트에서 가져옴)
   const [projectName, setProjectName] = useState("");
   const [PDP, setPDP] = useState("");
   const [productName, setProductName] = useState("");
 
+
+  const [ppt_response, setPpt_Response] = useState("");
+
   const handleAssetSave = () => {
     // You can handle the logic for saving asset data here
     console.log('Assets saved successfully.');
     // You can perform any additional actions like sending data to the server
   };
+  
+
+  const handleSubmit = async (file) => {
+    if (!file) {
+      alert("Please select a file first.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("txtfile", file);
+  
+    try {
+      const res = await axios.post("http://localhost:5000/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+  
+      console.log("Server Response:", res.data); // ✅ 디버깅
+  
+      const { pptNos = [], asWasCodes = [], toBeCodes = [] } = res.data;
+  
+      if (!Array.isArray(pptNos) || !Array.isArray(asWasCodes) || !Array.isArray(toBeCodes)) {
+        throw new Error("Invalid data format from server");
+      }
+  
+      // 🔄 Reset all states
+      setPptNos([]);
+      setAsWasCodes([]);
+      setToBeCodes([]);
+      setAsset_asWas([]);
+      setAsset_toBe([]);
+      setAsset_pptNo([]);
+  
+      // ✅ Separate regular and asset data
+      const regularPptNos = [];
+      const regularAsWasCodes = [];
+      const regularToBeCodes = [];
+  
+      const assetPptNos = [];
+      const assetAsWasCodes = [];
+      const assetToBeCodes = [];
+  
+      pptNos.forEach((pptNo, idx) => {
+        const asWasCode = asWasCodes[idx] || "";
+        const toBeCode = toBeCodes[idx] || "";
+  
+        // 👉 Check if either asWasCode or toBeCode starts with "//"
+        if (asWasCode.trim().startsWith("//") || toBeCode.trim().startsWith("//")) {
+          // Move to asset arrays
+          assetPptNos.push(pptNo);
+          assetAsWasCodes.push(asWasCode);
+          assetToBeCodes.push(toBeCode);
+        } else {
+          // Move to regular arrays
+          regularPptNos.push(pptNo);
+          regularAsWasCodes.push(asWasCode);
+          regularToBeCodes.push(toBeCode);
+        }
+      });
+  
+      // 🔥 Update state with separated data
+      setPptNos(regularPptNos);
+      setAsWasCodes(regularAsWasCodes);
+      setToBeCodes(regularToBeCodes);
+  
+      setAsset_pptNo(assetPptNos);
+      setAsset_asWas(assetAsWasCodes);
+      setAsset_toBe(assetToBeCodes);
+  
+      console.log("Regular Data:", {
+        pptNos: regularPptNos,
+        asWasCodes: regularAsWasCodes,
+        toBeCodes: regularToBeCodes,
+      });
+  
+      console.log("Asset Data:", {
+        assetPptNos,
+        assetAsWasCodes,
+        assetToBeCodes,
+      });
+  
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      alert("파일 업로드에 실패했습니다.");
+    }
+  };
+  
+  
 
   const addTextArea = () => {
     setAsWasCodes([...asWasCodes, ""]);
@@ -65,7 +159,16 @@ const Create_template = () => {
     setAsset_toBe(asset_toBe.filter((_, i) => i !== index));
     setAsset_pptNo(asset_pptNo.filter((_, i) => i !== index));
   };
-  
+  const handlePptFileChange = (event) => {
+    const selectedFile = event.target.files[0]; // Get the first selected file
+    if (!selectedFile) return; // Prevent errors if no file is selected
+
+    setTxtFile(selectedFile); // Update state
+
+    console.log("File selected:", selectedFile); // Debugging
+    handleSubmit(selectedFile); // Pass selectedFile directly
+};
+
   // Function to handle save button click
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0]; // Get the first selected file
@@ -239,28 +342,7 @@ const Create_template = () => {
     });
   };
 
-  // const countOccurrences = (asWasCode) => {
-  //   if (!fileContent || !asWasCode) return "null";
-
-  //   const normalizedAsWasCode = normalizeCode(asWasCode);
-  //   const normalizedFileContent = normalizeCode(fileContent);
-
-  //   let occurrenceCount = 0;
-  //   let startIndex = 0;
-
-  //   // Loop to find all occurrences of normalizedAsWasCode in normalizedFileContent
-  //   while (
-  //     (startIndex = normalizedFileContent.indexOf(
-  //       normalizedAsWasCode,
-  //       startIndex
-  //     )) !== -1
-  //   ) {
-  //     occurrenceCount++;
-  //     startIndex += normalizedAsWasCode.length; // Move index forward to find next occurrence
-  //   }
-
-  //   return occurrenceCount; // Return the total count of occurrences
-  // };
+  
 
   const countOccurrences = (asWasCode) => {
     if (!fileContent || !asWasCode) {
@@ -389,10 +471,31 @@ const Create_template = () => {
           </div>
         </div>
         <div className="content-div">
+        
           
 
              
               <div className="Run_Test_File_Upload">
+                <div className="file-upload-container">
+                  <form>
+                      <label className="file-upload-label">
+                          <input
+                              type="file"
+                              accept=".txt"
+                              ref={fileInputRef} // Use ref instead of querySelector
+                              onChange={handlePptFileChange}
+                              style={{ display: "none" }}
+                          />
+                          <span
+                              className="txt-file-upload-button"
+                              onClick={(e) => e.stopPropagation()} 
+                          >
+                              가이드 업로드
+                          </span>
+                      </label>
+                      {txtFile ? (<>{txtFile.name}</>):(<></>)}
+                  </form>
+              </div>
                 {file ? (
                   <label htmlFor="file-upload" className="file-upload-label">
                     {file.name}
@@ -404,6 +507,7 @@ const Create_template = () => {
                 )}
 
                 <div className="Run_test_button">
+                  
                   <input
                     type="file"
                     id="file-upload"
@@ -418,6 +522,7 @@ const Create_template = () => {
                   >
                     Run Test
                   </button>
+                  
                   <Asset_Template 
                     asset_pptNo={asset_pptNo}
                     asset_asWas={asset_asWas} 
@@ -434,9 +539,11 @@ const Create_template = () => {
                   />
                 </div>
               </div>
+              
+
               <div className="title_as_to_div">
-              <div className="Out_div"><h4 className="title_as">Out</h4></div>
-              <div className="In_div"><h4 className="title_to">In</h4></div>
+              <div className="Out_div"><h4 className="title_as">As Was</h4></div>
+              <div className="In_div"><h4 className="title_to">To Be</h4></div>
               
               
             </div>

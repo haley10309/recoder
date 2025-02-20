@@ -2,6 +2,14 @@ import React from "react";
 import "./Country_code.scss";
 import CheckIcon from "@mui/icons-material/Check";
 import { Dropdown } from "primereact/dropdown";
+import { twMerge } from "tailwind-merge";
+const divWrapperClasses = {
+  dropdown:
+    "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] w-full flex flex-col",
+};
+const divClasses = {
+  default:"focus-within:bg-none w-48 h-full p-4 ring-1 ring-black flex justify-center align-center items-center font-medium",
+};
 
 const Country_code = ({ country_code, setCountry_code }) => {
   const countryOptions = [
@@ -23,6 +31,8 @@ const Country_code = ({ country_code, setCountry_code }) => {
     { name: "BR", code: "br" },
     { name: "CA", code: "ca" },
     { name: "CA_FR", code: "ca_fr" },
+    { name: "CH", code: "ch" },
+    { name: "CH_FR", code: "ch_fr" },
     { name: "CL", code: "cl" },
     { name: "CN", code: "cn" },
     { name: "CO", code: "co" },
@@ -47,11 +57,14 @@ const Country_code = ({ country_code, setCountry_code }) => {
     { name: "IQ_KU", code: "iq_ku" },
     { name: "IRAN", code: "iran" },
     { name: "IT", code: "it" },
+    { name: "JP", code: "jp" },
     { name: "KZ_KZ", code: "kz_kz" },
     { name: "KZ_RU", code: "kz_ru" },
     { name: "LATIN", code: "latin" },
+    { name: "LB", code: "lb" },
     { name: "LATIN_EN", code: "latin_en" },
     { name: "LEVANT", code: "levant" },
+    { name: "LEVANT_AR", code: "levant_ar" },
     { name: "LT", code: "lt" },
     { name: "LV", code: "lv" },
     { name: "MK", code: "mk" },
@@ -88,7 +101,8 @@ const Country_code = ({ country_code, setCountry_code }) => {
     { name: "UY", code: "uy" },
     { name: "UZ_RU", code: "uz_ru" },
     { name: "UZ_UZ", code: "uz_uz" },
-    { name: "VN_ZA", code: "vn_za" },
+    { name: "ZA", code: "za" },
+    { name: "VN", code: "vn" },
   ];
 
   const selectedCountryTemplate = (option) => {
@@ -123,17 +137,27 @@ const Country_code = ({ country_code, setCountry_code }) => {
   };
 
   return (
-    <div className="country_code_button">
-      <div className="segment-start">
-        <div className="container">
-          <div className="state-layer">
-            <CheckIcon className="check-icon" />
-            <div className="label-text">국가 코드</div>
-          </div>
-        </div>
+    <div
+      className={twMerge(
+        divWrapperClasses.dropdown,
+        "flex items-start justify-center"
+      )}
+    >
+      <div className="flex gap-2 justify-center items-start">
+        {/* <img
+          className="w-[14px] h-[12px] align-center"
+          src={Check}
+          alt="check"
+        /> */}
+        <div className="flex items-start font-[600] gap-2">
+            국가코드
+        </div>          
       </div>
-      <div className="segment-end">
-        <div className="container2">
+        <div
+          className={twMerge(
+            divClasses.default,
+          )}
+        >
           <Dropdown
             value={countryOptions.find(
               (option) => option.code === country_code
@@ -148,7 +172,6 @@ const Country_code = ({ country_code, setCountry_code }) => {
             className="dropdown"
           />
         </div>
-      </div>
     </div>
   );
 };
