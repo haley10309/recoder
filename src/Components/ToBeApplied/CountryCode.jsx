@@ -133,11 +133,6 @@ const CountryCode = ({ country_code, setCountry_code }) => {
       )}
     >
       <div className="flex gap-2 justify-center items-start">
-        {/* <img
-          className="w-[14px] h-[12px] align-center"
-          src={Check}
-          alt="check"
-        /> */}
         <div className="flex items-start font-[600] gap-2">
             국가코드
         </div>          

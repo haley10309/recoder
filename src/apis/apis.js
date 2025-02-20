@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "../Pages/utils/routePath";
+import { BASE_URL } from "../utils/routePath";
 
 // 템플릿 조회
 export const templateSearch = async (projectName, pdp, productName, setTextareas, setCodePairs) => {
@@ -92,7 +92,8 @@ export const fileExecute = async (setChangeResults, setDownloadLink, handleChang
     }
   };
 
-  export const templateOption = async(_url)=>{
+  // ToBeApplied - 템플릿 선택지
+  export const templateOption = async (_url, setOptions, setLoading) => {
     try {
         const response = await axios.get(`http://${BASE_URL}/${_url}`);
         setOptions(response.data);

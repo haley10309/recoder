@@ -13,8 +13,6 @@ const ToBeApplied = () => {
   const [filter, setFilter] = useState("all");
   const [filterTobe, setFilterTobe] = useState("all");
 
-
-
   const handleAsWasCodeChange = (index, value) => {
     const newTextareas = [...textareas];
     newTextareas[index].asWasCode = value;
@@ -26,8 +24,6 @@ const ToBeApplied = () => {
     newTextareas[index].toBeCode = value;
     setTextareas(newTextareas);
   };
-
-
   
 
   const handleFilterChange = (e) => {
@@ -54,8 +50,6 @@ const ToBeApplied = () => {
     return textareas;
   };
   
-
-
 
   return (
     <>
