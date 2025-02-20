@@ -1,7 +1,17 @@
 import { atom } from "recoil";
 
-export const tobeAppliedState = atom({
-    key: 'tobeAppliedState',
+export const productNameState = atom({
+  key: 'productNameState',
+  default: '',
+});
+
+export const countryCodeState = atom({
+  key: 'countryCodeState',
+  default: '',
+});
+
+export const tobeResultState = atom({
+    key: 'tobeResultState',
     default: {
       id: '',
       pptNo: '',

@@ -91,3 +91,14 @@ export const fileExecute = async (setChangeResults, setDownloadLink, handleChang
       throw error; 
     }
   };
+
+  export const templateOption = async(_url)=>{
+    try {
+        const response = await axios.get(`http://${BASE_URL}/${_url}`);
+        setOptions(response.data);
+      } catch (error) {
+        console.error("Error fetching product names:", error);
+      } finally {
+        setLoading(false);
+      }
+  }

@@ -3,6 +3,7 @@ import axios from "axios";
 import { twMerge } from "tailwind-merge";
 import { Dropdown } from "primereact/dropdown";
 import Check from "../../assets/check.png";
+import { templateOption } from "../../apis/apis";
 
 const divWrapperClasses = {
   dropdown:
@@ -33,7 +34,7 @@ const SettingDropdown = ({
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProducts = async() => {
       try {
         const response = await axios.get(`http://localhost:5000/${_url}`);
         setOptions(response.data);
