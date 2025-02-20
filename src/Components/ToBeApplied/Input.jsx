@@ -13,15 +13,6 @@ const inputClasses = {
     'font-noto placeholder:text-[#787878] text-[12px] font-normal leading-normal',
 };
 
-/**
- * BasicInput 컴포넌트 : 기본적인 input 컴포넌트
- * @param _wrapperProps : input을 감싸는 div의 props
- * @param _inputProps : input의 props
- * @param _state : input의 상태 (default, error), undefined일 자유롭게 스타일링 가능
- * @param _title : input 왼쪽 위치할 노드, text 수정 가능
- * @param _onChange : input의 상태 변화 감지
- * @param _value : input의 값
- */
 const BasicInput = ({
   _wrapperProps,
   _inputProps,

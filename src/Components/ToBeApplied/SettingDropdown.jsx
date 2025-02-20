@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { twMerge } from "tailwind-merge";
 import { Dropdown } from "primereact/dropdown";
-import Check from "../../assets/check.png";
+import { templateOption } from "../../apis/apis";
 
 const divWrapperClasses = {
   dropdown:
@@ -33,19 +32,8 @@ const SettingDropdown = ({
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/${_url}`);
-        setOptions(response.data);
-      } catch (error) {
-        console.error("Error fetching product names:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+    templateOption(_url, setOptions, setLoading);
+  }, [_url]);
 
   return (
     <div
@@ -58,11 +46,6 @@ const SettingDropdown = ({
       )}
     >
       <div className="flex gap-2 justify-center items-start">
-        {/* <img
-          className="w-[14px] h-[12px] align-center"
-          src={Check}
-          alt="check"
-        /> */}
         {_title && (
           <div className="flex items-start font-[600] gap-2">
             {_title}

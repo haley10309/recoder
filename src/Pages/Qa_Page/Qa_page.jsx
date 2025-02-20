@@ -10,7 +10,7 @@ import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
 import call_template from "../../assets/search_for_template.png";
 import sad_face from "../../assets/no_value.png";
-import { countOccurrences } from "../utils/codeUtils";
+import { countOccurrences } from "../../utils/codeUtils";
 
 
 const Qa_page = () => {

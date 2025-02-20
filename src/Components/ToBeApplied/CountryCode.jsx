@@ -64,6 +64,7 @@ const CountryCode = ({ country_code, setCountry_code }) => {
     { name: "LEVANT", code: "levant" },
     { name: "LEVANT_AR", code: "levant_ar" },
     { name: "LATIN_EN", code: "latin_en" },    
+    { name: "LB", code: "lb" },
     { name: "LT", code: "lt" },
     { name: "LV", code: "lv" },
     { name: "MK", code: "mk" },
@@ -100,8 +101,9 @@ const CountryCode = ({ country_code, setCountry_code }) => {
     { name: "UY", code: "uy" },
     { name: "UZ_RU", code: "uz_ru" },
     { name: "UZ_UZ", code: "uz_uz" },
-    { name: "ZA", code: "za" },
     { name: "VN", code: "vn" },
+    { name: "VN_ZA", code: "vn_za" },
+    { name: "ZA", code: "za" },
   ];
 
   
@@ -132,11 +134,6 @@ const CountryCode = ({ country_code, setCountry_code }) => {
       )}
     >
       <div className="flex gap-2 justify-center items-start">
-        {/* <img
-          className="w-[14px] h-[12px] align-center"
-          src={Check}
-          alt="check"
-        /> */}
         <div className="flex items-start font-[600] gap-2">
             국가코드
         </div>          

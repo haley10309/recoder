@@ -3,7 +3,7 @@ import Rodal from 'rodal';
 import './Asset_template.scss';
 import 'rodal/lib/rodal.css';
 import AddIcon from '@mui/icons-material/Add'; // Import AddIcon
-import { countOccurrences as countOccurrencesUtil } from '../utils/codeUtils';
+import { countOccurrences as countOccurrencesUtil } from '../../utils/codeUtils';
 
 class Asset_Template extends React.Component {
   constructor(props) {

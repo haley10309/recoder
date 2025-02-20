@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 import Header from "./Components/Nav/Header";
 import Main from "./Pages/Main";
 import Create_template from "./Pages/Create_Template/Create_Template";
@@ -9,18 +10,21 @@ import Footer from "./Components/Nav/Footer";
 function App() {
   return (
     <>
+    <RecoilRoot>
       <div className="App">
-        <BrowserRouter>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/create-template" element={<Create_template />} />
-            <Route path="/tobe-applied" element={<ToBeApplied />} />
-            <Route path="/qa-check" element={<Qa_page />} />
-          </Routes>
-          <Footer />
-        </BrowserRouter>
-      </div>
+          <BrowserRouter>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Main />} />
+              <Route path="/create-template" element={<Create_template />} />
+              <Route path="/tobe-applied" element={<ToBeApplied />} />
+              <Route path="/qa-check" element={<Qa_page />} />
+            </Routes>
+            <Footer />
+          </BrowserRouter>
+        </div>
+    </RecoilRoot>
+      
     </>
   );
 }

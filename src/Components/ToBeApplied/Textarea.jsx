@@ -1,8 +1,10 @@
 import Yes from '../../assets/tobe_yes.png';
 import No from '../../assets/tobe_no.png';
+import Copy from '../../assets/copy.png';
 import NoValuePage from "../../Pages/ToBeApplied/NoValuePage";
+import { useState } from 'react';
 
-const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, isApplied, checked, onCheckedChange, filter, country_code }) => {
+const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, isApplied, checked, onCheckedChange, filter, country_code, matchedPart }) => {
   const isEmpty = !pptNo && !asWasCode && !toBeCode;
 
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
@@ -10,15 +12,29 @@ const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, 
   const transformedAsWasCode = asWasCode?.replace(/\/site\//g, `/${country_code}/`);
   const transformedToBeCode = toBeCode?.replace(/\/site\//g, `/${country_code}/`);
   
+  const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
+
+  const handleToggleMatchedPart = () => {
+    setIsMatchedPartVisible((prev) => !prev);
+  };
+
+  const handleCopyClipBoard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      alert("failed");
+    }
+  };
+
   return (
     <div>
       {isEmpty ? (
         <NoValuePage />
       ) : (
         <>    
-          <div className="flex items-center justify-between p-4 bg-[#f6f6f6] border-b border-gray-300">
+          <div className="flex justify-between p-4 bg-[#f6f6f6] border-b border-gray-300">
             {/* Checkbox */}
-            <div className="flex justify-center w-[12.5%] pr-4">
+            <div className="flex justify-center items-center w-[12.5%] pr-4">
               <input
                 type="checkbox"
                 checked={checked}
@@ -29,28 +45,55 @@ const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, 
             </div>
 
             {/* PPT No. */}
-            <h2 className='flex justify-center w-[12.5%] text-black text-[14px] pr-4'>
-              <span className='font-bold'>p.{pptNo}</span>
+            <h2 className='flex justify-center items-center w-[12.5%] text-black text-[14px] pr-4'>
+              <span className='font-bold'>p. {pptNo}</span>
             </h2>
 
             {/* As-Was Code */}
+            <div className='w-[28%] flex justify-start flex-col'>
             <textarea
-              className="w-[28%] h-[150px] bg-[#D9D9D9] resize-none p-4 border border-gray-300 rounded"
+              className="w-full h-[150px] bg-[#D9D9D9] resize-none p-4 border border-gray-300 rounded"
               value={transformedAsWasCode}
               onChange={(e) => setAsWasCode(e.target.value)}
               placeholder="As-Was code를 입력하세요."
             />
 
+            {matchedPart && (
+              <div className="mt-2">
+                <button
+                  onClick={handleToggleMatchedPart}
+                  className="bg-gray-100 py-2 px-4 cursor-pointer border border-gray-300 rounded-md text-sm"
+                >
+                  {isMatchedPartVisible ? '코드 숨기기' : '일치하는 코드 보기'}
+                </button>
+                
+                {isMatchedPartVisible && (
+                  <div className="mt-4 p-4 border border-gray-300 rounded-md bg-gray-50">
+                    <strong>Matched Part:</strong>
+                    <pre className="whitespace-pre-wrap break-words overflow-auto max-w-full py-5">
+                      {matchedPart}
+                    </pre>
+                    <div className='flex justify-end'>
+                      <button onClick={() => handleCopyClipBoard(matchedPart)}>
+                      <img className="w-[18px] h-[18px]" src={Copy} alt="copy" />
+                      </button>
+                    </div>                    
+                  </div>
+                )}
+              </div>
+            )}
+
+            </div>
             {/* To-Be Code */}
             <textarea
-              className="w-[28%] h-[150px] bg-[#D9D9D9] resize-none p-4 border border-gray-300 rounded"
+              className="w-[28%] h-[150px] bg-[#D9D9D9] resize-none p-4 border border-gray-300 rounded flex justify-start"
               value={transformedToBeCode}
               onChange={(e) => setToBeCode(e.target.value)}
               placeholder="To-Be code를 입력하세요."
             />
 
             {/* To-Be 적용 여부 */}
-            <div className="flex justify-center w-[18.75%]">
+            <div className="flex justify-center items-center w-[18.75%]">
               {isApplied === 'yes' ? (
                 <img className="w-[50px] h-[50px]" src={Yes} alt="yes" />
               ) : (

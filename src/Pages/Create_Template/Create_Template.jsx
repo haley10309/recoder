@@ -15,7 +15,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
-import { kind_countOccurrences as countOccurrencesUtil } from "../utils/codeUtils";
+import { kind_countOccurrences as countOccurrencesUtil } from "../../utils/codeUtils";
 
 
 const Create_template = () => {
