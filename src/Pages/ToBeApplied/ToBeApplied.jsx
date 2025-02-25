@@ -5,13 +5,14 @@ import SearchTemplate from "./SearchTemplate";
 import FileConvert from "./FileConvert";
 import { useRecoilState } from "recoil";
 import { textareasState } from "../../recoil/atoms/state";
+import { Dropdown } from "../../Components/ToBeApplied/DropDown";
 
 const ToBeApplied = () => {
   const [textareas, setTextareas] = useRecoilState(textareasState);
   const [codePairs, setCodePairs] = useState([]);
   const [country_code, setCountry_code] = useState("");
-  const [filter, setFilter] = useState("all");
-  const [filterTobe, setFilterTobe] = useState("all");
+  const [filter, setFilter] = useState("");
+  const [filterTobe, setFilterTobe] = useState("");
 
   const handleAsWasCodeChange = (index, value) => {
     const newTextareas = textareas.map((textarea, i) =>
@@ -28,38 +29,55 @@ const ToBeApplied = () => {
   };
   
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
+  const handleFilterChange = (value) => {
+    if(value === '선택된 항목'){
+      setFilter('checked');
+    } else if (value === '선택되지 않은 항목'){
+      setFilter('unchecked');
+    } else if (value === '전체 항목') {
+      setFilter("all")
+    } else {
+      setFilter("")
+    }
   };
 
-  const hangdleFilterTobeChange = (e) => {
-    setFilterTobe(e.target.value);
+  const handleFilterTobeChange = (value) => {
+    console.log(value)
+    if(value === 'To-Be 적용'){
+      setFilterTobe('yes');
+    } else if (value === 'To-Be 미적용'){
+      setFilterTobe('no');
+    } else if (value === '전체 항목') {
+      setFilterTobe("all")
+    } else {
+      setFilter("")
+    }
   }
-
   
   const handleCheckedChange = (index) => {
     const newTextareas = [...textareas];
-    newTextareas[index].checked = !newTextareas[index].checked;
+    newTextareas[index] = {
+      ...newTextareas[index],
+      checked: !newTextareas[index].checked,
+    };
     setTextareas(newTextareas);
   };
   
   const filteredTextareas = () => {
     let filtered = textareas;
 
-    // 필터링된 항목을 먼저 처리
     if (filter === "checked") {
       filtered = filtered.filter((textarea) => textarea.checked);
     } else if (filter === "unchecked") {
       filtered = filtered.filter((textarea) => !textarea.checked);
     }
 
-    // To-Be 적용 여부 필터링 처리
     if (filterTobe === "yes") {
       filtered = filtered.filter((textarea) => textarea.isApplied === "yes");
     } else if (filterTobe === "no") {
       filtered = filtered.filter((textarea) => textarea.isApplied === "no");
-    }
-
+    } 
+  
     return filtered;
   };
   
@@ -67,22 +85,38 @@ const ToBeApplied = () => {
   return (
     <>
       <div className="bg-white mx-60">
-        <h1 className="font-bold text-black my-10 text-[30px]">HOTFIX TO-BE 적용 페이지</h1>        
-        
+        <h1 className="font-bold text-black my-10 text-[28px]">HOTFIX TO-BE 적용 페이지</h1>
+      
+        <h2 className="font-bold text-black mb-5 text-[18px]">템플릿 불러오기</h2>
         <SearchTemplate setTextareas={setTextareas} setCodePairs={setCodePairs} />
         <FileConvert textareas={textareas} setTextareas={setTextareas} />
-        <div className="flex justify-between gap-4">
-            <select onChange={handleFilterChange} value={filter} className="rounded text-black h-10 text-center">
-              <option value="all">전체 항목</option>
-              <option value="checked">체크된 항목</option>
-              <option value="unchecked">체크되지 않은 항목</option>
-            </select>
-            <select onChange={hangdleFilterTobeChange} value={filterTobe} className="rounded text-black h-10 text-center">
-              <option value="all">To-Be 적용 여부 확인</option>
-              <option value="yes">To-Be 적용</option>
-              <option value="no">To-Be 미적용</option>
-            </select>
+
+        <div className="flex justify-between">
+          <h2 className="font-bold text-black mb-5 text-[18px]">AS-WAS / TO-BE 코드 확인하기</h2>
+          <div className="flex justify-end gap-4 pb-4">
+              <Dropdown
+                options={["전체 항목", "선택된 항목", "선택되지 않은 항목"]}
+                value={
+                  filter === "all" ? "전체 항목" :
+                  filter === "checked" ? "선택된 항목" :
+                  filter === "unchecked" ? "선택되지 않은 항목" :
+                  "전체 항목"
+                }
+                onChange={handleFilterChange}
+              />
+              <Dropdown
+                options={["전체 항목", "To-Be 적용", "To-Be 미적용"]}
+                value={
+                  filterTobe === "all" ? "전체 항목" :
+                  filterTobe === "yes" ? "To-Be 적용" :
+                  filterTobe === "no" ? "To-Be 미적용" :
+                  "To-Be 적용 여부 확인"
+                }
+                onChange={handleFilterTobeChange}
+              />
+          </div>
         </div>
+        
         
         <div className="bg-[#f6f6f6] mb-20">
           <div className="flex justify-between p-4 bg-[#495057] text-white border-b border-gray-300">

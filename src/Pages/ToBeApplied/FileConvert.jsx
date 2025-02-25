@@ -156,10 +156,13 @@ const FileConvert = ({ textareas, setTextareas }) => {
 
   return (
     <>
-      <div className="flex justify-center items-center gap-20 p-14">
-        <div className="border-dashed border-black border-2 p-6 w-[300px]">
-          <h1 className="font-bold pb-4">Original Code File</h1>
-          <input className="file-input" type="file" onChange={handleFileChange} />
+      <div className="flex justify-start items-center gap-20 py-14">
+        <div>
+        <h2 className="font-bold text-black mb-3 text-[18px]">Back-Up 파일 불러오기</h2>
+          <div className="border-dashed border-black border-2 p-6 w-[300px]">
+            <h1 className="font-bold pb-4">Original Code File</h1>
+            <input className="file-input" type="file" onChange={handleFileChange} />
+          </div>
         </div>
         <button
           className="flex items-center justify-center gap-2 font-bold bg-[#00A3FF] h-[41px] w-[137px] text-white"
@@ -169,20 +172,23 @@ const FileConvert = ({ textareas, setTextareas }) => {
           {isProcessing ? "코드 변환 중 .." : "코드 변환"}
           <img className="w-[19px] align-center" src={Process} alt="process" />
         </button>
-        <div className="border-dashed border-black border-2 p-6 w-[300px]">
-          <h1 className="font-bold pb-4">Changed Code File</h1>
-          {downloadLink === "" ? (
-            <div className="flex justify-center items-center align-center bg-gray-200 w-[130px] h-[27px] text-center text-white rounded">
-              파일 다운로드
-            </div>
-          ) : (
-            <button
-              onClick={handleDownload}
-              className="flex justify-center items-center align-center bg-black w-[130px] h-[27px] text-center text-white rounded"
-            >
-              파일 다운로드
-            </button>
-          )}
+        <div>
+        <h2 className="font-bold text-black mb-3 text-[18px]">생성된 파일 다운로드</h2>
+          <div className="border-dashed border-black border-2 p-6 w-[300px]">
+            <h1 className="font-bold pb-4">Changed Code File</h1>
+            {downloadLink === "" ? (
+              <div className="flex justify-center items-center align-center bg-gray-200 w-[130px] h-[27px] text-center text-white rounded">
+                파일 다운로드
+              </div>
+            ) : (
+              <button
+                onClick={handleDownload}
+                className="flex justify-center items-center align-center bg-black w-[130px] h-[27px] text-center text-white rounded"
+              >
+                파일 다운로드
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </>
