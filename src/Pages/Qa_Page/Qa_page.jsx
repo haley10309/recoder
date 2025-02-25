@@ -201,9 +201,9 @@ const Qa_page = () => {
       <div className="content-div">
         <div className="file-upload-section">
           {file ? (
-            `uploaded file: ${file.name}`
+            ` ${file.name}`
           ) : (
-            <label>QA 대상 파일 업로드</label>
+            <label></label>
           )}
 
           <div className="file-upload-input-container">
@@ -293,7 +293,7 @@ const Qa_page = () => {
                     className="QA-textarea"
                   />
                   <div className="duplicate-count">
-                    이 코드가 포함된 횟수: {occurrenceCount}
+                    포함된 횟수: {occurrenceCount}
                   </div>
                 </div>
 

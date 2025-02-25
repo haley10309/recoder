@@ -76,7 +76,7 @@ class Asset_Template extends React.Component {
                         placeholder="//"
                       />
                       <div className="duplicate-count">
-                        이 코드가 포함된 횟수: {this.countOccurrences(code)} {/* Display occurrence count */}
+                        포함된 횟수: {this.countOccurrences(code)} {/* Display occurrence count */}
                       </div>
                     </div>
 

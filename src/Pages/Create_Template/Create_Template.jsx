@@ -62,7 +62,7 @@ const Create_template = () => {
     formData.append("txtfile", file);
   
     try {
-      const res = await axios.post("http://localhost:5000/upload", formData, {
+      const res = await axios.post("http://localhost:5000/guide_upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
   
@@ -593,7 +593,7 @@ const Create_template = () => {
                             className="code-textarea"
                           />
                           <div className="duplicate-count">
-                          이 코드가 포함된 횟수: {countOccurrences(asWasCodes[index])}
+                          포함된 횟수: {countOccurrences(asWasCodes[index])}
                       </div>
                         </div>
 

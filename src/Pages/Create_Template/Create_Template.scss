@@ -2,7 +2,7 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
+    //height: 100vh;
     .template_detail_box {
         background-color: #ffffff;
         padding: 1.5rem;
@@ -271,6 +271,7 @@
     display: flex;
     justify-content: center;
     margin-top: 2rem;
+    margin-bottom: 10rem;
 
     .save_button {
         background-color: #000000;
@@ -367,7 +368,7 @@
 }
 .duplicate-count{
      font-size: 1.3rem;
-     background-color: #edffd6;
+     //background-color: #edffd6;
 }
 
 .file-upload-container {
