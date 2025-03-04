@@ -11,16 +11,20 @@ function App() {
   return (
     <>
     <RecoilRoot>
-      <div className="App">
+      <div className="App flex">
           <BrowserRouter>
+          <div className="w-[12%]">
             <Header />
-            <Routes>
+          </div>
+            <div className="w-[88%]">
+              <Routes>
               <Route path="/" element={<Main />} />
               <Route path="/create-template" element={<Create_template />} />
               <Route path="/tobe-applied" element={<ToBeApplied />} />
               <Route path="/qa-check" element={<Qa_page />} />
             </Routes>
             <Footer />
+            </div>
           </BrowserRouter>
         </div>
     </RecoilRoot>

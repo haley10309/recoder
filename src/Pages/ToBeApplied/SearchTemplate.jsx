@@ -19,8 +19,10 @@ const SearchTemplate = ({setTextareas, setCodePairs}) =>{
     
   return(
     <>
-    <div className="flex p-10 bg-white rounded-[20px] ring-2 ring-black">
-        <div className="flex w-full justify-center items-center gap-0">
+    <div className="flex flex-col p-8 bg-white rounded-[10px] border border-gray-300 text-[#32383E]">
+    <h2 className="font-bold text-black mb-5 text-[16px]">템플릿 불러오기</h2>
+    <div className="flex justify-between">
+          <div className="flex w-full justify-center items-center gap-0">
             <SettingDropdown
               _inputProps={{ placeholder: "S24" }}
               _title="프로젝트명"
@@ -50,14 +52,14 @@ const SearchTemplate = ({setTextareas, setCodePairs}) =>{
               setCountry_code={setCountry_code}
             />
           </div>
-          <div className="flex justify-center items-center">
-            <button
-              className="bg-[#009900] text-white font-semibold text-[14px] rounded-[10px] w-[120px] h-[40px]"
-              onClick={handleSetting}
-            >
+          <div className="pt-10">
+            <button className="flex justify-center items-center bg-[#009900] text-white font-[600] text-[14px] rounded-[10px] w-[140px] h-[40px]"
+              onClick={handleSetting}>
               불러오기
             </button>
           </div>
+    </div>
+        
     </div>    
     </>
     );
