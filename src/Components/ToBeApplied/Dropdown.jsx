@@ -28,7 +28,7 @@ export const Dropdown = ({ options, value, onChange }) => {
       <div>
         <button
           type="button"
-          className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-5 py-2 text-[14px] font-semibold text-gray-900 shadow-xs ring-gray-300 ring-inset"
+          className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-5 py-2 text-[13px] font-semibold text-gray-900 shadow-xs ring-gray-300 ring-inset"
           onClick={() => setIsOpen(!isOpen)}
         >
           {value}
@@ -53,7 +53,7 @@ export const Dropdown = ({ options, value, onChange }) => {
             {options.map((option, index) => (
               <button
                 key={index}
-                className="block w-full text-left px-4 py-2 text-[14px] text-gray-700 hover:bg-gray-50"
+                className="block w-full text-left px-4 py-2 text-[12px] text-gray-700 hover:bg-gray-50"
                 onClick={() => handleOptionClick(option)}
               >
                 {option}

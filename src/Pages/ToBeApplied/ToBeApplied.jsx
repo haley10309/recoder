@@ -84,47 +84,43 @@ const ToBeApplied = () => {
 
   return (
     <>
-      <div className="bg-white mx-60">
-        <h1 className="font-bold text-black my-10 text-[28px]">HOTFIX TO-BE 적용 페이지</h1>
-      
-        <h2 className="font-bold text-black mb-5 text-[18px]">템플릿 불러오기</h2>
+      <div className="bg-[#f7f7f7] px-40 py-20">
         <SearchTemplate setTextareas={setTextareas} setCodePairs={setCodePairs} />
         <FileConvert textareas={textareas} setTextareas={setTextareas} />
 
-        <div className="flex justify-between">
-          <h2 className="font-bold text-black mb-5 text-[18px]">AS-WAS / TO-BE 코드 확인하기</h2>
-          <div className="flex justify-end gap-4 pb-4">
-              <Dropdown
-                options={["전체 항목", "선택된 항목", "선택되지 않은 항목"]}
-                value={
-                  filter === "all" ? "전체 항목" :
-                  filter === "checked" ? "선택된 항목" :
-                  filter === "unchecked" ? "선택되지 않은 항목" :
-                  "전체 항목"
-                }
-                onChange={handleFilterChange}
-              />
-              <Dropdown
-                options={["전체 항목", "To-Be 적용", "To-Be 미적용"]}
-                value={
-                  filterTobe === "all" ? "전체 항목" :
-                  filterTobe === "yes" ? "To-Be 적용" :
-                  filterTobe === "no" ? "To-Be 미적용" :
-                  "To-Be 적용 여부 확인"
-                }
-                onChange={handleFilterTobeChange}
-              />
-          </div>
+        <div className="flex flex-col rounded-[10px] bg-white border border-gray-300 text-[#32383E] p-8">
+          <div className="flex justify-between">
+            <h2 className="font-bold text-black mb-5 text-[16px]">AS-WAS / TO-BE 코드 확인하기</h2>
+            <div className="flex justify-end gap-4 pb-4">
+                <Dropdown
+                  options={["전체 항목", "선택된 항목", "선택되지 않은 항목"]}
+                  value={
+                    filter === "all" ? "전체 항목" :
+                    filter === "checked" ? "선택된 항목" :
+                    filter === "unchecked" ? "선택되지 않은 항목" :
+                    "전체 항목"
+                  }
+                  onChange={handleFilterChange}
+                />
+                <Dropdown
+                  options={["전체 항목", "To-Be 적용", "To-Be 미적용"]}
+                  value={
+                    filterTobe === "all" ? "전체 항목" :
+                    filterTobe === "yes" ? "To-Be 적용" :
+                    filterTobe === "no" ? "To-Be 미적용" :
+                    "To-Be 적용 여부 확인"
+                  }
+                  onChange={handleFilterTobeChange}
+                />
+            </div>
         </div>
-        
-        
-        <div className="bg-[#f6f6f6] mb-20">
-          <div className="flex justify-between p-4 bg-[#495057] text-white border-b border-gray-300">
-            <h1 className="w-[12.5%] flex items-center justify-center text-[14px] font-[500]">항목</h1>
-            <h1 className="w-[12.5%] flex items-center justify-center text-[14px] font-[500]">PPT NO.</h1>
-            <h1 className="w-[28%] flex items-center justify-center text-[14px] font-[500]">As-Was Code</h1>
-            <h1 className="w-[28%] flex items-center justify-center text-[14px] font-[500]">To-Be Code</h1>
-            <h1 className="w-[18.75%] flex items-center justify-center text-[14px] font-[500]">To-Be 적용 여부</h1>
+        <div className="bg-[#f6f6f6] mb-20 w-full">
+          <div className="flex justify-between p-4 text-[#32383E] bg-white border border-gray-300">
+            <h1 className="w-[12.5%] flex items-center justify-center text-[13px] font-[500]">항목</h1>
+            <h1 className="w-[12.5%] flex items-center justify-center text-[13px] font-[500]">PPT NO.</h1>
+            <h1 className="w-[28%] flex items-center justify-center text-[13px] font-[500]">As-Was Code</h1>
+            <h1 className="w-[28%] flex items-center justify-center text-[13px] font-[500]">To-Be Code</h1>
+            <h1 className="w-[18.75%] flex items-center justify-center text-[13px] font-[500]">To-Be 적용 여부</h1>
           </div>
 
           {filteredTextareas().length > 0 ? (
@@ -159,6 +155,8 @@ const ToBeApplied = () => {
             </div>
           )}
             </div>
+        </div>
+        
           </div>
     </>
   );

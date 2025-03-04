@@ -6,21 +6,27 @@ import Create_template from "./Pages/Create_Template/Create_Template";
 import ToBeApplied from "./Pages/ToBeApplied/ToBeApplied";
 import Qa_page from "./Pages/Qa_Page/Qa_page";
 import Footer from "./Components/Nav/Footer";
+import Guide from "./Pages/Guide/Guide";
 
 function App() {
   return (
     <>
     <RecoilRoot>
-      <div className="App">
+      <div className="App flex">
           <BrowserRouter>
+          <div className="w-[12%]">
             <Header />
-            <Routes>
+          </div>
+            <div className="w-[88%]">
+              <Routes>
               <Route path="/" element={<Main />} />
               <Route path="/create-template" element={<Create_template />} />
               <Route path="/tobe-applied" element={<ToBeApplied />} />
               <Route path="/qa-check" element={<Qa_page />} />
+              <Route path="/guide" element={<Guide />} />
             </Routes>
             <Footer />
+            </div>
           </BrowserRouter>
         </div>
     </RecoilRoot>
