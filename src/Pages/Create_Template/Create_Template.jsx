@@ -16,6 +16,8 @@ import axios from "axios";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
 import { kind_countOccurrences as countOccurrencesUtil } from "../../utils/codeUtils";
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
+import Frequency from "./Frequencty";
 
 
 const Create_template = () => {
@@ -345,8 +347,10 @@ const Create_template = () => {
   
 
   const countOccurrences = (asWasCode) => {
-    if (!fileContent || !asWasCode) {
-      return "Run Test를 통해 알아보세요"; // 파일 내용이나 asWasCode가 없을 때의 메시지
+    if (!fileContent) {
+      return ""; // 파일 내용이나 asWasCode가 없을 때의 메시지
+    }else if (!asWasCode){
+      return 0;
     }
   
     // countOccurrencesUtil을 호출하여 결과를 가져옵니다.
@@ -478,11 +482,12 @@ const Create_template = () => {
               <div className="Run_Test_File_Upload">
                 <div className="file-upload-container">
                   <form>
+                    <div className="guide_upload_div">
                       <label className="file-upload-label">
                           <input
                               type="file"
                               accept=".txt"
-                              ref={fileInputRef} // Use ref instead of querySelector
+                              ref={fileInputRef}
                               onChange={handlePptFileChange}
                               style={{ display: "none" }}
                           />
@@ -492,10 +497,15 @@ const Create_template = () => {
                           >
                               가이드 업로드
                           </span>
+                          
                       </label>
-                      {txtFile ? (<>{txtFile.name}</>):(<></>)}
+                      {txtFile ? (<h3 className="txtfile_title">{txtFile.name}</h3>):(<></>)}</div>
+                      
                   </form>
               </div>
+                
+
+                <div className="Run_test_button">
                 {file ? (
                   <label htmlFor="file-upload" className="file-upload-label">
                     {file.name}
@@ -505,9 +515,6 @@ const Create_template = () => {
                     
                   </label>
                 )}
-
-                <div className="Run_test_button">
-                  
                   <input
                     type="file"
                     id="file-upload"
@@ -593,7 +600,8 @@ const Create_template = () => {
                             className="code-textarea"
                           />
                           <div className="duplicate-count">
-                          포함된 횟수: {countOccurrences(asWasCodes[index])}
+                            <Frequency/>
+                          {countOccurrences(asWasCodes[index])}
                       </div>
                         </div>
 

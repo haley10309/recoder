@@ -11,6 +11,7 @@ import Country_code from "../../Components/Template_detail_set/Country_code";
 import call_template from "../../assets/search_for_template.png";
 import sad_face from "../../assets/no_value.png";
 import { countOccurrences } from "../../utils/codeUtils";
+import Frequency from "../Create_Template/Frequencty";
 
 
 const Qa_page = () => {
@@ -157,7 +158,7 @@ const Qa_page = () => {
   
   return (
     <div className="qa_page">
-      {/* ... (Rest of your component code) ... */}
+     
       <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
         <div className="flex w-full gap-14 justify-center items-center">
           <SettingDropdown
@@ -293,7 +294,8 @@ const Qa_page = () => {
                     className="QA-textarea"
                   />
                   <div className="duplicate-count">
-                    포함된 횟수: {occurrenceCount}
+                  <Frequency/>
+                  Frequency: {occurrenceCount}
                   </div>
                 </div>
 
@@ -336,7 +338,7 @@ const Qa_page = () => {
             <h2>원하는 템플릿을 불러오세요.</h2>
           </div>
           <div className="nothing_rendered">
-            <img src={call_template} />
+            <img className="nothing_randered_img" src={call_template} />
             <br />
           </div>
         </>

@@ -48,8 +48,8 @@ class Asset_Template extends React.Component {
           <div>
             {this.props.content}
             <div className="title_as_to_div">
-              <div className="Out_div"><h4 className="title_as">Out</h4></div>
-              <div className="In_div"><h4 className="title_to">In</h4></div>
+              <div className="Out_div"><h4 className="title_as">As was</h4></div>
+              <div className="In_div"><h4 className="title_to">To be</h4></div>
             </div>
 
             <div className="asset_list" style={{ maxHeight: '500px', overflowY: 'auto' }}>
