@@ -62,6 +62,13 @@ const Header = () => {
           />
           QA
         </button>
+        <button
+          className="flex items-center justify-center font-bold py-4 rounded-[5px] bg-[#8C8C8C] hover:bg-[#8C8C8C]"
+          onClick={() => handleNavigate("/guide")}
+        >
+          <span className={`w-[5px] h-[100%] ${isActive("/qa-check")}`} />
+          Guide
+        </button>
       </div>
     </nav>
   );
