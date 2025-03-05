@@ -220,7 +220,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
 
                         {uploadStatus && (
                           <div className={`text-center mt-2 text-[12px] text-gray-600 ${uploadStatus === 'success' ? "text-[#009900]" : "text-[#ff0000]"}`}>
-                            {uploadStatus === "success" ? "Success Upload !" : uploadStatus === "fail" ? "Filed Upload !" : ""}
+                            {uploadStatus === "success" ? "성공적으로 파일이 생성되었습니다 !" : uploadStatus === "fail" ? "파일 생성에 실패하였습니다." : ""}
                           </div>
                         )}
                     </div>
