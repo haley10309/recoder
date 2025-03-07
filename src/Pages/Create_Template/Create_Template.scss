@@ -85,6 +85,8 @@
     margin-bottom: 2rem; /* Adjust bottom margin as needed */
     gap: 2rem; /* Space between child elements */
             
+    margin-left: 2rem;
+    margin-right: 2rem;
         .file-upload-section {
             display: flex;
             flex-direction: column;
@@ -171,6 +173,8 @@
     list-style: none;
     transition: background-color 0.2s ease;
 
+    margin-left: 2rem;
+    margin-right: 2rem;
     .num_type {
         display: flex;
         align-items: center;

@@ -159,8 +159,8 @@ const Qa_page = () => {
   return (
     <div className="qa_page">
      
-      <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
-        <div className="flex w-full gap-14 justify-center items-center">
+      <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px] ml-16 mr-16">
+        <div className="flex w-full justify-center items-center">
           <SettingDropdown
             _inputProps={{ placeholder: "S24" }}
             _title="프로젝트명"
@@ -190,6 +190,7 @@ const Qa_page = () => {
             setCountry_code={setCountry_code}
           />
         </div>
+        
         <div className="flex justify-center items-center">
           <button
             className="bg-black text-white font-semibold text-[14px] rounded-[20px] w-[150px] shadow-xl h-[35px]"
@@ -295,7 +296,7 @@ const Qa_page = () => {
                   />
                   <div className="duplicate-count">
                   <Frequency/>
-                  Frequency: {occurrenceCount}
+                   {occurrenceCount}
                   </div>
                 </div>
 

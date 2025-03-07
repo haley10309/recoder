@@ -444,7 +444,7 @@ const Create_template = () => {
     <div className="Create_Template">
       
    
-      <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px]">
+      <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px] ml-16 mr-16">
           <div className="flex w-full gap-14 justify-center items-center">
           <BasicInput
               _inputProps={{ placeholder: "S24" }}
