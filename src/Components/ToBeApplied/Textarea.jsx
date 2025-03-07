@@ -68,18 +68,27 @@ const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, 
                 </button>
                 
                 {isMatchedPartVisible && (
-                  <div className="mt-4 p-4 border border-gray-300 rounded-md bg-gray-50">
-                    <strong>Matched Part:</strong>
-                    <pre className="whitespace-pre-wrap break-words overflow-auto max-w-full py-5">
-                      {matchedPart}
-                    </pre>
-                    <div className='flex justify-end'>
-                      <button onClick={() => handleCopyClipBoard(matchedPart)}>
-                      <img className="w-[18px] h-[18px]" src={Copy} alt="copy" />
-                      </button>
-                    </div>                    
-                  </div>
-                )}
+                    <div className="mt-4 p-4 border border-gray-300 rounded-md bg-gray-50">
+                      <strong>Front Matched Part:</strong>
+                      <pre className="whitespace-pre-wrap break-words overflow-auto max-w-full py-5">
+                        {matchedPart[0]}
+                      </pre>
+                      <div className='flex justify-end'>
+                        <button onClick={() => handleCopyClipBoard(matchedPart[0])}>
+                          <img className="w-[18px] h-[18px]" src={Copy} alt="copy" />
+                        </button>
+                      </div> 
+                      <strong>Back Matched Part:</strong>
+                      <pre className="whitespace-pre-wrap break-words overflow-auto max-w-full py-5">
+                        {matchedPart[1]}
+                      </pre>
+                      <div className='flex justify-end'>
+                        <button onClick={() => handleCopyClipBoard(matchedPart[1])}>
+                          <img className="w-[18px] h-[18px]" src={Copy} alt="copy" />
+                        </button>
+                      </div>                    
+                    </div>
+                  )}
               </div>
             )}
 
