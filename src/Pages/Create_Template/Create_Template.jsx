@@ -18,7 +18,7 @@ import Country_code from "../../Components/Template_detail_set/Country_code";
 import { kind_countOccurrences as countOccurrencesUtil } from "../../utils/codeUtils";
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import Frequency from "./Frequencty";
-import BASE_URL from "../../utils/routePath";
+import { BASE_URL } from "../../utils/routePath";
 
 
 const Create_template = () => {

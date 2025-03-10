@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import './Guide.scss'; // Import CSS for styling
-import guide_kv from '../../../public/guide/guide_kv.png';
-import create_template_nav from '../../../public/guide/create_template_nav.png';
-import create_template_1 from '../../../public/guide/create_template_1.png';
-import create_template_asset from '../../../public/guide/create_template_asset.png';
-import create_template_whole_ready from '../../../public/guide/create_template_whole_ready.png';
-import tobe_applied_1 from '../../../public/guide/tobe_applied_6.png';
-import tobe_applied_2 from '../../../public/guide/tobe_applied_7.png';
-import tobe_applied_3 from '../../../public/guide/tobe_applied_8.png';
-import qa_check_1 from '../../../public/guide/qa_check_1.png';
-import qa_check_2 from '../../../public/guide/qa_check_2.png';
-import qa_check_3 from '../../../public/guide/qa_check_3.png';
+import guide_kv from '../../assets/guide/guide_kv.png';
+import create_template_nav from '../../assets/guide/create_template_nav.png';
+import create_template_1 from '../../assets/guide/create_template_1.png';
+import create_template_asset from '../../assets/guide/create_template_asset.png';
+import create_template_whole_ready from '../../assets/guide/create_template_whole_ready.png';
+import tobe_applied_1 from '../../assets/guide/tobe_applied_6.png';
+import tobe_applied_2 from '../../assets/guide/tobe_applied_7.png';
+import tobe_applied_3 from '../../assets/guide/tobe_applied_8.png';
+import qa_check_1 from '../../assets/guide/qa_check_1.png';
+import qa_check_2 from '../../assets/guide/qa_check_2.png';
+import qa_check_3 from '../../assets/guide/qa_check_3.png';
+
+
 
 const Guide = () => {
     const [isVisible, setIsVisible] = useState(false);

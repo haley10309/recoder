@@ -12,7 +12,7 @@ import call_template from "../../assets/search_for_template.png";
 import sad_face from "../../assets/no_value.png";
 import { countOccurrences } from "../../utils/codeUtils";
 import Frequency from "../Create_Template/Frequencty";
-import BASE_URL from "../../utils/routePath";
+import { BASE_URL } from "../../utils/routePath";
 
 
 const Qa_page = () => {
