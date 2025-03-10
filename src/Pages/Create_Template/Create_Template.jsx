@@ -18,6 +18,7 @@ import Country_code from "../../Components/Template_detail_set/Country_code";
 import { kind_countOccurrences as countOccurrencesUtil } from "../../utils/codeUtils";
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import Frequency from "./Frequencty";
+import BASE_URL from "../../utils/routePath";
 
 
 const Create_template = () => {
@@ -64,7 +65,7 @@ const Create_template = () => {
     formData.append("txtfile", file);
   
     try {
-      const res = await axios.post("http://localhost:5000/guide_upload", formData, {
+      const res = await axios.post(`http://${BASE_URL}/guide_upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
   
@@ -188,7 +189,7 @@ const Create_template = () => {
   };
   const checkForExistingTemplate = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/check-template", {
+      const response = await axios.post(`http://${BASE_URL}/check-template`, {
         projectName,
         PDP,
         productName,
@@ -198,7 +199,7 @@ const Create_template = () => {
         alert("이미 존재하는 템플릿이 있습니다.");
         setSave_type("update");
   
-        const detailsResponse = await axios.post("http://localhost:5000/get-template-details", {
+        const detailsResponse = await axios.post(`http://${BASE_URL}/get-template-details`, {
           projectName,
           PDP,
           productName,
@@ -291,14 +292,14 @@ const Create_template = () => {
     try {
       let response;
       if (save_type === "create") {
-        response = await axios.post("http://localhost:5000/create", formData, {
+        response = await axios.post(`http://${BASE_URL}/create`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
       } else if (save_type === "update") {
         response = await axios.post(
-          "http://localhost:5000/update-template",
+          `http://${BASE_URL}/update-template`,
           formData,
           {
             headers: {

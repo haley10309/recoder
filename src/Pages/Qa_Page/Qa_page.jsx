@@ -12,6 +12,7 @@ import call_template from "../../assets/search_for_template.png";
 import sad_face from "../../assets/no_value.png";
 import { countOccurrences } from "../../utils/codeUtils";
 import Frequency from "../Create_Template/Frequencty";
+import BASE_URL from "../../utils/routePath";
 
 
 const Qa_page = () => {
@@ -64,7 +65,7 @@ const Qa_page = () => {
       });
   
       const response = await axios.post(
-        "http://localhost:5000/check-template",
+        `http://${BASE_URL}/check-template`,
         {
           projectName,
           PDP,
@@ -74,7 +75,7 @@ const Qa_page = () => {
   
       if (response.data.length > 0) {
         const detailsResponse = await axios.post(
-          "http://localhost:5000/get-template-details",
+          `http://${BASE_URL}/get-template-details`,
           {
             projectName,
             PDP,
