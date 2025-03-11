@@ -1,0 +1,81 @@
+.guide-container {
+    padding: 20px;
+}
+
+.anchor-nav {
+    margin-bottom: 20px;
+    
+}
+
+.anchor-nav ul {
+    list-style-type: none; /* Remove bullets */
+    padding-left: 0; /* Remove padding */
+    
+}
+
+.anchor-nav li {
+    display: inline; /* Display items in a line */
+    margin-right: 15px; /* Space between items */
+}
+
+.anchor-nav a {
+    text-decoration: none; /* Remove underline from links */
+    color: #007bff; /* Link color */
+}
+
+.anchor-nav a:hover {
+   text-decoration: underline; /* Underline on hover */
+}
+
+.guide-section {
+   margin-top: 40px; 
+   border-top: 1px solid #ccc;
+   padding-top: 20px;
+}
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px; /* Distance from bottom edge */
+    right: 30px; /* Distance from right edge */
+    background-color:#007bff;
+    color:white;
+    
+ padding :10 px ;
+ border:none ;
+ border-radius :4 px ;
+ 
+ font-size :16 px ;
+ cursor:pointer ;
+ 
+ transition:.3s;
+ 
+ z-index :1000 ;/* Ensure it's above other elements */
+ 
+ display:flex ; 
+ align-items:center ; 
+ justify-content:center;
+ 
+ }
+ .scroll-to-top:hover{
+ background-color:#0056b3 ;/* Darker blue on hover */ 
+ 
+ }
+.img_guide{
+    width: 80%;
+    margin:auto;
+    align-items: center;
+    margin-bottom:1rem;
+    border-radius: 1.4%;
+    
+}
+.explain_h2{
+    display: flex;
+    margin-left: 10rem;
+    font-weight: bold;
+    margin-bottom: 3rem;
+}
+
+.guide_title{
+    font-size: xx-large;
+    font-weight: bold;
+    margin-bottom: 3rem;
+}
