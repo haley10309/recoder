@@ -72,7 +72,7 @@ export const fileExecute = async (setChangeResults, setDownloadLink, handleChang
   // 파일 로컬 다운로드
   export const downloadFile = async (downloadLink, country_code, productName) => {
     try {
-      const downloadResponse = await axios.get(downloadLink, { responseType: "blob" });
+      const downloadResponse = await axios.get(downloadLink, { responseType: "text" });
   
       const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
       const link = document.createElement("a");
