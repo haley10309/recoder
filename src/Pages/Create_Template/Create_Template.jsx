@@ -363,15 +363,15 @@ const Create_template = () => {
   function normalizeCode(code) {
     return code.replace(/\s+/g, ""); // 모든 공백 및 줄바꿈 제거
   }
-  // const allFieldsFilled = () => {
-  //   // Check if all asWasCodes and toBeCodes are filled
-  //   return (
-  //     asWasCodes.every((code) => code.trim() !== "") &&
-  //     toBeCodes.every((code) => code.trim() !== "")&&
-  //     asset_asWas.every((code) => code.trim() !== "")&&
-  //     asset_toBe.every((code) => code.trim() !== "")
-  //   );
-  // };
+  const allFieldsFilled = () => {
+    // Check if all asWasCodes and toBeCodes are filled
+    return (
+      asWasCodes.every((code) => code.trim() !== "") &&
+      toBeCodes.every((code) => code.trim() !== "")&&
+      asset_asWas.every((code) => code.trim() !== "")&&
+      asset_toBe.every((code) => code.trim() !== "")
+    );
+  };
 
   // Replace function (for reference)
   function replaceCode(originalCode, asWasCode, toBeCode) {
@@ -652,7 +652,7 @@ const Create_template = () => {
           type="button"
           className="save_button"
           onClick={handleSave}
-          // disabled={!allFieldsFilled()} // Disable button if not all fields are filled
+           disabled={!allFieldsFilled()} // Disable button if not all fields are filled
         >
           {save_type === "update" && `수정`}
           {save_type === "create" && `생성`}

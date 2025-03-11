@@ -239,10 +239,9 @@ const Qa_page = () => {
         </div>
         <form>
           {site_ToBeCodes.map((_, index) => {
-            const updatedAsWasCode = asWasCodes[index].replace(
-              /\/site\//g,
-              `/${country_code}/`
-            );
+           const updatedAsWasCode = asWasCodes[index] 
+           ? asWasCodes[index].replace(/\/site\//g, `/${country_code}/`)
+           : "";
             const updatedToBeCode = site_ToBeCodes[index];  // Use the correct value
             const finalUpdatedToBeCode = updateToBeCodes(updatedToBeCode);
             const occurrenceCount = countOccurrences(fileContent, finalUpdatedToBeCode);
