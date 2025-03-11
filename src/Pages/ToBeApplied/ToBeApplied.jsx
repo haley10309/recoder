@@ -123,7 +123,7 @@ const ToBeApplied = () => {
             <h1 className="w-[18.75%] flex items-center justify-center text-[13px] font-[500]">To-Be 적용 여부</h1>
           </div>
 
-          {filteredTextareas().length > 0 ? (
+          {filteredTextareas() && (
             filteredTextareas().map((textarea, index) => {
               const matchedPptNo = codePairs.find(pair => pair.aswas_code === textarea.asWasCode)?.ppt_no;
 
@@ -145,19 +145,21 @@ const ToBeApplied = () => {
                     filter={filter}
                     country_code={country_code}
                     matchedPart={textarea.matchedPart} 
+                    asWasOccurrenceCount={textarea.asWasOccurrenceCount}
+                    toBeOccurrenceCount={textarea.toBeOccurrenceCount}
                   />
                 </div>
-        );
-      })
-          ) : (
-            <div className="flex justify-center">
-              <NoValuePage />
-            </div>
+              );
+          })
+          // ) : (
+          //   <div className="flex justify-center">
+          //     <NoValuePage />
+          //   </div>
           )}
             </div>
         </div>
         
-          </div>
+      </div>
     </>
   );
 };

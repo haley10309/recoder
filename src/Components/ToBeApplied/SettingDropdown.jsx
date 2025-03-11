@@ -5,7 +5,7 @@ import { templateOption } from "../../apis/apis";
 
 const divWrapperClasses = {
   dropdown:
-    "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] mr-10 flex flex-col",
+    "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] mr-10 flex-col",
 };
 const divClasses = {
   default:"focus-within:bg-none h-full p-4 ring-1 ring-black flex justify-center align-center items-center font-[500]",
@@ -42,7 +42,7 @@ const SettingDropdown = ({
         divWrapperClasses.dropdown,
         _state ? divWrapperClasses[_state] : "",
         _wrapperProps?.className,
-        "flex items-start justify-center"
+        "flex items-start justify-center my-6"
       )}
     >
       <div className="flex gap-2 justify-center items-start">
@@ -68,7 +68,7 @@ const SettingDropdown = ({
             onChange={(e) => _setValue(e.value.name)}
             optionLabel="name"
             placeholder="선택"
-            className="px-10 gap-4"
+            className="lg:px-14 sm:px-10 gap-4"
             filter
             itemTemplate={handleOptions}
           />
