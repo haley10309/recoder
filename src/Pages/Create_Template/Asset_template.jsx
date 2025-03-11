@@ -38,6 +38,7 @@ class Asset_Template extends React.Component {
     this.props.onSave(); // Call the parent component's save function if needed
     this.hide();
   };
+ 
 
   render() {
     return (
@@ -60,11 +61,16 @@ class Asset_Template extends React.Component {
                       <div className="ppt_no_col">
                         <label className="ppt_no">PPT NO.</label>
                         <input
-                          type="text"
-                          className="ppt_no_text"
-                          value={this.props.asset_pptNo[index]}
-                          onChange={(e) => this.props.setAsset_pptNo(index, e.target.value)}
-                        />
+                            type="text"
+                            className="ppt_no_text"
+                            value={this.props.asset_pptNo[index] || ""}
+                            onChange={(e) => {
+                              if (this.props.setAsset_pptNo) {
+                                this.props.setAsset_pptNo(index, e.target.value);
+                              }
+                            }}
+                          />
+
                       </div>
                     </div>
 

@@ -434,13 +434,15 @@ const Create_template = () => {
       return newAssetToBe;
     });
   };
-  const handleAssetPptNoChange =(index, value) =>{
-    setAsset_pptNo(prev => {
-      const newAssetPptNo = [...prev];
-      newAssetPptNo[index] = value;
-      return newAssetPptNo;
+  const handleAssetPptNoChange = (index, newValue) => {
+    setAsset_pptNo((prev) => {
+      const updatedPptNos = [...prev]; // Clone array
+      updatedPptNos[index] = newValue; // Update specific index
+      console.log("Updated asset_pptNo:", updatedPptNos); // Debugging
+      return updatedPptNos;
     });
-  }
+  };
+  
   return (
     <div className="Create_Template">
       
