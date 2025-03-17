@@ -87,15 +87,11 @@ const Qa_page = () => {
         setPptNos([]);
         setAsWasCodes([]);
         setToBeCodes([]);
-        setPptNos((prev) => [...prev, ...details.map((item) => item.ppt_no || "")]);
-        setAsWasCodes((prev) => [
-          ...prev,
-          ...details.filter((item) => !(item.aswas_code?.trim().startsWith("//"))).map((item) => item.aswas_code?.trim() || ""),
-        ]);
-        setToBeCodes((prev) => [
-          ...prev,
-          ...details.filter((item) => !(item.tobe_code?.trim().startsWith("//"))).map((item) => item.tobe_code?.trim() || ""),
-        ]);
+        setSite_ToBeCodes([]);
+
+        setPptNos(details.map((item) => item.ppt_no || ""));
+        setAsWasCodes(details.map((item) => item.aswas_code?.trim() || ""));
+        setToBeCodes(details.map((item) => item.tobe_code?.trim() || ""));
   
         // After setting the toBeCodes, create site_ToBeCodes
         setSite_ToBeCodes(details.map((item) => item.tobe_code.replace(/\/site\//g, `/${country_code}/`)));
