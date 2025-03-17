@@ -65,7 +65,7 @@ const Create_template = () => {
     formData.append("txtfile", file);
   
     try {
-      const res = await axios.post(`http://${BASE_URL}/guide_upload`, formData, {
+      const res = await axios.post(`${BASE_URL}/guide_upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
   
@@ -189,7 +189,7 @@ const Create_template = () => {
   };
   const checkForExistingTemplate = async () => {
     try {
-      const response = await axios.post(`http://${BASE_URL}/check-template`, {
+      const response = await axios.post(`${BASE_URL}/check-template`, {
         projectName,
         PDP,
         productName,
@@ -199,7 +199,7 @@ const Create_template = () => {
         alert("이미 존재하는 템플릿이 있습니다.");
         setSave_type("update");
   
-        const detailsResponse = await axios.post(`http://${BASE_URL}/get-template-details`, {
+        const detailsResponse = await axios.post(`${BASE_URL}/get-template-details`, {
           projectName,
           PDP,
           productName,
@@ -292,14 +292,14 @@ const Create_template = () => {
     try {
       let response;
       if (save_type === "create") {
-        response = await axios.post(`http://${BASE_URL}/create`, formData, {
+        response = await axios.post(`${BASE_URL}/create`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
       } else if (save_type === "update") {
         response = await axios.post(
-          `http://${BASE_URL}/update-template`,
+          `${BASE_URL}/update-template`,
           formData,
           {
             headers: {

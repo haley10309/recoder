@@ -65,7 +65,7 @@ const Qa_page = () => {
       });
   
       const response = await axios.post(
-        `http://${BASE_URL}/check-template`,
+        `${BASE_URL}/check-template`,
         {
           projectName,
           PDP,
@@ -75,7 +75,7 @@ const Qa_page = () => {
   
       if (response.data.length > 0) {
         const detailsResponse = await axios.post(
-          `http://${BASE_URL}/get-template-details`,
+          `${BASE_URL}/get-template-details`,
           {
             projectName,
             PDP,

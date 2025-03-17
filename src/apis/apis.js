@@ -1,11 +1,12 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/routePath";
+console.log("베이스", BASE_URL)
 
 // 템플릿 조회
 export const templateSearch = async (projectName, pdp, productName, setTextareas, setCodePairs) => {
     try {
         const response = await axios.post(
-          `http://${BASE_URL}/api/search-setting`,
+          `${BASE_URL}/api/search-setting`,
           {
             hotfix_name: projectName,
             pdp_name: pdp,
@@ -38,7 +39,7 @@ export const templateSearch = async (projectName, pdp, productName, setTextareas
 export const fileExecute = async (setChangeResults, setDownloadLink, handleChangeResults, setIsProcessing, formData, updatedTextareas, updateTextareasWithResults) => {
     try {
         setIsProcessing(true);
-        const response = await axios.post(`http://${BASE_URL}/api/process-file`, formData);
+        const response = await axios.post(`${BASE_URL}/api/process-file`, formData);
         const { downloadLink, changeResults } = response.data;
     
         setChangeResults(changeResults);
@@ -59,7 +60,7 @@ export const fileExecute = async (setChangeResults, setDownloadLink, handleChang
   // 파일 다운로드
   export const processFileForDownload = async (formData) => {
     try {
-      const response = await axios.post(`http://${BASE_URL}/api/process-file`, formData);
+      const response = await axios.post(`${BASE_URL}/api/process-file`, formData);
       const { downloadLink, changeResults } = response.data;
   
       return { downloadLink, changeResults };
@@ -96,7 +97,7 @@ export const fileExecute = async (setChangeResults, setDownloadLink, handleChang
   // ToBeApplied - 템플릿 선택지
   export const templateOption = async (_url, setOptions, setLoading) => {
     try {
-        const response = await axios.get(`http://${BASE_URL}/${_url}`);
+        const response = await axios.get(`${BASE_URL}/${_url}`);
         setOptions(response.data);
       } catch (error) {
         console.error("Error fetching product names:", error);
