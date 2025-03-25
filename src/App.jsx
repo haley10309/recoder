@@ -7,6 +7,7 @@ import ToBeApplied from "./Pages/ToBeApplied/ToBeApplied";
 import Qa_page from "./Pages/Qa_Page/Qa_page";
 import Footer from "./Components/Nav/Footer";
 import Guide from "./Pages/Guide/Guide";
+import CopyTranslation from "./Pages/CopyTranslation/CopyTranslation";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Route path="/create-template" element={<Create_template />} />
               <Route path="/tobe-applied" element={<ToBeApplied />} />
               <Route path="/qa-check" element={<Qa_page />} />
+              <Route path="/copy-translation" element={<CopyTranslation />} />
               <Route path="/guide" element={<Guide />} />
             </Routes>
             <Footer />

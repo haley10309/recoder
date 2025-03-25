@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/routePath";
-console.log("베이스", BASE_URL)
+// console.log("베이스", BASE_URL)
 
 // 템플릿 조회
 export const templateSearch = async (projectName, pdp, productName, setTextareas, setCodePairs) => {
