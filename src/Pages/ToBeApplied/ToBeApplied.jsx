@@ -5,7 +5,7 @@ import SearchTemplate from "./SearchTemplate";
 import FileConvert from "./FileConvert";
 import { useRecoilState } from "recoil";
 import { textareasState } from "../../recoil/atoms/state";
-import { Dropdown } from "../../Components/ToBeApplied/DropDown";
+import Dropdown from "../../Components/ToBeApplied/DropDown";
 
 const ToBeApplied = () => {
   const [textareas, setTextareas] = useRecoilState(textareasState);
