@@ -1,24 +1,16 @@
 import React, { useEffect, useState,useRef  } from "react";
 import "./Create_Template.scss";
-import Asset_Template from './Asset_template';
-import Input_Project from "../../Components/Template_detail_set/Input_Project";
-import Input_pdp from "../../Components/Template_detail_set/Input_pdp";
-import Input_product_name from "../../Components/Template_detail_set/Input_product_name";
-import Input_date from "../../Components/Template_detail_set/Input_date";
-import BasicInput from "../../Components/ToBeApplied/Input";
-import Alert from "@mui/material/Alert";
 
-import { Dropdown } from "primereact/dropdown";
+import Asset_Template from './Asset_template';
+import BasicInput from "../../Components/ToBeApplied/Input";
 import AddIcon from "@mui/icons-material/Add";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
 import axios from "axios";
-import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
-import Country_code from "../../Components/Template_detail_set/Country_code";
 import { kind_countOccurrences as countOccurrencesUtil } from "../../utils/codeUtils";
-import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import Frequency from "./Frequencty";
 import { BASE_URL } from "../../utils/routePath";
+
+
 
 
 const Create_template = () => {
@@ -45,14 +37,82 @@ const Create_template = () => {
   const [PDP, setPDP] = useState("");
   const [productName, setProductName] = useState("");
 
+  const [translation_file, setTranslation_File] = useState(null); // 번역 파일
+  const [validCountries, setValidCountries] = useState([]); //유효한 나라 권역인지 확인된 나라 리스트
+  const [error, setError] = useState(null);
+  const [local_copies,setLocal_copies] = useState([]); //번역 덱
+  const [english_copies,setEnglish_copies] = useState([]); //원문 영어 덱
 
-  const [ppt_response, setPpt_Response] = useState("");
+  const handle_Translation_FileChange = (e) => {
+    const file = e.target.files[0];
+    console.log("Selected file:", file); // Verify file is selected
+    setTranslation_File(file);
+    translation_handleFile(file);
+  };
+  
+
+  const translation_handleFile = async (file) => {
+    if (!file) {
+        setError("Please select a file.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    console.log("Sending file:", file); // Check the file object before sending
+
+    try {
+        // Sending the file to the backend
+        const response = await axios.post(`${BASE_URL}/translation_upload`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+
+        console.log("Response:", response.data);
+
+        const translations = response.data.translations; // Assuming the backend returns this
+        const englishCopy = response.data.englishCopy; // English copy sent from the backend
+
+        // Object to hold translations for each country code
+        
+
+        // Use Object.entries to iterate over the translations object
+        Object.entries(translations).forEach(([countryCode, translationArray]) => {
+            if (Array.isArray(translationArray) && translationArray.length > 0) {
+                if (!local_copies[countryCode]) {
+                    local_copies[countryCode] = [];
+                }
+                // Store translations in the correct country code array
+                local_copies[countryCode].push(...translationArray);
+            }
+        });
+
+        // Log or update the state with the categorized translations
+        console.log("Categorized Translations:", local_copies);
+
+        setValidCountries(local_copies); // Store the categorized translations in state
+        setEnglish_copies(englishCopy); // Store the English copy in state
+        setError(null); // Clear any errors
+    } catch (err) {
+        console.error("Upload error:", err); // This will log any error
+        setError("Failed to upload file.");
+    }
+};
+
 
   const handleAssetSave = () => {
     // You can handle the logic for saving asset data here
     console.log('Assets saved successfully.');
     // You can perform any additional actions like sending data to the server
   };
+
+  
+  
+
+  
+  
+  
+  
   
 
   const handleSubmit = async (file) => {

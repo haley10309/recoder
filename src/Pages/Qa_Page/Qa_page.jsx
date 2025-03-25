@@ -5,7 +5,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import { Dropdown } from "primereact/dropdown";
-import dayjs from "dayjs";
 import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
 import Country_code from "../../Components/Template_detail_set/Country_code";
 import call_template from "../../assets/search_for_template.png";
@@ -17,13 +16,10 @@ import { BASE_URL } from "../../utils/routePath";
 
 const Qa_page = () => {
   const [_value, _setValue] = useState("");
-
   const [projectName, setProjectName] = useState("");
   const [PDP, setPDP] = useState("");
   const [productName, setProductName] = useState("");
-  const [createDate, setCreateDate] = useState(dayjs());
   const [country_code, setCountry_code] = useState("");
-
   const [asWasCodes, setAsWasCodes] = useState([]);
   const [toBeCodes, setToBeCodes] = useState([]);
   const [site_ToBeCodes, setSite_ToBeCodes] = useState([]); //site -> 권역 코드로 바뀐 to be 코드드
