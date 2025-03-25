@@ -1,5 +1,5 @@
 import React from "react";
-import "./Footer.scss"; // Assuming you want to apply some styles
+import "@Components/Nav/Footer.scss"; // Assuming you want to apply some styles
 
 const Footer = () => {
   return (

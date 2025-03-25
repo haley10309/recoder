@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import "./qa_page.scss";
+import "@Qa_Page/qa_page.scss";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import { Dropdown } from "primereact/dropdown";
-import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
-import Country_code from "../../Components/Template_detail_set/Country_code";
-import call_template from "../../assets/search_for_template.png";
-import sad_face from "../../assets/no_value.png";
-import { countOccurrences } from "../../utils/codeUtils";
-import Frequency from "../Create_Template/Frequencty";
-import { BASE_URL } from "../../utils/routePath";
+import SettingDropdown from "@/Components/ToBeApplied/SettingDropdown";
+import Country_code from "@/Components/Template_detail_set/Country_code";
+import call_template from "@/assets/search_for_template.png";
+import sad_face from "@/assets/no_value.png";
+import { countOccurrences } from "@/utils/codeUtils";
+import Frequency from "@Create_Template/Frequencty";
+import { BASE_URL } from "@/utils/routePath";
 
 
 const Qa_page = () => {

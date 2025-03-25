@@ -1,4 +1,4 @@
-import "./Input_date.scss";
+import "@Components/Template_detail_set/Input_date.scss";
 import CheckIcon from "@mui/icons-material/Check";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";

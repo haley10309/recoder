@@ -1,4 +1,4 @@
-import ToBeApplied from "./ToBeApplied/ToBeApplied"
+import ToBeApplied from "@ToBeApplied/ToBeApplied"
 
 const Main = () => {
     return (

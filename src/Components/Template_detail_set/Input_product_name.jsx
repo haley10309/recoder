@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import "./Input_product_name.scss";
+import "@Components/Template_detail_set/Input_product_name.scss";
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 import { Dropdown } from "primereact/dropdown";
+import { BASE_URL } from "@/utils/routePath";
+
 
 const Input_product_name = ({ productName, setProductName }) => {
   const [productOptions, setProductOptions] = useState([]); // State to hold product options
@@ -12,7 +14,7 @@ const Input_product_name = ({ productName, setProductName }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/products"); // Adjust the endpoint as needed
+        const response = await axios.get(`${ BASE_URL }/products`); // Adjust the endpoint as needed
         setProductOptions(response.data); // Assuming response.data is an array of product names
       } catch (error) {
         console.error("Error fetching product names:", error);

@@ -1,9 +1,9 @@
-import SettingDropdown from "../../Components/ToBeApplied/SettingDropdown";
-import Country_code from "../../Components/ToBeApplied/CountryCode";
+import SettingDropdown from "@/Components/ToBeApplied/SettingDropdown";
+import Country_code from "@/Components/ToBeApplied/CountryCode";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { templateSearch } from "../../apis/apis";
-import { countryCodeState, productNameState } from "../../recoil/atoms/state";
+import { templateSearch } from "@/apis/apis";
+import { countryCodeState, productNameState } from "@/recoil/atoms/state";
 
 const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   const [projectName, setProjectName] = useState("");

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import { Dropdown } from "primereact/dropdown";
-import { templateOption } from "../../apis/apis";
+import { templateOption } from "@/apis/apis";
 
 const divWrapperClasses = {
   dropdown:

@@ -1,8 +1,9 @@
 import React from "react";
-import "./Country_code.scss";
+import "@Components/Template_detail_set/Country_code.scss";
 import CheckIcon from "@mui/icons-material/Check";
 import { Dropdown } from "primereact/dropdown";
 import { twMerge } from "tailwind-merge";
+
 const divWrapperClasses = {
   dropdown:
     "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] w-full flex flex-col",

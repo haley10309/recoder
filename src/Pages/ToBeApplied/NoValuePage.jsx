@@ -1,4 +1,4 @@
-import NoValue from '../../assets/no_value.png';
+import NoValue from '@/assets/no_value.png';
 
 const NoValuePage = () => {
     return (

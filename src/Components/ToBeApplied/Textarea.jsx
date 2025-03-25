@@ -119,10 +119,10 @@
 // export default BasicTextarea;
 
 
-import Yes from '../../assets/tobe_yes.png';
-import No from '../../assets/tobe_no.png';
-import Copy from '../../assets/copy.png';
-import NoValuePage from "../../Pages/ToBeApplied/NoValuePage";
+import Yes from '@/assets/tobe_yes.png';
+import No from '@/assets/tobe_no.png';
+import Copy from '@/assets/copy.png';
+import NoValuePage from "@Pages/ToBeApplied/NoValuePage";
 import { useState } from 'react';
 
 const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, isApplied, checked, onCheckedChange, filter, country_code, matchedPart, asWasOccurrenceCount, toBeOccurrenceCount }) => {

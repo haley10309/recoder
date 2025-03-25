@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import "./Input_pdp.scss";
+import "@Components/Template_detail_set/Input_pdp.scss";
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 import { Dropdown } from "primereact/dropdown";
+import { BASE_URL } from "@/utils/routePath";
 
 const Input_pdp = ({ PDP, setPDP }) => {
   const [pdpOptions, setPdpOptions] = useState([]); // State to hold PDP options
@@ -12,7 +13,7 @@ const Input_pdp = ({ PDP, setPDP }) => {
   useEffect(() => {
     const fetchPDPs = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/pdps"); // Adjust the endpoint as needed
+        const response = await axios.get(`${ BASE_URL }/pdps`); // Adjust the endpoint as needed
         setPdpOptions(response.data); // Assuming response.data is an array of PDP names
       } catch (error) {
         console.error("Error fetching PDP names:", error);

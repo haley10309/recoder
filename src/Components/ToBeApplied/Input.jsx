@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import Check from '../../assets/check.png'
+import Check from '@/assets/check.png'
 
 const inputWrapperClasses = {
   tobe:

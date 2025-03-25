@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import "./Input_Project.scss";
+import "@Components/Template_detail_set/Input_Project.scss";
 import CheckIcon from "@mui/icons-material/Check";
 import axios from "axios";
 import { Dropdown } from "primereact/dropdown";
 
-const Input_Project = ({ projectName, setProjectName }) => {
+const c = ({ projectName, setProjectName }) => {
   const [projectOptions, setProjectOptions] = useState([]); // State to hold project options
   const [loading, setLoading] = useState(true); // State to manage loading state
 
@@ -12,7 +12,7 @@ const Input_Project = ({ projectName, setProjectName }) => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/projects"); // Adjust the endpoint as needed
+        const response = await axios.get(`${ BASE_URL }/projects`); // Adjust the endpoint as needed
         setProjectOptions(response.data); // Assuming response.data is an array of project names
       } catch (error) {
         console.error("Error fetching project names:", error);

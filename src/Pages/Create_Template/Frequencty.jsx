@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Rodal from 'rodal';
 import 'rodal/lib/rodal.css';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import frequency_explaination from '../../../public/duplicate-finder.png'
+import frequency_explaination from '@public/duplicate-finder.png'
 
 const Frequency = () => {
   const [visible, setVisible] = useState(false);

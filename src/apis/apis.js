@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "../utils/routePath";
+import { BASE_URL } from "@/utils/routePath";
 // console.log("베이스", BASE_URL)
 
 // 템플릿 조회

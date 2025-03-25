@@ -1,14 +1,14 @@
 import React, { useEffect, useState,useRef  } from "react";
-import "./Create_Template.scss";
+import "@Create_Template/Create_Template.scss";
 
-import Asset_Template from './Asset_template';
-import BasicInput from "../../Components/ToBeApplied/Input";
+import Asset_Template from '@Create_Template/Asset_template';
+import BasicInput from "@/Components/ToBeApplied/Input";
 import AddIcon from "@mui/icons-material/Add";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
-import { kind_countOccurrences as countOccurrencesUtil } from "../../utils/codeUtils";
-import Frequency from "./Frequencty";
-import { BASE_URL } from "../../utils/routePath";
+import { kind_countOccurrences as countOccurrencesUtil } from "@/utils/codeUtils";
+import Frequency from "@Create_Template/Frequencty";
+import { BASE_URL } from "@/utils/routePath";
 
 
 

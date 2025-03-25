@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { countOccurrences } from "../../utils/codeUtils";
-import Process from "../../assets/uim_process.png";
-import FileUpload from "../../assets/file_upload.png";
-import HtmlFile from "../../assets/html_file.svg";
-import { downloadFile, fileExecute, processFileForDownload } from "../../apis/apis";
+import { countOccurrences } from "@/utils/codeUtils";
+import Process from "@/assets/uim_process.png";
+import FileUpload from "@/assets/file_upload.png";
+import HtmlFile from "@/assets/html_file.svg";
+import { downloadFile, fileExecute, processFileForDownload } from "@/apis/apis";
 import { useRecoilState } from "recoil";
-import { countryCodeState, productNameState } from "../../recoil/atoms/state";
+import { countryCodeState, productNameState } from "@/recoil/atoms/state";
 
 const FileConvert = ({ textareas, setTextareas }) => {
   const [isProcessing, setIsProcessing] = useState(false);

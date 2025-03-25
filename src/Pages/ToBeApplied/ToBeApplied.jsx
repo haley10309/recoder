@@ -1,11 +1,10 @@
 import { useState } from "react";
-import BasicTextarea from "../../Components/ToBeApplied/Textarea";
-import NoValuePage from "./NoValuePage";
-import SearchTemplate from "./SearchTemplate";
-import FileConvert from "./FileConvert";
+import BasicTextarea from "@/Components/ToBeApplied/Textarea";
+import SearchTemplate from "@ToBeApplied/SearchTemplate";
+import FileConvert from "@ToBeApplied/FileConvert";
 import { useRecoilState } from "recoil";
-import { textareasState } from "../../recoil/atoms/state";
-import Dropdown from "../../Components/ToBeApplied/DropDown";
+import { textareasState } from "@/recoil/atoms/state";
+import Dropdown from "@/Components/ToBeApplied/DropDown";
 
 const ToBeApplied = () => {
   const [textareas, setTextareas] = useRecoilState(textareasState);
