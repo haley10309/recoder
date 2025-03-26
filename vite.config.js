@@ -11,6 +11,7 @@ export default ({ mode }) => {
         svgrOptions: {},
       }),
     ],
+    base: '/', // 기본값 확인
     define: {
       'process.env': env,
     },
