@@ -53,7 +53,7 @@ export const fileExecute = async (setChangeResults, handleChangeResults, setIsPr
       responseType: 'json'
     });
 
-    console.log(response.data);
+    // console.log(response.data);
 
     const { changeResults, filename, fileContent } = response.data;
 
