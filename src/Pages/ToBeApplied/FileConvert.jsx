@@ -3,13 +3,12 @@ import { countOccurrences } from "@/utils/codeUtils";
 import Process from "@/assets/uim_process.png";
 import FileUpload from "@/assets/file_upload.png";
 import HtmlFile from "@/assets/html_file.svg";
-import { downloadFile, fileExecute, processFileForDownload } from "@/apis/apis";
+import { fileExecute } from "@/apis/apis";
 import { useRecoilState } from "recoil";
 import { countryCodeState, productNameState } from "@/recoil/atoms/state";
 
 const FileConvert = ({ textareas, setTextareas }) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [downloadLink, setDownloadLink] = useState("");
   const [originalFile, setOriginalFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isExecuted, setIsExecuted] = useState(false);
@@ -21,8 +20,6 @@ const FileConvert = ({ textareas, setTextareas }) => {
 
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState("");
-  const [downloadProgress, setDownloadProgress] = useState(0); 
-  const [downloadStatus, setDownloadStatus] = useState("");
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -88,8 +85,8 @@ const FileConvert = ({ textareas, setTextareas }) => {
           asWasCode: textarea.asWasCode,
           toBeCode: textarea.toBeCode,
         }));
-  
       formData.append("codePairs", JSON.stringify(codePairs));
+  
       setIsProcessing(true);
   
       try {
@@ -106,7 +103,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
           }, 100);
         });
   
-        await fileExecute(setChangeResults, setDownloadLink, handleChangeResults, setIsProcessing, formData, updatedTextareas, setTextareas, codePairs, handleChangeResults);
+        await fileExecute(setChangeResults, handleChangeResults, setIsProcessing, formData, updatedTextareas, setTextareas, productName, country_code);
   
         await progressUpdatePromise;
         setUploadStatus("success");
@@ -122,72 +119,13 @@ const FileConvert = ({ textareas, setTextareas }) => {
     }
   };
   
-  const handleDownload = async () => {
-    if (!downloadLink) {
-      console.warn("Download link is not set");
-      return;
-    }
-  
-    const checkedCodePairs = textareas
-      .filter((textarea) => textarea.checked)
-      .map((textarea) => ({
-        asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
-        toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
-      }));
-  
-    if (checkedCodePairs.length === 0) {
-      console.warn("No checked code pairs to download");
-      return;
-    }
-  
-    const formData = new FormData();
-    formData.append("file", originalFile);
-    formData.append("codePairs", JSON.stringify(checkedCodePairs));
-  
-    try {
-      setIsProcessing(true);
-  
-      const downloadProgressPromise = new Promise((resolve) => {
-        const downloadProgressInterval = setInterval(() => {
-          setDownloadProgress((prev) => {
-            if (prev >= 100) {
-              clearInterval(downloadProgressInterval);
-              resolve();
-              return 100;
-            }
-            return prev + 10;
-          });
-        }, 100);
-      });
-  
-      const { downloadLink, changeResults } = await processFileForDownload(formData);
-  
-      setChangeResults(changeResults);
-      await handleChangeResults(changeResults);
-  
-      if (downloadLink) {
-        setDownloadLink(downloadLink);
-      }
-  
-      await downloadProgressPromise;
-      setDownloadStatus("success");
-  
-      await downloadFile(downloadLink, country_code, productName);
-    } catch (error) {
-      console.error("파일 다운로드 오류", error);
-      setDownloadStatus("fail");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-  
   
   return (
     <>
       <div className="flex flex-col justify-center items-start rounded-[10px] p-8 bg-white border border-gray-300 text-[#32383E] my-14 w-full">
         <h2 className="font-bold text-black mb-3 text-[16px]">Back-Up 파일 불러오기</h2>
         <div className="flex w-full gap-10 my-2">
-           <div className="flex flex-col items-center justify-center w-[40%] gap-4">
+            <div className="flex flex-col items-center justify-center w-[40%] gap-4">
               <div className="flex flex-col items-center justify-center w-full">
                 <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full py-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer text-gray-500 bg-gray-50 hover:text-[#00A3FF] hover:bg-[#EBF8FF]">
                   <div className="flex flex-col items-center justify-center">
@@ -218,46 +156,37 @@ const FileConvert = ({ textareas, setTextareas }) => {
                   )}
               </div>
             </div>
-          <div className="flex w-[60%]">
-          {fileName === "" ? null : (
-                <div className="flex items-center justify-center w-full py-10 rounded-lg">
-                  <div className="w-full flex justify-center gap-10">
-                    <div className="w-[70%] px-10">
-                      <div className="flex w-full gap-4 justify-start items-center">
-                        <img
-                          className="w-[40px]"
-                          src={HtmlFile}
-                          alt="htmlicon"
-                        />
-                        <p className="text-[14px] font-bold text-[#32383E]">{fileName}</p>
-                       </div>
-                        {isProcessing && uploadProgress < 100 ? (
-                          <div className="w-full mt-4 bg-gray-200 rounded-full h-2.5">
-                            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+            <div className="flex w-[60%]">
+              {fileName === "" ? null : (
+                    <div className="flex items-center justify-center w-full py-10 rounded-lg">
+                      <div className="w-full flex justify-center gap-10">
+                        <div className="w-[70%] px-10">
+                          <div className="flex w-full gap-4 justify-start items-center">
+                            <img
+                              className="w-[40px]"
+                              src={HtmlFile}
+                              alt="htmlicon"
+                            />
+                            <p className="text-[14px] font-bold text-[#32383E]">{fileName}</p>
                           </div>
-                        ):(
-                          <div className="w-full mt-4 bg-gray-200 rounded-full h-2.5" />
-                        )}
+                            {isProcessing && uploadProgress < 100 ? (
+                              <div className="w-full mt-4 bg-gray-200 rounded-full h-2.5">
+                                <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                              </div>
+                            ):(
+                              <div className="w-full mt-4 bg-gray-200 rounded-full h-2.5" />
+                            )}
 
-                        {uploadStatus && (
-                          <div className={`text-center mt-2 text-[12px] ${uploadStatus === 'success' ? "text-[#009900]" : "text-[#ff0000]"}`}>
-                            {uploadStatus === "success" ? "성공적으로 파일이 생성되었습니다 !" : uploadStatus === "fail" ? "파일 생성에 실패하였습니다." : ""}
-                          </div>
-                        )}
+                            {uploadStatus && (
+                              <div className={`text-center mt-2 text-[12px] ${uploadStatus === 'success' ? "text-[#009900]" : "text-[#ff0000]"}`}>
+                                {uploadStatus === "success" ? "성공적으로 파일이 생성되었습니다 !" : uploadStatus === "fail" ? "파일 생성에 실패하였습니다." : ""}
+                              </div>
+                            )}
+                        </div>
+                      </div>
                     </div>
-                  
-                  {downloadLink === "" ? null : (
-                    <div className="flex flex-col items-center justify-center">
-                      <button
-                        onClick={handleDownload} className="flex justify-center items-center font-medium align-center bg-[#00A3FF] w-full px-10 h-[40px] text-center text-white rounded-[20px]" disabled={isProcessing}>
-                        {isProcessing ? "파일 생성 중" : "파일 다운로드"}
-                      </button>
-                    </div>
-                  )}
-                  </div>
-                </div>
-            )}
-          </div>
+                )}
+            </div>
         </div>
       </div>
     </>

@@ -36,63 +36,47 @@ export const templateSearch = async (projectName, pdp, productName, setTextareas
 
 
 // 실행
-export const fileExecute = async (setChangeResults, setDownloadLink, handleChangeResults, setIsProcessing, formData, updatedTextareas, updateTextareasWithResults) => {
-    try {
-        setIsProcessing(true);
-        const response = await axios.post(`${BASE_URL}/api/process-file`, formData);
-        const { downloadLink, changeResults } = response.data;
-    
-        setChangeResults(changeResults);
-        updateTextareasWithResults(updatedTextareas, changeResults);
-        handleChangeResults(changeResults)
-        
-        if (downloadLink) {
-          setDownloadLink(downloadLink);
-        }
-      } catch (error) {
-        console.error("Error processing file", error);
-      } finally {
-        setIsProcessing(false);
-      }
-    };
+export const fileExecute = async (setChangeResults, handleChangeResults, setIsProcessing, formData, updatedTextareas, updateTextareasWithResults, productName, country_code) => {
+  try {
+    setIsProcessing(true);
 
+    formData.append("productName", String(productName));
+    formData.append("countryCode", String(country_code));
 
-  // 파일 다운로드
-  export const processFileForDownload = async (formData) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/api/process-file`, formData);
-      const { downloadLink, changeResults } = response.data;
-  
-      return { downloadLink, changeResults };
-    } catch (error) {
-      console.error("Error processing file", error);
-      throw error;
-    }
-  };
-  
-  // 파일 로컬 다운로드
-  export const downloadFile = async (downloadLink, country_code, productName) => {
-    try {
-      const downloadResponse = await axios.get(downloadLink, { responseType: "text" });
-  
-      const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
-      const link = document.createElement("a");
-      link.href = url;
-  
-      const today = new Date();
-      const formattedDate = today.toISOString().slice(0, 10).replace(/-/g, "").slice(2);
-      const formattedCountryCode = country_code.replace(/\s+/g, "_");
-      const filename = `${productName}_${formattedCountryCode}_to-be_${formattedDate}.html`;
-  
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Error downloading file", error);
-      throw error; 
-    }
-  };
+    // console.log("productName", productName);
+    // console.log("countryCode", country_code);
+
+    const response = await axios.post(`${BASE_URL}/api/process-file`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      responseType: 'json'
+    });
+
+    console.log(response.data);
+
+    const { changeResults, filename, fileContent } = response.data;
+
+    setChangeResults(changeResults);
+    updateTextareasWithResults(updatedTextareas, changeResults);
+    handleChangeResults(changeResults);
+
+    const blob = new Blob([fileContent], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+  } catch (error) {
+    console.error("Error processing file", error);
+  } finally {
+    setIsProcessing(false);
+  }
+};
+
 
   // ToBeApplied - 템플릿 선택지
   export const templateOption = async (_url, setOptions, setLoading) => {
