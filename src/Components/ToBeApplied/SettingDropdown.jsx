@@ -32,8 +32,20 @@ const SettingDropdown = ({
   };
 
   useEffect(() => {
-    templateOption(_url, setOptions, setLoading);
+    const fetchData = async () => {
+      try {
+        const data = await templateOption(_url);
+        setOptions(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [_url]);
+
 
   return (
     <div
