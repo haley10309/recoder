@@ -1,12 +1,11 @@
 import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
-// console.log("베이스", BASE_URL)
 
 // 템플릿 조회
 export const templateSearch = async (projectName, pdp, productName, setTextareas, setCodePairs) => {
     try {
         const response = await axios.post(
-          `${BASE_URL}/api/search-setting`,
+          `${BASE_URL}/template`,
           {
             hotfix_name: projectName,
             pdp_name: pdp,
@@ -25,7 +24,6 @@ export const templateSearch = async (projectName, pdp, productName, setTextareas
   
           setTextareas(newTextareas);
           setCodePairs(pairs);
-        //   console.log("Code pairs:", pairs);
         } else {
           alert("유효하지 않은 템플릿입니다.\n정보를 다시 확인해주세요.");
         }
@@ -42,18 +40,12 @@ export const fileExecute = async (setChangeResults, handleChangeResults, setIsPr
 
     formData.append("productName", String(productName));
     formData.append("countryCode", String(country_code));
-
-    // console.log("productName", productName);
-    // console.log("countryCode", country_code);
-
-    const response = await axios.post(`${BASE_URL}/api/process-file`, formData, {
+    const response = await axios.post(`${BASE_URL}/process-file`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
       responseType: 'json'
     });
-
-    // console.log(response.data);
 
     const { changeResults, filename, fileContent } = response.data;
 
@@ -79,13 +71,24 @@ export const fileExecute = async (setChangeResults, handleChangeResults, setIsPr
 
 
   // ToBeApplied - 템플릿 선택지
-  export const templateOption = async (_url, setOptions, setLoading) => {
+  export const templateOption = async (_url) => {
+    let apiUrl = '';
+
+    if (_url === "projects") {
+      apiUrl = `${BASE_URL}/projects`;
+    } else if (_url === "pdps") {
+      apiUrl = `${BASE_URL}/pdps`;
+    } else if (_url === "products") {
+      apiUrl = `${BASE_URL}/products`;
+    } else {
+      throw new Error('Invalid URL parameter');
+    }
+  
     try {
-        const response = await axios.get(`${BASE_URL}/${_url}`);
-        setOptions(response.data);
-      } catch (error) {
-        console.error("Error fetching product names:", error);
-      } finally {
-        setLoading(false);
-      }
+      const response = await axios.get(apiUrl);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error;
+    }
   }

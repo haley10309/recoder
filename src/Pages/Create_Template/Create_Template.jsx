@@ -105,14 +105,6 @@ const Create_template = () => {
     console.log('Assets saved successfully.');
     // You can perform any additional actions like sending data to the server
   };
-
-  
-  
-
-  
-  
-  
-  
   
 
   const handleSubmit = async (file) => {
@@ -125,7 +117,7 @@ const Create_template = () => {
     formData.append("txtfile", file);
   
     try {
-      const res = await axios.post(`${BASE_URL}/guide_upload`, formData, {
+      const res = await axios.post(`${BASE_URL}/guide-upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
   
