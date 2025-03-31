@@ -109,6 +109,7 @@ const Guide = () => {
                 <img className='img_guide' src={localization_guide_11}/>
                 <img className='img_guide' src={localization_guide_12}/>
                 <img className='img_guide' src={localization_guide_13}/>
+                <h2 className='explain_h2'>* 모든 시트가 병합될 때까지 6단계 반복</h2>
                 <img className='img_guide' src={localization_guide_14}/>
                 <img className='img_guide' src={localization_guide_15}/>
 
