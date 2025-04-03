@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "@Qa_Page/Qa_page.scss";
+import "@Qa_Page/qa_page.scss";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
@@ -7,11 +7,11 @@ import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import { Dropdown } from "primereact/dropdown";
 import SettingDropdown from "@/Components/ToBeApplied/SettingDropdown";
 import Country_code from "@/Components/Template_detail_set/Country_code";
-import call_template from "@/assets/search_for_template.png";
 import sad_face from "@/assets/no_value.png";
 import { countOccurrences } from "@/utils/codeUtils";
 import Frequency from "@Create_Template/Frequencty";
 import { BASE_URL } from "@/utils/routePath";
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 
 
 const Qa_page = () => {
@@ -327,11 +327,12 @@ const Qa_page = () => {
       )}
       {asWasCodes.length === 0 && !call_template_fail && (
         <>
+          {/* <div className="nothing_rendered">
+            <h2 className= "nothing_rendered_text">원하는 템플릿을 불러오세요.</h2>
+          </div> */}
           <div className="nothing_rendered">
-            <h2>원하는 템플릿을 불러오세요.</h2>
-          </div>
-          <div className="nothing_rendered">
-            <img className="nothing_randered_img" src={call_template} />
+            <ContentPasteSearchIcon  sx={{ fontSize: 40 }} className="nothing_randered_img" />
+            <h2 className= "nothing_rendered_text">Select each option to call the Template</h2>
             <br />
           </div>
         </>
