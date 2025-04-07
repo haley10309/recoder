@@ -103,7 +103,6 @@ const Country_code = ({ country_code, setCountry_code }) => {
     { name: "UZ_RU", code: "uz_ru" },
     { name: "UZ_UZ", code: "uz_uz" },
     { name: "VN", code: "vn" },
-    { name: "VN_ZA", code: "vn_za" },
     { name: "ZA", code: "za" },
   ];
 
