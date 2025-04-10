@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react';
 import '@Guide/Guide.scss'; // Import CSS for styling
 import guide_kv from '@/assets/guide/guide_kv.png';
 import create_template_nav from '@/assets/guide/create_template_nav.png';
-import create_template_1 from '@/assets/guide/create_template_1.png';
-import create_template_asset from '@/assets/guide/create_template_asset.png';
-import create_template_whole_ready from '@/assets/guide/create_template_whole_ready.png';
 import tobe_applied_1 from '@/assets/guide/tobe_applied_6.png';
 import tobe_applied_2 from '@/assets/guide/tobe_applied_7.png';
 import tobe_applied_3 from '@/assets/guide/tobe_applied_8.png';
@@ -94,7 +91,7 @@ const Guide = () => {
                 
                 
             </div>
-            <div id="section4" className="localization-section">
+            <div id="section4" className="guide-section">
                 <h1 className='guide_title'>로컬라이제이션 가이드</h1>
                 <img className='img_guide' src={localization_guide_1}/>
                 <img className='img_guide' src={localization_guide_2}/>
