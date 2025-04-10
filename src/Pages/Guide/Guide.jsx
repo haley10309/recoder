@@ -23,6 +23,7 @@ import localization_guide_12 from '@/assets/guide/localization_guide_12.png';
 import localization_guide_13 from '@/assets/guide/localization_guide_13.png';
 import localization_guide_14 from '@/assets/guide/localization_guide_14.png';
 import localization_guide_15 from '@/assets/guide/localization_guide_15.png';
+import firewall_setting1 from '@/assets/guide/firewall_setting1.png';
 
 const Guide = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -54,23 +55,36 @@ const Guide = () => {
             
             <nav className="anchor-nav">
                 <ul>
-                    <li><a href="#section1">템플릿 세팅 가이드</a></li>
-                    <li><a href="#section2">코드 적용 가이드</a></li>
-                    <li><a href="#section3">QA 가이드</a></li>
-                    <li><a href="#section4">로컬라이제이션 가이드</a></li>
+                    <li><a href="#section1">방화벽 신청 가이드</a></li>
+                    <li><a href="#section2">템플릿 세팅 가이드</a></li>
+                    <li><a href="#section3">코드 적용 가이드</a></li>
+                    <li><a href="#section4">QA 가이드</a></li>
+                    <li><a href="#section5">로컬라이제이션 가이드</a></li>
                 </ul>
             </nav>
+            <div id="section1" className="guide-section">
+                <h2 className='guide_title'>방화벽 신청</h2>
+                <h5>knox email {`>`} CPT System {`>`} IOPS(FireWall) {`>`} 신규 방화벽 신청 </h5>
+                <br/>
+                <li>구성 방식 : pc - 서버</li>
+                <li>신청 사유 : 자사 개발 프로그램 사용 및 운영</li>
+                <li>수신자 : 김영민 혹은 성지현 검색 후 선택</li>
+                <li>구분 : TCP</li>
+                <li>출발지 IP 대역 : 제일기획_수원_자회사방화벽_내부대역 | 목적지 IP 대역 : 제일기획_수원_자회사방화벽_서버대역</li>
+                <li>결제자 : '김석경'팀 리더 추가 후 선택</li>
+                <img className='firewall_img_guide' src={firewall_setting1}/>
+                
+            </div>
 
             
-            <div id="section1" className="guide-section">
+            <div id="section2" className="guide-section">
                 <h2 className='guide_title'>템플릿 세팅 가이드</h2>
-                {/* <p>여기에서는 파일을 어떻게 업로드하는지에 대한 설명이 들어갑니다.</p> */}
                 <img className='img_guide' src={create_template_nav}/>
                 
             </div>
 
              
-             <div id="section2" className="guide-section">
+             <div id="section3" className="guide-section">
                 <h1 className='guide_title'>코드 적용 가이드</h1>
                 <h2 className='explain_h2'>1. 템플릿 호출 방식</h2>
                 <img className='img_guide' src={tobe_applied_1}/>
@@ -80,7 +94,7 @@ const Guide = () => {
                 <img className='img_guide' src={tobe_applied_3}/>
                 
             </div>
-            <div id="section3" className="guide-section">
+            <div id="section4" className="guide-section">
                 <h2 className='guide_title'>QA 가이드</h2>
                 <h2 className='explain_h2'>1. 템플릿 호출 방식</h2>
                 <img className='img_guide' src={qa_check_1}/>
@@ -91,7 +105,7 @@ const Guide = () => {
                 
                 
             </div>
-            <div id="section4" className="guide-section">
+            <div id="section5" className="guide-section">
                 <h1 className='guide_title'>로컬라이제이션 가이드</h1>
                 <img className='img_guide' src={localization_guide_1}/>
                 <img className='img_guide' src={localization_guide_2}/>

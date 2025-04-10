@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+// import { useRecoilState } from "recoil";
 import "./Localization.scss";
 import Translation_country_code from "./localization_country_code";
 import { BASE_URL } from "../../utils/routePath";
@@ -7,6 +8,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+// import {  productNameState } from "@/recoil/atoms/state";
 import ShowDetail from './ShowDetail';
 
 const Localization = () => {
@@ -15,6 +17,8 @@ const Localization = () => {
     const [rows, setRows] = useState([]);
     const [validCountries, setValidCountries] = useState([]);
     const [english_copies, setEnglish_copies] = useState([]);
+    // const [productName, setProductName] = useRecoilState(productNameState);
+    // const [copyPairs, setCopyPairs] = useState([]);
 
     const handleTranslationFileChange = async (e) => {
         const file = e.target.files[0];
@@ -67,25 +71,20 @@ const Localization = () => {
     
             setRows((prevRows) => {
                 const updatedRows = [...prevRows];
-                updatedRows[index].status = response.data.status ? "success" : "error";
-    
-                if (response.data.results.length > 0) {
-                    updatedRows[index].downloadLink = response.data.results[0].file;
-                    updatedRows[index].status = response.data.results[0].status;
-                    updatedRows[index].untranslated_en = response.data.results[0].untranslatedEnglishCopies || [];
-                    updatedRows[index].untranslated_lo = response.data.results[0].untranslatedLocalCopies || [];
-                }
-    
+                updatedRows[index].status = response.data.results.length > 0 ? response.data.results[0].status : "error";
+                updatedRows[index].downloadLink = response.data.results[0]?.file || null;
+                updatedRows[index].untranslated_en = response.data.results[0]?.untranslatedEnglishCopies || [];
+                updatedRows[index].untranslated_lo = response.data.results[0]?.untranslatedLocalCopies || [];
                 return updatedRows;
             });
     
-            
-            if (response.data.results.length > 0) {
+            // Only proceed with file download if status is "success"
+            if (response.data.results.length > 0 && response.data.results[0].status === "success") {
                 const blob = new Blob([response.data.results[0].htmlContent], { type: "text/html" });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = response.data.results[0].file;
+                a.download = response.data.results[0].file; // File will not be downloaded if status is "error"
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -102,6 +101,8 @@ const Localization = () => {
     };
     
     
+
+    // Handle country selection change
     const handleCountryChange = (index, newCode) => {
         const updatedRows = [...rows];
         updatedRows[index].country_code = newCode;
@@ -202,6 +203,11 @@ const Localization = () => {
                         {row.status === "success" && <CheckCircleIcon className="success-icon" />}
                         {row.status === "error" && <ErrorIcon className="error-icon" />}
 
+                        {/* 다운로드 */}
+                        {/* {row.status==='success'?(<button className="download-button" onClick={() => handleDownloadFile(index)}>
+                            Download
+                        </button>):(<div></div>)} */}
+
                         {/* 자세히 보기 - 모달창 */}
                        
                         {row.untranslated_en && row.untranslated_en.length > 0 && (
@@ -226,7 +232,7 @@ const Localization = () => {
                 <button className="add-row-button" onClick={() => setRows([...rows, { id: Date.now(), country_code: "", htmlFiles: [], status: null }])}>
                     <AddCircleOutlineIcon /> Add Row
                 </button>  
-            </div>   
+            </div>    
         </div>
     );
 };
