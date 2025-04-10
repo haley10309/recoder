@@ -1,7 +1,7 @@
 import React from "react";
 import Rodal from "rodal";
 import "rodal/lib/rodal.css";
-import "./ShowDetail.scss"; // Import the SCSS file
+import "@Localization/ShowDetail.scss";
 
 class ShowDetail extends React.Component {
     constructor(props) {

@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
-// import { useRecoilState } from "recoil";
-import "./Localization.scss";
+import "@Localization/Localization.scss";
 import Translation_country_code from "./localization_country_code";
-import { BASE_URL } from "../../utils/routePath";
+import { BASE_URL } from "@/utils/routePath";
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-// import {  productNameState } from "@/recoil/atoms/state";
-import ShowDetail from './ShowDetail';
+import ShowDetail from '@Localization/ShowDetail';
 
 const Localization = () => {
     const [translationFile, setTranslationFile] = useState(null);
@@ -17,8 +15,6 @@ const Localization = () => {
     const [rows, setRows] = useState([]);
     const [validCountries, setValidCountries] = useState([]);
     const [english_copies, setEnglish_copies] = useState([]);
-    // const [productName, setProductName] = useRecoilState(productNameState);
-    // const [copyPairs, setCopyPairs] = useState([]);
 
     const handleTranslationFileChange = async (e) => {
         const file = e.target.files[0];
@@ -78,13 +74,12 @@ const Localization = () => {
                 return updatedRows;
             });
     
-            // Only proceed with file download if status is "success"
             if (response.data.results.length > 0 && response.data.results[0].status === "success") {
                 const blob = new Blob([response.data.results[0].htmlContent], { type: "text/html" });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = response.data.results[0].file; // File will not be downloaded if status is "error"
+                a.download = response.data.results[0].file;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -100,9 +95,7 @@ const Localization = () => {
         }
     };
     
-    
 
-    // Handle country selection change
     const handleCountryChange = (index, newCode) => {
         const updatedRows = [...rows];
         updatedRows[index].country_code = newCode;
@@ -116,7 +109,6 @@ const Localization = () => {
         console.log(updatedRows[index].htmlFiles[0].name);
         setRows(updatedRows);
     };
-
 
     
     return (
@@ -133,48 +125,16 @@ const Localization = () => {
                     
                 </label>
             </div>
-            {/* 영어 카피 렌더링 */}
-{/* {english_copies.length > 0 && (
-    <div className="english_copy_section">
-        <h3>English Copy</h3>
-        <ul>
-            {english_copies.map((copy, index) => (
-                <li key={index}>{copy}</li>
-            ))}
-        </ul>
-    </div>
-)} */}
 
-{/* 로컬 카피 렌더링 */}
-{/* {Object.keys(translations).length > 0 && (
-    <div className="translations_section">
-        <h3>Localized Translations</h3>
-        {Object.entries(translations).map(([countryCode, localCopies]) => (
-            <div key={countryCode} className="translation_each_row">
-                <h4>{countryCode}</h4>
-                <ul>
-                    {localCopies.map((translation, index) => (
-                        <li key={index}>{translation}</li>
-                    ))}
-                </ul>
-            </div>
-        ))}
-    </div>
-)} */}
-
-
-            {/* Dynamic Rows */}
             <div className="translation-rows">
                 {rows.map((row, index) => (
                     <div key={index} className="translation-row">
-                        {/* Country Selection Dropdown */}
                         <Translation_country_code 
                             country_code={row.country_code} 
                             validCountries={validCountries} 
                             onChange={(code) => handleCountryChange(index, code)} 
                         />
 
-                        {/* HTML File Upload */}
                         <label className="file-upload-label">
                             <input
                                 type="file"
@@ -183,7 +143,6 @@ const Localization = () => {
                                 onChange={(e) => handleHtmlFileChange(index, e)}
                                 hidden
                             />
-                             {/* <span className="txt-file-upload-button">Upload HTML</span> */}
                             {row.htmlFiles && row.htmlFiles.length === 0 ? (
                                 <span className="txt-file-upload-button">Upload rc01</span>
                             ) : (
@@ -193,22 +152,12 @@ const Localization = () => {
                             )}
                         </label>
 
-
-                        {/* 변환 */}
                         <button className="translate-button" onClick={() => handleTranslate(index)}>
                             Translate
                         </button>
 
-                        {/* 변환 결과 */}
                         {row.status === "success" && <CheckCircleIcon className="success-icon" />}
                         {row.status === "error" && <ErrorIcon className="error-icon" />}
-
-                        {/* 다운로드 */}
-                        {/* {row.status==='success'?(<button className="download-button" onClick={() => handleDownloadFile(index)}>
-                            Download
-                        </button>):(<div></div>)} */}
-
-                        {/* 자세히 보기 - 모달창 */}
                        
                         {row.untranslated_en && row.untranslated_en.length > 0 && (
                             <ShowDetail 
@@ -220,7 +169,6 @@ const Localization = () => {
                     </div>
                 ))}
 
-                {/* Show message if no translations available */}
                 {Object.keys(translations).length === 0 && (
                     <div className="nothing_rendered">
                         <FileUploadIcon sx={{ fontSize: 40 }} className="nothing_randered_img" />
@@ -228,7 +176,6 @@ const Localization = () => {
                     </div>
                 )}
                 
-                {/* Add Row Button */}
                 <button className="add-row-button" onClick={() => setRows([...rows, { id: Date.now(), country_code: "", htmlFiles: [], status: null }])}>
                     <AddCircleOutlineIcon /> Add Row
                 </button>  

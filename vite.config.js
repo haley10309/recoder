@@ -26,6 +26,7 @@ export default ({ mode }) => {
         { find: "@Translation", replacement: "/src/Pages/Translation" },
         { find: "@Components", replacement: "/src/Components" },
         { find: "@Pages", replacement: "/src/Pages" },
+        { find: "@Localization", replacement: "/src/Pages/Localization" },
         
       ],
       
