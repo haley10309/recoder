@@ -1,17 +1,13 @@
-import React, { useEffect, useState,useRef  } from "react";
-import "@Create_Template/Create_Template.scss";
-
-import Asset_Template from '@Create_Template/Asset_template';
-import BasicInput from "@/Components/ToBeApplied/Input";
-import AddIcon from "@mui/icons-material/Add";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import React, { useState  } from "react";
 import axios from "axios";
-import { kind_countOccurrences as countOccurrencesUtil } from "@/utils/codeUtils";
-import Frequency from "@Create_Template/Frequencty";
 import { BASE_URL } from "@/utils/routePath";
-
-
-
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { kind_countOccurrences as countOccurrencesUtil } from "@/utils/codeUtils";
+import AddIcon from "@mui/icons-material/Add";
+import Frequency from "@Create_Template/Frequency";
+import CheckTemplate from "./CheckTemplate";
+import UploadFiles from "./UploadFiles";
+import "@Create_Template/Create_Template.scss";
 
 const Create_template = () => {
   const [asWasCodes, setAsWasCodes] = useState(["", "", ""]);
@@ -21,183 +17,19 @@ const Create_template = () => {
   const [asset_toBe, setAsset_toBe] = useState([]);
   const [asset_pptNo, setAsset_pptNo] = useState([]);
   const [templateID, setTemplateID] = useState("");
-
-  const [txtFile, setTxtFile]  = useState(null); // 템플릿 호출 파일
-  const fileInputRef = useRef(null);
-  const [file, setFile] = useState(null); // State for the uploaded file
-  const [fileContent, setFileContent] = useState(""); //original code file
-  const [isTemplateAvailable, setIsTemplateAvailable] = useState(false); //템플릿을 사용할 수 있을 지에 여부
-  const [save_type, setSave_type] = useState("");
-  const initial_droppable_id = "as_was_to_be_row";//droppable id 초기 변수
-  // HTML 관련 데이터
-  const [notes, setNotes] = useState([]);//ppt 내용 저장 배열
-
-  //프로젝트 정보 (컴포넌트에서 가져옴)
   const [projectName, setProjectName] = useState("");
   const [PDP, setPDP] = useState("");
   const [productName, setProductName] = useState("");
-
-  const [translation_file, setTranslation_File] = useState(null); // 번역 파일
-  const [validCountries, setValidCountries] = useState([]); //유효한 나라 권역인지 확인된 나라 리스트
-  const [error, setError] = useState(null);
-  const [local_copies,setLocal_copies] = useState([]); //번역 덱
-  const [english_copies,setEnglish_copies] = useState([]); //원문 영어 덱
-
-  const handle_Translation_FileChange = (e) => {
-    const file = e.target.files[0];
-    console.log("Selected file:", file); // Verify file is selected
-    setTranslation_File(file);
-    translation_handleFile(file);
-  };
-  
-
-  const translation_handleFile = async (file) => {
-    if (!file) {
-        setError("Please select a file.");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    console.log("Sending file:", file); // Check the file object before sending
-
-    try {
-        // Sending the file to the backend
-        const response = await axios.post(`${BASE_URL}/translation_upload`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
-
-        console.log("Response:", response.data);
-
-        const translations = response.data.translations; // Assuming the backend returns this
-        const englishCopy = response.data.englishCopy; // English copy sent from the backend
-
-        // Object to hold translations for each country code
-        
-
-        // Use Object.entries to iterate over the translations object
-        Object.entries(translations).forEach(([countryCode, translationArray]) => {
-            if (Array.isArray(translationArray) && translationArray.length > 0) {
-                if (!local_copies[countryCode]) {
-                    local_copies[countryCode] = [];
-                }
-                // Store translations in the correct country code array
-                local_copies[countryCode].push(...translationArray);
-            }
-        });
-
-        // Log or update the state with the categorized translations
-        console.log("Categorized Translations:", local_copies);
-
-        setValidCountries(local_copies); // Store the categorized translations in state
-        setEnglish_copies(englishCopy); // Store the English copy in state
-        setError(null); // Clear any errors
-    } catch (err) {
-        console.error("Upload error:", err); // This will log any error
-        setError("Failed to upload file.");
-    }
-};
-
-
-  const handleAssetSave = () => {
-    // You can handle the logic for saving asset data here
-    console.log('Assets saved successfully.');
-    // You can perform any additional actions like sending data to the server
-  };
-  
-
-  const handleSubmit = async (file) => {
-    if (!file) {
-      alert("Please select a file first.");
-      return;
-    }
-  
-    const formData = new FormData();
-    formData.append("txtfile", file);
-  
-    try {
-      const res = await axios.post(`${BASE_URL}/guide-upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-  
-      console.log("Server Response:", res.data); // ✅ 디버깅
-  
-      const { pptNos = [], asWasCodes = [], toBeCodes = [] } = res.data;
-  
-      if (!Array.isArray(pptNos) || !Array.isArray(asWasCodes) || !Array.isArray(toBeCodes)) {
-        throw new Error("Invalid data format from server");
-      }
-  
-      // 🔄 Reset all states
-      setPptNos([]);
-      setAsWasCodes([]);
-      setToBeCodes([]);
-      setAsset_asWas([]);
-      setAsset_toBe([]);
-      setAsset_pptNo([]);
-  
-      // ✅ Separate regular and asset data
-      const regularPptNos = [];
-      const regularAsWasCodes = [];
-      const regularToBeCodes = [];
-  
-      const assetPptNos = [];
-      const assetAsWasCodes = [];
-      const assetToBeCodes = [];
-  
-      pptNos.forEach((pptNo, idx) => {
-        const asWasCode = asWasCodes[idx] || "";
-        const toBeCode = toBeCodes[idx] || "";
-  
-        // 👉 Check if either asWasCode or toBeCode starts with "//"
-        if (asWasCode.trim().startsWith("//") || toBeCode.trim().startsWith("//")) {
-          // Move to asset arrays
-          assetPptNos.push(pptNo);
-          assetAsWasCodes.push(asWasCode);
-          assetToBeCodes.push(toBeCode);
-        } else {
-          // Move to regular arrays
-          regularPptNos.push(pptNo);
-          regularAsWasCodes.push(asWasCode);
-          regularToBeCodes.push(toBeCode);
-        }
-      });
-  
-      // 🔥 Update state with separated data
-      setPptNos(regularPptNos);
-      setAsWasCodes(regularAsWasCodes);
-      setToBeCodes(regularToBeCodes);
-  
-      setAsset_pptNo(assetPptNos);
-      setAsset_asWas(assetAsWasCodes);
-      setAsset_toBe(assetToBeCodes);
-  
-      console.log("Regular Data:", {
-        pptNos: regularPptNos,
-        asWasCodes: regularAsWasCodes,
-        toBeCodes: regularToBeCodes,
-      });
-  
-      console.log("Asset Data:", {
-        assetPptNos,
-        assetAsWasCodes,
-        assetToBeCodes,
-      });
-  
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("파일 업로드에 실패했습니다.");
-    }
-  };
-  
-  
+  const [file, setFile] = useState(null);
+  const [fileContent, setFileContent] = useState("");
+  const [save_type, setSave_type] = useState("");
 
   const addTextArea = () => {
     setAsWasCodes([...asWasCodes, ""]);
     setToBeCodes([...toBeCodes, ""]);
     setPptNos([...pptNos, ""]);
   };
+
   const addAssetArea = () =>{
     setAsset_asWas((prev) => [...prev,""]);
     setAsset_toBe((prev) => [...prev,""] );
@@ -209,137 +41,27 @@ const Create_template = () => {
     setToBeCodes(toBeCodes.filter((_, i) => i !== index));
     setPptNos(pptNos.filter((_, i) => i !== index));
   };
-  const removeAssetArea = (index) => {
-    setAsset_asWas(asset_asWas.filter((_, i) => i !== index));
-    setAsset_toBe(asset_toBe.filter((_, i) => i !== index));
-    setAsset_pptNo(asset_pptNo.filter((_, i) => i !== index));
-  };
-  const handlePptFileChange = (event) => {
-    const selectedFile = event.target.files[0]; // Get the first selected file
-    if (!selectedFile) return; // Prevent errors if no file is selected
-
-    setTxtFile(selectedFile); // Update state
-
-    console.log("File selected:", selectedFile); // Debugging
-    handleSubmit(selectedFile); // Pass selectedFile directly
-};
-
-  // Function to handle save button click
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0]; // Get the first selected file
-    setFile(selectedFile); // Store the selected file in state
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setFileContent(event.target.result); // Store the file content in state
-        console.log("File content read successfully:", event.target.result); // Debugging
-      };
-      reader.readAsText(selectedFile); // Read the file as text
-    } else {
-      console.log("No file selected"); // Debugging
-    }
-  };
-  const checkForExistingTemplate = async () => {
-    try {
-      const response = await axios.post(`${BASE_URL}/check-template`, {
-        projectName,
-        PDP,
-        productName,
-      });
-  
-      if (response.data.length > 0) {
-        alert("이미 존재하는 템플릿이 있습니다.");
-        setSave_type("update");
-  
-        const detailsResponse = await axios.post(`${BASE_URL}/get-template-details`, {
-          projectName,
-          PDP,
-          productName,
-        });
-  
-        console.log("Server Response:", detailsResponse.data); // Debugging
-        const templateId = detailsResponse.data?.templateId;
-        setTemplateID(templateId);
-  
-        // Extract the aswas_tobe_list array from response
-        const details = detailsResponse.data?.aswas_tobe_list || [];
-  
-        if (!Array.isArray(details)) {
-          throw new Error("Invalid data format: Expected an array but got " + typeof details);
-        }
-  
-        // Reset states before updating
-        setPptNos([]);
-        setAsWasCodes([]);
-        setToBeCodes([]);
-        setAsset_asWas([]);
-        setAsset_toBe([]);
-        setAsset_pptNo([]);
-  
-        // Process response data
-        setPptNos((prev) => [...prev, ...details.map((item) => item.ppt_no || "")]);
-        setAsWasCodes((prev) => [
-          ...prev,
-          ...details.filter((item) => !(item.aswas_code?.trim().startsWith("//"))).map((item) => item.aswas_code?.trim() || ""),
-        ]);
-        setToBeCodes((prev) => [
-          ...prev,
-          ...details.filter((item) => !(item.tobe_code?.trim().startsWith("//"))).map((item) => item.tobe_code?.trim() || ""),
-        ]);
-  
-        setAsset_asWas((prev) => [
-          ...prev,
-          ...details.filter((item) => item.aswas_code?.trim().startsWith("//")).map((item) => item.aswas_code?.trim() || ""),
-        ]);
-        setAsset_pptNo((prev) => [
-          ...prev,
-          ...details.filter((item) => item.aswas_code?.trim().startsWith("//")).map((item) => item.ppt_no || ""),
-        ]);
-        setAsset_toBe((prev) => [
-          ...prev,
-          ...details.filter((item) => item.tobe_code?.trim().startsWith("//")).map((item) => item.tobe_code?.trim() || ""),
-        ]);
-        
-      } else {
-        alert("새로운 템플릿을 추가할 수 있습니다.");
-        setSave_type("create");
-      }
-    } catch (error) {
-      console.error("Error checking for existing templates:", error);
-      alert("템플릿 확인 중 오류가 발생했습니다.");
-    }
-  };
-  
-  
 
   const handleSave = async () => {
-
-    // if (!allFieldsFilled()) {
-    //   alert("공백 없이 모든 필드를 채워야 합니다.");
-    //   return;
-    // }
-    // Combine the original and asset-related arrays
     const combinedPptNos = [...pptNos, ...asset_pptNo];
     const combinedAsWasCodes = [...asWasCodes, ...asset_asWas];
     const combinedToBeCodes = [...toBeCodes, ...asset_toBe];
   
-    // Create a combined list of asWas and toBe codes
     const aswasTobeList = combinedAsWasCodes.map((_, index) => ({
       ppt_no: combinedPptNos[index],
       aswas_code: combinedAsWasCodes[index],
       tobe_code: combinedToBeCodes[index],
     }));
   
-    // Create FormData object for multipart/form-data
     const formData = new FormData();
     formData.append("templateId",templateID);
     formData.append("hotfix_name", projectName);
     formData.append("pdp_name", PDP);
     formData.append("product", productName);
   
-    const formattedDate = new Date().toISOString().split("T")[0]; // Get current date as YYYY-MM-DD
-    formData.append("create_date", formattedDate); // Use formatted date
-    formData.append("aswas_tobe_list", JSON.stringify(aswasTobeList)); // Append the combined list
+    const formattedDate = new Date().toISOString().split("T")[0];
+    formData.append("create_date", formattedDate);
+    formData.append("aswas_tobe_list", JSON.stringify(aswasTobeList));
   
     try {
       let response;
@@ -361,7 +83,7 @@ const Create_template = () => {
         );
       }
   
-      console.log("Data sent successfully", aswasTobeList);
+      // console.log("Data sent successfully", aswasTobeList);
       alert("템플릿이 성공적으로 저장되었습니다");
     } catch (error) {
       console.error(
@@ -371,11 +93,9 @@ const Create_template = () => {
       alert("템플릿 저장 중 오류가 발생하였습니다");
     }
   };
-  
-  
 
   const onDragEnd = (result) => {
-    if (!result.destination) return; // If dropped outside, do nothing
+    if (!result.destination) return;
 
     const reorderArray = (list, startIndex, endIndex) => {
       const result = Array.from(list);
@@ -388,35 +108,18 @@ const Create_template = () => {
     setToBeCodes((prev) => reorderArray(prev, result.source.index, result.destination.index));
     setPptNos((prev) => reorderArray(prev, result.source.index, result.destination.index));
   };
-  
-  const handleInputChange = (setter, index, value) => {
-    setter((prev) => {
-      const newArray = [...prev];
-      newArray[index] = value;
-      return newArray;
-    });
-  };
-
-  
 
   const countOccurrences = (asWasCode) => {
     if (!fileContent) {
-      return ""; // 파일 내용이나 asWasCode가 없을 때의 메시지
-    }else if (!asWasCode){
+      return "";
+    } else if (!asWasCode){
       return 0;
     }
-  
-    // countOccurrencesUtil을 호출하여 결과를 가져옵니다.
     const occurrenceCount = countOccurrencesUtil(fileContent, asWasCode);
-    return occurrenceCount !== "null" ? occurrenceCount : "0"; // null이 아닌 경우에만 반환
+    return occurrenceCount !== "null" ? occurrenceCount : "0";
   };
 
-  // Normalize function
-  function normalizeCode(code) {
-    return code.replace(/\s+/g, ""); // 모든 공백 및 줄바꿈 제거
-  }
   const allFieldsFilled = () => {
-    // Check if all asWasCodes and toBeCodes are filled
     return (
       asWasCodes.every((code) => code.trim() !== "") &&
       toBeCodes.every((code) => code.trim() !== "")&&
@@ -425,296 +128,115 @@ const Create_template = () => {
     );
   };
 
-  // Replace function (for reference)
-  function replaceCode(originalCode, asWasCode, toBeCode) {
-    const normalizedOriginal = normalizeCode(originalCode);
-    const normalizedAsWas = normalizeCode(asWasCode);
-
-    const startIndex = normalizedOriginal.indexOf(normalizedAsWas);
-    if (startIndex === -1) {
-      console.log("일치하는 부분이 없습니다.");
-      return originalCode;
-    }
-
-    let realStartIndex = -1;
-    let realEndIndex = -1;
-    for (let i = 0, j = 0; i < originalCode.length; i++) {
-      if (/\s/.test(originalCode[i])) {
-        continue;
-      }
-      if (j === startIndex && realStartIndex === -1) {
-        realStartIndex = i;
-      }
-      if (j === startIndex + normalizedAsWas.length - 1) {
-        realEndIndex = i;
-        break;
-      }
-      j++;
-    }
-
-    if (realStartIndex === -1 || realEndIndex === -1) {
-      console.log("일치하는 부분을 찾을 수 없습니다.");
-      return originalCode;
-    }
-
-    const newCode =
-      originalCode.slice(0, realStartIndex) +
-      toBeCode +
-      originalCode.slice(realEndIndex + 1);
-    return newCode;
-  }
-  const handleProjectNameChange = (projectName) => {
-    setProjectName(projectName);
-  };
-  const handlePdpChange = (PDP) => {
-    setPDP(PDP);
-  };
-  const handleProductNameChange = (productName) => {
-    setProductName(productName);
-  };
-  const handleAssetAsWasChange = (index, value) => {
-    setAsset_asWas(prev => {
-      const newAssetAsWas = [...prev];
-      newAssetAsWas[index] = value;
-      return newAssetAsWas;
-    });
-  };
-  const handleAssetToBeChange = (index, value) => {
-    setAsset_toBe(prev => {
-      const newAssetToBe = [...prev];
-      newAssetToBe[index] = value;
-      return newAssetToBe;
-    });
-  };
-  const handleAssetPptNoChange = (index, newValue) => {
-    setAsset_pptNo((prev) => {
-      const updatedPptNos = [...prev]; // Clone array
-      updatedPptNos[index] = newValue; // Update specific index
-      console.log("Updated asset_pptNo:", updatedPptNos); // Debugging
-      return updatedPptNos;
-    });
-  };
-  
   return (
-    <div className="Create_Template">
-      
-   
-      <div className="flex gap-14 p-10 justify-between bg-white shadow-xl rounded-b-[20px] ml-16 mr-16">
-          <div className="flex w-full gap-14 justify-center items-center">
-          <BasicInput
-              _inputProps={{ placeholder: "S24" }}
-            _title={"프로젝트명"}
-            _onChange={handleProjectNameChange}
-            _value={projectName}
-          />
-           <BasicInput
-            _inputProps={{ placeholder: "Features" }}
-            _title={"PDP"}
-            _onChange={handlePdpChange}
-            _value={PDP}
-          />
-           <BasicInput
-            _inputProps={{ placeholder: "B5" }}
-            _title={"Product Name"}
-            _onChange={handleProductNameChange}
-            _value={productName}
-          />
-          </div>
-          <div className="flex justify-center items-center">
-            <button
-              className="bg-black text-white font-semibold text-[14px] rounded-[20px] w-[150px] shadow-xl h-[35px]"
-              onClick={checkForExistingTemplate}
-            >
-              템플릿 생성
-            </button>
-          </div>
-        </div>
-        <div className="content-div">
-        
-          
+    <div className="bg-[#f7f7f7] px-40 py-20">
+      <CheckTemplate setSave_type={setSave_type} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setAsset_asWas={setAsset_asWas} setTemplateID={setTemplateID} setPptNos={setPptNos} setAsset_toBe={setAsset_toBe} setAsset_pptNo={setAsset_pptNo} setProjectName={setProjectName} setPDP={setPDP} setProductName={setProductName} projectName={projectName} PDP={PDP} productName={productName} />
 
-             
-              <div className="Run_Test_File_Upload">
-                <div className="file-upload-container">
-                  <form>
-                    <div className="guide_upload_div">
-                      <label className="file-upload-label">
-                          <input
-                              type="file"
-                              accept=".txt"
-                              ref={fileInputRef}
-                              onChange={handlePptFileChange}
-                              style={{ display: "none" }}
-                          />
-                          <span
-                              className="txt-file-upload-button"
-                              onClick={(e) => e.stopPropagation()} 
-                          >
-                              가이드 업로드
-                          </span>
-                          
-                      </label>
-                      {txtFile ? (<h3 className="txtfile_title">{txtFile.name}</h3>):(<></>)}</div>
-                      
-                  </form>
-              </div>
-                
+      <UploadFiles file={file} asset_pptNo={asset_pptNo} asset_asWas={asset_asWas} setAsset_asWas={setAsset_asWas} asset_toBe={asset_toBe} setAsset_toBe={setAsset_toBe} addAssetArea={addAssetArea} setAsset_pptNo={setAsset_pptNo} fileContent={fileContent} setFile={setFile} setFileContent={setFileContent} setPptNos={setPptNos} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} />
 
-                <div className="Run_test_button">
-                {file ? (
-                  <label htmlFor="file-upload" className="file-upload-label">
-                    {file.name}
-                  </label>
-                ) : (
-                  <label htmlFor="file-upload" className="file-upload-label">
-                    
-                  </label>
-                )}
-                  <input
-                    type="file"
-                    id="file-upload"
-                    onChange={handleFileChange}
-                    accept=".js,.html,.css"
-                    className="file-upload-input"
-                  />
-                  <button
-                    type="button"
-                    className="file-upload-button"
-                    onClick={() => document.getElementById("file-upload").click()}
-                  >
-                    Run Test
-                  </button>
-                  
-                  <Asset_Template 
-                    asset_pptNo={asset_pptNo}
-                    asset_asWas={asset_asWas} 
-                    asset_toBe={asset_toBe} 
+      <div className="flex flex-col rounded-[10px] bg-white border border-gray-300 text-[#32383E] p-8">
+        <h2 className="font-bold text-black mb-5 text-[16px]">AS-WAS / TO-BE 코드 입력</h2>
+        <div>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId={`droppable-${Math.random()}`}>
+              {(provided) => (
+                <ul className="as_was_to_be_row"{...provided.droppableProps} ref={provided.innerRef} >
+                  {asWasCodes.map((_, index) => (
+                    <Draggable key={index.toString()} draggableId={`item-${index}`} index={index}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="as_was_to_be_div"
+                        >
+                          <div className="num_type">
+                            <div className="ppt_no_col">
+                              <label className="ppt_no">PPT NO.</label>
+                              <input
+                                type="text"
+                                className="ppt_no_text"
+                                value={pptNos[index]}
+                                onChange={(e) => {
+                                  const newPptNos = [...pptNos];
+                                  newPptNos[index] = e.target.value;
+                                  setPptNos(newPptNos);
+                                }}
+                              />
+                            </div>
+                          </div>
 
-                    addAssetArea={addAssetArea} 
-                    removeAssetArea={removeAssetArea}
-                    isTemplateAvailable={isTemplateAvailable}
-                    setAsset_asWas={handleAssetAsWasChange} // Pass down the handler
-                    setAsset_toBe={handleAssetToBeChange}   // Pass down the handler
-                    setAsset_pptNo={handleAssetPptNoChange}
-                    fileContent={fileContent}
-                    onSave={handleAssetSave} 
-                  />
-                </div>
-              </div>
-              
-
-              <div className="title_as_to_div">
-              <div className="Out_div"><h4 className="title_as">As Was</h4></div>
-              <div className="In_div"><h4 className="title_to">To Be</h4></div>
-              
-              
-            </div>
-
-
-             
-              <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId={`droppable-${Math.random()}`}>
-            {(provided) => (
-              <ul className="as_was_to_be_row"{...provided.droppableProps} ref={provided.innerRef} >
-                {asWasCodes.map((_, index) => (
-                  <Draggable key={index.toString()} draggableId={`item-${index}`} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="as_was_to_be_div"
-                      >
-                        <div className="num_type">
-                          <div className="ppt_no_col">
-                            <label className="ppt_no">PPT NO.</label>
-                            <input
-                              type="text"
-                              className="ppt_no_text"
-                              value={pptNos[index]}
+                          <div className="as_was_div">
+                            <textarea
+                              id={`asWasCode${index}`}
+                              rows="5"
+                              value={asWasCodes[index]}
                               onChange={(e) => {
-                                const newPptNos = [...pptNos];
-                                newPptNos[index] = e.target.value;
-                                setPptNos(newPptNos);
+                                const newCodes = [...asWasCodes];
+                                newCodes[index] = e.target.value;
+                                setAsWasCodes(newCodes);
                               }}
+                              placeholder="Enter the as-was code here"
+                              className="code-textarea"
+                            />
+                            <div className="duplicate-count">
+                              <Frequency/>
+                            {countOccurrences(asWasCodes[index])}
+                        </div>
+                          </div>
+
+                          <div className="to_be_div">
+                            <textarea
+                              id={`toBeCode${index}`}
+                              rows="5"
+                              value={toBeCodes[index]}
+                              onChange={(e) => {
+                                const newCodes = [...toBeCodes];
+                                newCodes[index] = e.target.value;
+                                setToBeCodes(newCodes);
+                              }}
+                              placeholder="Enter the to-be code here"
+                              className="code-textarea"
                             />
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => removeTextArea(index)}
+                            className="remove_button"
+                          >
+                            삭제
+                          </button>
                         </div>
-
-                        <div className="as_was_div">
-                          <textarea
-                            id={`asWasCode${index}`}
-                            rows="5"
-                            value={asWasCodes[index]}
-                            onChange={(e) => {
-                              const newCodes = [...asWasCodes];
-                              newCodes[index] = e.target.value;
-                              setAsWasCodes(newCodes);
-                            }}
-                            placeholder="Enter the as-was code here"
-                            className="code-textarea"
-                          />
-                          <div className="duplicate-count">
-                            <Frequency/>
-                          {countOccurrences(asWasCodes[index])}
-                      </div>
-                        </div>
-
-                        <div className="to_be_div">
-                          <textarea
-                            id={`toBeCode${index}`}
-                            rows="5"
-                            value={toBeCodes[index]}
-                            onChange={(e) => {
-                              const newCodes = [...toBeCodes];
-                              newCodes[index] = e.target.value;
-                              setToBeCodes(newCodes);
-                            }}
-                            placeholder="Enter the to-be code here"
-                            className="code-textarea"
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeTextArea(index)}
-                          className="remove_button"
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    )}
-                  </Draggable>
-                  
-                  ))}
-                {provided.placeholder}
-              </ul>
-            )}
-          </Droppable>
-        </DragDropContext>
-
+                      )}
+                    </Draggable>
+                    
+                    ))}
+                  {provided.placeholder}
+                </ul>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </div>
         <div className="add_more_div">
           <button type="button" onClick={addTextArea} className="add_more_button">
             <AddIcon />
             <span className="add_button_text">항목 추가</span>
           </button>
         </div>
+      </div>
 
-        <div className="save_button_div">
+      <div className="save_button_div">
         <button
           type="button"
           className="save_button"
           onClick={handleSave}
-           disabled={!allFieldsFilled()} // Disable button if not all fields are filled
+          disabled={!allFieldsFilled()}
         >
           {save_type === "update" && `수정`}
           {save_type === "create" && `생성`}
           {save_type !== "update" && save_type !== "create" && `저장`}
         </button>
-        </div>
-
-     
-        </div>
-     
+      </div>
     </div>
   );
 };

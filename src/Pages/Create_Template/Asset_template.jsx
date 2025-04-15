@@ -43,7 +43,7 @@ class Asset_Template extends React.Component {
   render() {
     return (
       <div className='asset-template'>
-        <button className='asset_upload_button' onClick={this.show.bind(this)}>Asset</button>
+        <button className='flex justify-center items-center bg-[#F0E100] text-white font-[600] text-[13px] rounded-[10px] h-[40px] w-[130px]' onClick={this.show.bind(this)}>Asset</button>
 
         <Rodal width={1000} height={700} visible={this.state.visible} onClose={this.hide.bind(this)}>
           <div>

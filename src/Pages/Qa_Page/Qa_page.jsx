@@ -9,7 +9,7 @@ import SettingDropdown from "@/Components/ToBeApplied/SettingDropdown";
 import Country_code from "@/Components/Template_detail_set/Country_code";
 import sad_face from "@/assets/no_value.png";
 import { countOccurrences } from "@/utils/codeUtils";
-import Frequency from "@Create_Template/Frequencty";
+import Frequency from "@Create_Template/Frequency";
 import { BASE_URL } from "@/utils/routePath";
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 
