@@ -8,6 +8,8 @@ import Qa_page from "@Pages/Qa_Page/Qa_page";
 import Footer from "@Components/Nav/Footer";
 import Guide from "@Pages/Guide/Guide";
 import Localization from "@Pages/Localization/Localization";
+import LocalizationSetting from "./Pages/Localization/LocalizationSetting";
+import LocalizationVersion1 from "./Pages/Localization/LocalizationVersion1";
 
 function App() {
   return (
@@ -24,7 +26,9 @@ function App() {
               <Route path="/create-template" element={<Create_template />} />
               <Route path="/tobe-applied" element={<ToBeApplied />} />
               <Route path="/qa-check" element={<Qa_page />} />
+              <Route path="/localizationversion1" element={<LocalizationVersion1 />} />
               <Route path="/localization" element={<Localization />} />
+              <Route path="/localization-setting" element={<LocalizationSetting />} />
               <Route path="/guide" element={<Guide />} />
             </Routes>
             <Footer />

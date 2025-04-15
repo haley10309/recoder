@@ -28,51 +28,89 @@ const Header = () => {
 
       <div className="flex flex-col gap-4">
         <button
-          className={`flex items-start gap-2 py-4 rounded-r-[5px] ${isActive("/create-template") ? "bg-[#8C8C8C] font-[500]" : "hover:bg-[#8C8C8C]"}`}
+          className={`flex items-start gap-2 py-4 rounded-r-[5px] ${
+            isActive("/create-template")
+              ? "bg-[#8C8C8C] font-[500]"
+              : "hover:bg-[#8C8C8C]"
+          }`}
           onClick={() => handleNavigate("/create-template")}
         >
-          <span className={`w-[5px] h-[100%] ${isActive("/create-template") ? "bg-blue-500" : ""}`} />
-          <img
-            className="w-[22px]"
-            src={navTemplate}
-            alt="Template"
+          <span
+            className={`w-[5px] h-[100%] ${
+              isActive("/create-template") ? "bg-blue-500" : ""
+            }`}
           />
+          <img className="w-[22px]" src={navTemplate} alt="Template" />
           Template Setting
         </button>
         <button
-          className={`flex items-center gap-3  py-4 rounded-r-[5px] ${isActive("/tobe-applied") ? "bg-[#8C8C8C]" : "hover:bg-[#8C8C8C]"}`}
+          className={`flex items-center gap-3  py-4 rounded-r-[5px] ${
+            isActive("/tobe-applied") ? "bg-[#8C8C8C]" : "hover:bg-[#8C8C8C]"
+          }`}
           onClick={() => handleNavigate("/tobe-applied")}
         >
-          <span className={`w-[5px] h-[100%] ${isActive("/tobe-applied") ? "bg-blue-500" : ""}`} />
-          <img
-            className="w-[20px]"
-            src={navApply}
-            alt="Apply"
+          <span
+            className={`w-[5px] h-[100%] ${
+              isActive("/tobe-applied") ? "bg-blue-500" : ""
+            }`}
           />
+          <img className="w-[20px]" src={navApply} alt="Apply" />
           Hotfix
         </button>
         <button
-          className={`flex items-center gap-3  py-4 rounded-r-[5px] ${isActive("/qa-check") ? "bg-[#8C8C8C]" : "hover:bg-[#8C8C8C]"}`}
+          className={`flex items-center gap-3  py-4 rounded-r-[5px] ${
+            isActive("/qa-check") ? "bg-[#8C8C8C]" : "hover:bg-[#8C8C8C]"
+          }`}
           onClick={() => handleNavigate("/qa-check")}
         >
-          <span className={`w-[5px] h-[100%]  ${isActive("/qa-check") ? "bg-blue-500" : ""}`} />
-          <img
-            className="w-[20px]"
-            src={navQa}
-            alt="QA"
+          <span
+            className={`w-[5px] h-[100%]  ${
+              isActive("/qa-check") ? "bg-blue-500" : ""
+            }`}
           />
+          <img className="w-[20px]" src={navQa} alt="QA" />
           QA
         </button>
         <button
-          className={`flex items-center gap-3  py-4 rounded-r-[5px] ${isActive("/translation") ? "bg-[#8C8C8C]" : "hover:bg-[#8C8C8C]"}`}
+          className={`flex items-center gap-3  py-4 rounded-r-[5px] ${
+            isActive("/translation") ? "bg-[#8C8C8C]" : "hover:bg-[#8C8C8C]"
+          }`}
+          onClick={() => handleNavigate("/localizationversion1")}
+        >
+          <span
+            className={`w-[5px] h-[100%]  ${
+              isActive("/localizationversion1") ? "bg-blue-500" : ""
+            }`}
+          />
+          <img className="w-[20px]" src={navTran} alt="LocalizationVersion1" />
+          Localization(1.0.0)
+        </button>
+        <button
+          className={`flex items-center gap-3  py-4 rounded-r-[5px] ${
+            isActive("/translation") ? "bg-[#8C8C8C]" : "hover:bg-[#8C8C8C]"
+          }`}
+          onClick={() => handleNavigate("/localization-setting")}
+        >
+          <span
+            className={`w-[5px] h-[100%]  ${
+              isActive("/localization-setting") ? "bg-blue-500" : ""
+            }`}
+          />
+          <img className="w-[20px]" src={navTran} alt="LocalizationSetting" />
+          Localization Setting
+        </button>
+        <button
+          className={`flex items-center gap-3  py-4 rounded-r-[5px] ${
+            isActive("/translation") ? "bg-[#8C8C8C]" : "hover:bg-[#8C8C8C]"
+          }`}
           onClick={() => handleNavigate("/localization")}
         >
-          <span className={`w-[5px] h-[100%]  ${isActive("/localization") ? "bg-blue-500" : ""}`} />
-          <img
-            className="w-[20px]"
-            src={navTran}
-            alt="Localization"
+          <span
+            className={`w-[5px] h-[100%]  ${
+              isActive("/localization") ? "bg-blue-500" : ""
+            }`}
           />
+          <img className="w-[20px]" src={navTran} alt="Localization" />
           Localization
         </button>
         <button
