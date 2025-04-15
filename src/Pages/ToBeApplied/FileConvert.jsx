@@ -20,6 +20,8 @@ const FileConvert = ({ textareas, setTextareas }) => {
 
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState("");
+  const [isDownloaded, setIsDownloaded] = useState(false); 
+  const [downloadedFileName, setDownloadedFileName] = useState("");
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -103,10 +105,14 @@ const FileConvert = ({ textareas, setTextareas }) => {
           }, 100);
         });
   
-        await fileExecute(setChangeResults, handleChangeResults, setIsProcessing, formData, updatedTextareas, setTextareas, productName, country_code);
+        const {fileContent, filename} = await fileExecute(setChangeResults, handleChangeResults, setIsProcessing, formData, updatedTextareas, setTextareas, productName, country_code);
+        
+        setDownloadedFileContent(fileContent);
+        setDownloadedFileName(filename);
   
         await progressUpdatePromise;
         setUploadStatus("success");
+        setIsDownloaded(false); 
   
       } catch (error) {
         console.error("파일 실행 오류", error);
@@ -119,6 +125,20 @@ const FileConvert = ({ textareas, setTextareas }) => {
     }
   };
   
+  const handleDownload = () => {
+    if (downloadedFileContent) {
+      const blob = new Blob([downloadedFileContent], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = downloadedFileName || "downloaded_file.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      alert("변환된 파일이 없습니다. 먼저 코드 변환을 진행해주세요.");
+    }
+  };
   
   return (
     <>
@@ -158,33 +178,48 @@ const FileConvert = ({ textareas, setTextareas }) => {
             </div>
             <div className="flex w-[60%]">
               {fileName === "" ? null : (
-                    <div className="flex items-center justify-center w-full py-10 rounded-lg">
-                      <div className="w-full flex justify-center gap-10">
-                        <div className="w-[70%] px-10">
-                          <div className="flex w-full gap-4 justify-start items-center">
-                            <img
-                              className="w-[40px]"
-                              src={HtmlFile}
-                              alt="htmlicon"
-                            />
-                            <p className="text-[14px] font-bold text-[#32383E]">{fileName}</p>
-                          </div>
-                            {isProcessing && uploadProgress < 100 ? (
-                              <div className="w-full mt-4 bg-gray-200 rounded-full h-2.5">
-                                <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
-                              </div>
-                            ):(
-                              <div className="w-full mt-4 bg-gray-200 rounded-full h-2.5" />
-                            )}
-
-                            {uploadStatus && (
-                              <div className={`text-center mt-2 text-[12px] ${uploadStatus === 'success' ? "text-[#009900]" : "text-[#ff0000]"}`}>
-                                {uploadStatus === "success" ? "성공적으로 파일이 생성되었습니다 !" : uploadStatus === "fail" ? "파일 생성에 실패하였습니다." : ""}
-                              </div>
-                            )}
-                        </div>
+                <div className="flex items-center justify-center w-full py-10 rounded-lg">
+                  <div className="w-full flex justify-center gap-10">
+                    <div className="w-[70%] px-10">
+                      <div className="flex w-full gap-4 justify-start items-center">
+                        <img
+                          className="w-[40px]"
+                          src={HtmlFile}
+                          alt="htmlicon"
+                        />
+                        <p className="text-[14px] font-bold text-[#32383E]">{fileName}</p>
                       </div>
+                        {isProcessing && uploadProgress < 100 ? (
+                          <div className="w-full mt-4 bg-gray-200 rounded-full h-2.5">
+                            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                          </div>
+                        ):(
+                          <div className="w-full mt-4 bg-gray-200 rounded-full h-2.5" />
+                        )}
+
+                        {uploadStatus && (
+                          <div className={`text-center mt-2 text-[12px] ${uploadStatus === 'success' ? "text-[#009900]" : "text-[#ff0000]"}`}>
+                            {uploadStatus === "success" ? "성공적으로 파일이 생성되었습니다 !" : uploadStatus === "fail" ? "파일 생성에 실패하였습니다." : ""}
+                          </div>
+                        )}
+
+                        {isExecuted && (
+                          <div className="mt-6 flex justify-center w-full">
+                            <button
+                              onClick={handleDownload}
+                              className="flex items-center justify-center gap-2 font-bold bg-[#00A3FF] h-[41px] w-[160px] text-white rounded-[10px]"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18m9-9l-9 9-9-9" />
+                              </svg>
+                              파일 다운로드
+                            </button>
+                          </div>
+                        )}
+                        
                     </div>
+                  </div>
+                </div>
                 )}
             </div>
         </div>

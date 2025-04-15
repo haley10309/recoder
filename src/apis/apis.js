@@ -1,8 +1,8 @@
 import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 
-// 템플릿 조회
-export const templateSearch = async (projectName, pdp, productName, setTextareas, setCodePairs) => {
+  // 템플릿 조회
+  export const templateSearch = async (projectName, pdp, productName, setTextareas, setCodePairs) => {
     try {
         const response = await axios.post(
           `${BASE_URL}/template`,
@@ -33,41 +33,43 @@ export const templateSearch = async (projectName, pdp, productName, setTextareas
   };
 
 
-// 실행
-export const fileExecute = async (setChangeResults, handleChangeResults, setIsProcessing, formData, updatedTextareas, updateTextareasWithResults, productName, country_code) => {
-  try {
-    setIsProcessing(true);
+  // 실행
+  export const fileExecute = async (setChangeResults, handleChangeResults, setIsProcessing, formData, updatedTextareas, updateTextareasWithResults, productName, country_code) => {
+    try {
+      setIsProcessing(true);
 
-    formData.append("productName", String(productName));
-    formData.append("countryCode", String(country_code));
-    const response = await axios.post(`${BASE_URL}/process-file`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      responseType: 'json'
-    });
+      formData.append("productName", String(productName));
+      formData.append("countryCode", String(country_code));
+      const response = await axios.post(`${BASE_URL}/process-file`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        responseType: 'json'
+      });
 
-    const { changeResults, filename, fileContent } = response.data;
+      const { changeResults, filename, fileContent } = response.data;
 
-    setChangeResults(changeResults);
-    updateTextareasWithResults(updatedTextareas, changeResults);
-    handleChangeResults(changeResults);
+      setChangeResults(changeResults);
+      updateTextareasWithResults(updatedTextareas, changeResults);
+      handleChangeResults(changeResults);
+      
+    return { fileContent, filename }; 
 
-    const blob = new Blob([fileContent], { type: 'text/html' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+      // const blob = new Blob([fileContent], { type: 'text/html' });
+      // const url = window.URL.createObjectURL(blob);
+      // const a = document.createElement('a');
+      // a.href = url;
+      // a.download = filename;
+      // document.body.appendChild(a);
+      // a.click();
+      // document.body.removeChild(a);
 
-  } catch (error) {
-    console.error("Error processing file", error);
-  } finally {
-    setIsProcessing(false);
-  }
-};
+    } catch (error) {
+      console.error("Error processing file", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
 
   // ToBeApplied - 템플릿 선택지
