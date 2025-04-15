@@ -55,7 +55,7 @@ const Header = () => {
             }`}
           />
           <img className="w-[20px]" src={navApply} alt="Apply" />
-          Hotfix
+          Apply
         </button>
         <button
           className={`flex items-center gap-3  py-4 rounded-r-[5px] ${

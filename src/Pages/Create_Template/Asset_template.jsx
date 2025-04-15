@@ -2,7 +2,7 @@ import React from 'react';
 import Rodal from 'rodal';
 import '@Create_Template/Asset_template.scss';
 import 'rodal/lib/rodal.css';
-import AddIcon from '@mui/icons-material/Add'; // Import AddIcon
+import AddIcon from '@mui/icons-material/Add';
 import { countOccurrences as countOccurrencesUtil } from '@/utils/codeUtils';
 
 class Asset_Template extends React.Component {
@@ -24,18 +24,16 @@ class Asset_Template extends React.Component {
 
   countOccurrences = (asWasCode) => {
     if (!this.props.fileContent || !asWasCode) {
-      return "Run Test를 통해 알아보세요"; // Provide a message when fileContent or asWasCode is not available
+      return "Run Test를 통해 알아보세요";
     }
   
-    // Call the utility function to get the occurrence count
     const occurrenceCount = countOccurrencesUtil(this.props.fileContent, asWasCode);
-    return occurrenceCount !== "null" ? occurrenceCount : "0"; // Return occurrences count
+    return occurrenceCount !== "null" ? occurrenceCount : "0";
   };
 
   handleSave = () => {
-    // Call any additional save logic here if necessary.
     console.log("Saving asset data...");
-    this.props.onSave(); // Call the parent component's save function if needed
+    this.props.onSave();
     this.hide();
   };
  
@@ -78,18 +76,18 @@ class Asset_Template extends React.Component {
                       <textarea
                         value={code}
                         className="code-textarea"
-                        onChange={(e) => this.props.setAsset_asWas(index, e.target.value)} // Update asset_asWas
+                        onChange={(e) => this.props.setAsset_asWas(index, e.target.value)}
                         placeholder="//"
                       />
                       <div className="duplicate-count">
-                        포함된 횟수: {this.countOccurrences(code)} {/* Display occurrence count */}
+                        포함된 횟수: {this.countOccurrences(code)}
                       </div>
                     </div>
 
                     <div className="to_be_div">
                       <textarea
                         value={this.props.asset_toBe[index] || ""}
-                        onChange={(e) => this.props.setAsset_toBe(index, e.target.value)} // Update asset_toBe
+                        onChange={(e) => this.props.setAsset_toBe(index, e.target.value)}
                         placeholder="//"
                         className="code-textarea"
                       />
