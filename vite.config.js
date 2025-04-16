@@ -27,7 +27,7 @@ export default ({ mode }) => {
         { find: "@Components", replacement: "/src/Components" },
         { find: "@Pages", replacement: "/src/Pages" },
         { find: "@Localization", replacement: "/src/Pages/Localization" },
-        
+        { find: "@DummyData", replacement: "/src/dummy_data" },
       ],
       
     },
