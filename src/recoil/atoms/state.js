@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 
-export const productNameState = atom({
-  key: 'productNameState',
+export const ticketUrlState = atom({
+  key: 'ticketUrlState',
   default: '',
 });
 
@@ -9,6 +9,7 @@ export const countryCodeState = atom({
   key: 'countryCodeState',
   default: '',
 });
+
 
 export const textareasState = atom({
   key: "textareasState", 

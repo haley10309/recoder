@@ -33,11 +33,11 @@ import { BASE_URL } from "@/utils/routePath";
 
 
   // 실행
-  export const fileExecute = async (setChangeResults, handleChangeResults, setIsProcessing, formData, updatedTextareas, updateTextareasWithResults, productName, country_code) => {
+  export const fileExecute = async (setChangeResults, handleChangeResults, setIsProcessing, formData, updatedTextareas, updateTextareasWithResults, ticketUrl, country_code) => {
     try {
       setIsProcessing(true);
 
-      formData.append("productName", String(productName));
+      formData.append("ticket_url", String(ticketUrl));
       formData.append("countryCode", String(country_code));
       const response = await axios.post(`${BASE_URL}/process-file`, formData, {
         headers: {

@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { templateSearch } from "@/apis/apis";
 import { countryCodeState } from "@/recoil/atoms/state";
+import { ticketUrlState } from "../../recoil/atoms/state";
 
 const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   const [ticketNum, setTicketNum] = useState("");
-  const [ticketURL, setTicketURL] = useState("");
+  const [ticketURL, setTicketURL] =  useRecoilState(ticketUrlState);
   const [country_code, setCountry_code] = useRecoilState(countryCodeState);
 
   // 템플릿 조회
