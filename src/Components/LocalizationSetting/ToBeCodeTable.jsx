@@ -8,9 +8,15 @@ const ToBeCodeTable = ({ toBeCodes, onDelete }) => {
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-gray-50">
-            <th className="border border-gray-200 px-4 py-2 text-left">PPT NO.</th>
-            <th className="border border-gray-200 px-4 py-2 text-left">To-Be Code</th>
-            <th className="border border-gray-200 px-4 py-2 text-center">삭제</th>
+            <th className="border border-gray-200 px-4 py-2 text-left">
+              PPT NO.
+            </th>
+            <th className="border border-gray-200 px-4 py-2 text-left">
+              To-Be Code
+            </th>
+            <th className="border border-gray-200 px-4 py-2 text-center">
+              삭제
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -31,12 +37,12 @@ const ToBeCodeTable = ({ toBeCodes, onDelete }) => {
               </td>
               <td className="border border-gray-200 px-4 py-2 text-center">
                 {row.code && (
-                  <button
+`                  <button
                     onClick={() => onDelete(idx)}
                     className="text-red-600 hover:text-red-800"
                   >
                     <DeleteIcon />
-                  </button>
+                  </button>`
                 )}
               </td>
             </tr>

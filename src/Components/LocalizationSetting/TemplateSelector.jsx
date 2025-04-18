@@ -1,82 +1,98 @@
-// components/TemplateSelector.jsx
 import React from "react";
-import { DUMMY_PROJECTS, DUMMY_PDPS, DUMMY_PRODUCTS } from "@DummyData/setting_dummy";
+import { DUMMY_PROJECTS, DUMMY_PDPS, DUMMY_PRODUCTS, DUMMY_TEMPLATES } from "@DummyData/setting_dummy";
 
 const TemplateSelector = ({
   selectedTemplate,
-  onTemplateClick,
-  showOptions,
+  setSelectedTemplate,
   project,
   pdp,
   product,
   setProject,
   setPdp,
   setProduct,
+  handleApply,
 }) => {
   return (
-    <section className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-8">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="font-semibold">템플릿 불러오기</h2>
-        <div className="flex gap-3">
-          {["1차 TO BE", "로컬라이제이션 적용"].map((tpl) => (
-            <button
-              key={tpl}
-              onClick={() => onTemplateClick(tpl)}
-              className={`px-4 py-2 rounded-md border ${
-                selectedTemplate === tpl
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 border-gray-300"
-              }`}
-            >
-              {tpl}
-            </button>
-          ))}
+    <section className="bg-gray-50 border rounded-lg shadow-sm px-8 py-6 mb-8">
+      <div className="grid grid-cols-5 gap-6 items-end">
+        {/* 템플릿 종류 */}
+        <div>
+          <label className="block font-semibold mb-2">템플릿 종류</label>
+          <select
+            value={selectedTemplate}
+            onChange={(e) => setSelectedTemplate(e.target.value)}
+            className="w-full px-4 py-2 border rounded-md bg-white border-orange-400 outline-none focus:ring-2 focus:ring-orange-200"
+          >
+            <option value="">선택</option>
+            {DUMMY_TEMPLATES.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
 
-      {showOptions && (
-        <div className="flex flex-wrap gap-4">
+        {/* 프로젝트 */}
+        <div>
+          <label className="block font-semibold mb-2">프로젝트</label>
           <select
             value={project}
             onChange={(e) => setProject(e.target.value)}
-            className="border px-4 py-2 rounded-md bg-white"
+            className="w-full px-4 py-2 border rounded-md bg-white border-orange-400 outline-none focus:ring-2 focus:ring-orange-200"
           >
-            <option value="">프로젝트명</option>
+            <option value="">선택</option>
             {DUMMY_PROJECTS.map((item) => (
               <option key={item.value} value={item.value}>
                 {item.label}
               </option>
             ))}
           </select>
+        </div>
+
+        {/* PDP */}
+        <div>
+          <label className="block font-semibold mb-2">PDP</label>
           <select
             value={pdp}
             onChange={(e) => setPdp(e.target.value)}
-            className="border px-4 py-2 rounded-md bg-white"
+            className="w-full px-4 py-2 border rounded-md bg-white border-orange-400 outline-none focus:ring-2 focus:ring-orange-200"
           >
-            <option value="">PDP</option>
+            <option value="">선택</option>
             {DUMMY_PDPS.map((item) => (
               <option key={item.value} value={item.value}>
                 {item.label}
               </option>
             ))}
           </select>
+        </div>
+
+        {/* 제품명 */}
+        <div>
+          <label className="block font-semibold mb-2">제품명</label>
           <select
             value={product}
             onChange={(e) => setProduct(e.target.value)}
-            className="border px-4 py-2 rounded-md bg-white"
+            className="w-full px-4 py-2 border rounded-md bg-white border-orange-400 outline-none focus:ring-2 focus:ring-orange-200"
           >
-            <option value="">Product Name</option>
+            <option value="">선택</option>
             {DUMMY_PRODUCTS.map((item) => (
               <option key={item.value} value={item.value}>
                 {item.label}
               </option>
             ))}
           </select>
-          <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
-            불러오기
+        </div>
+
+        {/* 확인 버튼 */}
+        <div className="flex items-end justify-end">
+          <button
+            onClick={handleApply}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-md"
+          >
+            확인
           </button>
         </div>
-      )}
+      </div>
     </section>
   );
 };
