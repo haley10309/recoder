@@ -17,9 +17,8 @@ const Create_template = () => {
   const [asset_toBe, setAsset_toBe] = useState([]);
   const [asset_pptNo, setAsset_pptNo] = useState([]);
   const [templateID, setTemplateID] = useState("");
-  const [projectName, setProjectName] = useState("");
-  const [PDP, setPDP] = useState("");
-  const [productName, setProductName] = useState("");
+  const [ticketNum, setTicketNum] = useState("");
+  const [ticketURL, setTicketURL] = useState("");
   const [file, setFile] = useState(null);
   const [fileContent, setFileContent] = useState("");
   const [save_type, setSave_type] = useState("");
@@ -55,9 +54,8 @@ const Create_template = () => {
   
     const formData = new FormData();
     formData.append("templateId",templateID);
-    formData.append("hotfix_name", projectName);
-    formData.append("pdp_name", PDP);
-    formData.append("product", productName);
+    formData.append("ticket_num", ticketNum);
+    formData.append("ticket_url", ticketURL);
   
     const formattedDate = new Date().toISOString().split("T")[0];
     formData.append("create_date", formattedDate);
@@ -130,7 +128,7 @@ const Create_template = () => {
 
   return (
     <div className="bg-[#f7f7f7] px-40 py-20">
-      <CheckTemplate setSave_type={setSave_type} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setAsset_asWas={setAsset_asWas} setTemplateID={setTemplateID} setPptNos={setPptNos} setAsset_toBe={setAsset_toBe} setAsset_pptNo={setAsset_pptNo} setProjectName={setProjectName} setPDP={setPDP} setProductName={setProductName} projectName={projectName} PDP={PDP} productName={productName} />
+      <CheckTemplate setSave_type={setSave_type} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setAsset_asWas={setAsset_asWas} setTemplateID={setTemplateID} setPptNos={setPptNos} setAsset_toBe={setAsset_toBe} setAsset_pptNo={setAsset_pptNo} ticketNum={ticketNum} ticketURL={ticketURL} setTicketNum={setTicketNum} setTicketURL={setTicketURL}  />
 
       <UploadFiles file={file} asset_pptNo={asset_pptNo} asset_asWas={asset_asWas} setAsset_asWas={setAsset_asWas} asset_toBe={asset_toBe} setAsset_toBe={setAsset_toBe} addAssetArea={addAssetArea} setAsset_pptNo={setAsset_pptNo} fileContent={fileContent} setFile={setFile} setFileContent={setFileContent} setPptNos={setPptNos} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} />
 

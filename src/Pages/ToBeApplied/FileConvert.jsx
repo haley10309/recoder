@@ -143,7 +143,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
   return (
     <>
       <div className="flex flex-col justify-center items-start rounded-[10px] p-8 bg-white border border-gray-300 text-[#32383E] my-14 w-full">
-        <h2 className="font-bold text-black mb-3 text-[16px]">Back-Up 파일 불러오기</h2>
+        <h2 className="font-bold text-black mb-3 text-[16px]">Local Source 파일 불러오기</h2>
         <div className="flex w-full gap-10 my-2">
             <div className="flex flex-col items-center justify-center w-[40%] gap-4">
               <div className="flex flex-col items-center justify-center w-full">

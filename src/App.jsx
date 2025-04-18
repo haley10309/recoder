@@ -26,9 +26,9 @@ function App() {
               <Route path="/create-template" element={<Create_template />} />
               <Route path="/tobe-applied" element={<ToBeApplied />} />
               <Route path="/qa-check" element={<Qa_page />} />
-              <Route path="/localizationversion1" element={<LocalizationVersion1 />} />
+              {/* <Route path="/localizationversion1" element={<LocalizationVersion1 />} />
               <Route path="/localization" element={<Localization />} />
-              <Route path="/localization-setting" element={<LocalizationSetting />} />
+              <Route path="/localization-setting" element={<LocalizationSetting />} /> */}
               <Route path="/guide" element={<Guide />} />
             </Routes>
             <Footer />

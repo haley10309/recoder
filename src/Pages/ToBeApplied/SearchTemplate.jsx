@@ -24,28 +24,20 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
           <div className="flex justify-between items-center">
             <div className="flex justify-start items-center px-2 overflow-x-auto">
               <SettingDropdown
-                _inputProps={{ placeholder: "S24" }}
-                _title="프로젝트명"
+                _inputProps={{ placeholder: "WSC20200078-9816" }}
+                _title="Jira 티켓 번호"
                 _onChange={() => {}}
                 _value={projectName}
                 _setValue={setProjectName}
                 _url="projects"
               />
               <SettingDropdown
-                _inputProps={{ placeholder: "Feature" }}
-                _title="PDP"
+                _inputProps={{ placeholder: "/smartphones/galaxy-s24-ultra/compare/" }}
+                _title="Page URL"
                 _onChange={() => {}}
                 _value={pdp}
                 _setValue={setPdp}
                 _url="pdps"
-              />
-              <SettingDropdown
-                _inputProps={{ placeholder: "B5" }}
-                _title="Product Name"
-                _onChange={() => {}}
-                _value={productName}
-                _setValue={setProductName}
-                _url="products"
               />
               <Country_code
                 country_code={country_code}
