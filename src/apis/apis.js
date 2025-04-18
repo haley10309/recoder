@@ -2,14 +2,13 @@ import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 
   // 템플릿 조회
-  export const templateSearch = async (projectName, pdp, productName, setTextareas, setCodePairs) => {
+  export const templateSearch = async (ticket_num, ticket_url, setTextareas, setCodePairs) => {
     try {
         const response = await axios.post(
           `${BASE_URL}/template`,
           {
-            hotfix_name: projectName,
-            pdp_name: pdp,
-            product: productName,
+            ticket_num: ticket_num,
+            ticket_url: ticket_url,
           }
         );
   
@@ -67,12 +66,10 @@ import { BASE_URL } from "@/utils/routePath";
   export const templateOption = async (_url) => {
     let apiUrl = '';
 
-    if (_url === "projects") {
-      apiUrl = `${BASE_URL}/projects`;
-    } else if (_url === "pdps") {
-      apiUrl = `${BASE_URL}/pdps`;
-    } else if (_url === "products") {
-      apiUrl = `${BASE_URL}/products`;
+    if (_url === "get-ticket-number") {
+      apiUrl = `${BASE_URL}/get-ticket-number`;
+    } else if (_url === "get-ticket-url") {
+      apiUrl = `${BASE_URL}/get-ticket-url`;
     } else {
       throw new Error('Invalid URL parameter');
     }

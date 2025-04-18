@@ -3,17 +3,16 @@ import Country_code from "@/Components/ToBeApplied/CountryCode";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { templateSearch } from "@/apis/apis";
-import { countryCodeState, productNameState } from "@/recoil/atoms/state";
+import { countryCodeState } from "@/recoil/atoms/state";
 
 const SearchTemplate = ({ setTextareas, setCodePairs }) => {
-  const [projectName, setProjectName] = useState("");
-  const [pdp, setPdp] = useState("");
-  const [productName, setProductName] = useRecoilState(productNameState);
+  const [ticketNum, setTicketNum] = useState("");
+  const [ticketURL, setTicketURL] = useState("");
   const [country_code, setCountry_code] = useRecoilState(countryCodeState);
 
   // 템플릿 조회
   const handleSetting = async () => {
-    templateSearch(projectName, pdp, productName, setTextareas, setCodePairs);
+    templateSearch(ticketNum, ticketURL, setTextareas, setCodePairs);
   };
 
   return (
@@ -27,17 +26,17 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
                 _inputProps={{ placeholder: "WSC20200078-9816" }}
                 _title="Jira 티켓 번호"
                 _onChange={() => {}}
-                _value={projectName}
-                _setValue={setProjectName}
-                _url="projects"
+                _value={ticketNum}
+                _setValue={setTicketNum}
+                _url="get-ticket-number"
               />
               <SettingDropdown
                 _inputProps={{ placeholder: "/smartphones/galaxy-s24-ultra/compare/" }}
                 _title="Page URL"
                 _onChange={() => {}}
-                _value={pdp}
-                _setValue={setPdp}
-                _url="pdps"
+                _value={ticketURL}
+                _setValue={setTicketURL}
+                _url="get-ticket-url"
               />
               <Country_code
                 country_code={country_code}
