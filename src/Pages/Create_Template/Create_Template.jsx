@@ -1,4 +1,4 @@
-import React, { useState  } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -8,6 +8,7 @@ import Frequency from "@Create_Template/Frequency";
 import CheckTemplate from "./CheckTemplate";
 import UploadFiles from "./UploadFiles";
 import "@Create_Template/Create_Template.scss";
+import { styled } from "@mui/material";
 
 const Create_template = () => {
   const [asWasCodes, setAsWasCodes] = useState(["", "", ""]);
@@ -29,11 +30,11 @@ const Create_template = () => {
     setPptNos([...pptNos, ""]);
   };
 
-  const addAssetArea = () =>{
-    setAsset_asWas((prev) => [...prev,""]);
-    setAsset_toBe((prev) => [...prev,""] );
-    setAsset_pptNo((prev) => [...prev,""]);
-  }
+  const addAssetArea = () => {
+    setAsset_asWas((prev) => [...prev, ""]);
+    setAsset_toBe((prev) => [...prev, ""]);
+    setAsset_pptNo((prev) => [...prev, ""]);
+  };
 
   const removeTextArea = (index) => {
     setAsWasCodes(asWasCodes.filter((_, i) => i !== index));
@@ -45,22 +46,22 @@ const Create_template = () => {
     const combinedPptNos = [...pptNos, ...asset_pptNo];
     const combinedAsWasCodes = [...asWasCodes, ...asset_asWas];
     const combinedToBeCodes = [...toBeCodes, ...asset_toBe];
-  
+
     const aswasTobeList = combinedAsWasCodes.map((_, index) => ({
       ppt_no: combinedPptNos[index],
       aswas_code: combinedAsWasCodes[index],
       tobe_code: combinedToBeCodes[index],
     }));
-  
+
     const formData = new FormData();
-    formData.append("templateId",templateID);
+    formData.append("templateId", templateID);
     formData.append("ticket_num", ticketNum);
     formData.append("ticket_url", ticketURL);
-  
+
     const formattedDate = new Date().toISOString().split("T")[0];
     formData.append("create_date", formattedDate);
     formData.append("aswas_tobe_list", JSON.stringify(aswasTobeList));
-  
+
     try {
       let response;
       if (save_type === "create") {
@@ -70,24 +71,17 @@ const Create_template = () => {
           },
         });
       } else if (save_type === "update") {
-        response = await axios.post(
-          `${BASE_URL}/update-template`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        response = await axios.post(`${BASE_URL}/update-template`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
       }
-  
+
       // console.log("Data sent successfully", aswasTobeList);
       alert("템플릿이 성공적으로 저장되었습니다");
     } catch (error) {
-      console.error(
-        "Error sending data",
-        error.response ? error.response.data : error
-      );
+      console.error("Error sending data", error.response ? error.response.data : error);
       alert("템플릿 저장 중 오류가 발생하였습니다");
     }
   };
@@ -110,7 +104,7 @@ const Create_template = () => {
   const countOccurrences = (asWasCode) => {
     if (!fileContent) {
       return "";
-    } else if (!asWasCode){
+    } else if (!asWasCode) {
       return 0;
     }
     const occurrenceCount = countOccurrencesUtil(fileContent, asWasCode);
@@ -118,17 +112,12 @@ const Create_template = () => {
   };
 
   const allFieldsFilled = () => {
-    return (
-      asWasCodes.every((code) => code.trim() !== "") &&
-      toBeCodes.every((code) => code.trim() !== "")&&
-      asset_asWas.every((code) => code.trim() !== "")&&
-      asset_toBe.every((code) => code.trim() !== "")
-    );
+    return asWasCodes.every((code) => code.trim() !== "") && toBeCodes.every((code) => code.trim() !== "") && asset_asWas.every((code) => code.trim() !== "") && asset_toBe.every((code) => code.trim() !== "");
   };
 
   return (
-    <div className="bg-[#f7f7f7] px-40 py-20">
-      <CheckTemplate setSave_type={setSave_type} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setAsset_asWas={setAsset_asWas} setTemplateID={setTemplateID} setPptNos={setPptNos} setAsset_toBe={setAsset_toBe} setAsset_pptNo={setAsset_pptNo} ticketNum={ticketNum} ticketURL={ticketURL} setTicketNum={setTicketNum} setTicketURL={setTicketURL}  />
+    <div className="bg-[#FFFFFF] p-[110px]">
+      <CheckTemplate setSave_type={setSave_type} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setAsset_asWas={setAsset_asWas} setTemplateID={setTemplateID} setPptNos={setPptNos} setAsset_toBe={setAsset_toBe} setAsset_pptNo={setAsset_pptNo} ticketNum={ticketNum} ticketURL={ticketURL} setTicketNum={setTicketNum} setTicketURL={setTicketURL} />
 
       <UploadFiles file={file} asset_pptNo={asset_pptNo} asset_asWas={asset_asWas} setAsset_asWas={setAsset_asWas} asset_toBe={asset_toBe} setAsset_toBe={setAsset_toBe} addAssetArea={addAssetArea} setAsset_pptNo={setAsset_pptNo} fileContent={fileContent} setFile={setFile} setFileContent={setFileContent} setPptNos={setPptNos} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} />
 
@@ -138,16 +127,11 @@ const Create_template = () => {
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId={`droppable-${Math.random()}`}>
               {(provided) => (
-                <ul className="as_was_to_be_row"{...provided.droppableProps} ref={provided.innerRef} >
+                <ul className="as_was_to_be_row" {...provided.droppableProps} ref={provided.innerRef}>
                   {asWasCodes.map((_, index) => (
                     <Draggable key={index.toString()} draggableId={`item-${index}`} index={index}>
                       {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="as_was_to_be_div"
-                        >
+                        <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="as_was_to_be_div">
                           <div className="num_type">
                             <div className="ppt_no_col">
                               <label className="ppt_no">PPT NO.</label>
@@ -178,9 +162,9 @@ const Create_template = () => {
                               className="code-textarea"
                             />
                             <div className="duplicate-count">
-                              <Frequency/>
-                            {countOccurrences(asWasCodes[index])}
-                        </div>
+                              <Frequency />
+                              {countOccurrences(asWasCodes[index])}
+                            </div>
                           </div>
 
                           <div className="to_be_div">
@@ -197,18 +181,13 @@ const Create_template = () => {
                               className="code-textarea"
                             />
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => removeTextArea(index)}
-                            className="remove_button"
-                          >
+                          <button type="button" onClick={() => removeTextArea(index)} className="remove_button">
                             삭제
                           </button>
                         </div>
                       )}
                     </Draggable>
-                    
-                    ))}
+                  ))}
                   {provided.placeholder}
                 </ul>
               )}
@@ -224,12 +203,7 @@ const Create_template = () => {
       </div>
 
       <div className="save_button_div">
-        <button
-          type="button"
-          className="save_button"
-          onClick={handleSave}
-          disabled={!allFieldsFilled()}
-        >
+        <button type="button" className="save_button" onClick={handleSave} disabled={!allFieldsFilled()}>
           {save_type === "update" && `수정`}
           {save_type === "create" && `생성`}
           {save_type !== "update" && save_type !== "create" && `저장`}
