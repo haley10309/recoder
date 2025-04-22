@@ -1,14 +1,35 @@
-import Yes from '@/assets/tobe_yes.png';
-import No from '@/assets/tobe_no.png';
-import Copy from '@/assets/copy.png';
-import { useState } from 'react';
+import React, { useState } from "react";
+import styled from "styled-components";
+import Yes from "@/assets/tobe_yes.png";
+import No from "@/assets/tobe_no.png";
+import Copy from "@/assets/copy.png";
 
-const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, isApplied, checked, onCheckedChange, filter, country_code, matchedPart, asWasOccurrenceCount, toBeOccurrenceCount }) => {
+const BasicTextarea = ({
+  pptNo,
+  asWasCode,
+  setAsWasCode,
+  toBeCode,
+  setToBeCode,
+  isApplied,
+  checked,
+  onCheckedChange,
+  filter,
+  country_code,
+  matchedPart,
+  asWasOccurrenceCount,
+  toBeOccurrenceCount,
+}) => {
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
 
-  const transformedAsWasCode = asWasCode?.replace(/\/site\//g, `/${country_code}/`);
-  const transformedToBeCode = toBeCode?.replace(/\/site\//g, `/${country_code}/`);
-  
+  const transformedAsWasCode = asWasCode?.replace(
+    /\/site\//g,
+    `/${country_code}/`
+  );
+  const transformedToBeCode = toBeCode?.replace(
+    /\/site\//g,
+    `/${country_code}/`
+  );
+
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
 
   const handleToggleMatchedPart = () => {
@@ -23,112 +44,208 @@ const BasicTextarea = ({ pptNo, asWasCode, setAsWasCode, toBeCode, setToBeCode, 
     }
   };
 
+  const transformedLocalization = () => {
+    return 0;
+  };
+
   return (
-    <div>
-      {/* {isEmpty ? (
-        <NoValuePage />
-      ) : ( */}
-        <>    
-          <div className="flex justify-between p-4 bg-[#f6f6f6] border-b border-gray-300">
-            {/* Checkbox */}
-            <div className="flex justify-center items-center w-[12.5%] pr-4">
-              <input
-                type="checkbox"
-                checked={checked}
-                onChange={onCheckedChange}
-                className="w-6 h-6 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                disabled={isCheckboxDisabled}
-              />
-            </div>
+    <Container>
+      <Wrapper>
+        <CheckboxWrapper>
+          <Checkbox
+            type="checkbox"
+            checked={checked}
+            onChange={onCheckedChange}
+            disabled={isCheckboxDisabled}
+          />
+        </CheckboxWrapper>
 
-            {/* PPT No. */}
-            <h2 className='flex justify-center items-center w-[12.5%] text-black text-[14px] pr-4'>
-              <span className='font-bold'>p. {pptNo}</span>
-            </h2>
+        <PptNo>
+          <TextBold>p. {pptNo}</TextBold>
+        </PptNo>
 
-            {/* As-Was Code */}
-            <div className='w-[28%] flex justify-start flex-col'>
-              <div>
-                <textarea
-                className="w-full h-[150px] bg-[#D9D9D9] resize-none p-4 border border-gray-300 rounded"
-                value={transformedAsWasCode}
-                onChange={(e) => setAsWasCode(e.target.value)}
-                placeholder="As-Was code를 입력하세요."
-              />
-              
-                {asWasOccurrenceCount && asWasOccurrenceCount > 0 ? (
-                  <div className="mt-2 text-sm text-gray-600">
-                    <strong>[AS-WAS] 일치하는 코드 출현 횟수:</strong> {asWasOccurrenceCount}회
-                  </div>
-                 ) : (
-                  <div className="mt-2 text-sm text-gray-600">
-                    <strong>[AS-WAS] 일치하는 코드 출현 횟수:</strong> 없음
-                  </div>
-                )}
-              </div>
-              
-              {matchedPart && (
-                <div className="mt-2">
-                  <button
-                    onClick={handleToggleMatchedPart}
-                    className="bg-gray-100 py-2 px-4 cursor-pointer border border-gray-300 rounded-md text-sm">
-                    {isMatchedPartVisible ? '코드 숨기기' : '일치하는 코드 보기'}
-                  </button>
-                  
-                  {isMatchedPartVisible && (
-                    <div className="mt-4 p-4 border border-gray-300 rounded-md bg-gray-50">
-                      <strong>Front Matched Part:</strong>
-                      <pre className="whitespace-pre-wrap break-words overflow-auto max-w-full py-5">
-                        {matchedPart[0]}
-                      </pre>
-                      <div className='flex justify-end'>
-                        <button onClick={() => handleCopyClipBoard(matchedPart[0])}>
-                          <img className="w-[18px] h-[18px]" src={Copy} alt="copy" />
-                        </button>
-                      </div> 
-                      <strong>Back Matched Part:</strong>
-                      <pre className="whitespace-pre-wrap break-words overflow-auto max-w-full py-5">
-                        {matchedPart[1]}
-                      </pre>
-                      <div className='flex justify-end'>
-                        <button onClick={() => handleCopyClipBoard(matchedPart[1])}>
-                          <img className="w-[18px] h-[18px]" src={Copy} alt="copy" />
-                        </button>
-                      </div>                    
-                    </div>
-                  )}
-                </div>
+        <CodeBlock>
+          <Textarea
+            value={transformedAsWasCode}
+            onChange={(e) => setAsWasCode(e.target.value)}
+            placeholder="As-Was code를 입력하세요."
+          />
+          {asWasOccurrenceCount && asWasOccurrenceCount > 0 ? (
+            <OccurrenceCount>
+              <strong>[AS-WAS] 일치하는 코드 출현 횟수:</strong>{" "}
+              {asWasOccurrenceCount}회
+            </OccurrenceCount>
+          ) : (
+            <OccurrenceCount>
+              <strong>[AS-WAS] 일치하는 코드 출현 횟수:</strong> 없음
+            </OccurrenceCount>
+          )}
+
+          {matchedPart && (
+            <MatchedPartWrapper>
+              <ToggleButton onClick={handleToggleMatchedPart}>
+                {isMatchedPartVisible ? "코드 숨기기" : "일치하는 코드 보기"}
+              </ToggleButton>
+
+              {isMatchedPartVisible && (
+                <MatchedPartContainer>
+                  <strong>Front Matched Part:</strong>
+                  <Pre>{matchedPart[0]}</Pre>
+                  <CopyButton
+                    onClick={() => handleCopyClipBoard(matchedPart[0])}
+                  >
+                    <CopyIcon src={Copy} alt="copy" />
+                  </CopyButton>
+                  <strong>Back Matched Part:</strong>
+                  <Pre>{matchedPart[1]}</Pre>
+                  <CopyButton
+                    onClick={() => handleCopyClipBoard(matchedPart[1])}
+                  >
+                    <CopyIcon src={Copy} alt="copy" />
+                  </CopyButton>
+                </MatchedPartContainer>
               )}
-            </div>
-            
-            {/* To-Be Code */}
-            <textarea
-              className="w-[28%] h-[150px] bg-[#D9D9D9] resize-none p-4 border border-gray-300 rounded flex justify-start"
-              value={transformedToBeCode}
-              onChange={(e) => setToBeCode(e.target.value)}
-              placeholder="To-Be code를 입력하세요."
-            />
-            <div>
-              {/* {toBeOccurrenceCount && (
-                <div className="mt-2 text-sm text-gray-600">
-                  <strong>[TO-BE] 일치하는 코드 출현 횟수:</strong> {toBeOccurrenceCount}회
-                </div>
-              )} */}
-            </div>
+            </MatchedPartWrapper>
+          )}
+        </CodeBlock>
 
-            {/* To-Be 적용 여부 */}
-            <div className="flex justify-center items-center w-[18.75%]">
-              {isApplied === 'yes' ? (
-                <img className="w-[50px] h-[50px]" src={Yes} alt="yes" />
-              ) : (
-                <img className="w-[50px] h-[50px]" src={No} alt="no" />
-              )}
-            </div>
-          </div>          
-        </>
-      {/* )} */}
-    </div>
+        <CodeBlock>
+          <Textarea
+            value={transformedToBeCode}
+            onChange={(e) => setToBeCode(e.target.value)}
+            placeholder="To-Be code를 입력하세요."
+          />
+        </CodeBlock>
+
+        <CodeBlock>
+          <Textarea
+            value={transformedLocalization()}
+            onChange={(e) => setToBeCode(e.target.value)}
+            placeholder="로컬라이제이션을 적용하세요."
+          />
+        </CodeBlock>
+
+        <ToBeAppliedWrapper>
+          {isApplied === "yes" ? (
+            <YesIcon src={Yes} alt="yes" />
+          ) : (
+            <NoIcon src={No} alt="no" />
+          )}
+        </ToBeAppliedWrapper>
+      </Wrapper>
+    </Container>
   );
 };
 
 export default BasicTextarea;
+
+const Container = styled.div`
+  margin-bottom: 1rem;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  padding: 1rem;
+  background-color: #f6f6f6;
+  border-bottom: 1px solid #d1d5db;
+  align-items: flex-start;
+`;
+
+const CheckboxWrapper = styled.div`
+  width: 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Checkbox = styled.input`
+  width: 24px;
+  height: 24px;
+`;
+
+const PptNo = styled.div`
+  width: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  color: #111827;
+`;
+
+const TextBold = styled.span`
+  font-weight: bold;
+`;
+
+const CodeBlock = styled.div`
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const Textarea = styled.textarea`
+  width: 100%;
+  height: 150px;
+  background-color: #d9d9d9;
+  resize: none;
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+`;
+
+const OccurrenceCount = styled.div`
+  font-size: 12px;
+  color: #4b5563;
+`;
+
+const MatchedPartWrapper = styled.div``;
+
+const ToggleButton = styled.button`
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #f3f4f6;
+  cursor: pointer;
+`;
+
+const MatchedPartContainer = styled.div`
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+`;
+
+const Pre = styled.pre`
+  white-space: pre-wrap;
+  background-color: #f3f4f6;
+  padding: 0.5rem;
+  border-radius: 6px;
+`;
+
+const CopyButton = styled.button`
+  margin-top: 0.5rem;
+  cursor: pointer;
+`;
+
+const CopyIcon = styled.img`
+  width: 18px;
+  height: 18px;
+`;
+
+const ToBeAppliedWrapper = styled.div`
+  width: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const YesIcon = styled.img`
+  width: 50px;
+  height: 50px;
+`;
+
+const NoIcon = styled.img`
+  width: 50px;
+  height: 50px;
+`;

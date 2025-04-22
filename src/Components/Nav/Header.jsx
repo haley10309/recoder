@@ -71,7 +71,7 @@ const Header = () => {
           <img className="w-[20px]" src={navQa} alt="QA" />
           QA
         </button>
-        {/* <button
+        <button
           className={`flex items-center gap-3  py-4 rounded-r-[5px] ${
             isActive("/translation") ? "bg-[#8C8C8C]" : "hover:bg-[#8C8C8C]"
           }`}
@@ -112,7 +112,7 @@ const Header = () => {
           />
           <img className="w-[20px]" src={navTran} alt="Localization" />
           Localization
-        </button> */}
+        </button>
         <button
           className="flex items-center justify-center font-bold py-4 rounded-[5px] bg-[#8C8C8C] hover:bg-[#8C8C8C]"
           onClick={() => handleNavigate("/guide")}

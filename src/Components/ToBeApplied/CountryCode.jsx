@@ -3,12 +3,13 @@ import { twMerge } from "tailwind-merge";
 import { Dropdown } from "primereact/dropdown";
 
 const divWrapperClasses = {
-    dropdown:
-      "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] w-full flex flex-col",
-  };
-  const divClasses = {
-    default:"focus-within:bg-none w-48 h-full p-4 ring-1 ring-black flex justify-center align-center items-center font-medium",
-  };
+  dropdown:
+    "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] w-full flex flex-col",
+};
+const divClasses = {
+  default:
+    "focus-within:bg-none w-48 h-full p-4 ring-1 ring-black flex justify-center align-center items-center font-medium",
+};
 
 const CountryCode = ({ country_code, setCountry_code }) => {
   const countryOptions = [
@@ -63,7 +64,7 @@ const CountryCode = ({ country_code, setCountry_code }) => {
     { name: "LB", code: "lb" },
     { name: "LEVANT", code: "levant" },
     { name: "LEVANT_AR", code: "levant_ar" },
-    { name: "LATIN_EN", code: "latin_en" },    
+    { name: "LATIN_EN", code: "latin_en" },
     { name: "LB", code: "lb" },
     { name: "LT", code: "lt" },
     { name: "LV", code: "lv" },
@@ -106,7 +107,6 @@ const CountryCode = ({ country_code, setCountry_code }) => {
     { name: "ZA", code: "za" },
   ];
 
-  
   const selectedCountryTemplate = (option) => {
     if (option) {
       return (
@@ -127,36 +127,28 @@ const CountryCode = ({ country_code, setCountry_code }) => {
   };
 
   return (
-      <div
+    <div
       className={twMerge(
         divWrapperClasses.dropdown,
         "flex items-start justify-center"
       )}
     >
       <div className="flex gap-2 justify-center items-start">
-        <div className="flex items-start font-[600] gap-2">
-            국가코드
-        </div>          
+        <div className="flex items-start font-[600] gap-2">국가코드</div>
       </div>
-        <div
-          className={twMerge(
-            divClasses.default,
-          )}
-        >
-          <Dropdown
-            value={countryOptions.find(
-              (option) => option.code === country_code
-            )}
-            options={countryOptions}
-            onChange={(e) => setCountry_code(e.value.code)}
-            optionLabel="name"
-            placeholder="선택"
-            filter
-            valueTemplate={selectedCountryTemplate}
-            itemTemplate={countryOptionTemplate}
-            className="dropdown"
-          />
-        </div>
+      <div className={twMerge(divClasses.default)}>
+        <Dropdown
+          value={countryOptions.find((option) => option.code === country_code)}
+          options={countryOptions}
+          onChange={(e) => setCountry_code(e.value.code)}
+          optionLabel="name"
+          placeholder="선택"
+          filter
+          valueTemplate={selectedCountryTemplate}
+          itemTemplate={countryOptionTemplate}
+          className="dropdown"
+        />
+      </div>
     </div>
   );
 };

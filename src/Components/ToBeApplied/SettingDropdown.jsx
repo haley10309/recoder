@@ -4,11 +4,12 @@ import { Dropdown } from "primereact/dropdown";
 import { templateOption } from "@/apis/apis";
 
 const divWrapperClasses = {
-  dropdown: "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] mr-10 flex-col"
+  dropdown: "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] mr-10 flex-col",
 };
 
 const divClasses = {
-  default:"focus-within:bg-none h-full p-4 ring-1 ring-black flex justify-center align-center items-center font-[500]"
+  default:
+    "focus-within:bg-none h-full p-4 ring-1 ring-black flex justify-center align-center items-center font-[500]",
 };
 
 const SettingDropdown = ({
@@ -46,7 +47,6 @@ const SettingDropdown = ({
     fetchData();
   }, [_url]);
 
-
   return (
     <div
       {..._wrapperProps}
@@ -59,9 +59,7 @@ const SettingDropdown = ({
     >
       <div className="flex gap-2 justify-center items-start">
         {_title && (
-          <div className="flex items-start font-[600] gap-2">
-            {_title}
-          </div>
+          <div className="flex items-start font-[600] gap-2">{_title}</div>
         )}
       </div>
       {loading ? (
@@ -69,10 +67,7 @@ const SettingDropdown = ({
       ) : (
         <div
           {..._divProps}
-          className={twMerge(
-            divClasses.default,
-            _divProps?.className
-          )}
+          className={twMerge(divClasses.default, _divProps?.className)}
         >
           <Dropdown
             value={options.find((option) => option.name === _value)}
