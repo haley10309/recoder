@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useRecoilState } from "recoil";
-import { ticketUrlState, countryCodeState } from "@/recoil/atoms/state";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil"; // ✅ 여기에 추가
+import {
+  ticketNumState,
+  ticketUrlState,
+  countryCodeState,
+} from "@/recoil/atoms/state";
 import CustomDropdownInput from "@/Components/Common/CustomDropdownInput";
 import { countryOptions } from "@/Components/Common/CoutryCode";
 import { templateSearch, templateOption } from "@/apis/apis";
 
 const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   const [ticketNumber, setTicketNumber] = useState(""); // 지라 티켓 번호
+  const setTicketNum = useSetRecoilState(ticketNumState);
   const [ticketUrl, setTicketUrl] = useRecoilState(ticketUrlState); // 티켓에 해당하는 URL (Recoil)
   const [siteCode, setSiteCode] = useRecoilState(countryCodeState); // 사이트 코드 (Recoil)
+
+  const handleTicketNumberChange = (value) => {
+    setTicketNumber(value);
+    setTicketNum(value); // 👈 Recoil 업데이트
+  };
 
   const [ticketNumberOptions, setTicketNumberOptions] = useState([]); // 티켓 번호 드롭다운 옵션
   const [ticketUrlOptions, setTicketUrlOptions] = useState([]); // URL 드롭다운 옵션
@@ -50,7 +60,7 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
             <InputTitle>지라 티켓 번호</InputTitle>
             <CustomDropdownInput
               value={ticketNumber}
-              onChange={setTicketNumber}
+              onChange={handleTicketNumberChange}
               placeholder="지라 티켓 번호"
               options={ticketNumberOptions}
             />
@@ -84,8 +94,8 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
 
 export default SearchTemplate;
 
-const Title = styled.h3`
-  font-size: 1.25rem;
+const Title = styled.p`
+  font-size: 1rem;
   font-style: normal;
   font-weight: 700;
   line-height: 140%;

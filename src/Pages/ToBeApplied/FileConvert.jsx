@@ -5,17 +5,22 @@ import Process from "@/assets/uim_process.png";
 import FileUpload from "@/assets/shift-fill.svg";
 import HtmlFile from "@/assets/union.svg";
 import { fileExecute } from "@/apis/apis";
-import { useRecoilState } from "recoil";
-import { countryCodeState, ticketUrlState } from "@/recoil/atoms/state";
+import { fetchLocalizationList } from "@/apis/apis";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  countryCodeState,
+  ticketUrlState,
+  ticketNumState,
+} from "@/recoil/atoms/state";
 
 const FileConvert = ({ textareas, setTextareas }) => {
-  // 상태 관리
+  const ticketUrl = useRecoilValue(ticketUrlState);
+  const ticketNum = useRecoilValue(ticketNumState);
   const [isProcessing, setIsProcessing] = useState(false);
   const [originalFile, setOriginalFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isExecuted, setIsExecuted] = useState(false);
   const [changeResults, setChangeResults] = useState([]);
-  const [ticketUrl, setticketUrl] = useRecoilState(ticketUrlState);
   const [country_code, setCountry_code] = useRecoilState(countryCodeState);
   const [fileContent, setFileContent] = useState("");
   const [downloadedFileContent, setDownloadedFileContent] = useState("");
@@ -23,9 +28,85 @@ const FileConvert = ({ textareas, setTextareas }) => {
   const [uploadStatus, setUploadStatus] = useState("");
   const [isDownloaded, setIsDownloaded] = useState(false);
   const [downloadedFileName, setDownloadedFileName] = useState("");
+  const [translations, setTranslations] = useState({}); // txt 번역 딕셔너리 저장
 
-  const handleLocalization = () => {
-    return 0;
+  const handleTranslationUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/translation_upload`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      console.log("✅ 번역덱 업로드 응답:", response.data);
+
+      const dictionary = {};
+      response.data.translations?.forEach((item) => {
+        dictionary[item.english] = item.local;
+      });
+
+      setTranslations(dictionary); // ✅ 상태에 저장
+    } catch (error) {
+      console.error("❌ 번역덱 업로드 실패:", error);
+    }
+  };
+
+  const handleApplyLocalization = async () => {
+    try {
+      const localization_list = await fetchLocalizationList(
+        ticketNum,
+        ticketUrl
+      );
+      console.log("받은 localization_list:", localization_list);
+
+      const updatedTextareas = textareas.map((textarea, index) => {
+        const localItem = localization_list[index];
+        const originalToBe = textarea.toBeCode;
+
+        if (!localItem?.local_code) return textarea;
+
+        let replacedCode = originalToBe;
+
+        // local_code 부분만 추출해서 안에서 치환
+        const blockRegex = new RegExp(localItem.local_code, "g");
+
+        if (originalToBe.includes(localItem.local_code)) {
+          const localizedBlock = localItem.local_code.replace(
+            />([^<]+)</g,
+            (match, text) => {
+              const trimmedText = text.trim();
+              if (translations[trimmedText]) {
+                return `>${translations[trimmedText]}<`;
+              }
+              return match;
+            }
+          );
+
+          replacedCode = originalToBe.replace(
+            localItem.local_code,
+            localizedBlock
+          );
+        }
+
+        return {
+          ...textarea,
+          toBeCode: replacedCode, // 치환 결과 덮어쓰기
+          localizedToBeCode: replacedCode,
+        };
+      });
+
+      setTextareas(updatedTextareas);
+    } catch (error) {
+      console.error("로컬라이제이션 적용 실패:", error);
+    }
   };
 
   // 파일 변경 시 파일 읽기 및 상태 업데이트
@@ -198,7 +279,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
             <input
               id="dropzone-file"
               type="file"
-              onChange={handleLocalization}
+              onChange={handleTranslationUpload}
               hidden
             />
           </FileDropLabel>
@@ -216,7 +297,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
             </ConvertButton>
             <ConvertButton
               $bgColor="black"
-              onClick={handleExecute}
+              onClick={handleApplyLocalization}
               disabled={isProcessing || fileName === ""}
               $active={fileName !== "" && !isProcessing}
             >
@@ -229,7 +310,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
             <PreviewHeader>
               <img src={HtmlFile} alt="htmlicon" />
               <div id="preview-text">
-                <span>{fileName}</span>
+                <span>{downloadedFileName}</span>
                 <ProgressBar>
                   <ProgressFill $progress={uploadProgress} />
                 </ProgressBar>
@@ -255,9 +336,12 @@ const FileConvert = ({ textareas, setTextareas }) => {
 export default FileConvert;
 
 const ConvertTitle = styled.p`
-  font-size: 16px;
-  font-weight: bold;
-  color: black;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 `;
 
 const ConvertSection = styled.div`
@@ -334,7 +418,6 @@ const ConvertButton = styled.button`
 const PreviewContainer = styled.div`
   display: flex;
   margin-top: 1.5rem;
-  margin-bottom: 2rem;
   justify-content: space-between;
 `;
 
@@ -363,13 +446,15 @@ const ProgressBar = styled.div`
   width: 11.25rem;
   height: 0.125rem;
   flex-shrink: 0;
+
   background-color: #e5e7eb;
   border-radius: 999px;
   margin-top: 8px;
 `;
 
 const ProgressFill = styled.div`
-  width: ${({ $progress }) => `${$progress}%`};
+  width: ${({ $progress }) => ($progress ? `${$progress}%` : "0%")};
+  height: 100%;
   background: #5b975b;
   border-radius: 999px;
 `;

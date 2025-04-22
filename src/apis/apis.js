@@ -95,3 +95,18 @@ export const templateOption = async (_url) => {
     throw error;
   }
 };
+
+// 로컬라이제이션 템플릿 가져오기
+export const fetchLocalizationList = async (ticket_num, ticket_url) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/get-template-details`, {
+      ticket_num,
+      ticket_url,
+    });
+
+    return response.data.localization_list || [];
+  } catch (error) {
+    console.error("로컬라이제이션 API 호출 실패:", error);
+    throw error;
+  }
+};

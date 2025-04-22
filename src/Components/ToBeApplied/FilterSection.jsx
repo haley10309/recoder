@@ -20,7 +20,7 @@ const FilterSection = ({ filter, setFilter, filterTobe, setFilterTobe }) => {
 
   return (
     <TitleRow>
-      <Title>AS-WAS / TO-BE 코드 확인하기</Title>
+      <Title>👀 AS-WAS / TO BE / Localization 확인하기</Title>
       <DropdownGroup>
         <CustomDropdownInput
           value={
@@ -57,10 +57,11 @@ const TitleRow = styled.div`
 `;
 
 const Title = styled.h2`
-  font-weight: bold;
-  color: black;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%;
   margin-bottom: 20px;
-  font-size: 16px;
 `;
 
 const DropdownGroup = styled.div`

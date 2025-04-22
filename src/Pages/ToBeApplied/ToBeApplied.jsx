@@ -93,9 +93,6 @@ const Container = styled.div`
 const WhiteBox = styled.div`
   display: flex;
   flex-direction: column;
-  border-radius: 10px;
-  background-color: white;
-  border: 1px solid #d1d5db;
   color: #32383e;
-  padding: 32px;
+  margin-top: 2rem;
 `;

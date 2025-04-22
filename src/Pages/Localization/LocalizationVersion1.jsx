@@ -7,6 +7,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ShowDetail from "@Localization/ShowDetail";
+import styled from "styled-components";
 
 const LocalizationVersion1 = () => {
   const [translationFile, setTranslationFile] = useState(null);
@@ -35,7 +36,7 @@ const LocalizationVersion1 = () => {
       setValidCountries(response.data.validCountries);
       setTranslations(response.data.translations || {});
       setEnglish_copies(response.data.englishCopy || []);
-      if (rows.length == 0) {
+      if (rows.length === 0) {
         setRows(
           new Array(4).fill(null).map(() => ({
             id: Date.now(),
@@ -125,20 +126,18 @@ const LocalizationVersion1 = () => {
     const files = Array.from(e.target.files);
     const updatedRows = [...rows];
     updatedRows[index].htmlFiles = files;
-    console.log(updatedRows[index].htmlFiles[0].name);
     setRows(updatedRows);
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <Container>
       {/* 번역 파일 업로드 */}
-      <div className="mb-6">
-        <label className="inline-flex items-center gap-3 bg-blue-100 text-blue-800 px-4 py-2 rounded border border-blue-200 cursor-pointer hover:bg-blue-200">
-          <input
+      <UploadSection>
+        <UploadButton>
+          <FileInput
             type="file"
             accept=".txt"
             onChange={handleTranslationFileChange}
-            hidden
           />
           <FileUploadIcon />
           <span>
@@ -146,50 +145,45 @@ const LocalizationVersion1 = () => {
               ? translationFile.name
               : "📄 번역 기준 파일 업로드 (.txt)"}
           </span>
-        </label>
-      </div>
+        </UploadButton>
+      </UploadSection>
 
       {/* 각 번역 row 렌더링 */}
       {rows.length > 0 ? (
-        <div className="space-y-4">
+        <div>
           {rows.map((row, index) => (
-            <div
-              key={index}
-              className="flex flex-col md:flex-row items-center gap-4 bg-white border border-gray-200 p-4 rounded shadow-sm"
-            >
-              {/* 국가 선택 */}
-              <Translation_country_code
-                country_code={row.country_code}
-                validCountries={validCountries}
-                onChange={(code) => handleCountryChange(index, code)}
-              />
-
-              <label className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-2 rounded border border-gray-300 cursor-pointer hover:bg-gray-200">
-                <input
-                  type="file"
-                  accept=".html"
-                  multiple
-                  onChange={(e) => handleHtmlFileChange(index, e)}
-                  hidden
+            <RowWrapper key={index}>
+              <RowActions>
+                {/* 국가 선택 */}
+                <Translation_country_code
+                  country_code={row.country_code}
+                  validCountries={validCountries}
+                  onChange={(code) => handleCountryChange(index, code)}
                 />
-                <span>{row.htmlFiles?.[0]?.name || "Upload rc01"}</span>
-              </label>
 
-              {/* 번역 버튼 */}
-              <button
-                onClick={() => handleTranslate(index)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-              >
-                Translate
-              </button>
+                <FileLabel>
+                  <FileInput
+                    type="file"
+                    accept=".html"
+                    multiple
+                    onChange={(e) => handleHtmlFileChange(index, e)}
+                  />
+                  <span>{row.htmlFiles?.[0]?.name || "Upload rc01"}</span>
+                </FileLabel>
+
+                <Button onClick={() => handleTranslate(index)}>
+                  Translate
+                </Button>
+              </RowActions>
 
               {/* 상태 표시 */}
-              {row.status === "success" && (
-                <CheckCircleIcon className="text-green-500 text-xl" />
-              )}
-              {row.status === "error" && (
-                <ErrorIcon className="text-red-500 text-xl" />
-              )}
+              <StatusIcon success={row.status === "success"}>
+                {row.status === "success" ? (
+                  <CheckCircleIcon />
+                ) : row.status === "error" ? (
+                  <ErrorIcon />
+                ) : null}
+              </StatusIcon>
 
               {/* 상세 보기 */}
               {(row.untranslated_en?.length > 0 ||
@@ -199,12 +193,11 @@ const LocalizationVersion1 = () => {
                   untranslatedLocalCopies={row.untranslated_lo}
                 />
               )}
-            </div>
+            </RowWrapper>
           ))}
 
           {/* Row 추가 */}
-          <button
-            className="flex items-center gap-2 text-sm text-blue-700 hover:text-blue-900 mt-4"
+          <AddRowButton
             onClick={() =>
               setRows([
                 ...rows,
@@ -218,19 +211,115 @@ const LocalizationVersion1 = () => {
             }
           >
             <AddCircleOutlineIcon /> Add Row
-          </button>
+          </AddRowButton>
         </div>
       ) : (
-        // 초기 상태 안내
-        <div className="flex flex-col items-center justify-center mt-16 text-gray-500">
+        <EmptyState>
           <FileUploadIcon sx={{ fontSize: 48 }} />
-          <p className="mt-2 text-lg font-medium">
-            Upload the copy deck in txt file.
-          </p>
-        </div>
+          <p>Upload the copy deck in txt file.</p>
+        </EmptyState>
       )}
-    </div>
+    </Container>
   );
 };
 
 export default LocalizationVersion1;
+
+// Styled components
+const Container = styled.div`
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  min-height: 100vh;
+`;
+
+const UploadSection = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const UploadButton = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #e0f2fe;
+  color: #1e40af;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: 1px solid #93c5fd;
+  cursor: pointer;
+  &:hover {
+    background-color: #bfdbfe;
+  }
+`;
+
+const FileInput = styled.input`
+  display: none;
+`;
+
+const RowWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const RowActions = styled.div`
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+`;
+
+const FileLabel = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  &:hover {
+    background-color: #e5e7eb;
+  }
+`;
+
+const Button = styled.button`
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  &:hover {
+    background-color: #1d4ed8;
+  }
+`;
+
+const AddRowButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #3b82f6;
+  font-size: 0.875rem;
+  &:hover {
+    color: #2563eb;
+  }
+  margin-top: 1rem;
+`;
+
+const StatusIcon = styled.div`
+  font-size: 1.25rem;
+  color: ${(props) => (props.success ? "#10b981" : "#ef4444")};
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4rem;
+  color: #6b7280;
+  font-size: 1.125rem;
+`;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Yes from "@/assets/tobe_yes.png";
 import No from "@/assets/tobe_no.png";
@@ -10,6 +10,8 @@ const BasicTextarea = ({
   setAsWasCode,
   toBeCode,
   setToBeCode,
+  localizedToBeCode,
+  setLocalizedToBeCode,
   isApplied,
   checked,
   onCheckedChange,
@@ -22,10 +24,6 @@ const BasicTextarea = ({
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
 
   const transformedAsWasCode = asWasCode?.replace(
-    /\/site\//g,
-    `/${country_code}/`
-  );
-  const transformedToBeCode = toBeCode?.replace(
     /\/site\//g,
     `/${country_code}/`
   );
@@ -44,10 +42,6 @@ const BasicTextarea = ({
     }
   };
 
-  const transformedLocalization = () => {
-    return 0;
-  };
-
   return (
     <Container>
       <Wrapper>
@@ -64,22 +58,17 @@ const BasicTextarea = ({
           <TextBold>p. {pptNo}</TextBold>
         </PptNo>
 
+        {/* AS-WAS */}
         <CodeBlock>
           <Textarea
             value={transformedAsWasCode}
             onChange={(e) => setAsWasCode(e.target.value)}
             placeholder="As-Was code를 입력하세요."
           />
-          {asWasOccurrenceCount && asWasOccurrenceCount > 0 ? (
-            <OccurrenceCount>
-              <strong>[AS-WAS] 일치하는 코드 출현 횟수:</strong>{" "}
-              {asWasOccurrenceCount}회
-            </OccurrenceCount>
-          ) : (
-            <OccurrenceCount>
-              <strong>[AS-WAS] 일치하는 코드 출현 횟수:</strong> 없음
-            </OccurrenceCount>
-          )}
+          <OccurrenceCount>
+            <strong>[AS-WAS] 일치하는 코드 출현 횟수:</strong>{" "}
+            {asWasOccurrenceCount > 0 ? `${asWasOccurrenceCount}회` : "없음"}
+          </OccurrenceCount>
 
           {matchedPart && (
             <MatchedPartWrapper>
@@ -109,22 +98,26 @@ const BasicTextarea = ({
           )}
         </CodeBlock>
 
+        {/* TO-BE */}
         <CodeBlock>
           <Textarea
-            value={transformedToBeCode}
+            value={toBeCode}
             onChange={(e) => setToBeCode(e.target.value)}
             placeholder="To-Be code를 입력하세요."
+            $isApplied={isApplied}
           />
         </CodeBlock>
 
+        {/* LOCALIZED TO-BE */}
         <CodeBlock>
           <Textarea
-            value={transformedLocalization()}
-            onChange={(e) => setToBeCode(e.target.value)}
+            value={localizedToBeCode}
+            onChange={(e) => setLocalizedToBeCode(e.target.value)}
             placeholder="로컬라이제이션을 적용하세요."
           />
         </CodeBlock>
 
+        {/* 결과 표시 */}
         <ToBeAppliedWrapper>
           {isApplied === "yes" ? (
             <YesIcon src={Yes} alt="yes" />
@@ -149,6 +142,7 @@ const Wrapper = styled.div`
   background-color: #f6f6f6;
   border-bottom: 1px solid #d1d5db;
   align-items: flex-start;
+  gap: 1rem;
 `;
 
 const CheckboxWrapper = styled.div`
@@ -191,6 +185,38 @@ const Textarea = styled.textarea`
   padding: 1rem;
   border: 1px solid #d1d5db;
   border-radius: 8px;
+
+  /* 조건에 따른 테두리 색상 */
+  ${({ $isApplied }) =>
+    $isApplied === "yes"
+      ? `border: 2px solid green;`
+      : $isApplied === "no"
+      ? `border: 2px solid red;`
+      : ``}
+
+  overflow: hidden;
+
+  &:hover,
+  &:focus {
+    overflow: auto;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: #8a8a8a #e5e7eb;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #e5e7eb;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: 10px;
+  }
 `;
 
 const OccurrenceCount = styled.div`

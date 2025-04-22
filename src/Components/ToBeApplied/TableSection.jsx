@@ -2,7 +2,16 @@
 import BasicTextarea from "@/Components/ToBeApplied/Textarea";
 import styled from "styled-components";
 
-const TableSection = ({ filteredTextareas, codePairs, country_code, handleAsWasCodeChange, handleToBeCodeChange, handleCheckedChange, filter, filterTobe }) => {
+const TableSection = ({
+  filteredTextareas,
+  codePairs,
+  country_code,
+  handleAsWasCodeChange,
+  handleToBeCodeChange,
+  handleCheckedChange,
+  filter,
+  filterTobe,
+}) => {
   return (
     <TableWrapper>
       <TableHeader>
@@ -15,7 +24,9 @@ const TableSection = ({ filteredTextareas, codePairs, country_code, handleAsWasC
       </TableHeader>
 
       {filteredTextareas().map((textarea, index) => {
-        const matchedPptNo = codePairs.find((pair) => pair.aswas_code === textarea.asWasCode)?.ppt_no;
+        const matchedPptNo = codePairs.find(
+          (pair) => pair.aswas_code === textarea.asWasCode
+        )?.ppt_no;
 
         return (
           <BasicTextarea
@@ -31,12 +42,16 @@ const TableSection = ({ filteredTextareas, codePairs, country_code, handleAsWasC
               `/${country_code}/`
             )}
             setToBeCode={(value) => handleToBeCodeChange(index, value)}
+            localizedToBeCode={textarea.localizedToBeCode}
+            setLocalizedToBeCode={(value) =>
+              handleToBeCodeChange(index, value, { isLocalized: true })
+            }
             changed={{ index, changed: textarea.changed }}
             isApplied={textarea.isApplied}
             onCheckedChange={() => handleCheckedChange(index)}
             checked={textarea.checked}
-            filter={filter} // filter가 전달됨
-            filterTobe={filterTobe} // filterTobe가 전달됨
+            filter={filter}
+            filterTobe={filterTobe}
             country_code={country_code}
             matchedPart={textarea.matchedPart}
             asWasOccurrenceCount={textarea.asWasOccurrenceCount}
