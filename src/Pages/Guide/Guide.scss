@@ -1,112 +1,104 @@
 .guide-container {
-    padding: 20px;
+  padding: 20px;
 }
 
 .anchor-nav {
-    margin-bottom: 20px;
-    
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .anchor-nav ul {
-    list-style-type: none; /* Remove bullets */
-    padding-left: 0; /* Remove padding */
-    
+  list-style-type: none; /* Remove bullets */
+  padding-left: 0; /* Remove padding */
 }
 
 .anchor-nav li {
-    display: inline; /* Display items in a line */
-    margin-right: 15px; /* Space between items */
+  display: inline; /* Display items in a line */
+  margin-right: 15px; /* Space between items */
 }
 
 .anchor-nav a {
-    text-decoration: none; /* Remove underline from links */
-    color: #007bff; /* Link color */
-    font-size: larges;
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: bold;
-    margin-right: 1rem;
+  text-decoration: none; /* Remove underline from links */
+  color: #2b318a; /* Link color */
+  font-size: larges;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  margin-right: 1rem;
 }
 
 .anchor-nav a:hover {
-   text-decoration: underline; /* Underline on hover */
+  text-decoration: underline; /* Underline on hover */
 }
 
 .guide-section {
-    margin-top: 60px;
-    padding: 40px;
-    background-color: #f9f9f9; // 연한 회색 배경
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); // 부드러운 그림자
-    border: 1px solid #e0e0e0; // 얇은 테두리로 정리된 느낌
-    transition: transform 0.3s ease;
+  margin-top: 60px;
+  padding: 40px;
+  background-color: #f9f9f9; // 연한 회색 배경
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); // 부드러운 그림자
+  border: 1px solid #e0e0e0; // 얇은 테두리로 정리된 느낌
+  transition: transform 0.3s ease;
 
-    &:hover {
-        transform: translateY(-2px); // 살짝 위로 올라가는 효과
-    }
+  h2.guide_title,
+  h1.guide_title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+    border-left: 5px solid #2b318a;
+    padding-left: 1rem;
+    background-color: #fff;
+  }
 
-    h2.guide_title, h1.guide_title {
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-        color: #333;
-        border-left: 5px solid #007bff;
-        padding-left: 1rem;
-        background-color: #fff;
-    }
-
-    li {
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        line-height: 1.6;
-        color: #444;
-    }
+  li {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+    color: #444;
+  }
 }
 
 .scroll-to-top {
-    position: fixed;
-    bottom: 30px; /* Distance from bottom edge */
-    right: 30px; /* Distance from right edge */
-    background-color:#007bff;
-    color:white;
-    
- padding :1rem ;
- border:none ;
- border-radius :3rem;
- //width: 3rem;
- font-size :16 px ;
- cursor:pointer ;
- 
- transition:.3s;
- 
- z-index :1000 ;/* Ensure it's above other elements */
- 
- display:flex ; 
- align-items:center ; 
- justify-content:center;
- 
- }
- .scroll-to-top:hover{
- background-color:#0056b3 ;/* Darker blue on hover */ 
- 
- 
- }
-.img_guide{
-    width: 80%;
-    margin:auto;
-    align-items: center;
-    margin-bottom:1rem;
-    border-radius: 1.4%;
-    
+  position: fixed;
+  bottom: 30px; /* Distance from bottom edge */
+  right: 30px; /* Distance from right edge */
+  background-color: #494e9c;
+  color: white;
+
+  padding: 1rem;
+  border: none;
+  border-radius: 3rem;
+  font-size: 16 px;
+  cursor: pointer;
+
+  transition: 0.3s;
+
+  z-index: 1000; /* Ensure it's above other elements */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.explain_h2{
-    display: flex;
-    margin-left: 10rem;
-    font-weight: bold;
-    margin-bottom: 3rem;
+.scroll-to-top:hover {
+  background-color: #2b318a;
+}
+.img_guide {
+  width: 80%;
+  margin: auto;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-radius: 1.4%;
+}
+.explain_h2 {
+  display: flex;
+  margin-left: 10rem;
+  font-weight: bold;
+  margin-bottom: 3rem;
 }
 
-.guide_title{
-    font-size: xx-large;
-    font-weight: bold;
-    margin-bottom: 3rem;
-    font-family: Arial, Helvetica, sans-serif;
+.guide_title {
+  font-size: xx-large;
+  font-weight: bold;
+  margin-bottom: 3rem;
+  font-family: Arial, Helvetica, sans-serif;
 }
