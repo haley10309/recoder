@@ -110,3 +110,31 @@ export const fetchLocalizationList = async (ticket_num, ticket_url) => {
     throw error;
   }
 };
+
+export const uploadTranslationDeck = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await axios.post(`${BASE_URL}/translation_upload`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    const { translations, englishCopy, validCountries } = response.data;
+
+    if (!translations || !englishCopy) {
+      throw new Error("❌ 번역덱 데이터가 비어 있습니다.");
+    }
+
+    return {
+      translations,
+      englishCopy,
+      validCountries,
+    };
+  } catch (error) {
+    console.error("❌ 번역덱 업로드 실패:", error);
+    throw error;
+  }
+};

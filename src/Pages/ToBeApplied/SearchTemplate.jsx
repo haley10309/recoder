@@ -14,7 +14,7 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   const [ticketNumber, setTicketNumber] = useState(""); // 지라 티켓 번호
   const setTicketNum = useSetRecoilState(ticketNumState);
   const [ticketUrl, setTicketUrl] = useRecoilState(ticketUrlState); // 티켓에 해당하는 URL (Recoil)
-  const [siteCode, setSiteCode] = useRecoilState(countryCodeState); // 사이트 코드 (Recoil)
+  const [country_code, setCountry_code] = useRecoilState(countryCodeState);
 
   const handleTicketNumberChange = (value) => {
     setTicketNumber(value);
@@ -77,8 +77,8 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
           <InputBox>
             <InputTitle>SITECODE</InputTitle>
             <CustomDropdownInput
-              value={siteCode}
-              onChange={setSiteCode}
+              value={country_code}
+              onChange={setCountry_code}
               placeholder="국가 코드 선택"
               options={countryOptions.map((c) => c.name)}
             />

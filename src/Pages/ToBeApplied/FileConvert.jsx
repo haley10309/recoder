@@ -5,6 +5,7 @@ import Process from "@/assets/uim_process.png";
 import FileUpload from "@/assets/shift-fill.svg";
 import HtmlFile from "@/assets/union.svg";
 import { fileExecute } from "@/apis/apis";
+import { uploadTranslationDeck } from "@/apis/apis";
 import { fetchLocalizationList } from "@/apis/apis";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -28,36 +29,67 @@ const FileConvert = ({ textareas, setTextareas }) => {
   const [uploadStatus, setUploadStatus] = useState("");
   const [isDownloaded, setIsDownloaded] = useState(false);
   const [downloadedFileName, setDownloadedFileName] = useState("");
-  const [translations, setTranslations] = useState({}); // txt 번역 딕셔너리 저장
+  const [translations, setTranslations] = useState({});
+  const [translationsByCountry, setTranslationsByCountry] = useState({});
+  const [currentTranslations, setCurrentTranslations] = useState({});
+  const [translationFile, setTranslationFile] = useState({});
+  const [validCountries, setValidCountries] = useState([]);
 
   const handleTranslationUpload = async (e) => {
     const file = e.target.files[0];
+    setTranslationFile(file);
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
-      const response = await axios.post(
-        `${BASE_URL}/translation_upload`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const { translations, englishCopy, validCountries } =
+        await uploadTranslationDeck(file);
 
-      console.log("✅ 번역덱 업로드 응답:", response.data);
+      setValidCountries(validCountries);
+      setTranslationsByCountry(translations);
+
+      const currentCountry = country_code;
+      const countryTranslations = translations[currentCountry] || [];
 
       const dictionary = {};
-      response.data.translations?.forEach((item) => {
-        dictionary[item.english] = item.local;
-      });
+      for (let i = 0; i < englishCopy.length; i++) {
+        const key = englishCopy[i]?.trim();
+        const value = countryTranslations[i]?.trim();
+        if (value && key !== value) {
+          dictionary[key] = value;
+        }
+      }
 
-      setTranslations(dictionary); // ✅ 상태에 저장
-    } catch (error) {
-      console.error("❌ 번역덱 업로드 실패:", error);
+      setCurrentTranslations(dictionary);
+
+      console.log("🌍 현재 country_code:", currentCountry);
+      console.log("📘 dictionary:", Object.entries(dictionary).slice(0, 5));
+    } catch (err) {
+      console.error(err);
     }
   };
+
+  function applyLocalizationToHtmlString(htmlString, dictionary) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, "text/html");
+
+    const walker = document.createTreeWalker(
+      doc.body,
+      NodeFilter.SHOW_TEXT,
+      null,
+      false
+    );
+
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      Object.entries(dictionary).forEach(([english, local]) => {
+        if (node.nodeValue.includes(english)) {
+          node.nodeValue = node.nodeValue.replaceAll(english, local);
+        }
+      });
+    }
+
+    return doc.body.innerHTML;
+  }
 
   const handleApplyLocalization = async () => {
     try {
@@ -67,48 +99,24 @@ const FileConvert = ({ textareas, setTextareas }) => {
       );
       console.log("받은 localization_list:", localization_list);
 
-      const updatedTextareas = textareas.map((textarea, index) => {
-        const localItem = localization_list[index];
-        const originalToBe = textarea.toBeCode;
-
-        if (!localItem?.local_code) return textarea;
-
-        let replacedCode = originalToBe;
-
-        // local_code 부분만 추출해서 안에서 치환
-        const blockRegex = new RegExp(localItem.local_code, "g");
-
-        if (originalToBe.includes(localItem.local_code)) {
-          const localizedBlock = localItem.local_code.replace(
-            />([^<]+)</g,
-            (match, text) => {
-              const trimmedText = text.trim();
-              if (translations[trimmedText]) {
-                return `>${translations[trimmedText]}<`;
-              }
-              return match;
-            }
-          );
-
-          replacedCode = originalToBe.replace(
-            localItem.local_code,
-            localizedBlock
-          );
-        }
+      const newTextareas = textareas.map((textarea) => {
+        let localizedHtml = textarea.toBeCode;
+        localizedHtml = applyLocalizationToHtmlString(
+          localizedHtml,
+          currentTranslations
+        );
 
         return {
           ...textarea,
-          toBeCode: replacedCode, // 치환 결과 덮어쓰기
-          localizedToBeCode: replacedCode,
+          localizedToBeCode: localizedHtml,
         };
       });
 
-      setTextareas(updatedTextareas);
+      setTextareas(newTextareas);
     } catch (error) {
       console.error("로컬라이제이션 적용 실패:", error);
     }
   };
-
   // 파일 변경 시 파일 읽기 및 상태 업데이트
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -271,13 +279,13 @@ const FileConvert = ({ textareas, setTextareas }) => {
               hidden
             />
           </FileDropLabel>
-          <FileDropLabel htmlFor="dropzone-file">
+          <FileDropLabel htmlFor="dropzone-txt">
             <FileDropInner>
               <img src={FileUpload} alt="Apply" />
               <p>번역덱 TXT 을 업로드 해주세요.</p>
             </FileDropInner>
             <input
-              id="dropzone-file"
+              id="dropzone-txt"
               type="file"
               onChange={handleTranslationUpload}
               hidden
