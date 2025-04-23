@@ -60,7 +60,7 @@ const InputDrop = ({ _wrapperProps, _divProps, _state, _title, _value, _setValue
             zIndex: 1000,
             padding: 0,
           }}
-          itemTemplate={(opt) => <div className="px-4 py-2 hover:bg-[#FF782F] hover:text-white">{opt.name}</div>}
+          itemTemplate={(opt) => <div className="px-4 py-2 hover:bg-[#FFAE82] hover:text-white rounded-[5px]">{opt.name}</div>}
         />
       )}
     </div>
