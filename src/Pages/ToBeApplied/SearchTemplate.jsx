@@ -40,12 +40,9 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   }, []);
 
   const handleSearchTemplate = async () => {
-    const normalizedUrl = ticketUrl.startsWith("/")
-      ? ticketUrl
-      : `/${ticketUrl}`;
     await templateSearch(
       ticketNumber,
-      normalizedUrl,
+      ticketUrl,
       setTextareas,
       setCodePairs
     );

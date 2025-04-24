@@ -9,9 +9,12 @@ export const templateSearch = async (
   setCodePairs
 ) => {
   try {
+    console.log("📦 보내는 값:", { ticket_num, ticket_url });
+    console.log("🌐 BASE_URL:", BASE_URL);
+
     const response = await axios.post(`${BASE_URL}/template`, {
-      ticket_num: ticket_num,
-      ticket_url: ticket_url,
+      ticket_num,
+      ticket_url,
     });
 
     console.log("🔥 응답 결과:", response.data);
@@ -28,13 +31,15 @@ export const templateSearch = async (
       setTextareas(newTextareas);
       setCodePairs(pairs);
     } else {
+      console.warn("⚠️ 실패 응답 메시지:", response.data.message);
       alert(
         response.data.message ||
           "유효하지 않은 템플릿입니다.\n정보를 다시 확인해주세요."
       );
     }
   } catch (error) {
-    console.error("Error fetching code pairs:", error);
+    console.error("❌ Error fetching code pairs:", error);
+    alert("서버 요청에 실패했습니다. 콘솔을 확인해주세요.");
   }
 };
 
@@ -116,11 +121,15 @@ export const uploadTranslationDeck = async (file) => {
   formData.append("file", file);
 
   try {
-    const response = await axios.post(`${BASE_URL}/translation_upload`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axios.post(
+      `${BASE_URL}/translation_upload`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
     const { translations, englishCopy, validCountries } = response.data;
 

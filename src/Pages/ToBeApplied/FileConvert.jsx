@@ -68,27 +68,40 @@ const FileConvert = ({ textareas, setTextareas }) => {
     }
   };
 
-  function applyLocalizationToHtmlString(htmlString, dictionary) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, "text/html");
+  function applyLocalizedTemplateBlocks(
+    htmlString,
+    dictionary,
+    localizationList
+  ) {
+    let result = htmlString;
 
-    const walker = document.createTreeWalker(
-      doc.body,
-      NodeFilter.SHOW_TEXT,
-      null,
-      false
-    );
+    const normalize = (str) =>
+      str
+        .replace(/[\[\]"]/g, "")
+        .replace(/[*]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
 
-    while (walker.nextNode()) {
-      const node = walker.currentNode;
-      Object.entries(dictionary).forEach(([english, local]) => {
-        if (node.nodeValue.includes(english)) {
-          node.nodeValue = node.nodeValue.replaceAll(english, local);
+    localizationList.forEach((item) => {
+      const originalBlock = item.local_code;
+      const doc = new DOMParser().parseFromString(originalBlock, "text/html");
+      const originalText = doc.body.textContent?.trim() || "";
+      const normalizedKey = normalize(originalText);
+
+      Object.entries(dictionary).forEach(([eng, local]) => {
+        if (normalize(eng) === normalizedKey) {
+          // 기존 블록을 가공해서 텍스트만 치환
+          const translatedBlock = originalBlock.replace(eng, local);
+          // 원본 전체 HTML에서 exact block만 찾아서 교체
+          if (result.includes(originalBlock)) {
+            result = result.replaceAll(originalBlock, translatedBlock);
+          }
         }
       });
-    }
+    });
 
-    return doc.body.innerHTML;
+    return result;
   }
 
   const handleApplyLocalization = async () => {
@@ -97,13 +110,32 @@ const FileConvert = ({ textareas, setTextareas }) => {
         ticketNum,
         ticketUrl
       );
+
+      const validTemplateTexts = localization_list.map((item) => {
+        const doc = new DOMParser().parseFromString(
+          item.local_code,
+          "text/html"
+        );
+        return doc.body.textContent?.trim();
+      });
+
+      localization_list.forEach((item) => {
+        Object.entries(item).forEach(([key, val]) => {
+          if (key.startsWith("value") && typeof val === "string") {
+            const doc = new DOMParser().parseFromString(val, "text/html");
+            const textOnly = doc.body.textContent?.trim();
+            if (textOnly) validTemplateTexts.push(textOnly);
+          }
+        });
+      });
+
       console.log("받은 localization_list:", localization_list);
 
       const newTextareas = textareas.map((textarea) => {
-        let localizedHtml = textarea.toBeCode;
-        localizedHtml = applyLocalizationToHtmlString(
-          localizedHtml,
-          currentTranslations
+        const localizedHtml = applyLocalizedTemplateBlocks(
+          textarea.toBeCode,
+          currentTranslations,
+          localization_list
         );
 
         return {
@@ -117,7 +149,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
       console.error("로컬라이제이션 적용 실패:", error);
     }
   };
-  // 파일 변경 시 파일 읽기 및 상태 업데이트
+
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     const reader = new FileReader();
@@ -152,6 +184,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
         downloadedFileContent,
         textarea.toBeCode
       );
+      const lowerCaseCode = country_code?.toLowerCase?.() || "";
 
       return {
         ...textarea,
@@ -159,9 +192,11 @@ const FileConvert = ({ textareas, setTextareas }) => {
         isApplied: changed ? "yes" : "no",
         matchedPart: matchedPart,
         asWasOccurrenceCount,
-        toBeOccurrenceCount,
-        asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
-        toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
+        asWasCode: textarea.asWasCode.replace(
+          /\/site\//g,
+          `/${lowerCaseCode}/`
+        ),
+        toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
       };
     });
 
@@ -170,10 +205,11 @@ const FileConvert = ({ textareas, setTextareas }) => {
 
   // 실행 버튼 클릭 시, 파일과 텍스트 영역 상태 업데이트
   const handleExecute = async () => {
+    const lowerCaseCode = country_code?.toLowerCase?.() || "";
     const updatedTextareas = textareas.map((textarea) => ({
       ...textarea,
-      asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${country_code}/`),
-      toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`),
+      asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
+      toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
       changed: textarea.asWasCode !== "",
     }));
 
