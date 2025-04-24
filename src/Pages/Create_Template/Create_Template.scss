@@ -1,414 +1,333 @@
 .Create_Template {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    min-height: 100vh;
-    .template_detail_box {
-        background-color: #ffffff;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 2rem;
-    }
-}
-
-
-.title_as_to_div {
-    display: flex;
-    justify-content: center;
-    //background-color: #cdffce;
-    //margin: 2rem 0;
-     //justify-content: space-between;
-     padding-left: 20rem;
-     padding-right: 20rem;
-    .Out_div{
-        display: flex;
-        width: 70%;
-        //background-color: #007bff;
-        .title_as {
-        color: red; // 빨간색으로 설정
-        margin: 0 2rem;
-        font-weight: bold;
-        font-size: 1.5rem;
-        }
-    }
-    .In_div{
-        display: flex;
-        //background-color: #a7d2ff;
-        .title_to {
-        color: green; // 녹색으로 설정
-        //margin: 0 2rem;
-        font-weight: bold;
-        font-size: 1.5rem;
-         }
-    }
-    
-}
-
-
-    
-
-    // .file-upload-input-container {
-    //     position: relative;
-
-    //     .file-upload-input {
-    //         display: none; // Hide the default file input
-    //     }
-
-    //     .file-upload-button {
-    //         display: inline-block;
-    //         padding: 0.5rem 1rem;
-    //         border: 1px solid #007bff;
-    //         border-radius: 4px;
-    //         background-color: #007bff;
-    //         color: white;
-    //         font-size: 1rem;
-    //         cursor: pointer;
-    //         transition: background-color 0.3s;
-
-    //         &:hover {
-    //             background-color: #0056b3;
-    //         }
-    //     }
-    // }
-
-
-
-.Run_Test_File_Upload {
-    display: flex;
-    flex-direction: row; /* Align items in a row */
-    justify-content: space-between; /* Distribute space between items */
-    align-items: center; /* Center items vertically */
-    margin: 0; /* Remove top margin */
-    margin-bottom: 2rem; /* Adjust bottom margin as needed */
-    gap: 2rem; /* Space between child elements */
-            
-    margin-left: 2rem;
-    margin-right: 2rem;
-        .file-upload-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 2rem 0;
-
-            .file-upload-label {
-                // font-weight: bold;
-                // color: #333;
-                // margin-bottom: 1rem;
-                // font-size: 1.2rem;
-            }
-
-            .file-upload-input-container {
-                position: relative;
-
-                .file-upload-input {
-                    display: none; // Hide the default file input
-                }
-
-                .file-upload-button {
-                    display: inline-block;
-                    padding: 0.5rem 1rem;
-                    border: 1px solid #007bff;
-                    border-radius: 4px;
-                    background-color: #007bff;
-                    color: white;
-                    font-size: 1rem;
-                    cursor: pointer;
-                    transition: background-color 0.3s;
-
-                    &:hover {
-                        background-color: #0056b3;
-                    }
-                }
-            }
-
-        }
-    .file-upload-label {
-         padding-top: 2%;
-         margin-right: 5px;
-        // font-weight: bold;
-        // color: #333;
-        // margin-bottom: 1rem;
-        // font-size: 1.2rem;
-    }
-
-    .Run_test_button {
-        display: flex;
-        position: relative;
-        //background-color: #000000;
-
-        .file-upload-input {
-            display: none; // Hide the default file input
-        }
-
-        .file-upload-button {
-            margin-right: 1rem;
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border: 1px solid #007bff;
-            border-radius: 6px;
-            background-color: #007bff;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-
-            &:hover {
-                background-color: #0056b3;
-            }
-        }
-    }
-}
-
-.as_was_to_be_div {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    padding: 2rem;
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
+  .template_detail_box {
+    background-color: #ffffff;
+    padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    list-style: none;
-    transition: background-color 0.2s ease;
-
-    margin-left: 2rem;
-    margin-right: 2rem;
-    .num_type {
-        display: flex;
-        align-items: center;
-
-        .ppt_no_col {
-            display: flex;
-            align-items: center;
-
-            .ppt_no {
-                margin-right: 0.5rem;
-                font-weight: bold;
-                color: #555;
-            }
-
-            .ppt_no_text {
-                width: 50px;
-                padding: 0.5rem;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                transition: border-color 0.3s;
-
-                &:focus {
-                    border-color: #007bff;
-                    outline: none;
-                }
-            }
-        }
-    }
-
-    .as_was_div,
-    .to_be_div {
-        width: 40%;
-
-        .code-textarea {
-            background-color: #e4e4e4;
-            width: 100%;
-            color: black;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            resize: none;
-            height: 100px;
-            padding: 0.5rem;
-            transition: border-color 0.3s;
-
-            &:focus {
-                border-color: #007bff;
-                outline: none;
-            }
-            &::-webkit-scrollbar {
-                width: 0; // Set width to 0 to hide it
-                background: transparent; // Transparent background
-            }
-    
-            // Show scrollbar on hover
-            &:hover {
-                overflow: auto; // Allow scrolling
-            }
-    
-            &:hover::-webkit-scrollbar {
-                width: 8px; // Show scrollbar width when hovered
-            }
-    
-            &:hover::-webkit-scrollbar-thumb {
-                background: #ccc; // Color of the scrollbar thumb
-                border-radius: 4px; // Optional: rounding the scrollbar thumb
-            }
-    
-            
-        }
-    }
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
 }
 
-.add_more_div {
+.title_as_to_div {
+  display: flex;
+  justify-content: center;
+  padding-left: 20rem;
+  padding-right: 20rem;
+  .Out_div {
     display: flex;
-    justify-content: center;
-    margin-top: 2rem;
+    width: 70%;
+    .title_as {
+      color: red;
+      margin: 0 2rem;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+  }
+  .In_div {
+    display: flex;
+    .title_to {
+      color: green;
 
-    .add_more_button {
-        display: flex;
-        align-items: center;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.Run_Test_File_Upload {
+  display: flex;
+  flex-direction: row; /* Align items in a row */
+  justify-content: space-between; /* Distribute space between items */
+  align-items: center; /* Center items vertically */
+  margin: 0; /* Remove top margin */
+  margin-bottom: 2rem; /* Adjust bottom margin as needed */
+  gap: 2rem; /* Space between child elements */
+
+  margin-left: 2rem;
+  margin-right: 2rem;
+  .file-upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0;
+
+    .file-upload-input-container {
+      position: relative;
+
+      .file-upload-input {
+        display: none; // Hide the default file input
+      }
+
+      .file-upload-button {
+        display: inline-block;
         padding: 0.5rem 1rem;
-        border: none;
+        border: 1px solid #007bff;
         border-radius: 4px;
         background-color: #007bff;
         color: white;
-        font-size: 16px;
+        font-size: 1rem;
         cursor: pointer;
         transition: background-color 0.3s;
 
         &:hover {
-            background-color: #0056b3;
+          background-color: #0056b3;
         }
-
-        .add_button_text {
-            margin-left: 0.5rem;
-        }
+      }
     }
+  }
+  .file-upload-label {
+    padding-top: 2%;
+    margin-right: 5px;
+  }
+
+  .Run_test_button {
+    display: flex;
+    position: relative;
+
+    .file-upload-input {
+      display: none; // Hide the default file input
+    }
+
+    .file-upload-button {
+      margin-right: 1rem;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border: 1px solid #007bff;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+}
+
+.as_was_to_be_div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  transition: background-color 0.2s ease;
+
+  .num_type {
+    display: flex;
+    align-items: center;
+
+    .ppt_no_col {
+      display: flex;
+      align-items: center;
+
+      .ppt_no {
+        margin-right: 0.5rem;
+        font-weight: bold;
+        color: #555;
+      }
+
+      .ppt_no_text {
+        width: 50px;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: border-color 0.3s;
+
+        &:focus {
+          border-color: #007bff;
+          outline: none;
+        }
+      }
+    }
+  }
+
+  .as_was_div,
+  .to_be_div {
+    width: 40%;
+
+    .code-textarea {
+      background-color: #e4e4e4;
+      width: 100%;
+      color: black;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: none;
+      height: 100px;
+      padding: 0.5rem;
+      transition: border-color 0.3s;
+
+      &:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+      &::-webkit-scrollbar {
+        width: 0; // Set width to 0 to hide it
+        background: transparent; // Transparent background
+      }
+
+      // Show scrollbar on hover
+      &:hover {
+        overflow: auto; // Allow scrolling
+      }
+
+      &:hover::-webkit-scrollbar {
+        width: 8px; // Show scrollbar width when hovered
+      }
+
+      &:hover::-webkit-scrollbar-thumb {
+        background: #ccc; // Color of the scrollbar thumb
+        border-radius: 4px; // Optional: rounding the scrollbar thumb
+      }
+    }
+  }
+}
+
+.add_more_div {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+
+  .add_more_button {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+
+    .add_button_text {
+      margin-left: 0.5rem;
+    }
+  }
 }
 
 .save_button_div {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-    margin-bottom: 10rem;
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  margin-bottom: 10rem;
 
-    .save_button {
-        background-color: #000000;
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 4px;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s;
+  .save_button {
+    background-color: #000000;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 
-        &:disabled {
-            background-color: #ccc; // Gray out the button when disabled
-            cursor: not-allowed;
-        }
-
-        &:hover {
-            background-color: #4a75d4;
-        }
+    &:disabled {
+      background-color: #ccc; // Gray out the button when disabled
+      cursor: not-allowed;
     }
+
+    &:hover {
+      background-color: #4a75d4;
+    }
+  }
 }
 
 .remove_button {
-    margin-top: 0rem;
-    margin-bottom: 1.5rem;
-    //margin-left: 1rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  margin-top: 0rem;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 
-    &:hover {
-        background-color: #f44336;
-        color: white;
-    }
+  &:hover {
+    background-color: #f44336;
+    color: white;
+  }
 }
-
 
 .check_button {
-    background-color: #4caf50; // Green color
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  background-color: #4caf50; // Green color
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 
-    &:hover {
-        background-color: #45a049; // Darker green on hover
-    }
+  &:hover {
+    background-color: #45a049; // Darker green on hover
+  }
 }
 
-
-.duplicate-count{
-     font-size: 1rem;
-     //background-color: #edffd6;
-     display: flex;
+.duplicate-count {
+  font-size: 1rem;
+  display: flex;
 }
 
 .file-upload-container {
-    //display: flex;
-    left: 0rem;
-    flex-direction: column;
+  left: 0rem;
+  flex-direction: column;
+  align-items: center;
+  .guide_upload_div {
+    display: flex;
+    .file-upload-label {
+      cursor: pointer;
+      margin-bottom: 10px;
+
+      input[type="file"] {
+        display: none; /* Hide the default file input */
+      }
+      .txt-file-upload-button {
+        padding: 12px 20px;
+
+        background-color: #4caf50; /* Green background */
+        color: white; /* White text */
+        border: none;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+        font-size: 16px;
+        .txt-file-upload-button:hover {
+          background-color: #4e7950; /* Darker green on hover */
+        }
+      }
+    }
+    .txtfile_title {
+      margin-top: 5px;
+      margin-left: 5px;
+    }
+  }
+}
+.frequency_modal {
+  overflow-y: auto;
+  .frequency_modal_content {
     align-items: center;
-    //margin: 20px;
-    .guide_upload_div{
-        display: flex
-        ;
-        .file-upload-label {
-        // display: inline-block;
-        // position: relative;
-         cursor: pointer;
-         margin-bottom: 10px;
-        //background-color: #000000;
-
-                input[type="file"] {
-            display: none; /* Hide the default file input */
-
-        }
-            .txt-file-upload-button {
-                padding: 12px 20px;
-                // padding-top: 12px;
-                // padding-bottom: 12px;
-                background-color: #4CAF50; /* Green background */
-                color: white; /* White text */
-                border: none;
-                border-radius: 6px;
-                transition: background-color 0.3s ease;
-                font-size: 16px;
-                .txt-file-upload-button:hover {
-                    background-color: #4e7950; /* Darker green on hover */
-                }
-            }
-        }
-        .txtfile_title{
-         margin-top:5px;
-         margin-left: 5px;
-        }
+  }
+  .frequency_modal_img_div {
+    height: 20rem;
+    .frequency_modal_img {
+      padding: 1rem;
     }
-        
-    
-   
+  }
+  .frequency_words {
+    color: #747474;
+  }
 }
-.frequency_modal{
-    //background-color: #af3939;
-    overflow-y: auto;
-    .frequency_modal_content{
-        //padding: 1rem;
-        align-items: center;
-    }
-    .frequency_modal_img_div{
-        height: 20rem;
-        //background-color: #000000;
-        .frequency_modal_img{
-            padding: 1rem;
-        }
-    }
-    .frequency_words{
-        color:#747474;
-    }
-    
-}
-
-
-
-
-
-
-
-
-
