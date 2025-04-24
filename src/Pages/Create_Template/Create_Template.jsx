@@ -353,7 +353,7 @@ const Create_template = () => {
 
       console.log(body);
 
-      const res = await axios.post(`${BASE_URL}/localization/template`, body, { headers: { "Content-Type": "application/json" } });
+      const res = await axios.put(`${BASE_URL}/localization/template`, body, { headers: { "Content-Type": "application/json" } });
       console.log("서버 응답:", res.data);
       alert("로컬라이제이션 템플릿이 생성되었습니다");
     } catch (err) {

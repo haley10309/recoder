@@ -132,9 +132,9 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
   return (
     <div className="mt-14 mb-14 w-full">
       <h2 className="font-bold text-black text-[16px] mb-[15px]">📤 파일 업로드</h2>
-      <div className="flex justify-center gap-[40px]">
+      <div className="flex justify-center gap-[40px] bg-[#f9f9f9] rounded-[10px] py-[30px]">
         {/* PPT.txt 업로드 박스 */}
-        <div className="flex flex-col justify-center items-center w-[330px] h-[120px] border-2 border-dashed border-gray-300 rounded-[10px] bg-[#f9f9f9] cursor-pointer" onClick={() => pptInputRef.current.click()}>
+        <div className="flex flex-col justify-center items-center w-[330px] h-[120px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" onClick={() => pptInputRef.current.click()}>
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
           <p className="mt-3 text-[#32383E] font-[500] text-[15px]">PPT.txt 파일을 업로드 해 주세요</p>
           <input type="file" accept=".txt" ref={pptInputRef} onChange={handlePptFileChange} className="hidden" />
@@ -146,8 +146,8 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
           )}
         </div>
 
-        {/* 번역.txt 박스 */}
-        <div className="flex flex-col justify-center items-center w-[330px] h-[120px] border-2 border-dashed border-gray-300 rounded-[10px] bg-[#f9f9f9] cursor-pointer" onClick={() => transInputRef.current.click()}>
+        {/* 번역.txt 업로드 박스 */}
+        <div className="flex flex-col justify-center items-center w-[330px] h-[120px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" onClick={() => transInputRef.current.click()}>
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
           <p className="mt-3 font-[500] text-[15px]">번역.txt 파일을 업로드 해 주세요</p>
           <input type="file" accept=".txt" ref={transInputRef} onChange={handleTransFileChange} className="hidden" />
