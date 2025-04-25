@@ -1,6 +1,7 @@
 .translate-scroll {
   /* 기본에선 스크롤 숨기기 */
   overflow: hidden;
+  position: relative;
 
   /* 숨긴 상태의 웹킷 스크롤바 */
   &::-webkit-scrollbar {
@@ -21,5 +22,16 @@
   &:hover::-webkit-scrollbar-thumb {
     background: #ccc;
     border-radius: 4px;
+  }
+
+  &:empty:before {
+    content: attr(data-placeholder);
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    color: #999;
+    pointer-events: none;
+    font-size: 16px;
+    font-weight: 500;
   }
 }
