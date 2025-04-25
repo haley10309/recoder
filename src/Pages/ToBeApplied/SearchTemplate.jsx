@@ -120,6 +120,7 @@ const Wrapper = styled.div`
 `;
 
 const InputTitle = styled.div`
+  font-size: 0.8rem;
   font-weight: 700;
   line-height: 140%;
 `;
@@ -135,7 +136,7 @@ const InputBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-width: 200px;
+  min-width: 12.5rem;
   flex: 0 1 auto;
 `;
 

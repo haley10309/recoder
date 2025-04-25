@@ -19,6 +19,8 @@ const FileConvert = ({ textareas, setTextareas }) => {
   const ticketUrl = useRecoilValue(ticketUrlState);
   const ticketNum = useRecoilValue(ticketNumState);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLocalizationProcessing, setIsLocalizationProcessing] =
+    useState(false);
   const [originalFile, setOriginalFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isExecuted, setIsExecuted] = useState(false);
@@ -40,6 +42,9 @@ const FileConvert = ({ textareas, setTextareas }) => {
   const [txtUploadStatus, setTxtUploadStatus] = useState("");
   const [txtFileName, setTxtFileName] = useState("");
   const isEnglishCountry = useRecoilValue(isEnglishCountryState); // 영문국 비영문국 분기 처리
+  const [localizedFileContent, setLocalizedFileContent] = useState("");
+  const [localizedFileName, setLocalizedFileName] = useState("");
+  const [isLocalizationApplied, setIsLocalizationApplied] = useState(false);
 
   const handleTranslationUpload = async (e) => {
     const file = e.target.files[0];
@@ -85,21 +90,25 @@ const FileConvert = ({ textareas, setTextareas }) => {
     let result = htmlString;
 
     localizationList.forEach((item) => {
-      let block = item.local_code;
+      let originalBlock = item.local_code;
+      let blockDoc = new DOMParser().parseFromString(
+        originalBlock,
+        "text/html"
+      );
+      let blockText = blockDoc.body.textContent?.trim();
 
       Object.entries(dictionary).forEach(([eng, local]) => {
         const cleanedEng = eng.trim().replace(/\s+/g, " ");
-        const cleanedBlock = block.replace(/\s+/g, " ");
+        const cleanedBlockText = blockText.replace(/\s+/g, " ");
 
-        if (cleanedBlock.includes(cleanedEng)) {
-          // 실제 원본 블럭에서 정확히 어떤 부분이 일치하는지 찾아서 교체
+        if (cleanedBlockText.includes(cleanedEng)) {
           const regex = new RegExp(escapeRegExp(eng), "g");
-          block = block.replace(regex, local);
+          originalBlock = originalBlock.replace(regex, local);
         }
       });
 
-      if (htmlString.includes(item.local_code)) {
-        result = result.replace(item.local_code, block);
+      if (result.includes(item.local_code)) {
+        result = result.replace(item.local_code, originalBlock);
       }
     });
 
@@ -111,6 +120,11 @@ const FileConvert = ({ textareas, setTextareas }) => {
   }
 
   const handleApplyLocalization = async () => {
+    if (!originalFile) {
+      alert("먼저 HTML 파일을 업로드하고 코드 변환을 진행해주세요.");
+      return;
+    }
+
     try {
       const localization_list = await fetchLocalizationList(
         ticketNum,
@@ -135,24 +149,78 @@ const FileConvert = ({ textareas, setTextareas }) => {
         });
       });
 
-      console.log("받은 localization_list:", localization_list);
-
-      const newTextareas = textareas.map((textarea) => {
-        const localizedHtml = applyLocalizedTemplateBlocks(
-          textarea.toBeCode,
+      const lowerCaseCode = country_code?.toLowerCase?.() || "";
+      const updatedTextareas = textareas.map((textarea) => {
+        const localizedToBe = applyLocalizedTemplateBlocks(
+          textarea.toBeCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
           currentTranslations,
           localization_list
         );
 
         return {
           ...textarea,
-          localizedToBeCode: localizedHtml,
+          asWasCode: textarea.asWasCode.replace(
+            /\/site\//g,
+            `/${lowerCaseCode}/`
+          ),
+          toBeCode: textarea.toBeCode.replace(
+            /\/site\//g,
+            `/${lowerCaseCode}/`
+          ),
+          localizedToBeCode: localizedToBe,
         };
       });
 
-      setTextareas(newTextareas);
+      // 전체 HTML에도 적용
+      let localizedFullHtml = downloadedFileContent;
+      localization_list.forEach((item) => {
+        let originalBlock = item.local_code;
+        let blockDoc = new DOMParser().parseFromString(
+          originalBlock,
+          "text/html"
+        );
+        let blockText = blockDoc.body.textContent?.trim();
+
+        Object.entries(currentTranslations).forEach(([eng, local]) => {
+          const cleanedEng = eng.trim().replace(/\s+/g, " ");
+          const cleanedBlockText = blockText?.replace(/\s+/g, " ");
+
+          if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
+            const regex = new RegExp(escapeRegExp(eng), "g");
+            originalBlock = originalBlock.replace(regex, local);
+          }
+        });
+
+        if (localizedFullHtml.includes(item.local_code)) {
+          localizedFullHtml = localizedFullHtml.replace(
+            item.local_code,
+            originalBlock
+          );
+        }
+      });
+
+      setLocalizedFileContent(localizedFullHtml);
+      setLocalizedFileName(`localized_${fileName}`);
+      setTextareas(updatedTextareas);
+      setIsLocalizationApplied(true);
     } catch (error) {
       console.error("로컬라이제이션 적용 실패:", error);
+      setUploadStatus("fail");
+    }
+  };
+  // 로컬라이제이션 적용된 파일 다운로드
+  const handleLocalizedDownload = () => {
+    if (localizedFileContent) {
+      const blob = new Blob([localizedFileContent], { type: "text/html" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = localizedFileName || "localized_file.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      alert("먼저 로컬라이제이션 적용을 진행해주세요.");
     }
   };
 
@@ -186,8 +254,6 @@ const FileConvert = ({ textareas, setTextareas }) => {
     const normB = normalizeSitePath(b, countryCode);
     return normA === normB;
   };
-
-  
 
   // 변경된 결과를 처리하여 textareas 상태를 업데이트
   const handleChangeResults = (changeResults) => {
@@ -413,10 +479,10 @@ const FileConvert = ({ textareas, setTextareas }) => {
               <ConvertButton
                 $bgColor="black"
                 onClick={handleApplyLocalization}
-                disabled={isProcessing || fileName === ""}
-                $active={fileName !== "" && !isProcessing}
+                disabled={isLocalizationProcessing || fileName === ""}
+                $active={fileName !== "" && !isLocalizationProcessing}
               >
-                {isProcessing
+                {isLocalizationProcessing
                   ? "로컬라이제이션 적용 중 .."
                   : "로컬라이제이션 적용"}
               </ConvertButton>
@@ -441,6 +507,11 @@ const FileConvert = ({ textareas, setTextareas }) => {
             </PreviewHeader>
             {isExecuted && (
               <DownloadButton onClick={handleDownload}>다운로드</DownloadButton>
+            )}
+            {isLocalizationApplied && (
+              <LocalaizationDownloadButton onClick={handleLocalizedDownload}>
+                로컬라이제이션 적용본 다운로드
+              </LocalaizationDownloadButton>
             )}
           </PreviewCard>
         </PreviewContainer>
@@ -593,6 +664,24 @@ const DownloadButton = styled.button`
   height: 2.5625rem;
   font-weight: 600;
   color: white;
+  background-color: #ff782f;
+  border-radius: 10px;
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const LocalaizationDownloadButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 10.9375rem;
+  height: 2.5625rem;
+  font-weight: 600;
+  color: white;
+  font-size: 0.7rem;
   background-color: #ff782f;
   border-radius: 10px;
   svg {
