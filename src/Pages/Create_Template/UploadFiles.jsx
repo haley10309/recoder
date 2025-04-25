@@ -130,7 +130,7 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
     });
 
   return (
-    <div className="mt-14 mb-14 w-full">
+    <div className="mt-[100px] mb-[100px] w-full">
       <h2 className="font-bold text-black text-[16px] mb-[15px]">📤 파일 업로드</h2>
       <div className="flex justify-center gap-[40px] bg-[#f9f9f9] rounded-[10px] py-[30px]">
         {/* PPT.txt 업로드 박스 */}
@@ -161,7 +161,7 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
       </div>
 
       {/* Run Test 버튼 & Asset_Template */}
-      <div className="flex gap-2 items-center mt-6 justify-center">
+      <div className="flex items-center justify-center gap-2 mt-6">
         <input type="file" id="file-upload" onChange={handleFileChange} accept=".js,.html,.css" className="hidden" />
         <button type="button" className="flex justify-center items-center bg-black text-white hover:bg-gray-700 font-[600] text-[13px] rounded-[10px] h-[40px] w-[130px]" onClick={() => document.getElementById("file-upload").click()}>
           Run Test

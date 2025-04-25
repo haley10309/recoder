@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -8,7 +8,7 @@ import Frequency from "@Create_Template/Frequency";
 import CheckTemplate from "./CheckTemplate";
 import UploadFiles from "./UploadFiles";
 import "@Create_Template/Create_Template.scss";
-import TranslateBox from "../../Components/Common/TranslateBox";
+import TransBox from "../../Components/Common/TransBox";
 
 const Create_template = () => {
   // AS-WAS / TO-BE states
@@ -36,23 +36,33 @@ const Create_template = () => {
   const [tobeCodeList, setTobeCodeList] = useState([]); // tobe-code-list 응답
 
   // Items for localization template and IDs to delete
-  const [localizedItems, setLocalizedItems] = useState([]); // { id?, local_code }
+  const [localizedItems, setLocalizedItems] = useState([{ local_code: "" }, { local_code: "" }]);
   const [deleteIds, setDeleteIds] = useState([]);
 
   // 1) 번역.txt 업로드 후 englishCopy 세팅 → tobe-code-list API 호출
   useEffect(() => {
     if (englishCopy.length && ticketNum && ticketURL) {
       axios
-        .post(`${BASE_URL}/localization/tobe-code-list`, { ticket_num: ticketNum, ticket_url: ticketURL })
+        .post(`${BASE_URL}/localization/tobe-code-list`, {
+          ticket_num: ticketNum,
+          ticket_url: ticketURL,
+        })
         .then((res) => setTobeCodeList(res.data.tobe_code_list || []))
         .catch((err) => console.error("Error fetching tobe_code_list:", err));
     }
   }, [englishCopy, ticketNum, ticketURL]);
 
-  // 2) 필터링된 tobeCodeList로 localizedItems 초기화
+  // 2) 영어 원문이 있을 때만 기존 tobeCodeList → localizedItems 덮어쓰기
   useEffect(() => {
-    const items = tobeCodeList.filter((item) => englishCopy.some((orig) => item.tobe_code.includes(orig))).map((item) => ({ id: item.id, local_code: item.tobe_code }));
-    setLocalizedItems(items);
+    if (englishCopy.length) {
+      const items = tobeCodeList
+        .filter((item) => englishCopy.some((orig) => item.tobe_code.includes(orig)))
+        .map((item) => ({
+          id: item.id,
+          local_code: item.tobe_code,
+        }));
+      setLocalizedItems(items.length ? items : []);
+    }
   }, [tobeCodeList, englishCopy]);
 
   // AS-WAS / TO-BE 항목 추가·삭제
@@ -123,19 +133,14 @@ const Create_template = () => {
       const body = {
         ticket_num: ticketNum,
         ticket_url: ticketURL,
-        localization_list: localizedItems.map(
-          (item) =>
-            item.id
-              ? { id: item.id, local_code: item.local_code } // 기존 항목
-              : { local_code: item.local_code } // 신규 항목
-        ),
+        localization_list: localizedItems.map((item) => (item.id ? { id: item.id, local_code: item.local_code } : { local_code: item.local_code })),
         delete_ids: deleteIds,
       };
+      console.log("Request body:", body);
 
-      console.log(body);
-
-      const res = await axios.put(`${BASE_URL}/localization/template`, body, { headers: { "Content-Type": "application/json" } });
-      console.log("서버 응답:", res.data);
+      await axios.put(`${BASE_URL}/localization/template`, body, {
+        headers: { "Content-Type": "application/json" },
+      });
       alert("로컬라이제이션 템플릿이 생성되었습니다");
     } catch (err) {
       console.error("Error creating localization template:", err);
@@ -158,11 +163,11 @@ const Create_template = () => {
                 <Draggable key={i.toString()} draggableId={`item-${i}`} index={i}>
                   {(p) => (
                     <li ref={p.innerRef} {...p.draggableProps} {...p.dragHandleProps} className="as_was_to_be_div">
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-[10px]">
                         <label className="font-[16px]">PPT NO.</label>
                         <input
                           type="text"
-                          className="w-[30px] h-[30px] rounded-[5px] ml-[10px] text-center border border-[#8B8B8B] focus:border-black"
+                          className="w-[30px] h-[30px] rounded-[5px] text-center border border-[#8B8B8B] outline-none  focus:border-1 focus:border-[#595880]"
                           value={pptNos[i]}
                           onChange={(e) => {
                             const arr = [...pptNos];
@@ -171,37 +176,39 @@ const Create_template = () => {
                           }}
                         />
                       </div>
-                      <div className="as_was_div">
-                        <textarea
-                          rows="5"
-                          value={asWasCodes[i]}
-                          onChange={(e) => {
-                            const arr = [...asWasCodes];
-                            arr[i] = e.target.value;
-                            setAsWasCodes(arr);
-                          }}
-                          placeholder="Enter the as-was code here"
-                          className="code-textarea"
-                        />
-                        <div className="duplicate-count">
-                          <Frequency />
-                          {countOccurrences(asWasCodes[i])}
+                      <div className="w-[80%] flex gap-[20px] justify-between">
+                        <div className="as_was_div">
+                          <textarea
+                            rows="5"
+                            value={asWasCodes[i]}
+                            onChange={(e) => {
+                              const arr = [...asWasCodes];
+                              arr[i] = e.target.value;
+                              setAsWasCodes(arr);
+                            }}
+                            placeholder="AS-WAS 코드를 입력해 주세요."
+                            className="code-textarea"
+                          />
+                          <div className="duplicate-count">
+                            <Frequency />
+                            {countOccurrences(asWasCodes[i])}
+                          </div>
+                        </div>
+                        <div className="to_be_div">
+                          <textarea
+                            rows="5"
+                            value={toBeCodes[i]}
+                            onChange={(e) => {
+                              const arr = [...toBeCodes];
+                              arr[i] = e.target.value;
+                              setToBeCodes(arr);
+                            }}
+                            placeholder="TO-BE 코드를 입력해 주세요."
+                            className="code-textarea"
+                          />
                         </div>
                       </div>
-                      <div className="to_be_div">
-                        <textarea
-                          rows="5"
-                          value={toBeCodes[i]}
-                          onChange={(e) => {
-                            const arr = [...toBeCodes];
-                            arr[i] = e.target.value;
-                            setToBeCodes(arr);
-                          }}
-                          placeholder="Enter the to-be code here"
-                          className="code-textarea"
-                        />
-                      </div>
-                      <button type="button" onClick={() => removeTextArea(i)} className="remove_button">
+                      <button type="button" onClick={() => removeTextArea(i)} className="px-4 mt-0 mb-6 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white">
                         삭제
                       </button>
                     </li>
@@ -214,23 +221,20 @@ const Create_template = () => {
         </Droppable>
       </DragDropContext>
 
-      <div className="add_more_div">
-        <button onClick={addTextArea} className="add_more_button">
+      <div className="flex gap-[15px] save_button_div mt-[50px]">
+        <button onClick={addTextArea} className="plus-button rouned-[10px]">
           <AddIcon />
           <span className="add_button_text">항목 추가</span>
         </button>
-      </div>
-
-      <div className="save_button_div">
         <button type="button" className="save_button" onClick={handleSave} disabled={!allFieldsFilled()}>
-          {save_type === "update" ? "수정" : save_type === "create" ? "생성" : "저장"}
+          {save_type === "update" ? "핫픽스 템플릿 수정" : save_type === "create" ? "핫픽스 템플릿 생성" : "핫픽스 템플릿 생성"}
         </button>
       </div>
 
       <h2 className="font-bold text-black mb-5 text-[16px]">🌐 번역 위치 확인</h2>
-      <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-col">
         {localizedItems.map((item, idx) => (
-          <TranslateBox
+          <TransBox
             key={idx}
             text={item.local_code}
             highlights={englishCopy}
@@ -249,7 +253,11 @@ const Create_template = () => {
         ))}
       </div>
 
-      <div className="save_button_div mt-6">
+      <div className="flex gap-[15px] save_button_div mt-[50px]">
+        <button className="plus-button rouned-[10px]" onClick={() => setLocalizedItems((prev) => [...prev, { local_code: "" }])}>
+          <AddIcon fontSize="small" />
+          <span>항목 추가</span>
+        </button>
         <button type="button" className="save_button" onClick={handleCreateLocalization} disabled={!localizedItems.length}>
           로컬라이제이션 템플릿 생성
         </button>

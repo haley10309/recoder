@@ -15,7 +15,7 @@ const CheckTemplate = ({ setSave_type, setAsWasCodes, setToBeCodes, setAsset_asW
         // 기존 as-was / to-be 처리
         const { id } = data[0];
         if (id > 0) {
-          alert("이미 존재하는 템플릿이 있습니다.");
+          alert(`${ticketURL} 템플릿을 불러왔습니다.`);
           setSave_type("update");
         }
 
