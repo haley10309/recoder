@@ -2,15 +2,7 @@ import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 import InputDrop from "../../Components/Common/InputDrop";
 
-const CheckTemplate = ({ setSave_type, setAsWasCodes, setToBeCodes, setAsset_asWas, setAsset_toBe, setTemplateID, setPptNos, setAsset_pptNo, ticketNum, ticketURL, setTicketNum, setTicketURL }) => {
-  const handleTicketNumChange = (ticketNum) => {
-    setTicketNum(ticketNum);
-  };
-
-  const handleTicketURLChange = (ticketURL) => {
-    setTicketURL(ticketURL);
-  };
-
+const CheckTemplate = ({ setSave_type, setAsWasCodes, setToBeCodes, setAsset_asWas, setAsset_toBe, setTemplateID, setPptNos, setAsset_pptNo, ticketNum, ticketURL, setTicketNum, setTicketURL, setLocalizedItems }) => {
   const checkForExistingTemplate = async () => {
     try {
       const response = await axios.post(`${BASE_URL}/check-template`, {
@@ -19,45 +11,40 @@ const CheckTemplate = ({ setSave_type, setAsWasCodes, setToBeCodes, setAsset_asW
       });
 
       const data = response.data;
-
       if (Array.isArray(data) && data.length > 0) {
+        // 기존 as-was / to-be 처리
         const { id } = data[0];
         if (id > 0) {
           alert("이미 존재하는 템플릿이 있습니다.");
           setSave_type("update");
         }
 
+        // 상세 조회 (aswas_tobe_list + localization_list + delete_ids)
         const detailResponse = await axios.post(`${BASE_URL}/get-template-details`, {
           ticket_num: ticketNum,
           ticket_url: ticketURL,
         });
 
-        const templateId = detailResponse.data?.templateId;
-        setTemplateID(templateId);
+        const detailData = detailResponse.data;
+        setTemplateID(detailData.templateId);
 
-        // Extract the aswas_tobe_list array from response
-        const details = detailResponse.data?.aswas_tobe_list || [];
+        /** 1) AS-WAS / TO-BE 세팅 **/
+        const details = detailData.aswas_tobe_list || [];
+        setPptNos(details.map((item) => item.ppt_no || ""));
+        setAsWasCodes(details.filter((i) => !i.aswas_code?.trim().startsWith("//")).map((i) => i.aswas_code?.trim() || ""));
+        setToBeCodes(details.filter((i) => !i.tobe_code?.trim().startsWith("//")).map((i) => i.tobe_code?.trim() || ""));
+        setAsset_asWas(details.filter((i) => i.aswas_code?.trim().startsWith("//")).map((i) => i.aswas_code?.trim()));
+        setAsset_pptNo(details.filter((i) => i.aswas_code?.trim().startsWith("//")).map((i) => i.ppt_no || ""));
+        setAsset_toBe(details.filter((i) => i.tobe_code?.trim().startsWith("//")).map((i) => i.tobe_code?.trim()));
 
-        if (!Array.isArray(details)) {
-          throw new Error("Invalid data format: Expected an array but got " + typeof details);
-        }
-
-        // Reset states before updating
-        setPptNos([]);
-        setAsWasCodes([]);
-        setToBeCodes([]);
-        setAsset_asWas([]);
-        setAsset_toBe([]);
-        setAsset_pptNo([]);
-
-        // Process response data
-        setPptNos((prev) => [...prev, ...details.map((item) => item.ppt_no || "")]);
-        setAsWasCodes((prev) => [...prev, ...details.filter((item) => !item.aswas_code?.trim().startsWith("//")).map((item) => item.aswas_code?.trim() || "")]);
-        setToBeCodes((prev) => [...prev, ...details.filter((item) => !item.tobe_code?.trim().startsWith("//")).map((item) => item.tobe_code?.trim() || "")]);
-
-        setAsset_asWas((prev) => [...prev, ...details.filter((item) => item.aswas_code?.trim().startsWith("//")).map((item) => item.aswas_code?.trim() || "")]);
-        setAsset_pptNo((prev) => [...prev, ...details.filter((item) => item.aswas_code?.trim().startsWith("//")).map((item) => item.ppt_no || "")]);
-        setAsset_toBe((prev) => [...prev, ...details.filter((item) => item.tobe_code?.trim().startsWith("//")).map((item) => item.tobe_code?.trim() || "")]);
+        /** 2) Localization(번역) 세팅 **/
+        const locList = detailData.localization_list || [];
+        setLocalizedItems(
+          locList.map((item) => ({
+            id: item.id,
+            local_code: item.local_code,
+          }))
+        );
       } else {
         alert("새로운 템플릿을 추가할 수 있습니다.");
         setSave_type("create");

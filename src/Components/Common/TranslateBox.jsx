@@ -29,7 +29,7 @@ export default function TranslateBox({ text: initialText, highlights = [], onCha
   };
 
   return (
-    <div className="flex w-[full] bg-[#F9F9F9] rounded-[10px] px-20 items-center">
+    <div className="flex w-[full] bg-[#F9F9F9] rounded-[10px] px-20 py-5 items-center">
       <div ref={editableRef} contentEditable suppressContentEditableWarning onBlur={handleBlur} className="flex-1 p-4 h-[140px] bg-[#D9D9D9] rounded-[10px] text-[14px] font-[500] whitespace-pre-wrap break-all overflow-auto outline-none focus:border-black" />
       <button onClick={onDelete} className="ml-10 flex-shrink-0">
         <img src={deleteIcon} alt="삭제" className="w-[24px] h-[24px]" />
