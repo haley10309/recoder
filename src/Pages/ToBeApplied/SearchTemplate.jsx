@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil"; // ✅ 여기에 추가
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import {
   ticketNumState,
   ticketUrlState,
   countryCodeState,
+  isEnglishCountryState,
 } from "@/recoil/atoms/state";
 import CustomDropdownInput from "@/Components/Common/CustomDropdownInput";
 import { countryOptions } from "@/Components/Common/CoutryCode";
@@ -15,6 +16,8 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   const setTicketNum = useSetRecoilState(ticketNumState);
   const [ticketUrl, setTicketUrl] = useRecoilState(ticketUrlState); // 티켓에 해당하는 URL (Recoil)
   const [country_code, setCountry_code] = useRecoilState(countryCodeState);
+  const setIsEnglishCountry = useSetRecoilState(isEnglishCountryState);
+  const isEnglish = useRecoilValue(isEnglishCountryState);
 
   const handleTicketNumberChange = (value) => {
     setTicketNumber(value);
@@ -40,12 +43,15 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   }, []);
 
   const handleSearchTemplate = async () => {
-    await templateSearch(
-      ticketNumber,
-      ticketUrl,
-      setTextareas,
-      setCodePairs
-    );
+    await templateSearch(ticketNumber, ticketUrl, setTextareas, setCodePairs);
+  };
+
+  const handleCountryChange = (selectedName) => {
+    const selected = countryOptions.find((c) => c.name === selectedName);
+    if (selected) {
+      setCountry_code(selected.name);
+      setIsEnglishCountry(selected.isEnglish ?? false); // undefined일 경우 false 처리
+    }
   };
 
   return (
@@ -75,7 +81,7 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
             <InputTitle>SITECODE</InputTitle>
             <CustomDropdownInput
               value={country_code}
-              onChange={setCountry_code}
+              onChange={handleCountryChange}
               placeholder="국가 코드 선택"
               options={countryOptions.map((c) => c.name)}
             />

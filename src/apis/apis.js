@@ -25,6 +25,7 @@ export const templateSearch = async (
       const newTextareas = pairs.map((pair) => ({
         asWasCode: pair.aswas_code,
         toBeCode: pair.tobe_code,
+        pptNo: pair.ppt_no,
         checked: true,
       }));
 

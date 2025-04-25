@@ -12,6 +12,7 @@ import {
   countryCodeState,
   ticketUrlState,
   ticketNumState,
+  isEnglishCountryState,
 } from "@/recoil/atoms/state";
 
 const FileConvert = ({ textareas, setTextareas }) => {
@@ -34,11 +35,19 @@ const FileConvert = ({ textareas, setTextareas }) => {
   const [currentTranslations, setCurrentTranslations] = useState({});
   const [translationFile, setTranslationFile] = useState({});
   const [validCountries, setValidCountries] = useState([]);
+  const [htmlUploadStatus, setHtmlUploadStatus] = useState("");
+  const [htmlFileName, setHtmlFileName] = useState("");
+  const [txtUploadStatus, setTxtUploadStatus] = useState("");
+  const [txtFileName, setTxtFileName] = useState("");
+  const isEnglishCountry = useRecoilValue(isEnglishCountryState); // 영문국 비영문국 분기 처리
 
   const handleTranslationUpload = async (e) => {
     const file = e.target.files[0];
     setTranslationFile(file);
-    if (!file) return;
+    if (!file) {
+      setTxtUploadStatus("fail");
+      return;
+    }
 
     try {
       const { translations, englishCopy, validCountries } =
@@ -60,11 +69,11 @@ const FileConvert = ({ textareas, setTextareas }) => {
       }
 
       setCurrentTranslations(dictionary);
-
-      console.log("🌍 현재 country_code:", currentCountry);
-      console.log("📘 dictionary:", Object.entries(dictionary).slice(0, 5));
+      setTxtUploadStatus("success");
+      setTxtFileName(file.name);
     } catch (err) {
       console.error(err);
+      setTxtUploadStatus("fail");
     }
   };
 
@@ -75,33 +84,30 @@ const FileConvert = ({ textareas, setTextareas }) => {
   ) {
     let result = htmlString;
 
-    const normalize = (str) =>
-      str
-        .replace(/[\[\]"]/g, "")
-        .replace(/[*]/g, "")
-        .replace(/\s+/g, " ")
-        .trim()
-        .toLowerCase();
-
     localizationList.forEach((item) => {
-      const originalBlock = item.local_code;
-      const doc = new DOMParser().parseFromString(originalBlock, "text/html");
-      const originalText = doc.body.textContent?.trim() || "";
-      const normalizedKey = normalize(originalText);
+      let block = item.local_code;
 
       Object.entries(dictionary).forEach(([eng, local]) => {
-        if (normalize(eng) === normalizedKey) {
-          // 기존 블록을 가공해서 텍스트만 치환
-          const translatedBlock = originalBlock.replace(eng, local);
-          // 원본 전체 HTML에서 exact block만 찾아서 교체
-          if (result.includes(originalBlock)) {
-            result = result.replaceAll(originalBlock, translatedBlock);
-          }
+        const cleanedEng = eng.trim().replace(/\s+/g, " ");
+        const cleanedBlock = block.replace(/\s+/g, " ");
+
+        if (cleanedBlock.includes(cleanedEng)) {
+          // 실제 원본 블럭에서 정확히 어떤 부분이 일치하는지 찾아서 교체
+          const regex = new RegExp(escapeRegExp(eng), "g");
+          block = block.replace(regex, local);
         }
       });
+
+      if (htmlString.includes(item.local_code)) {
+        result = result.replace(item.local_code, block);
+      }
     });
 
     return result;
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
   const handleApplyLocalization = async () => {
@@ -157,18 +163,31 @@ const FileConvert = ({ textareas, setTextareas }) => {
     reader.onload = () => {
       const content = reader.result;
       setFileContent(content);
+      setHtmlUploadStatus("success");
+      setHtmlFileName(selectedFile.name);
     };
 
-    reader.readAsText(selectedFile);
-
-    // 파일명과 원본 파일 상태 업데이트
     if (selectedFile) {
+      reader.readAsText(selectedFile);
       setOriginalFile(selectedFile);
       setFileName(selectedFile.name);
     } else {
+      setHtmlUploadStatus("fail");
       console.warn("No file selected");
     }
   };
+
+  const normalizeSitePath = (str, countryCode) => {
+    return str.replace(new RegExp(`/${countryCode}/`, "g"), "/site/").trim();
+  };
+
+  const isCodeEqual = (a, b, countryCode) => {
+    const normA = normalizeSitePath(a, countryCode);
+    const normB = normalizeSitePath(b, countryCode);
+    return normA === normB;
+  };
+
+  
 
   // 변경된 결과를 처리하여 textareas 상태를 업데이트
   const handleChangeResults = (changeResults) => {
@@ -185,11 +204,16 @@ const FileConvert = ({ textareas, setTextareas }) => {
         textarea.toBeCode
       );
       const lowerCaseCode = country_code?.toLowerCase?.() || "";
-
+      const actualChanged = !isCodeEqual(
+        textarea.asWasCode,
+        textarea.toBeCode,
+        lowerCaseCode
+      );
       return {
         ...textarea,
+        pptNo: textarea.pptNo,
         changed: changed || false,
-        isApplied: changed ? "yes" : "no",
+        isApplied: actualChanged ? "yes" : "no",
         matchedPart: matchedPart,
         asWasOccurrenceCount,
         asWasCode: textarea.asWasCode.replace(
@@ -208,6 +232,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
     const lowerCaseCode = country_code?.toLowerCase?.() || "";
     const updatedTextareas = textareas.map((textarea) => ({
       ...textarea,
+      pptNo: textarea.pptNo,
       asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
       toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
       changed: textarea.asWasCode !== "",
@@ -303,32 +328,76 @@ const FileConvert = ({ textareas, setTextareas }) => {
       <ConvertTitle>📤 파일 업로드</ConvertTitle>
       <ConvertSection>
         <ConvertContainer>
-          <FileDropLabel htmlFor="dropzone-file">
-            <FileDropInner>
-              <img src={FileUpload} alt="Apply" />
-              <p>Backup HTML 을 업로드 해주세요.</p>
-            </FileDropInner>
-            <input
-              id="dropzone-file"
-              type="file"
-              onChange={handleFileChange}
-              hidden
-            />
-          </FileDropLabel>
-          <FileDropLabel htmlFor="dropzone-txt">
-            <FileDropInner>
-              <img src={FileUpload} alt="Apply" />
-              <p>번역덱 TXT 을 업로드 해주세요.</p>
-            </FileDropInner>
-            <input
-              id="dropzone-txt"
-              type="file"
-              onChange={handleTranslationUpload}
-              hidden
-            />
-          </FileDropLabel>
+          {/* HTML 업로드 */}
+          <div>
+            {htmlUploadStatus ? (
+              <PreviewHeader style={{ marginTop: "0.75rem" }}>
+                <img src={HtmlFile} alt="htmlicon" />
+                <div id="preview-text">
+                  <span>{htmlFileName}</span>
+                  <ProgressBar>
+                    <ProgressFill $progress={100} />
+                  </ProgressBar>
+                  <UploadStatus $success={htmlUploadStatus === "success"}>
+                    {htmlUploadStatus === "success"
+                      ? "📂 HTML 파일 업로드 성공!"
+                      : "❌ HTML 파일 업로드 실패"}
+                  </UploadStatus>
+                </div>
+              </PreviewHeader>
+            ) : (
+              <FileDropLabel htmlFor="dropzone-file">
+                <FileDropInner>
+                  <img src={FileUpload} alt="Apply" />
+                  <p>Backup HTML 을 업로드 해주세요.</p>
+                </FileDropInner>
+                <input
+                  id="dropzone-file"
+                  type="file"
+                  onChange={handleFileChange}
+                  hidden
+                />
+              </FileDropLabel>
+            )}
+          </div>
+
+          {/* TXT 업로드 (영문국이면 숨김) */}
+          {!isEnglishCountry && (
+            <div>
+              {txtUploadStatus ? (
+                <PreviewHeader style={{ marginTop: "0.75rem" }}>
+                  <img src={HtmlFile} alt="txticon" />
+                  <div id="preview-text">
+                    <span>{txtFileName}</span>
+                    <ProgressBar>
+                      <ProgressFill $progress={100} />
+                    </ProgressBar>
+                    <UploadStatus $success={txtUploadStatus === "success"}>
+                      {txtUploadStatus === "success"
+                        ? "📄 번역덱 TXT 업로드 성공!"
+                        : "❌ 번역덱 TXT 업로드 실패"}
+                    </UploadStatus>
+                  </div>
+                </PreviewHeader>
+              ) : (
+                <FileDropLabel htmlFor="dropzone-txt">
+                  <FileDropInner>
+                    <img src={FileUpload} alt="Apply" />
+                    <p>번역덱 TXT 을 업로드 해주세요.</p>
+                  </FileDropInner>
+                  <input
+                    id="dropzone-txt"
+                    type="file"
+                    onChange={handleTranslationUpload}
+                    hidden
+                  />
+                </FileDropLabel>
+              )}
+            </div>
+          )}
         </ConvertContainer>
       </ConvertSection>
+
       {fileName && (
         <PreviewContainer>
           <ButtonBox>
@@ -339,16 +408,19 @@ const FileConvert = ({ textareas, setTextareas }) => {
             >
               {isProcessing ? "코드 변환 중 .." : "코드 변환"}
             </ConvertButton>
-            <ConvertButton
-              $bgColor="black"
-              onClick={handleApplyLocalization}
-              disabled={isProcessing || fileName === ""}
-              $active={fileName !== "" && !isProcessing}
-            >
-              {isProcessing
-                ? "로컬라이제이션 적용 중 .."
-                : "로컬라이제이션 적용"}
-            </ConvertButton>
+            {/* 로컬라이제이션 적용 버튼도 영문국이면 숨김 */}
+            {!isEnglishCountry && (
+              <ConvertButton
+                $bgColor="black"
+                onClick={handleApplyLocalization}
+                disabled={isProcessing || fileName === ""}
+                $active={fileName !== "" && !isProcessing}
+              >
+                {isProcessing
+                  ? "로컬라이제이션 적용 중 .."
+                  : "로컬라이제이션 적용"}
+              </ConvertButton>
+            )}
           </ButtonBox>
           <PreviewCard>
             <PreviewHeader>
@@ -390,9 +462,11 @@ const ConvertTitle = styled.p`
 
 const ConvertSection = styled.div`
   display: flex;
+  min-height: 11.5rem;
   border-radius: 0.625rem;
   background: #f9f9f9;
   justify-content: center;
+  align-items: center;
   padding: 1.5rem;
 `;
 
@@ -505,9 +579,8 @@ const ProgressFill = styled.div`
 
 const UploadStatus = styled.div`
   font-size: 12px;
-  margin-top: 8px;
+  margin-top: 4px;
   color: ${({ $success }) => ($success ? "#009900" : "#ff0000")};
-  text-align: center;
   width: 100%;
 `;
 

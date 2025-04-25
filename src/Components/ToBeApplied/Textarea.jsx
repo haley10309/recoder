@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Yes from "@/assets/tobe_yes.png";
 import No from "@/assets/tobe_no.png";
 import Copy from "@/assets/copy.png";
+import { useRecoilValue } from "recoil";
+import { isEnglishCountryState } from "@/recoil/atoms/state";
 
 const BasicTextarea = ({
   pptNo,
@@ -21,6 +23,7 @@ const BasicTextarea = ({
   asWasOccurrenceCount,
   toBeOccurrenceCount,
 }) => {
+  const isEnglishCountry = useRecoilValue(isEnglishCountryState);
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
 
   const transformedAsWasCode = asWasCode?.replace(
@@ -42,9 +45,12 @@ const BasicTextarea = ({
     }
   };
 
+  const isLocalizedChanged =
+    localizedToBeCode && localizedToBeCode !== toBeCode;
+
   return (
     <Container>
-      <Wrapper>
+      <Wrapper $isEnglishCountry={isEnglishCountry}>
         <CheckboxWrapper>
           <Checkbox
             type="checkbox"
@@ -59,7 +65,7 @@ const BasicTextarea = ({
         </PptNo>
 
         {/* AS-WAS */}
-        <CodeBlock>
+        <CodeBlock $isEnglishCountry={isEnglishCountry}>
           <Textarea
             value={transformedAsWasCode}
             onChange={(e) => setAsWasCode(e.target.value)}
@@ -99,7 +105,7 @@ const BasicTextarea = ({
         </CodeBlock>
 
         {/* TO-BE */}
-        <CodeBlock>
+        <CodeBlock $isEnglishCountry={isEnglishCountry}>
           <Textarea
             value={toBeCode}
             onChange={(e) => setToBeCode(e.target.value)}
@@ -108,14 +114,17 @@ const BasicTextarea = ({
           />
         </CodeBlock>
 
-        {/* LOCALIZED TO-BE */}
-        <CodeBlock>
-          <Textarea
-            value={localizedToBeCode}
-            onChange={(e) => setLocalizedToBeCode(e.target.value)}
-            placeholder="로컬라이제이션을 적용하세요."
-          />
-        </CodeBlock>
+        {/* LOCALIZED TO-BE - 항상 렌더되지만 텍스트는 값이 있는 경우에만 */}
+        {!isEnglishCountry && (
+          <CodeBlock>
+            <Textarea
+              value={localizedToBeCode || ""}
+              onChange={(e) => setLocalizedToBeCode(e.target.value)}
+              placeholder="로컬라이제이션을 적용하세요."
+              $isLocalizedChanged={isLocalizedChanged}
+            />
+          </CodeBlock>
+        )}
 
         {/* 결과 표시 */}
         <ToBeAppliedWrapper>
@@ -171,7 +180,7 @@ const TextBold = styled.span`
 `;
 
 const CodeBlock = styled.div`
-  width: 25%;
+  width: ${({ $isEnglishCountry }) => ($isEnglishCountry ? "40%" : "25%")};
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -186,12 +195,18 @@ const Textarea = styled.textarea`
   border: 1px solid #d1d5db;
   border-radius: 8px;
 
-  /* 조건에 따른 테두리 색상 */
   ${({ $isApplied }) =>
     $isApplied === "yes"
       ? `border: 2px solid green;`
       : $isApplied === "no"
       ? `border: 2px solid red;`
+      : ``}
+
+  ${({ $isLocalizedChanged }) =>
+    $isLocalizedChanged === true
+      ? `border: 2px solid green;`
+      : $isLocalizedChanged === false
+      ? `border: 1px solid #d1d5db;`
       : ``}
 
   overflow: hidden;

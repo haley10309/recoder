@@ -1,6 +1,7 @@
-// TableSection.js
 import BasicTextarea from "@/Components/ToBeApplied/Textarea";
 import styled from "styled-components";
+import { useRecoilValue } from "recoil";
+import { isEnglishCountryState } from "@/recoil/atoms/state";
 
 const TableSection = ({
   filteredTextareas,
@@ -12,53 +13,56 @@ const TableSection = ({
   filter,
   filterTobe,
 }) => {
+  const isEnglishCountry = useRecoilValue(isEnglishCountryState);
+
   return (
     <TableWrapper>
       <TableHeader>
-        <HeaderCell width="5%">항목</HeaderCell>
-        <HeaderCell width="10%">PPT NO.</HeaderCell>
-        <HeaderCell width="25%">As-Was Code</HeaderCell>
-        <HeaderCell width="25%">To-Be Code</HeaderCell>
-        <HeaderCell width="25%">로컬라이제이션</HeaderCell>
-        <HeaderCell width="10%">작업 완료 여부</HeaderCell>
+        <HeaderCell width={isEnglishCountry ? "5%" : "5%"}>항목</HeaderCell>
+        <HeaderCell width={isEnglishCountry ? "15%" : "10%"}>
+          PPT NO.
+        </HeaderCell>
+        <HeaderCell width={isEnglishCountry ? "40%" : "25%"}>
+          As-Was Code
+        </HeaderCell>
+        <HeaderCell width={isEnglishCountry ? "40%" : "25%"}>
+          To-Be Code
+        </HeaderCell>
+        {!isEnglishCountry && (
+          <HeaderCell width="25%">로컬라이제이션</HeaderCell>
+        )}
+        <HeaderCell width={isEnglishCountry ? "10%" : "10%"}>
+          작업 완료 여부
+        </HeaderCell>
       </TableHeader>
 
-      {filteredTextareas().map((textarea, index) => {
-        const matchedPptNo = codePairs.find(
-          (pair) => pair.aswas_code === textarea.asWasCode
-        )?.ppt_no;
-
-        return (
-          <BasicTextarea
-            key={index}
-            pptNo={matchedPptNo}
-            asWasCode={textarea.asWasCode.replace(
-              /\/site\//g,
-              `/${country_code}/`
-            )}
-            setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-            toBeCode={textarea.toBeCode.replace(
-              /\/site\//g,
-              `/${country_code}/`
-            )}
-            setToBeCode={(value) => handleToBeCodeChange(index, value)}
-            localizedToBeCode={textarea.localizedToBeCode}
-            setLocalizedToBeCode={(value) =>
-              handleToBeCodeChange(index, value, { isLocalized: true })
-            }
-            changed={{ index, changed: textarea.changed }}
-            isApplied={textarea.isApplied}
-            onCheckedChange={() => handleCheckedChange(index)}
-            checked={textarea.checked}
-            filter={filter}
-            filterTobe={filterTobe}
-            country_code={country_code}
-            matchedPart={textarea.matchedPart}
-            asWasOccurrenceCount={textarea.asWasOccurrenceCount}
-            toBeOccurrenceCount={textarea.toBeOccurrenceCount}
-          />
-        );
-      })}
+      {filteredTextareas().map((textarea, index) => (
+        <BasicTextarea
+          key={index}
+          pptNo={textarea.pptNo} // ✅ 바로 사용
+          asWasCode={textarea.asWasCode.replace(
+            /\/site\//g,
+            `/${country_code}/`
+          )}
+          setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
+          toBeCode={textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`)}
+          setToBeCode={(value) => handleToBeCodeChange(index, value)}
+          localizedToBeCode={textarea.localizedToBeCode}
+          setLocalizedToBeCode={(value) =>
+            handleToBeCodeChange(index, value, { isLocalized: true })
+          }
+          changed={{ index, changed: textarea.changed }}
+          isApplied={textarea.isApplied}
+          onCheckedChange={() => handleCheckedChange(index)}
+          checked={textarea.checked}
+          filter={filter}
+          filterTobe={filterTobe}
+          country_code={country_code}
+          matchedPart={textarea.matchedPart}
+          asWasOccurrenceCount={textarea.asWasOccurrenceCount}
+          toBeOccurrenceCount={textarea.toBeOccurrenceCount}
+        />
+      ))}
     </TableWrapper>
   );
 };
