@@ -46,11 +46,14 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
     await templateSearch(ticketNumber, ticketUrl, setTextareas, setCodePairs);
   };
 
-  const handleCountryChange = (selectedName) => {
-    const selected = countryOptions.find((c) => c.name === selectedName);
+  const handleCountryChange = (inputValue) => {
+    setCountry_code(inputValue);
+
+    const selected = countryOptions.find((c) => c.name === inputValue);
     if (selected) {
-      setCountry_code(selected.name);
-      setIsEnglishCountry(selected.isEnglish ?? false); // undefined일 경우 false 처리
+      setIsEnglishCountry(selected.isEnglish ?? false);
+    } else {
+      setIsEnglishCountry(false);
     }
   };
 

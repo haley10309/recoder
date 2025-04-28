@@ -22,6 +22,7 @@ const BasicTextarea = ({
   matchedPart,
   asWasOccurrenceCount,
   toBeOccurrenceCount,
+  errorState,
 }) => {
   const isEnglishCountry = useRecoilValue(isEnglishCountryState);
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
@@ -112,6 +113,10 @@ const BasicTextarea = ({
             placeholder="To-Be code를 입력하세요."
             $isApplied={isApplied}
           />
+          <OccurrenceCount>
+            <strong>[TO-BE] 변환 후 코드 출현 횟수:</strong>{" "}
+            {toBeOccurrenceCount > 0 ? `${toBeOccurrenceCount}회` : "없음"}
+          </OccurrenceCount>
         </CodeBlock>
 
         {/* LOCALIZED TO-BE - 항상 렌더되지만 텍스트는 값이 있는 경우에만 */}
@@ -122,6 +127,7 @@ const BasicTextarea = ({
               onChange={(e) => setLocalizedToBeCode(e.target.value)}
               placeholder="로컬라이제이션을 적용하세요."
               $isLocalizedChanged={isLocalizedChanged}
+              $errorState={errorState}
             />
           </CodeBlock>
         )}
@@ -208,6 +214,9 @@ const Textarea = styled.textarea`
       : $isLocalizedChanged === false
       ? `border: 1px solid #d1d5db;`
       : ``}
+
+${({ errorState }) => (errorState ? `border: 2px solid orange;` : ``)}
+
 
   overflow: hidden;
 

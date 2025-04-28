@@ -61,6 +61,7 @@ const TableSection = ({
           matchedPart={textarea.matchedPart}
           asWasOccurrenceCount={textarea.asWasOccurrenceCount}
           toBeOccurrenceCount={textarea.toBeOccurrenceCount}
+          errorState={textarea.errorState}
         />
       ))}
     </TableWrapper>

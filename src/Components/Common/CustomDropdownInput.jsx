@@ -8,8 +8,12 @@ const CustomDropdownInput = ({ value, onChange, placeholder, options }) => {
 
   const handleSelect = (val) => {
     onChange(val);
+    setTimeout(() => {
+      containerRef.current?.querySelector("input")?.focus();
+    }, 0);
     setShowOptions(false);
   };
+  
 
   return (
     <Container

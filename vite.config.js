@@ -30,6 +30,7 @@ export default ({ mode }) => {
         { find: "@DummyData", replacement: "/src/dummy_data" },
         { find: "@LocalizationComponent", replacement: "/src/Components/Localization" },
         { find: "@Hooks", replacement: "/src/hooks" },
+        { find: "@Utils", replacement: "/src/utils" },
       ],
       
     },

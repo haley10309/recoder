@@ -45,6 +45,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
   const [localizedFileContent, setLocalizedFileContent] = useState("");
   const [localizedFileName, setLocalizedFileName] = useState("");
   const [isLocalizationApplied, setIsLocalizationApplied] = useState(false);
+  const [localizationStatus, setLocalizationStatus] = useState("");
 
   const handleTranslationUpload = async (e) => {
     const file = e.target.files[0];
@@ -131,30 +132,50 @@ const FileConvert = ({ textareas, setTextareas }) => {
         ticketUrl
       );
 
-      const validTemplateTexts = localization_list.map((item) => {
+      const validTemplateTexts = localization_list.flatMap((item) => {
+        const texts = [];
         const doc = new DOMParser().parseFromString(
           item.local_code,
           "text/html"
         );
-        return doc.body.textContent?.trim();
-      });
+        if (doc.body.textContent?.trim())
+          texts.push(doc.body.textContent.trim());
 
-      localization_list.forEach((item) => {
         Object.entries(item).forEach(([key, val]) => {
           if (key.startsWith("value") && typeof val === "string") {
-            const doc = new DOMParser().parseFromString(val, "text/html");
-            const textOnly = doc.body.textContent?.trim();
-            if (textOnly) validTemplateTexts.push(textOnly);
+            const innerDoc = new DOMParser().parseFromString(val, "text/html");
+            if (innerDoc.body.textContent?.trim())
+              texts.push(innerDoc.body.textContent.trim());
           }
         });
+        return texts;
       });
 
+      // 1. missingKey 체크
+      const missingKeys = Object.keys(currentTranslations).filter((key) => {
+        const cleanedKey = key.trim().replace(/\s+/g, " ");
+        return !validTemplateTexts.some((templateText) =>
+          templateText.includes(cleanedKey)
+        );
+      });
+
+      if (missingKeys.length > 0) {
+        console.warn("🚨 템플릿에 없는 번역 키 발견:", missingKeys);
+      }
+
       const lowerCaseCode = country_code?.toLowerCase?.() || "";
+
+      // 2. textareas 업데이트
       const updatedTextareas = textareas.map((textarea) => {
         const localizedToBe = applyLocalizedTemplateBlocks(
           textarea.toBeCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
           currentTranslations,
           localization_list
+        );
+
+        // 3. 여기에서 missingKeys 안에 해당 텍스트가 있는지 검사해서 errorState 설정
+        const errorState = missingKeys.some((key) =>
+          textarea.toBeCode.includes(key)
         );
 
         return {
@@ -168,10 +189,11 @@ const FileConvert = ({ textareas, setTextareas }) => {
             `/${lowerCaseCode}/`
           ),
           localizedToBeCode: localizedToBe,
+          errorState, // 여기 추가!!!!!!
         };
       });
 
-      // 전체 HTML에도 적용
+      // 전체 HTML에도 적용하는 부분은 기존 그대로 두고
       let localizedFullHtml = downloadedFileContent;
       localization_list.forEach((item) => {
         let originalBlock = item.local_code;
@@ -184,7 +206,6 @@ const FileConvert = ({ textareas, setTextareas }) => {
         Object.entries(currentTranslations).forEach(([eng, local]) => {
           const cleanedEng = eng.trim().replace(/\s+/g, " ");
           const cleanedBlockText = blockText?.replace(/\s+/g, " ");
-
           if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
             const regex = new RegExp(escapeRegExp(eng), "g");
             originalBlock = originalBlock.replace(regex, local);
@@ -208,8 +229,22 @@ const FileConvert = ({ textareas, setTextareas }) => {
       setUploadStatus("fail");
     }
   };
+
   // 로컬라이제이션 적용된 파일 다운로드
   const handleLocalizedDownload = () => {
+    const hasUnapplied = textareas.some(
+      (textarea) => textarea.isApplied === "no"
+    );
+
+    if (hasUnapplied) {
+      const proceed = window.confirm(
+        "🚫 변환이 적용되지 않은 항목이 있습니다.\n그래도 다운로드 하시겠습니까?"
+      );
+      if (!proceed) {
+        return; // 사용자가 취소 누르면 다운로드 중단
+      }
+    }
+
     if (localizedFileContent) {
       const blob = new Blob([localizedFileContent], { type: "text/html" });
       const url = window.URL.createObjectURL(blob);
@@ -270,18 +305,24 @@ const FileConvert = ({ textareas, setTextareas }) => {
         textarea.toBeCode
       );
       const lowerCaseCode = country_code?.toLowerCase?.() || "";
-      const actualChanged = !isCodeEqual(
-        textarea.asWasCode,
-        textarea.toBeCode,
-        lowerCaseCode
-      );
+
+      const normalizePath = (code) =>
+        code?.replace(new RegExp(`/${lowerCaseCode}/`, "g"), "/site/")?.trim();
+
+      const normalizedAsWas = normalizePath(textarea.asWasCode);
+      const normalizedToBe = normalizePath(textarea.toBeCode);
+
+      const actualChanged = normalizedAsWas !== normalizedToBe;
+      const isFound = asWasOccurrenceCount > 0;
+
       return {
         ...textarea,
         pptNo: textarea.pptNo,
-        changed: changed || false,
-        isApplied: actualChanged ? "yes" : "no",
+        changed: isFound && actualChanged, // 일치했을 때만 '변경' 인정
+        isApplied: isFound ? (actualChanged ? "yes" : "no") : "no", // 찾지 못했으면 무조건 "no"
         matchedPart: matchedPart,
         asWasOccurrenceCount,
+        toBeOccurrenceCount,
         asWasCode: textarea.asWasCode.replace(
           /\/site\//g,
           `/${lowerCaseCode}/`
@@ -375,6 +416,18 @@ const FileConvert = ({ textareas, setTextareas }) => {
 
   // 다운로드 버튼 클릭 시 변환된 파일 다운로드
   const handleDownload = () => {
+    const hasUnapplied = textareas.some(
+      (textarea) => textarea.isApplied === "no"
+    );
+
+    if (hasUnapplied) {
+      const proceed = window.confirm(
+        "🚫 변환이 적용되지 않은 항목이 있습니다.\n그래도 다운로드 하시겠습니까?"
+      );
+      if (!proceed) {
+        return; // 사용자가 취소 누르면 다운로드 중단
+      }
+    }
     if (downloadedFileContent) {
       const blob = new Blob([downloadedFileContent], { type: "text/html" });
       const url = window.URL.createObjectURL(blob);
@@ -476,16 +529,19 @@ const FileConvert = ({ textareas, setTextareas }) => {
             </ConvertButton>
             {/* 로컬라이제이션 적용 버튼도 영문국이면 숨김 */}
             {!isEnglishCountry && (
-              <ConvertButton
-                $bgColor="black"
-                onClick={handleApplyLocalization}
-                disabled={isLocalizationProcessing || fileName === ""}
-                $active={fileName !== "" && !isLocalizationProcessing}
-              >
-                {isLocalizationProcessing
-                  ? "로컬라이제이션 적용 중 .."
-                  : "로컬라이제이션 적용"}
-              </ConvertButton>
+              <>
+                ➡️
+                <ConvertButton
+                  $bgColor="black"
+                  onClick={handleApplyLocalization}
+                  disabled={isLocalizationProcessing || fileName === ""}
+                  $active={fileName !== "" && !isLocalizationProcessing}
+                >
+                  {isLocalizationProcessing
+                    ? "로컬라이제이션 적용 중 .."
+                    : "로컬라이제이션 적용"}
+                </ConvertButton>
+              </>
             )}
           </ButtonBox>
           <PreviewCard>
@@ -496,17 +552,28 @@ const FileConvert = ({ textareas, setTextareas }) => {
                 <ProgressBar>
                   <ProgressFill $progress={uploadProgress} />
                 </ProgressBar>
-                {uploadStatus && (
-                  <UploadStatus $success={uploadStatus === "success"}>
-                    {uploadStatus === "success"
-                      ? "핫픽스 작업이 완료된 파일이 생성되었습니다!"
-                      : "파일 생성에 실패하였습니다."}
+                {(uploadStatus || localizationStatus) && (
+                  <UploadStatus
+                    $success={
+                      uploadStatus === "success" ||
+                      localizationStatus === "success"
+                    }
+                  >
+                    {uploadStatus === "success" &&
+                      "핫픽스 작업이 완료된 파일이 생성되었습니다!"}
+                    {uploadStatus === "fail" && "파일 생성에 실패하였습니다."}
+                    {localizationStatus === "success" &&
+                      "로컬라이제이션이 완료되었습니다!"}
+                    {localizationStatus === "fail" &&
+                      "로컬라이제이션 적용에 실패했습니다."}
                   </UploadStatus>
                 )}
               </div>
             </PreviewHeader>
             {isExecuted && (
-              <DownloadButton onClick={handleDownload}>다운로드</DownloadButton>
+              <DownloadButton onClick={handleDownload}>
+                코드 변환 다운로드
+              </DownloadButton>
             )}
             {isLocalizationApplied && (
               <LocalaizationDownloadButton onClick={handleLocalizedDownload}>
@@ -544,6 +611,7 @@ const ConvertSection = styled.div`
 const ConvertContainer = styled.div`
   display: flex;
   gap: 2rem;
+  align-items: center;
 `;
 
 const FileDropLabel = styled.label`
@@ -581,7 +649,8 @@ const FileDropInner = styled.div`
 `;
 const ButtonBox = styled.div`
   display: flex;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 0.8rem;
 `;
 
 const ConvertButton = styled.button`
@@ -612,13 +681,13 @@ const PreviewContainer = styled.div`
 
 const PreviewCard = styled.div`
   display: flex;
-  gap: 4rem;
+  gap: 0.8rem;
 `;
 
 const PreviewHeader = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.8rem;
   #preview-text {
     font-size: 0.875rem;
     font-weight: 500;
@@ -659,11 +728,11 @@ const DownloadButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   width: 10.9375rem;
   height: 2.5625rem;
   font-weight: 600;
   color: white;
+  font-size: 0.9rem;
   background-color: #ff782f;
   border-radius: 10px;
   svg {
@@ -676,13 +745,12 @@ const LocalaizationDownloadButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  width: 10.9375rem;
+  width: 13.9375rem;
   height: 2.5625rem;
   font-weight: 600;
   color: white;
-  font-size: 0.7rem;
-  background-color: #ff782f;
+  font-size: 0.9rem;
+  background-color: #000000;
   border-radius: 10px;
   svg {
     width: 20px;
