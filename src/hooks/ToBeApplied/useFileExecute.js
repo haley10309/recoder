@@ -1,53 +1,52 @@
-import { normalizeSitePath, isCodeEqual } from "@Utils/ToBeApplied/pathUtils";
+import { useState } from "react";
 import { fileExecute } from "@/apis/apis";
-import { countOccurrences } from "@Utils/codeUtils";
+import { countOccurrences } from "@/utils/codeUtils";
 
-export const useExecute = ({
+export function useFileExecute({
+  originalFile,
+  fileContent,
   textareas,
   setTextareas,
-  originalFile,
-  setIsExecuted,
-  setUploadProgress,
-  setDownloadedFileContent,
-  setDownloadedFileName,
-  setUploadStatus,
-  setIsProcessing,
   country_code,
   ticketUrl,
-  fileContent,
-  downloadedFileContent,
-}) => {
-  const handleChangeResults = (
-    changeResults,
-    fileContentParam,
-    downloadedFileContentParam
-  ) => {
+}) {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isExecuted, setIsExecuted] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState("");
+  const [downloadedFileContent, setDownloadedFileContent] = useState("");
+  const [downloadedFileName, setDownloadedFileName] = useState("");
+
+  const handleChangeResults = (changeResults) => {
     const updatedTextareas = textareas.map((textarea, index) => {
       const { changed, matchedPart } =
         changeResults.find((result) => result.pairIndex === index) || {};
 
       const asWasOccurrenceCount = countOccurrences(
-        fileContentParam,
+        fileContent,
         textarea.asWasCode
       );
       const toBeOccurrenceCount = countOccurrences(
-        downloadedFileContentParam,
+        downloadedFileContent,
         textarea.toBeCode
       );
-
       const lowerCaseCode = country_code?.toLowerCase?.() || "";
-      const actualChanged = !isCodeEqual(
-        textarea.asWasCode,
-        textarea.toBeCode,
-        lowerCaseCode
-      );
+
+      const normalizePath = (code) =>
+        code?.replace(new RegExp(`/${lowerCaseCode}/`, "g"), "/site/")?.trim();
+
+      const normalizedAsWas = normalizePath(textarea.asWasCode);
+      const normalizedToBe = normalizePath(textarea.toBeCode);
+
+      const actualChanged = normalizedAsWas !== normalizedToBe;
+      const isFound = asWasOccurrenceCount > 0;
 
       return {
         ...textarea,
         pptNo: textarea.pptNo,
-        changed: changed || false,
-        isApplied: actualChanged ? "yes" : "no",
-        matchedPart,
+        changed: isFound && actualChanged,
+        isApplied: isFound ? (actualChanged ? "yes" : "no") : "no",
+        matchedPart: matchedPart,
         asWasOccurrenceCount,
         toBeOccurrenceCount,
         asWasCode: textarea.asWasCode.replace(
@@ -98,26 +97,9 @@ export const useExecute = ({
       setIsProcessing(true);
 
       try {
-        const progressUpdatePromise = new Promise((resolve) => {
-          const progressInterval = setInterval(() => {
-            setUploadProgress((prev) => {
-              if (prev >= 100) {
-                clearInterval(progressInterval);
-                resolve();
-                return 100;
-              }
-              return prev + 10;
-            });
-          }, 100);
-        });
-
-        const { fileContent: newFileContent, filename } = await fileExecute(
-          (changeResults) =>
-            handleChangeResults(
-              changeResults,
-              newFileContent,
-              downloadedFileContent
-            ),
+        const { fileContent, filename } = await fileExecute(
+          () => {},
+          handleChangeResults,
           setIsProcessing,
           formData,
           updatedTextareas,
@@ -126,10 +108,8 @@ export const useExecute = ({
           country_code
         );
 
-        setDownloadedFileContent(newFileContent);
+        setDownloadedFileContent(fileContent);
         setDownloadedFileName(filename);
-
-        await progressUpdatePromise;
         setUploadStatus("success");
       } catch (error) {
         console.error("파일 실행 오류", error);
@@ -138,9 +118,17 @@ export const useExecute = ({
         setIsProcessing(false);
       }
     } else {
-      alert("파일 선택, asWasCode과 toBeCode 입력은 필수입니다.");
+      alert("파일 선택, asWasCode, toBeCode 입력은 필수입니다.");
     }
   };
 
-  return { handleExecute };
-};
+  return {
+    isProcessing,
+    isExecuted,
+    uploadProgress,
+    uploadStatus,
+    downloadedFileContent,
+    downloadedFileName,
+    handleExecute,
+  };
+}

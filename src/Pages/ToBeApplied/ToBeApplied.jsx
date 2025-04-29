@@ -5,12 +5,13 @@ import SearchTemplate from "@ToBeApplied/SearchTemplate";
 import FileConvert from "@ToBeApplied/FileConvert";
 import FilterSection from "@/Components/ToBeApplied/FilterSection";
 import TableSection from "@/Components/ToBeApplied/TableSection";
+import { countryCodeState } from "@/recoil/atoms/state";
 import styled from "styled-components";
 
 const ToBeApplied = () => {
   const [textareas, setTextareas] = useRecoilState(textareasState);
   const [codePairs, setCodePairs] = useState([]);
-  const [country_code, setCountry_code] = useState("");
+  const [country_code, setCountry_code] = useRecoilState(countryCodeState);
   const [filter, setFilter] = useState("");
   const [filterTobe, setFilterTobe] = useState("");
 

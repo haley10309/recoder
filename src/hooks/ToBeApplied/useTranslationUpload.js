@@ -1,0 +1,82 @@
+import { useState } from "react";
+import { uploadTranslationDeck } from "@/apis/apis";
+
+export function useTranslationUpload(country_code) {
+  const [translationsByCountry, setTranslationsByCountry] = useState({});
+  const [currentTranslations, setCurrentTranslations] = useState({});
+  const [validCountries, setValidCountries] = useState([]);
+  const [txtUploadStatus, setTxtUploadStatus] = useState("");
+  const [txtFileName, setTxtFileName] = useState("");
+  const [txtUploadProgress, setTxtUploadProgress] = useState(0);
+
+  const handleTranslationUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setTxtUploadStatus("fail");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    // ✅ 파일 읽기 시작할 때
+    reader.onloadstart = () => {
+      setTxtUploadProgress(0);
+    };
+
+    // ✅ 파일 읽는 중
+    reader.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        setTxtUploadProgress(percent);
+      }
+    };
+
+    // ✅ 파일 다 읽었을 때
+    reader.onload = async () => {
+      setTxtUploadProgress(100);
+
+      try {
+        const { translations, englishCopy, validCountries } =
+          await uploadTranslationDeck(file);
+
+        setValidCountries(validCountries);
+        setTranslationsByCountry(translations);
+
+        const currentCountry = country_code;
+        const countryTranslations = translations[currentCountry] || [];
+
+        const dictionary = {};
+        for (let i = 0; i < englishCopy.length; i++) {
+          const key = englishCopy[i]?.trim();
+          const value = countryTranslations[i]?.trim();
+          if (value && key !== value) {
+            dictionary[key] = value;
+          }
+        }
+
+        setCurrentTranslations(dictionary);
+        setTxtUploadStatus("success");
+        setTxtFileName(file.name);
+      } catch (err) {
+        console.error(err);
+        setTxtUploadStatus("fail");
+      }
+    };
+
+    // ✅ 에러 났을 때
+    reader.onerror = () => {
+      setTxtUploadStatus("fail");
+    };
+
+    reader.readAsText(file);
+  };
+
+  return {
+    translationsByCountry,
+    currentTranslations,
+    validCountries,
+    txtUploadStatus,
+    txtFileName,
+    handleTranslationUpload,
+  };
+}
