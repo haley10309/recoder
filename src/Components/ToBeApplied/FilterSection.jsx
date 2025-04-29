@@ -1,74 +1,154 @@
-import CustomDropdownInput from "@Components/Common/CustomDropdownInput";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
+import ArrowIcon from "@/assets/Path.svg";
 
 const FilterSection = ({ filter, setFilter, filterTobe, setFilterTobe }) => {
-  const handleFilterChange = (value) => {
-    setFilter(
-      value === "선택된 항목"
-        ? "checked"
-        : value === "선택되지 않은 항목"
-        ? "unchecked"
-        : "all"
-    );
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
+  const [showTobeOptions, setShowTobeOptions] = useState(false);
+
+  const filterOptions = [
+    { label: "전체 항목", value: "all" },
+    { label: "선택된 항목", value: "checked" },
+    { label: "선택되지 않은 항목", value: "unchecked" },
+  ];
+
+  const filterTobeOptions = [
+    { label: "전체 항목", value: "all" },
+    { label: "To-Be 적용", value: "yes" },
+    { label: "To-Be 미적용", value: "no" },
+  ];
+
+  const handleFilterSelect = (value) => {
+    setFilter(value);
+    setShowFilterOptions(false);
   };
 
-  const handleFilterTobeChange = (value) => {
-    setFilterTobe(
-      value === "To-Be 적용" ? "yes" : value === "To-Be 미적용" ? "no" : "all"
-    );
+  const handleTobeSelect = (value) => {
+    setFilterTobe(value);
+    setShowTobeOptions(false);
   };
 
   return (
     <TitleRow>
       <Title>👀 AS-WAS / TO BE / Localization 확인하기</Title>
       <DropdownGroup>
-        <CustomDropdownInput
-          value={
-            filter === "all"
-              ? "전체 항목"
-              : filter === "checked"
-              ? "선택된 항목"
-              : "선택되지 않은 항목"
-          }
-          onChange={handleFilterChange}
-          placeholder="항목 선택"
-          options={["전체 항목", "선택된 항목", "선택되지 않은 항목"]}
-        />
-        <CustomDropdownInput
-          value={
-            filterTobe === "all"
-              ? "전체 항목"
-              : filterTobe === "yes"
-              ? "To-Be 적용"
-              : "To-Be 미적용"
-          }
-          onChange={handleFilterTobeChange}
-          placeholder="To-Be 선택"
-          options={["전체 항목", "To-Be 적용", "To-Be 미적용"]}
-        />
+        <DropdownContainer
+          tabIndex={0}
+          onBlur={() => setShowFilterOptions(false)}
+        >
+          <DropdownButton onClick={() => setShowFilterOptions((prev) => !prev)}>
+            {filterOptions.find((opt) => opt.value === filter)?.label ||
+              "전체 항목"}
+            <Arrow src={ArrowIcon} $open={showFilterOptions} />
+          </DropdownButton>
+          {showFilterOptions && (
+            <DropdownList>
+              {filterOptions.map((option) => (
+                <DropdownItem
+                  key={option.value}
+                  onMouseDown={() => handleFilterSelect(option.value)}
+                >
+                  {option.label}
+                </DropdownItem>
+              ))}
+            </DropdownList>
+          )}
+        </DropdownContainer>
+
+        <DropdownContainer
+          tabIndex={0}
+          onBlur={() => setShowTobeOptions(false)}
+        >
+          <DropdownButton onClick={() => setShowTobeOptions((prev) => !prev)}>
+            {filterTobeOptions.find((opt) => opt.value === filterTobe)?.label ||
+              "전체 항목"}
+            <Arrow src={ArrowIcon} $open={showTobeOptions} />
+          </DropdownButton>
+          {showTobeOptions && (
+            <DropdownList>
+              {filterTobeOptions.map((option) => (
+                <DropdownItem
+                  key={option.value}
+                  onMouseDown={() => handleTobeSelect(option.value)}
+                >
+                  {option.label}
+                </DropdownItem>
+              ))}
+            </DropdownList>
+          )}
+        </DropdownContainer>
       </DropdownGroup>
     </TitleRow>
   );
 };
 
+export default FilterSection;
+
 const TitleRow = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 `;
 
 const Title = styled.h2`
   font-size: 1rem;
-  font-style: normal;
   font-weight: 700;
-  line-height: 140%;
-  margin-bottom: 20px;
 `;
 
 const DropdownGroup = styled.div`
   display: flex;
-  justify-content: end;
-  gap: 16px;
-  padding-bottom: 16px;
+  gap: 1rem;
 `;
 
-export default FilterSection;
+const DropdownContainer = styled.div`
+  position: relative;
+  min-width: 11rem;
+`;
+
+const DropdownButton = styled.button`
+  width: 100%;
+  height: 2.625rem;
+  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  background: #fff;
+  border: 1px solid #ff782f;
+  border-radius: 0.625rem;
+  box-shadow: 0px 0px 10px 0px rgba(96, 130, 228, 0.25);
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+`;
+
+const Arrow = styled.img`
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%)
+    rotate(${(props) => (props.$open ? "180deg" : "0deg")});
+  transition: transform 0.3s ease;
+  width: 0.8rem;
+  height: 0.8rem;
+`;
+
+const DropdownList = styled.ul`
+  position: absolute;
+  width: 100%;
+  top: 110%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0.625rem;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  max-height: 10rem;
+  overflow-y: auto;
+`;
+
+const DropdownItem = styled.li`
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  &:hover {
+    background-color: #ffece1;
+  }
+`;

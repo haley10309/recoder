@@ -4,12 +4,12 @@ import Asset_Template from "@Create_Template/Asset_template";
 import { BASE_URL } from "@/utils/routePath";
 import arrowIcon from "@/assets/shift-fill.svg";
 
-export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, asset_toBe, setAsset_toBe, addAssetArea, isTemplateAvailable, setAsset_pptNo, fileContent, setPptNos, setAsWasCodes, setToBeCodes, setFileContent, setFile, setEnglishCopy }) {
+export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, asset_toBe, setAsset_toBe, addAssetArea, isTemplateAvailable, setAsset_pptNo, fileContent, setPptNos, setAsWasCodes, setToBeCodes, setFileContent, setFile }) {
   const pptInputRef = useRef(null);
-  const transInputRef = useRef(null);
+  const backUpInputRef = useRef(null);
 
   const [pptFile, setPptFile] = useState(null);
-  const [transFile, setTransFile] = useState(null);
+  const [backUpFile, setBackUpFile] = useState(null);
 
   function formatFileSize(size) {
     if (size < 1024) return `${size} B`;
@@ -74,28 +74,10 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
     handlePptSubmit(f);
   };
 
-  // 번역.txt 업로드
-  const handleTransSubmit = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await axios.post(`${BASE_URL}/localization/english-copy`, formData, { headers: { "Content-Type": "multipart/form-data" } });
-      setEnglishCopy(res.data.englishCopy); // ← 여기서 번역 결과 전달
-    } catch (error) {
-      console.error("Error uploading translation file:", error);
-      alert("번역 업로드에 실패했습니다.");
-    }
-  };
-  const handleTransFileChange = (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
-    setTransFile(f);
-    handleTransSubmit(f);
-  };
-
   // Run Test 파일 처리
   const handleFileChange = (e) => {
     const f = e.target.files[0];
+    setBackUpFile(f);
     setFile(f);
     if (f) {
       const reader = new FileReader();
@@ -132,7 +114,7 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
   return (
     <div className="mt-[100px] mb-[100px] w-full">
       <h2 className="font-bold text-black text-[16px] mb-[15px]">📤 파일 업로드</h2>
-      <div className="flex justify-center gap-[40px] bg-[#f9f9f9] rounded-[10px] py-[30px]">
+      <div className="flex justify-center gap-[40px] bg-[#f9f9f9] rounded-[8px] py-[30px] shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
         {/* PPT.txt 업로드 박스 */}
         <div className="flex flex-col justify-center items-center w-[330px] h-[120px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" onClick={() => pptInputRef.current.click()}>
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
@@ -146,26 +128,22 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
           )}
         </div>
 
-        {/* 번역.txt 업로드 박스 */}
-        <div className="flex flex-col justify-center items-center w-[330px] h-[120px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" onClick={() => transInputRef.current.click()}>
+        {/* 원본.html 업로드 박스 */}
+        <div className="flex flex-col justify-center items-center w-[330px] h-[120px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" onClick={() => backUpInputRef.current.click()}>
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
-          <p className="mt-3 font-[500] text-[15px]">번역.txt 파일을 업로드 해 주세요</p>
-          <input type="file" accept=".txt" ref={transInputRef} onChange={handleTransFileChange} className="hidden" />
-          {transFile && (
+          <p className="mt-3 font-[500] text-[15px]">원본.html 파일을 업로드 해 주세요</p>
+          <input type="file" accept=".html" ref={backUpInputRef} onChange={handleFileChange} className="hidden" />
+          {backUpFile && (
             <div className="mt-2 text-center text-[13px]">
-              <p>{transFile.name}</p>
-              <p>{formatFileSize(transFile.size)}</p>
+              <p>{backUpFile.name}</p>
+              <p>{formatFileSize(backUpFile.size)}</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Run Test 버튼 & Asset_Template */}
+      {/* Asset_Template */}
       <div className="flex items-center justify-center gap-2 mt-6">
-        <input type="file" id="file-upload" onChange={handleFileChange} accept=".js,.html,.css" className="hidden" />
-        <button type="button" className="flex justify-center items-center bg-black text-white hover:bg-gray-700 font-[600] text-[13px] rounded-[10px] h-[40px] w-[130px]" onClick={() => document.getElementById("file-upload").click()}>
-          Run Test
-        </button>
         <Asset_Template asset_pptNo={asset_pptNo} asset_asWas={asset_asWas} asset_toBe={asset_toBe} addAssetArea={addAssetArea} removeAssetArea={removeAssetArea} isTemplateAvailable={isTemplateAvailable} setAsset_asWas={handleAssetAsWasChange} setAsset_toBe={handleAssetToBeChange} setAsset_pptNo={handleAssetPptNoChange} fileContent={fileContent} onSave={() => {}} />
       </div>
     </div>

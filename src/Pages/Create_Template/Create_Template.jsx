@@ -9,6 +9,7 @@ import CheckTemplate from "./CheckTemplate";
 import UploadFiles from "./UploadFiles";
 import "@Create_Template/Create_Template.scss";
 import TransBox from "../../Components/Common/TransBox";
+import TransFileUpload from "./TransFileUpload";
 
 const Create_template = () => {
   // AS-WAS / TO-BE states
@@ -18,17 +19,13 @@ const Create_template = () => {
   const [asset_asWas, setAsset_asWas] = useState([]);
   const [asset_toBe, setAsset_toBe] = useState([]);
   const [asset_pptNo, setAsset_pptNo] = useState([]);
-
-  // Template and ticket info
   const [templateID, setTemplateID] = useState("");
   const [ticketNum, setTicketNum] = useState("");
   const [ticketURL, setTicketURL] = useState("");
-
-  // File upload and code occurrence
   const [file, setFile] = useState(null);
   const [fileContent, setFileContent] = useState("");
 
-  // Save type: 'create' or 'update'
+  const [isHotfixCreated, setIsHotfixCreated] = useState(false);
   const [save_type, setSave_type] = useState("");
 
   // Localization: original translations and tobe codes
@@ -105,9 +102,22 @@ const Create_template = () => {
       const url = save_type === "create" ? `${BASE_URL}/create` : `${BASE_URL}/update-template`;
       await axios.post(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
       alert("템플릿이 성공적으로 저장되었습니다");
+      setIsHotfixCreated(true);
     } catch (err) {
       console.error("Error sending data", err);
       alert("템플릿 저장 중 오류가 발생하였습니다");
+    }
+  };
+
+  const toggleTransBtn = () => {
+    if (save_type === "update") {
+      return false;
+    } else if (save_type === "create") {
+      return false;
+    } else if (isHotfixCreated) {
+      return false;
+    } else {
+      true;
     }
   };
 
@@ -131,19 +141,17 @@ const Create_template = () => {
 
   // 로컬라이제이션 템플릿 생성/수정
   const handleCreateLocalization = async () => {
+    if (!isHotfixCreated) {
+      alert("핫픽스 템플릿을 먼저 생성해 주세요.");
+      return;
+    }
     try {
       const body = {
         ticket_num: ticketNum,
         ticket_url: ticketURL,
-        localization_list: localizedItems.map(
-          (item) =>
-            item.id
-              ? { id: item.id, local_code: item.local_code } // 기존 항목
-              : { local_code: item.local_code } // 신규 항목
-        ),
+        localization_list: localizedItems.map((item) => (item.id ? { id: item.id, local_code: item.local_code } : { local_code: item.local_code })),
         delete_ids: deleteIds,
       };
-      console.log("Request body:", body);
 
       await axios.put(`${BASE_URL}/localization/template`, body, {
         headers: { "Content-Type": "application/json" },
@@ -151,24 +159,34 @@ const Create_template = () => {
 
       setDeleteIds([]);
 
-      const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
+      const { data } = await axios.post(`${BASE_URL}/get-template-details`, {
+        ticket_num: ticketNum,
+        ticket_url: ticketURL,
+      });
       setLocalizedItems(data.localization_list || []);
-      alert("로컬라이제이션 템플릿이 생성/수정되었습니다");
+      if (save_type === "create") {
+        alert("로컬라이제이션 템플릿이 생성되었습니다");
+      } else {
+        alert("로컬라이제이션 템플릿이 수정되었습니다");
+      }
     } catch (err) {
+      if (save_type === "create") {
+        alert("로컬라이제이션 생성 중 오류가 발생했습니다");
+      } else {
+        alert("로컬라이제이션 수정 중 오류가 발생했습니다");
+      }
       console.error("Error creating localization template:", err);
-      alert("로컬라이제이션 생성/수정 중 오류가 발생했습니다");
     }
   };
 
   return (
     <div className="bg-[#FFFFFF] p-[110px]">
-      {/* 1. 핫픽스 템플릿 확인 및 기존 데이터 로드 */}
-      <CheckTemplate setSave_type={setSave_type} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setAsset_asWas={setAsset_asWas} setAsset_toBe={setAsset_toBe} setTemplateID={setTemplateID} setPptNos={setPptNos} setAsset_pptNo={setAsset_pptNo} ticketNum={ticketNum} ticketURL={ticketURL} setTicketNum={setTicketNum} setTicketURL={setTicketURL} setLocalizedItems={setLocalizedItems} setDeleteIds={setDeleteIds} />
+      <CheckTemplate setSave_type={setSave_type} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setAsset_asWas={setAsset_asWas} setAsset_toBe={setAsset_toBe} setTemplateID={setTemplateID} setPptNos={setPptNos} setAsset_pptNo={setAsset_pptNo} ticketNum={ticketNum} ticketURL={ticketURL} setTicketNum={setTicketNum} setTicketURL={setTicketURL} setLocalizedItems={setLocalizedItems} setDeleteIds={setDeleteIds} setIsHotfixCreated={setIsHotfixCreated} />
 
-      {/* 2. 파일 업로드 & AS-WAS / TO-BE 리스트 */}
       <UploadFiles file={file} asset_pptNo={asset_pptNo} asset_asWas={asset_asWas} setAsset_asWas={setAsset_asWas} asset_toBe={asset_toBe} setAsset_toBe={setAsset_toBe} addAssetArea={addAssetArea} isTemplateAvailable={Boolean(templateID)} setAsset_pptNo={setAsset_pptNo} fileContent={fileContent} setFile={setFile} setFileContent={setFileContent} setPptNos={setPptNos} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setEnglishCopy={setEnglishCopy} />
 
-      <h2 className="font-bold text-black mb-5 text-[16px]">✅ 핫픽스 AS-WAS / TO-BE</h2>
+      {/* <Asset_Template /> */}
+      <h2 className="font-bold text-black mb-5 text-[16px]">✅ AS-WAS / TO-BE 템플릿</h2>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(prov) => (
@@ -203,9 +221,9 @@ const Create_template = () => {
                             placeholder="AS-WAS 코드를 입력해 주세요."
                             className="code-textarea"
                           />
-                          <div className="duplicate-count">
+                          <div className="flex">
                             <Frequency />
-                            {countOccurrences(asWasCodes[i])}
+                            <span className="ml-1 text-xs">{countOccurrences(asWasCodes[i]) == 0 ? "없음" : `${countOccurrences(asWasCodes[i])}번`}</span>
                           </div>
                         </div>
                         <div className="to_be_div">
@@ -245,7 +263,9 @@ const Create_template = () => {
         </button>
       </div>
 
-      <h2 className="font-bold text-black mb-5 text-[16px]">🌐 번역 위치 확인</h2>
+      <TransFileUpload setEnglishCopy={setEnglishCopy} />
+
+      <h2 className="font-bold text-black mb-5 text-[16px]">🌐 로컬라이제이션 템플릿</h2>
       <div className="flex flex-col">
         {localizedItems.map((item, idx) => (
           <TransBox
@@ -272,8 +292,8 @@ const Create_template = () => {
           <AddIcon />
           <span>항목 추가</span>
         </button>
-        <button type="button" className="save_button" onClick={handleCreateLocalization} disabled={!localizedItems.length}>
-          로컬라이제이션 템플릿 생성
+        <button type="button" className="save_button" onClick={handleCreateLocalization} disabled={toggleTransBtn() || localizedItems.length === 0}>
+          {save_type === "update" ? "로컬라이제이션 템플릿 수정" : "로컬라이제이션 템플릿 생성"}
         </button>
       </div>
     </div>

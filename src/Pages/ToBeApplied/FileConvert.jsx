@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { countOccurrences } from "@/utils/codeUtils";
-import Process from "@/assets/uim_process.png";
 import FileUpload from "@/assets/shift-fill.svg";
 import HtmlFile from "@/assets/union.svg";
 import { fileExecute } from "@/apis/apis";
@@ -32,7 +31,6 @@ const FileConvert = ({ textareas, setTextareas }) => {
   const [uploadStatus, setUploadStatus] = useState("");
   const [isDownloaded, setIsDownloaded] = useState(false);
   const [downloadedFileName, setDownloadedFileName] = useState("");
-  const [translations, setTranslations] = useState({});
   const [translationsByCountry, setTranslationsByCountry] = useState({});
   const [currentTranslations, setCurrentTranslations] = useState({});
   const [translationFile, setTranslationFile] = useState({});
@@ -292,16 +290,6 @@ const FileConvert = ({ textareas, setTextareas }) => {
     }
   };
 
-  const normalizeSitePath = (str, countryCode) => {
-    return str.replace(new RegExp(`/${countryCode}/`, "g"), "/site/").trim();
-  };
-
-  const isCodeEqual = (a, b, countryCode) => {
-    const normA = normalizeSitePath(a, countryCode);
-    const normB = normalizeSitePath(b, countryCode);
-    return normA === normB;
-  };
-
   // 변경된 결과를 처리하여 textareas 상태를 업데이트
   const handleChangeResults = (changeResults) => {
     const updatedTextareas = textareas.map((textarea, index) => {
@@ -542,7 +530,6 @@ const FileConvert = ({ textareas, setTextareas }) => {
             {/* 로컬라이제이션 적용 버튼도 영문국이면 숨김 */}
             {!isEnglishCountry && (
               <>
-                ➡️
                 <ConvertButton
                   $bgColor="black"
                   onClick={handleApplyLocalization}
@@ -560,7 +547,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
             <PreviewHeader>
               <img src={HtmlFile} alt="htmlicon" />
               <div id="preview-text">
-                <span>{downloadedFileName}</span>
+                <FileName>{downloadedFileName}</FileName>
                 <ProgressBar>
                   <ProgressFill $progress={uploadProgress} />
                 </ProgressBar>
@@ -701,7 +688,7 @@ const PreviewHeader = styled.div`
   align-items: center;
   gap: 0.8rem;
   #preview-text {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     font-weight: 500;
     line-height: normal;
   }
@@ -710,6 +697,15 @@ const PreviewHeader = styled.div`
     width: 1.875rem;
     height: 1.875rem;
   }
+`;
+
+const FileName = styled.span`
+  display: inline-block;
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
 `;
 
 const ProgressBar = styled.div`

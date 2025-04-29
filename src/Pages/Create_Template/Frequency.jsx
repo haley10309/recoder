@@ -21,7 +21,7 @@ const Frequency = () => {
       {/* onClick={openModal} */}
       <div className="text-xs">
         {/* <HelpOutlineIcon color="disabled" /> */}
-        <span className="ml-1">AS-WAS 일치하는 코드 출현 횟수 :</span>
+        <span className="ml-1 font-bold text-[#4b5563;]">[AS-WAS] 일치하는 코드 출현 횟수 : </span>
       </div>
 
       <Rodal width={400} height={350} visible={visible} onClose={closeModal}>
