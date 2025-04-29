@@ -137,14 +137,14 @@ const BasicTextarea = ({
           </CodeBlock>
         )}
 
-        {/* 결과 표시 */}
+        {/* 
         <ToBeAppliedWrapper>
           {isApplied === "yes" ? (
             <YesIcon src={Yes} alt="yes" />
           ) : (
             <NoIcon src={No} alt="no" />
           )}
-        </ToBeAppliedWrapper>
+        </ToBeAppliedWrapper> */}
       </Wrapper>
     </Container>
   );
@@ -207,11 +207,11 @@ const Textarea = styled.textarea`
   border-radius: 8px;
 
   border: ${({ $errorState, $isApplied, $isLocalizedChanged }) => {
-    if ($errorState) return "2px solid #ffa600"; 
+    if ($errorState) return "2px solid #ffa600";
     if ($isApplied === "yes") return "2px solid green";
     if ($isApplied === "no") return "2px solid red";
     if ($isLocalizedChanged) return "2px solid green";
-    return "1px solid #d1d5db"; 
+    return "1px solid #d1d5db";
   }};
 
   overflow: hidden;

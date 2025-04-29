@@ -19,21 +19,21 @@ const TableSection = ({
     <TableWrapper>
       <TableHeader>
         <HeaderCell width={isEnglishCountry ? "5%" : "5%"}>항목</HeaderCell>
-        <HeaderCell width={isEnglishCountry ? "15%" : "10%"}>
+        <HeaderCell width={isEnglishCountry ? "10%" : "13%"}>
           PPT NO.
         </HeaderCell>
-        <HeaderCell width={isEnglishCountry ? "40%" : "25%"}>
+        <HeaderCell width={isEnglishCountry ? "45%" : "25%"}>
           As-Was Code
         </HeaderCell>
-        <HeaderCell width={isEnglishCountry ? "40%" : "25%"}>
+        <HeaderCell width={isEnglishCountry ? "40%" : "27%"}>
           To-Be Code
         </HeaderCell>
         {!isEnglishCountry && (
-          <HeaderCell width="25%">로컬라이제이션</HeaderCell>
+          <HeaderCell width="28%">로컬라이제이션</HeaderCell>
         )}
-        <HeaderCell width={isEnglishCountry ? "10%" : "10%"}>
+        {/* <HeaderCell width={isEnglishCountry ? "10%" : "10%"}>
           작업 완료 여부
-        </HeaderCell>
+        </HeaderCell> */}
       </TableHeader>
 
       {filteredTextareas().map((textarea, index) => (
@@ -69,17 +69,18 @@ const TableSection = ({
 };
 
 const TableWrapper = styled.div`
-  background-color: #f6f6f6;
   margin-bottom: 80px;
   width: 100%;
 `;
 
 const TableHeader = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding: 16px;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1rem;
   background-color: white;
-  border: 1px solid #d1d5db;
+  border: 1px solid #cfcfcf;
+  border-radius: 0.625rem 0.625rem 0 0;
 `;
 
 const HeaderCell = styled.h1`
