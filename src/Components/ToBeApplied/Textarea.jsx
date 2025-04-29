@@ -129,6 +129,11 @@ const BasicTextarea = ({
               $isLocalizedChanged={isLocalizedChanged}
               $errorState={errorState}
             />
+            {errorState && (
+              <ErrorMessage>
+                🚨 템플릿에 없는 번역 키가 포함되어 있습니다.
+              </ErrorMessage>
+            )}
           </CodeBlock>
         )}
 
@@ -201,22 +206,13 @@ const Textarea = styled.textarea`
   border: 1px solid #d1d5db;
   border-radius: 8px;
 
-  ${({ $isApplied }) =>
-    $isApplied === "yes"
-      ? `border: 2px solid green;`
-      : $isApplied === "no"
-      ? `border: 2px solid red;`
-      : ``}
-
-  ${({ $isLocalizedChanged }) =>
-    $isLocalizedChanged === true
-      ? `border: 2px solid green;`
-      : $isLocalizedChanged === false
-      ? `border: 1px solid #d1d5db;`
-      : ``}
-
-${({ errorState }) => (errorState ? `border: 2px solid orange;` : ``)}
-
+  border: ${({ $errorState, $isApplied, $isLocalizedChanged }) => {
+    if ($errorState) return "2px solid #ffa600"; 
+    if ($isApplied === "yes") return "2px solid green";
+    if ($isApplied === "no") return "2px solid red";
+    if ($isLocalizedChanged) return "2px solid green";
+    return "1px solid #d1d5db"; 
+  }};
 
   overflow: hidden;
 
@@ -241,6 +237,11 @@ ${({ errorState }) => (errorState ? `border: 2px solid orange;` : ``)}
     background: #e5e7eb;
     border-radius: 10px;
   }
+`;
+
+const ErrorMessage = styled.div`
+  font-size: 12px;
+  color: #ffa600;
 `;
 
 const OccurrenceCount = styled.div`

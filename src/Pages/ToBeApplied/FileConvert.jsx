@@ -151,32 +151,44 @@ const FileConvert = ({ textareas, setTextareas }) => {
         return texts;
       });
 
+      const normalizeText = (text) => {
+        return text
+          ?.replace(/\s+/g, " ")
+          .replace(/[\[\]]/g, "")
+          .replace(/\n/g, "")
+          .replace(/\r/g, "")
+          .trim();
+      };
+
       // 1. missingKey 체크
       const missingKeys = Object.keys(currentTranslations).filter((key) => {
-        const cleanedKey = key.trim().replace(/\s+/g, " ");
-        return !validTemplateTexts.some((templateText) =>
-          templateText.includes(cleanedKey)
-        );
+        const cleanedKey = normalizeText(key);
+
+        const isFound = validTemplateTexts.some((templateText) => {
+          const cleanedTemplate = normalizeText(templateText);
+          return cleanedTemplate.includes(cleanedKey);
+        });
+
+        if (!isFound) {
+          console.log("🚨 missingKey 발견:", cleanedKey);
+        }
+
+        return !isFound;
       });
 
-      if (missingKeys.length > 0) {
-        console.warn("🚨 템플릿에 없는 번역 키 발견:", missingKeys);
-      }
-
-      const lowerCaseCode = country_code?.toLowerCase?.() || "";
-
-      // 2. textareas 업데이트
       const updatedTextareas = textareas.map((textarea) => {
+        const lowerCaseCode = country_code?.toLowerCase?.() || "";
+
         const localizedToBe = applyLocalizedTemplateBlocks(
           textarea.toBeCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
           currentTranslations,
           localization_list
         );
 
-        // 3. 여기에서 missingKeys 안에 해당 텍스트가 있는지 검사해서 errorState 설정
-        const errorState = missingKeys.some((key) =>
-          textarea.toBeCode.includes(key)
-        );
+        // ✨ errorState 판단
+        const errorState = Object.keys(currentTranslations).some((key) => {
+          return localizedToBe.includes(key); // 번역 이후에도 원본 영어가 남아있으면 문제
+        });
 
         return {
           ...textarea,
@@ -189,7 +201,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
             `/${lowerCaseCode}/`
           ),
           localizedToBeCode: localizedToBe,
-          errorState, // 여기 추가!!!!!!
+          errorState,
         };
       });
 
