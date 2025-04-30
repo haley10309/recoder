@@ -1,19 +1,21 @@
+import React from "react";
 import styled from "styled-components";
 
-export default function ConvertButtons({
-  handleExecute,
-  handleApplyLocalization,
-  isProcessing,
-  isLocalizationProcessing,
-  isEnglishCountry,
+const FileConvertButtons = ({
   fileName,
-}) {
+  isProcessing,
+  handleExecute,
+  isEnglishCountry,
+  handleApplyLocalization,
+  ticketNum,
+  ticketUrl,
+}) => {
   return (
     <ButtonBox>
       <ConvertButton
         onClick={handleExecute}
         disabled={isProcessing || !fileName}
-        $active={!isProcessing && !!fileName}
+        $active={!!fileName && !isProcessing}
       >
         {isProcessing ? "코드 변환 중.." : "코드 변환"}
       </ConvertButton>
@@ -21,18 +23,18 @@ export default function ConvertButtons({
       {!isEnglishCountry && (
         <ConvertButton
           $bgColor="black"
-          onClick={handleApplyLocalization}
-          disabled={isLocalizationProcessing || !fileName}
-          $active={!isLocalizationProcessing && !!fileName}
+          onClick={() => handleApplyLocalization(ticketNum, ticketUrl)}
+          disabled={!fileName}
+          $active={!!fileName}
         >
-          {isLocalizationProcessing
-            ? "로컬라이제이션 적용 중.."
-            : "로컬라이제이션 적용"}
+          로컬라이제이션 적용
         </ConvertButton>
       )}
     </ButtonBox>
   );
-}
+};
+
+export default FileConvertButtons;
 
 const ButtonBox = styled.div`
   display: flex;
@@ -49,8 +51,8 @@ const ConvertButton = styled.button`
   height: 2.5625rem;
   border-radius: 10px;
   color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
   background-color: ${({ $active, $bgColor }) =>
     $bgColor || ($active ? "#ff782f" : "#d1d5db")};
+  font-weight: 600;
+  font-size: 0.9rem;
 `;
