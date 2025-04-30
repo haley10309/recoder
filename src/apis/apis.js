@@ -45,33 +45,39 @@ export const templateSearch = async (
 };
 
 // 실행
-export const fileExecute = async (
-  setChangeResults,
-  handleChangeResults,
+export const fileExecute = async ({
+  setUploadProgress,
   setIsProcessing,
+  handleChangeResults,
+  setChangeResults,
   formData,
   updatedTextareas,
   updateTextareasWithResults,
   ticketUrl,
-  country_code
-) => {
+  country_code,
+}) => {
   try {
     setIsProcessing(true);
 
     formData.append("ticket_url", String(ticketUrl));
     formData.append("countryCode", String(country_code));
+
     const response = await axios.post(`${BASE_URL}/process-file`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
       responseType: "json",
+      onUploadProgress: (event) => {
+        const percent = Math.round((event.loaded * 100) / event.total);
+        setUploadProgress(percent);
+      },
     });
 
     const { changeResults, filename, fileContent } = response.data;
 
-    setChangeResults(changeResults);
-    updateTextareasWithResults(updatedTextareas, changeResults);
-    handleChangeResults(changeResults);
+    setChangeResults?.(changeResults);
+    updateTextareasWithResults?.(updatedTextareas, changeResults);
+    handleChangeResults?.(changeResults);
 
     return { fileContent, filename };
   } catch (error) {

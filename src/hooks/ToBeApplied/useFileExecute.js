@@ -19,8 +19,13 @@ export function useFileExecute({
 
   const handleChangeResults = (changeResults) => {
     const updatedTextareas = textareas.map((textarea, index) => {
-      const { changed, matchedPart } =
+      const { changed, matchedPart, updatedToBe } =
         changeResults.find((result) => result.pairIndex === index) || {};
+
+      const lowerCaseCode = country_code?.toLowerCase?.() || "";
+
+      const normalizePath = (code) =>
+        code?.replace(new RegExp(`/${lowerCaseCode}/`, "g"), "/site/")?.trim();
 
       const asWasOccurrenceCount = countOccurrences(
         fileContent,
@@ -28,12 +33,8 @@ export function useFileExecute({
       );
       const toBeOccurrenceCount = countOccurrences(
         downloadedFileContent,
-        textarea.toBeCode
+        updatedToBe || textarea.toBeCode
       );
-      const lowerCaseCode = country_code?.toLowerCase?.() || "";
-
-      const normalizePath = (code) =>
-        code?.replace(new RegExp(`/${lowerCaseCode}/`, "g"), "/site/")?.trim();
 
       const normalizedAsWas = normalizePath(textarea.asWasCode);
       const normalizedToBe = normalizePath(textarea.toBeCode);
@@ -46,7 +47,7 @@ export function useFileExecute({
         pptNo: textarea.pptNo,
         changed: isFound && actualChanged,
         isApplied: isFound ? (actualChanged ? "yes" : "no") : "no",
-        matchedPart: matchedPart,
+        matchedPart,
         asWasOccurrenceCount,
         toBeOccurrenceCount,
         asWasCode: textarea.asWasCode.replace(
@@ -94,23 +95,27 @@ export function useFileExecute({
 
       formData.append("codePairs", JSON.stringify(codePairs));
 
-      setIsProcessing(true);
-
       try {
-        const { fileContent, filename } = await fileExecute(
-          () => {},
-          handleChangeResults,
+        const result = await fileExecute({
+          setUploadProgress,
           setIsProcessing,
+          handleChangeResults,
+          setChangeResults: () => {},
           formData,
           updatedTextareas,
-          setTextareas,
+          updateTextareasWithResults: setTextareas,
           ticketUrl,
-          country_code
-        );
+          country_code,
+        });
 
-        setDownloadedFileContent(fileContent);
-        setDownloadedFileName(filename);
-        setUploadStatus("success");
+        if (result) {
+          const { fileContent, filename } = result;
+          setDownloadedFileContent(fileContent);
+          setDownloadedFileName(filename);
+          setUploadStatus("success");
+        } else {
+          setUploadStatus("fail");
+        }
       } catch (error) {
         console.error("파일 실행 오류", error);
         setUploadStatus("fail");

@@ -3,7 +3,7 @@ export const normalizeCode = (code) => {
 };
 
 export const kind_normalizeCode = (code) => {
-  return code.replace(/[\s;"',/()]/g, '');
+  return code.replace(/[\s;"',/()]/g, "");
 };
 
 export const countOccurrences = (fileContent, asWasCode) => {
@@ -16,7 +16,10 @@ export const countOccurrences = (fileContent, asWasCode) => {
   let startIndex = 0;
 
   while (
-    (startIndex = normalizedFileContent.indexOf(normalizedAsWasCode, startIndex)) !== -1
+    (startIndex = normalizedFileContent.indexOf(
+      normalizedAsWasCode,
+      startIndex
+    )) !== -1
   ) {
     occurrenceCount++;
     startIndex += normalizedAsWasCode.length;
@@ -35,7 +38,10 @@ export const kind_countOccurrences = (fileContent, asWasCode) => {
   let startIndex = 0;
 
   while (
-    (startIndex = normalizedFileContent.indexOf(normalizedAsWasCode, startIndex)) !== -1
+    (startIndex = normalizedFileContent.indexOf(
+      normalizedAsWasCode,
+      startIndex
+    )) !== -1
   ) {
     occurrenceCount++;
     startIndex += normalizedAsWasCode.length;

@@ -18,6 +18,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
   const ticketUrl = useRecoilValue(ticketUrlState);
   const ticketNum = useRecoilValue(ticketNumState);
   const isEnglishCountry = useRecoilValue(isEnglishCountryState);
+  
 
   const {
     originalFile,
@@ -130,7 +131,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
                 <div id="preview-text">
                   <span>{fileName}</span>
                   <ProgressBar>
-                    <ProgressFill $progress={uploadProgress} />
+                    <ProgressFill $progress={100} />
                   </ProgressBar>
                   <UploadStatus $success={htmlUploadStatus === "success"}>
                     {htmlUploadStatus === "success"
@@ -163,7 +164,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
                   <div id="preview-text">
                     <span>{txtFileName}</span>
                     <ProgressBar>
-                      <ProgressFill $progress={txtUploadProgress} />
+                      <ProgressFill $progress={100} />
                     </ProgressBar>
                     <UploadStatus $success={txtUploadStatus === "success"}>
                       {txtUploadStatus === "success"
@@ -220,7 +221,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
               <div id="preview-text">
                 <FileName>{downloadedFileName}</FileName>
                 <ProgressBar>
-                  <ProgressFill $progress={txtUploadProgress} />
+                  <ProgressFill $progress={uploadProgress} />
                 </ProgressBar>
                 {(uploadStatus || localizationStatus) && (
                   <UploadStatus
@@ -390,8 +391,7 @@ const ProgressBar = styled.div`
 `;
 
 const ProgressFill = styled.div`
-  width: ${({ $progress }) =>
-    $progress !== undefined && $progress !== null ? `${$progress}%` : "0%"};
+  width: ${({ $progress }) => ($progress ? `${$progress}%` : "0%")};
   height: 100%;
   background: #5b975b;
   border-radius: 999px;
