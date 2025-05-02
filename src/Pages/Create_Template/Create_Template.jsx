@@ -278,7 +278,7 @@ const Create_template = () => {
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>
-        <button type="button" className="save_button" onClick={handleSave} disabled={!allFieldsFilled()}>
+        <button type="button" className="save_button" onClick={handleSave}>
           {save_type === "update" ? "핫픽스 템플릿 수정" : "핫픽스 템플릿 생성"}
         </button>
       </div>
@@ -311,7 +311,7 @@ const Create_template = () => {
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>
-        <button type="button" className="save_button" onClick={handleCreateLocalization} disabled={!isHotfixCreated || localizedItems.length === 0}>
+        <button type="button" className="save_button" onClick={handleCreateLocalization} disabled={!isHotfixCreated}>
           {save_type === "update" ? "로컬라이제이션 템플릿 수정" : "로컬라이제이션 템플릿 생성"}
         </button>
       </div>
