@@ -37,7 +37,7 @@ const CheckTemplate = ({ setSave_type, setAsWasCodes, setToBeCodes, setAsset_asW
 
         // 로컬라이제이션 세팅
         const localization = detailData.localization_list || [];
-        setDeleteIds([]); // 기존에 삭제 대기 중이던 ID 초기화
+        setDeleteIds([]);
         setLocalizedItems(
           localization.map((it) => ({
             id: it.id,
@@ -45,10 +45,8 @@ const CheckTemplate = ({ setSave_type, setAsWasCodes, setToBeCodes, setAsset_asW
           }))
         );
       } else {
-        // 템플릿이 없으면 생성 모드
         alert("새로운 템플릿을 추가할 수 있습니다.");
         setSave_type("create");
-        // 빈 박스 두 개로 초기화
         setLocalizedItems([{ local_code: "" }, { local_code: "" }]);
         setDeleteIds([]);
       }
@@ -60,7 +58,7 @@ const CheckTemplate = ({ setSave_type, setAsWasCodes, setToBeCodes, setAsset_asW
 
   return (
     <div>
-      <h2 className="font-bold text-black text-[16px] mb-[15px]">📄 핫픽스 템플릿 생성</h2>
+      <h2 className="font-bold text-black text-[16px] mb-[15px]">📄 핫픽스 템플릿 생성 및 불러오기</h2>
       <div className="flex items-center bg-[#F9F9F9] rounded-[8px] p-6 min-h-[150px] justify-between shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
         <div className="flex">
           <InputDrop _wrapperProps={{ className: "w-[260px]" }} _title="지라 티켓 번호" _value={ticketNum} _setValue={setTicketNum} _url="get-ticket-number" />

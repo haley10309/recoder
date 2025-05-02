@@ -3,15 +3,7 @@ import styled from "styled-components";
 import FileUploadIcon from "@/assets/shift-fill.svg";
 import HtmlFileIcon from "@/assets/union.svg";
 
-const FileUploadSection = ({
-  fileName,
-  htmlUploadStatus,
-  handleFileChange,
-  isEnglishCountry,
-  txtUploadStatus,
-  txtFileName,
-  handleTranslationUpload,
-}) => {
+const FileUploadSection = ({ fileName, htmlUploadStatus, handleFileChange, isEnglishCountry, txtUploadStatus, txtFileName, handleTranslationUpload }) => {
   return (
     <>
       <SectionTitle>📤 파일 업로드</SectionTitle>
@@ -27,11 +19,7 @@ const FileUploadSection = ({
                   <ProgressBar>
                     <ProgressFill $progress={100} />
                   </ProgressBar>
-                  <UploadStatus $success={htmlUploadStatus === "success"}>
-                    {htmlUploadStatus === "success"
-                      ? "📂 HTML 파일 업로드 성공!"
-                      : "❌ HTML 파일 업로드 실패"}
-                  </UploadStatus>
+                  <UploadStatus $success={htmlUploadStatus === "success"}>{htmlUploadStatus === "success" ? "📂 HTML 파일 업로드 성공!" : "❌ HTML 파일 업로드 실패"}</UploadStatus>
                 </div>
               </PreviewHeader>
             ) : (
@@ -40,12 +28,7 @@ const FileUploadSection = ({
                   <img src={FileUploadIcon} alt="Upload" />
                   <p>Backup HTML 을 업로드 해주세요.</p>
                 </FileDropInner>
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  onChange={handleFileChange}
-                  hidden
-                />
+                <input id="dropzone-file" type="file" onChange={handleFileChange} hidden />
               </FileDropLabel>
             )}
           </div>
@@ -61,11 +44,7 @@ const FileUploadSection = ({
                     <ProgressBar>
                       <ProgressFill $progress={100} />
                     </ProgressBar>
-                    <UploadStatus $success={txtUploadStatus === "success"}>
-                      {txtUploadStatus === "success"
-                        ? "📄 번역덱 TXT 업로드 성공!"
-                        : "❌ 번역덱 TXT 업로드 실패"}
-                    </UploadStatus>
+                    <UploadStatus $success={txtUploadStatus === "success"}>{txtUploadStatus === "success" ? "📄 번역덱 TXT 업로드 성공!" : "❌ 번역덱 TXT 업로드 실패"}</UploadStatus>
                   </div>
                 </PreviewHeader>
               ) : (
@@ -74,12 +53,7 @@ const FileUploadSection = ({
                     <img src={FileUploadIcon} alt="Upload" />
                     <p>번역덱 TXT 파일을 업로드 해주세요.</p>
                   </FileDropInner>
-                  <input
-                    id="dropzone-txt"
-                    type="file"
-                    onChange={handleTranslationUpload}
-                    hidden
-                  />
+                  <input id="dropzone-txt" type="file" onChange={handleTranslationUpload} hidden />
                 </FileDropLabel>
               )}
             </div>

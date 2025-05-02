@@ -1,10 +1,9 @@
 import { useRef, useState } from "react";
 import axios from "axios";
-import Asset_Template from "@Create_Template/Asset_template";
 import { BASE_URL } from "@/utils/routePath";
 import arrowIcon from "@/assets/shift-fill.svg";
 
-export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, asset_toBe, setAsset_toBe, addAssetArea, isTemplateAvailable, setAsset_pptNo, fileContent, setPptNos, setAsWasCodes, setToBeCodes, setFileContent, setFile }) {
+export default function UploadFiles({ setPptNos, setAsWasCodes, setToBeCodes, setAsset_pptNo, setAsset_asWas, setAsset_toBe, setFileContent, setFile }) {
   const pptInputRef = useRef(null);
   const backUpInputRef = useRef(null);
 
@@ -22,18 +21,21 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
     const formData = new FormData();
     formData.append("txtfile", file);
     try {
-      const res = await axios.post(`${BASE_URL}/guide-upload`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+      const res = await axios.post(`${BASE_URL}/guide-upload`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       const { pptNos = [], asWasCodes = [], toBeCodes = [] } = res.data;
       if (!Array.isArray(pptNos) || !Array.isArray(asWasCodes) || !Array.isArray(toBeCodes)) {
         throw new Error("Invalid data format from server");
       }
+
       // 상태 초기화
       setPptNos([]);
       setAsWasCodes([]);
       setToBeCodes([]);
+      setAsset_pptNo([]);
       setAsset_asWas([]);
       setAsset_toBe([]);
-      setAsset_pptNo([]);
 
       const regularPptNos = [];
       const regularAsWasCodes = [];
@@ -43,16 +45,16 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
       const assetToBeCodes = [];
 
       pptNos.forEach((pptNo, idx) => {
-        const asWas = asWasCodes[idx] || "";
-        const toBe = toBeCodes[idx] || "";
-        if (asWas.trim().startsWith("//") || toBe.trim().startsWith("//")) {
+        const a = asWasCodes[idx] || "";
+        const t = toBeCodes[idx] || "";
+        if (a.trim().startsWith("//") || t.trim().startsWith("//")) {
           assetPptNos.push(pptNo);
-          assetAsWasCodes.push(asWas);
-          assetToBeCodes.push(toBe);
+          assetAsWasCodes.push(a);
+          assetToBeCodes.push(t);
         } else {
           regularPptNos.push(pptNo);
-          regularAsWasCodes.push(asWas);
-          regularToBeCodes.push(toBe);
+          regularAsWasCodes.push(a);
+          regularToBeCodes.push(t);
         }
       });
 
@@ -67,6 +69,7 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
       alert("PPT 업로드에 실패했습니다.");
     }
   };
+
   const handlePptFileChange = (e) => {
     const f = e.target.files[0];
     if (!f) return;
@@ -77,39 +80,13 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
   // Run Test 파일 처리
   const handleFileChange = (e) => {
     const f = e.target.files[0];
+    if (!f) return;
     setBackUpFile(f);
     setFile(f);
-    if (f) {
-      const reader = new FileReader();
-      reader.onload = (ev) => setFileContent(ev.target.result);
-      reader.readAsText(f);
-    }
+    const reader = new FileReader();
+    reader.onload = (ev) => setFileContent(ev.target.result);
+    reader.readAsText(f);
   };
-
-  // Asset_Template 핸들러
-  const removeAssetArea = (i) => {
-    setAsset_asWas((prev) => prev.filter((_, idx) => idx !== i));
-    setAsset_toBe((prev) => prev.filter((_, idx) => idx !== i));
-    setAsset_pptNo((prev) => prev.filter((_, idx) => idx !== i));
-  };
-  const handleAssetAsWasChange = (i, v) =>
-    setAsset_asWas((prev) => {
-      const arr = [...prev];
-      arr[i] = v;
-      return arr;
-    });
-  const handleAssetToBeChange = (i, v) =>
-    setAsset_toBe((prev) => {
-      const arr = [...prev];
-      arr[i] = v;
-      return arr;
-    });
-  const handleAssetPptNoChange = (i, v) =>
-    setAsset_pptNo((prev) => {
-      const arr = [...prev];
-      arr[i] = v;
-      return arr;
-    });
 
   return (
     <div className="mt-[100px] mb-[100px] w-full">
@@ -140,11 +117,6 @@ export default function UploadFiles({ asset_pptNo, asset_asWas, setAsset_asWas, 
             </div>
           )}
         </div>
-      </div>
-
-      {/* Asset_Template */}
-      <div className="flex items-center justify-center gap-2 mt-6">
-        <Asset_Template asset_pptNo={asset_pptNo} asset_asWas={asset_asWas} asset_toBe={asset_toBe} addAssetArea={addAssetArea} removeAssetArea={removeAssetArea} isTemplateAvailable={isTemplateAvailable} setAsset_asWas={handleAssetAsWasChange} setAsset_toBe={handleAssetToBeChange} setAsset_pptNo={handleAssetPptNoChange} fileContent={fileContent} onSave={() => {}} />
       </div>
     </div>
   );
