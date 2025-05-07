@@ -4,7 +4,7 @@ import { fetchLocalizationList } from "@/apis/apis";
 export function useLocalizationApply({
   downloadedFileContent,
   fileName,
-  setTextareas, // ✨
+  setTextareas,
   country_code,
   currentTranslations,
 }) {
@@ -57,11 +57,11 @@ export function useLocalizationApply({
 
       const lowerCaseCode = country_code?.toLowerCase?.() || "";
 
-      // ✨ textareas 업데이트하는 로직
+      // textareas 업데이트하는 로직
       setTextareas((prev) =>
         prev.map((textarea) => {
           const localizedToBe = applyLocalizedTemplateBlocks(
-            textarea.toBeCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
+            textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
             currentTranslations,
             localization_list
           );

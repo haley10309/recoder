@@ -21,7 +21,7 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
 
   const handleTicketNumberChange = (value) => {
     setTicketNumber(value);
-    setTicketNum(value); // 👈 Recoil 업데이트
+    setTicketNum(value); // Recoil 업데이트
   };
 
   const [ticketNumberOptions, setTicketNumberOptions] = useState([]); // 티켓 번호 드롭다운 옵션

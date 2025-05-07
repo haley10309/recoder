@@ -25,7 +25,7 @@ export function useFileExecute({
       const lowerCaseCode = country_code?.toLowerCase?.() || "";
 
       const normalizePath = (code) =>
-        code?.replace(new RegExp(`/${lowerCaseCode}/`, "g"), "/site/")?.trim();
+        code?.replace(new RegExp(`/${lowerCaseCode}/`, "g"), "/uk/")?.trim();
 
       const asWasOccurrenceCount = countOccurrences(
         fileContent,
@@ -51,10 +51,10 @@ export function useFileExecute({
         asWasOccurrenceCount,
         toBeOccurrenceCount,
         asWasCode: textarea.asWasCode.replace(
-          /\/site\//g,
+          /\/uk\//g,
           `/${lowerCaseCode}/`
         ),
-        toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
+        toBeCode: textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
       };
     });
 
@@ -67,8 +67,8 @@ export function useFileExecute({
     const updatedTextareas = textareas.map((textarea) => ({
       ...textarea,
       pptNo: textarea.pptNo,
-      asWasCode: textarea.asWasCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
-      toBeCode: textarea.toBeCode.replace(/\/site\//g, `/${lowerCaseCode}/`),
+      asWasCode: textarea.asWasCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
+      toBeCode: textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
       changed: textarea.asWasCode !== "",
     }));
 

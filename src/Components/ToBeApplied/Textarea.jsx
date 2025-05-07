@@ -28,7 +28,7 @@ const BasicTextarea = ({
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
 
   const transformedAsWasCode = asWasCode?.replace(
-    /\/site\//g,
+    /\/uk\//g,
     `/${country_code}/`
   );
 

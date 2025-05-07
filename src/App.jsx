@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RecoilRoot } from "recoil";
-import Header from "@Components/Nav/Header";
 import Main from "@Pages/Main";
 import Create_template from "@Pages/Create_Template/Create_Template";
 import ToBeApplied from "@Pages/ToBeApplied/ToBeApplied";
@@ -9,6 +8,7 @@ import Footer from "@Components/Nav/Footer";
 import Guide from "@Pages/Guide/Guide";
 import "../src/style/global.css";
 import LocalizationVersion1 from "./Pages/Localization/LocalizationVersion1";
+import LeftNavBar from "@Components/Nav/LeftNavBar";
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         <div className="App flex">
           <BrowserRouter>
             <div className="w-[12%]">
-              <Header />
+              <LeftNavBar />
             </div>
             <div className="w-[88%]">
               <Routes>

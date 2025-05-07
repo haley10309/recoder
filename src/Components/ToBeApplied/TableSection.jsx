@@ -41,11 +41,11 @@ const TableSection = ({
           key={index}
           pptNo={textarea.pptNo} // ✅ 바로 사용
           asWasCode={textarea.asWasCode.replace(
-            /\/site\//g,
+            /\/uk\//g,
             `/${country_code}/`
           )}
           setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-          toBeCode={textarea.toBeCode.replace(/\/site\//g, `/${country_code}/`)}
+          toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${country_code}/`)}
           setToBeCode={(value) => handleToBeCodeChange(index, value)}
           localizedToBeCode={textarea.localizedToBeCode}
           setLocalizedToBeCode={(value) =>
