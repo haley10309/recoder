@@ -278,7 +278,7 @@ const Create_template = () => {
             highlights={englishCopy}
             onChange={(newTxt) => {
               setLocalizedItems((prev) => {
-                const a = [...p];
+                const a = [...prev];
                 a[idx].local_code = newTxt;
                 return a;
               });
