@@ -6,6 +6,33 @@ import Copy from "@/assets/copy.png";
 import { useRecoilValue } from "recoil";
 import { isEnglishCountryState } from "@/recoil/atoms/state";
 
+const CopiedContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:rgb(61, 146, 61);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 10px;
+  width: 120px;
+  height: 40px;
+  padding: 3px 5px;
+`;
+const CopyCodeButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #6B7280;
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 10px;
+  width: 120px;
+  height: 40px;
+  padding: 3px 5px;
+`;
+
 const BasicTextarea = ({
   pptNo,
   asWasCode,
@@ -33,6 +60,7 @@ const BasicTextarea = ({
   );
 
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleToggleMatchedPart = () => {
     setIsMatchedPartVisible((prev) => !prev);
@@ -49,8 +77,29 @@ const BasicTextarea = ({
   const isLocalizedChanged =
     localizedToBeCode && localizedToBeCode !== toBeCode;
 
+  const CopiedButtonCmpnt = ({ text, onClick }) => {
+    // return isCopied ? (
+    return false ? (
+      <CopiedContainer>
+        <div>v</div>
+      </CopiedContainer>
+    ) : (
+      <CopyCodeButton onClick={onClick}>
+        {text}
+      </CopyCodeButton>
+    )
+  }
+
+  useEffect(() => {
+    if (isCopied) {
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 500);
+    }
+  }, [isCopied]);
+
   return (
-    <Container>
+    <Container style={{backgroundColor:"pink"}}>
       <Wrapper $isEnglishCountry={isEnglishCountry}>
         <CheckboxWrapper>
           <Checkbox
@@ -63,6 +112,13 @@ const BasicTextarea = ({
 
         <PptNo>
           <TextBold>p. {pptNo}</TextBold>
+          <CopiedButtonCmpnt
+            text={"ppt{숫자}로 복사"}
+            onClick={() => {
+              navigator.clipboard.writeText(`ppt${pptNo ?? ''}`);
+              // setIsCopied(true);
+            }}
+          />
         </PptNo>
 
         {/* AS-WAS */}
@@ -72,6 +128,10 @@ const BasicTextarea = ({
             onChange={(e) => setAsWasCode(e.target.value)}
             placeholder="As-Was code를 입력하세요."
           />
+          <CopyCodeButton  onClick={() => {
+            navigator.clipboard.writeText(transformedAsWasCode);
+              setIsCopied(true);
+            }}>{"코드 복사"}</CopyCodeButton>
           <OccurrenceCount>
             <strong>[AS-WAS] 일치하는 코드 출현 횟수:</strong>{" "}
             {asWasOccurrenceCount > 0 ? `${asWasOccurrenceCount}회` : "없음"}
@@ -113,6 +173,10 @@ const BasicTextarea = ({
             placeholder="To-Be code를 입력하세요."
             $isApplied={isApplied}
           />
+          <CopyCodeButton  onClick={() => {
+            navigator.clipboard.writeText(toBeCode);
+              setIsCopied(true);
+            }}>{"코드 복사"}</CopyCodeButton>
           <OccurrenceCount>
             <strong>[TO-BE] 변환 후 코드 출현 횟수:</strong>{" "}
             {toBeOccurrenceCount > 0 ? `${toBeOccurrenceCount}회` : "없음"}
@@ -129,6 +193,10 @@ const BasicTextarea = ({
               $isLocalizedChanged={isLocalizedChanged}
               $errorState={errorState}
             />
+            <CopyCodeButton  onClick={() => {
+              navigator.clipboard.writeText(localizedToBeCode || "");
+              setIsCopied(true);
+            }}>{"코드 복사"}</CopyCodeButton>
             {errorState && (
               <ErrorMessage>
                 🚨 템플릿에 없는 번역 키가 포함되어 있습니다.
@@ -180,6 +248,7 @@ const Checkbox = styled.input`
 const PptNo = styled.div`
   width: 10%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   font-size: 14px;
