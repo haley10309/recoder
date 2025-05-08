@@ -6,7 +6,7 @@ import ToBeApplied from "@Pages/ToBeApplied/ToBeApplied";
 import Qa_page from "@Pages/Qa_Page/Qa_page";
 import Footer from "@Components/Nav/Footer";
 import Guide from "@Pages/Guide/Guide";
-import "../src/style/global.css";
+import "./style/global.css";
 import LocalizationVersion1 from "./Pages/Localization/LocalizationVersion1";
 import LeftNavBar from "@Components/Nav/LeftNavBar";
 
