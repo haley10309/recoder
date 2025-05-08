@@ -1,0 +1,25 @@
+version: "3.3"
+
+services:
+  raw_auto_server:
+    build:
+      context: .
+      dockerfile: Dockerfile_server
+    image: raw_auto_server
+    container_name: raw_auto_server
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules # Volume mounts시, node_modules 덮어씌우기 방지
+    ports:
+      - "8089:8080"
+    env_file:
+      - .env
+    command: ["node", "server.js"]
+    restart: unless-stopped
+    networks:
+      - raw_auto_net
+
+networks:
+  raw_auto_net:
+    external: true
