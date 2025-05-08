@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@Components/*": ["src/Components/*"],
+      "@Pages/*": ["src/Pages/*"],
+      "@Create_Template/*": ["src/Pages/Create_Template/*"],
+      "@public/*": ["public/*"],
+      "@Guide/*": ["src/Pages/Guide/*"],
+      "@Qa_Page/*": ["src/Pages/Qa_Page/*"],
+      "@ToBeApplied/*": ["src/Pages/ToBeApplied/*"],
+      "@Translation/*": ["src/Pages/Translation/*"],
+      "@Localization/*": ["src/Pages/Localization/*"],
+      "@DummyData/*": ["src/dummy_data/*"],
+      "@LocalizationComponent/*": ["src/Components/Localization/*"],
+      "@Hooks/*": ["src/hooks/*"],
+      "@Utils/*": ["src/utils/*"]
+    }
+  },
+  "include": ["src"]
+}
