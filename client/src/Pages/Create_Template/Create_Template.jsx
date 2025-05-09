@@ -167,14 +167,25 @@ const Create_template = () => {
       return;
     }
     try {
-      const body = { ticket_num: ticketNum, ticket_url: ticketURL, localization_list: localizedItems.map((item) => (item.id ? { id: item.id, local_code: item.local_code } : { local_code: item.local_code })), delete_ids: deleteIds };
+      const body = { 
+        ticket_num: ticketNum, 
+        ticket_url: ticketURL, 
+        localization_list: 
+          localizedItems.map((item) => (
+            item.id 
+              ? { id: item.id, local_code: item.local_code }
+              : { local_code: item.local_code }
+          )), 
+        delete_ids: deleteIds,
+      };
+      
       await axios.put(`${BASE_URL}/localization/template`, body, { headers: { "Content-Type": "application/json" } });
       setDeleteIds([]);
       const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
       setLocalizedItems(data.localization_list || []);
       alert(save_type === "create" ? "로컬라이제이션 템플릿이 생성되었습니다" : "로컬라이제이션 템플릿이 수정되었습니다");
     } catch (err) {
-      console.error(err);
+      console.error("[Error] handleCreateLocalization", err);
       alert(save_type === "create" ? "로컬라이제이션 생성 중 오류가 발생했습니다" : "로컬라이제이션 수정 중 오류가 발생했습니다");
     }
   };
