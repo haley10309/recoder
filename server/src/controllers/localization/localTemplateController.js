@@ -2,28 +2,24 @@
 const db = require("../../config/db");
 
 exports.updateLocalizationFull = (req, res) => {
-  const { ticket_num, ticket_url, localization_list = [], delete_ids = [] } = req.body;
+  const { ticket_num, ticket_url, localization_list = [], delete_ids = [] } = req.body; // localization_list, delete_ids 기본값 []로 안전하게 설정정
 
   if (!ticket_num || !ticket_url) {
     return res.status(400).json({ success: false, message: "ticket_num and ticket_url are required." });
   }
-
-  const findTemplateQuery = `SELECT id FROM templatesetting WHERE ticket_num = ? AND ticket_url = ?`;
+  const findTemplateQuery = `SELECT id FROM TemplateSetting WHERE ticket_num = ? AND ticket_url = ?`;
   db.query(findTemplateQuery, [ticket_num, ticket_url], (err, results) => {
     if (err || results.length === 0) {
       return res.status(404).json({ success: false, message: "No such template." });
     }
 
     const hotfix_id = results[0].id;
-
     const insertItems = localization_list.filter(item => !item.id);
     const updateItems = localization_list.filter(item => item.id);
 
     const insertValues = insertItems.map(item => [item.local_code, hotfix_id]);
     const insertQuery = `INSERT INTO localization (local_code, hotfix_id) VALUES ?`;
-
     const updateQuery = `UPDATE localization SET local_code = ? WHERE id = ? AND hotfix_id = ?`;
-
     const deleteQuery = `DELETE FROM localization WHERE id IN (?) AND hotfix_id = ?`;
 
     const updatePromises = updateItems.map(item => {
