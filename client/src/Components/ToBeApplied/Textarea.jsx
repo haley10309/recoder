@@ -216,7 +216,6 @@ const CopiedButtonCmpnt = ({ text, value }) => {
   };
 
   useEffect(() => {
-    console.log('copyState', copyState)
     if (copyState !== 'none') {
       setTimeout(() => setCopyState('none'), 350);
     }
