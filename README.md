@@ -54,15 +54,27 @@ Re-coder는 txt 가이드 파일에서 데이터를 추출하고 템플릿을 �
     VITE_API=http://localhost:5000 # 5000 <<< 서버 포트
     ```
 
-- server/.env
+- server/.env 
     ```
+    # 로컬 db 사용 시
     DB_HOST=localhost # 데이터베이스 호스트
     DB_PORT=3306 # 데이터베이스 포트
     DB_USER=root # 데이터베이스 사용자 계정 ID
     DB_PASSWORD=1111 # 데이터베이스 사용자 계정 PW
     DB_NAME=testdb # 연결할 데이터베이스 이름 (실제 배포된 db 이름은 다를수도 있어 확인 필요)
-    CLIENT=http://localhost:5173 # 클라이언트 호스트
+    CLIENT=http://localhost:5173 # cors 허용할 클라이언트 호스트
     PORT=5000 # 서버 포트
+    ```
+
+    ```
+    # 배포용 db 사용 시
+    DB_HOST=121.252.183.22
+    DB_PORT=8090
+    DB_USER=root
+    DB_PASSWORD=0000
+    DB_NAME=testDB
+    CLIENT=http://localhost:5173
+    PORT=5000
     ```
 
 ### 3️⃣ 초기 데이터베이스 세팅
