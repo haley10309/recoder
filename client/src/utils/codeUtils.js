@@ -95,3 +95,10 @@ const fallbackCopyTextToClipboard = (text) => {
   document.body.removeChild(textArea);
   return result;
 };
+
+/**
+ * @returns true: asset, false: non-asset
+ */
+export const isAssetCode = (str) => {
+  return str?.trim().startsWith("//");
+};

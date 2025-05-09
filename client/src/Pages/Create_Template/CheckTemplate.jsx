@@ -1,11 +1,12 @@
 import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 import InputDrop from "../../Components/Common/InputDrop";
+import { isAssetCode } from "@/utils/codeUtils";
 
 const CheckTemplate = ({ 
   setSaveType, 
   setIsTemplateCreated,
-  setAsWasCodes, 
+  setNonAssetAsWasCodes, 
   setToBeCodes, 
   setAsset_asWas, 
   setAsset_toBe, 
@@ -45,10 +46,10 @@ const CheckTemplate = ({
         const aswasTobeList = detailData.aswas_tobe_list || [];
         const localizationList = detailData.localization_list || [];
 
-        const nonAssetAswasList = aswasTobeList.filter((it) => !it.aswas_code?.trim().startsWith("//"));
-        const assetAswasList = aswasTobeList.filter((it) => it.aswas_code?.trim().startsWith("//"));
-        const nonAssetTobeList = aswasTobeList.filter((it) => !it.tobe_code?.trim().startsWith("//"));
-        const assetTobeList = aswasTobeList.filter((it) => it.tobe_code?.trim().startsWith("//"));
+        const nonAssetAswasList = aswasTobeList.filter((it) => !isAssetCode(it.aswas_code));
+        const assetAswasList = aswasTobeList.filter((it) => isAssetCode(it.aswas_code));
+        const nonAssetTobeList = aswasTobeList.filter((it) => !isAssetCode(it.tobe_code));
+        const assetTobeList = aswasTobeList.filter((it) => isAssetCode(it.tobe_code));
         
         // console.log('====')
         // console.log('aswasTobeList',aswasTobeList)
@@ -57,7 +58,7 @@ const CheckTemplate = ({
         // 핫픽스 AS-WAS/TO-BE, 로컬라이제이션 세팅
         setTemplateID(templateId);
         setPptNos(aswasTobeList.map((it) => it.ppt_no || ""));
-        setAsWasCodes(nonAssetAswasList.map((it) => it.aswas_code?.trim() || ""));
+        setNonAssetAsWasCodes(nonAssetAswasList.map((it) => it.aswas_code?.trim() || ""));
         setAsset_asWas(assetAswasList.map((it) => it.aswas_code?.trim() || ""));
         setAsset_pptNo(assetAswasList.map((it) => it.ppt_no || ""));
         setToBeCodes(nonAssetTobeList.map((it) => it.tobe_code?.trim() || ""));

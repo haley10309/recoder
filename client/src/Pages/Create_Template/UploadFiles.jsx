@@ -2,10 +2,11 @@ import { useRef, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 import arrowIcon from "@/assets/shift-fill.svg";
+import { isAssetCode } from "@/utils/codeUtils";
 
 export default function UploadFiles({ 
   setPptNos, 
-  setAsWasCodes, 
+  setNonAssetAsWasCodes, 
   setToBeCodes, 
   setAsset_pptNo, 
   setAsset_asWas, 
@@ -37,14 +38,6 @@ export default function UploadFiles({
         throw new Error("Invalid data format from server");
       }
 
-      // 상태 초기화
-      setPptNos([]);
-      setAsWasCodes([]);
-      setToBeCodes([]);
-      setAsset_pptNo([]);
-      setAsset_asWas([]);
-      setAsset_toBe([]);
-
       const regularPptNos = [];
       const regularAsWasCodes = [];
       const regularToBeCodes = [];
@@ -55,7 +48,7 @@ export default function UploadFiles({
       pptNos.forEach((pptNo, idx) => {
         const a = asWasCodes[idx] || "";
         const t = toBeCodes[idx] || "";
-        if (a.trim().startsWith("//") || t.trim().startsWith("//")) {
+        if (isAssetCode(a) || isAssetCode(t)) {
           assetPptNos.push(pptNo);
           assetAsWasCodes.push(a);
           assetToBeCodes.push(t);
@@ -67,7 +60,7 @@ export default function UploadFiles({
       });
 
       setPptNos(regularPptNos);
-      setAsWasCodes(regularAsWasCodes);
+      setNonAssetAsWasCodes(regularAsWasCodes);
       setToBeCodes(regularToBeCodes);
       setAsset_pptNo(assetPptNos);
       setAsset_asWas(assetAsWasCodes);

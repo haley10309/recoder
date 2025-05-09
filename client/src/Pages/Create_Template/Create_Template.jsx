@@ -16,12 +16,12 @@ const Create_template = () => {
   const [ticketNum, setTicketNum] = useState("");
   const [ticketURL, setTicketURL] = useState("");
 
-  // AS-WAS / TO-BE states
-  const [asWasCodes, setAsWasCodes] = useState(["", "", ""]);
+  // non-asset states
+  const [nonAssetAsWasCodes, setNonAssetAsWasCodes] = useState(["", "", ""]);
   const [toBeCodes, setToBeCodes] = useState(["", "", ""]);
   const [pptNos, setPptNos] = useState(["", "", ""]);
 
-  // Asset-based states
+  // asset states
   const [asset_asWas, setAsset_asWas] = useState([]);
   const [asset_toBe, setAsset_toBe] = useState([]);
   const [asset_pptNo, setAsset_pptNo] = useState([]);
@@ -67,12 +67,12 @@ const Create_template = () => {
 
   // add/remove handlers
   const addTextArea = () => {
-    setAsWasCodes((prev) => [...prev, ""]);
+    setNonAssetAsWasCodes((prev) => [...prev, ""]);
     setToBeCodes((prev) => [...prev, ""]);
     setPptNos((prev) => [...prev, ""]);
   };
   const removeTextArea = (idx) => {
-    setAsWasCodes((prev) => prev.filter((_, i) => i !== idx));
+    setNonAssetAsWasCodes((prev) => prev.filter((_, i) => i !== idx));
     setToBeCodes((prev) => prev.filter((_, i) => i !== idx));
     setPptNos((prev) => prev.filter((_, i) => i !== idx));
   };
@@ -110,15 +110,15 @@ const Create_template = () => {
   // 핫픽스 템플릿 저장
   const handleSave = async () => {
     // AS-WAS/TO-BE validation: 동시에 비어있는 row 차단
-    for (let i = 0; i < asWasCodes.length; i++) {
-      if (!asWasCodes[i].trim() && !toBeCodes[i].trim()) {
+    for (let i = 0; i < nonAssetAsWasCodes.length; i++) {
+      if (!nonAssetAsWasCodes[i].trim() && !toBeCodes[i].trim()) {
         alert("AS-WAS와 TO-BE 코드 중 최소 하나는 입력해 주세요.");
         return;
       }
     }
 
     const combinedPptNos = [...pptNos, ...asset_pptNo];
-    const combinedAsWas = [...asWasCodes, ...asset_asWas];
+    const combinedAsWas = [...nonAssetAsWasCodes, ...asset_asWas];
     const combinedToBe = [...toBeCodes, ...asset_toBe];
     const aswasTobeList = combinedAsWas.map((_, idx) => ({
       ppt_no: combinedPptNos[idx],
@@ -153,7 +153,7 @@ const Create_template = () => {
       arr.splice(e, 0, m);
       return arr;
     };
-    setAsWasCodes((p) => reorder(p, res.source.index, res.destination.index));
+    setNonAssetAsWasCodes((p) => reorder(p, res.source.index, res.destination.index));
     setToBeCodes((p) => reorder(p, res.source.index, res.destination.index));
     setPptNos((p) => reorder(p, res.source.index, res.destination.index));
   };
@@ -196,7 +196,7 @@ const Create_template = () => {
       <CheckTemplate 
         setSaveType={setSaveType} 
         setIsTemplateCreated={setIsTemplateCreated} 
-        setAsWasCodes={setAsWasCodes} 
+        setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
         setToBeCodes={setToBeCodes} 
         setAsset_asWas={setAsset_asWas} 
         setAsset_toBe={setAsset_toBe} 
@@ -214,7 +214,7 @@ const Create_template = () => {
       {/* 📤 파일 업로드 */}
       <UploadFiles 
         setPptNos={setPptNos} 
-        setAsWasCodes={setAsWasCodes} 
+        setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
         setToBeCodes={setToBeCodes} 
         setAsset_pptNo={setAsset_pptNo} 
         setAsset_asWas={setAsset_asWas} 
@@ -243,7 +243,7 @@ const Create_template = () => {
         <Droppable droppableId="droppable">
           {(prov) => (
             <ul {...prov.droppableProps} ref={prov.innerRef} className="as_was_to_be_row">
-              {asWasCodes.map((_, i) => (
+              {nonAssetAsWasCodes.map((_, i) => (
                 <Draggable key={i} draggableId={`item-${i}`} index={i}>
                   {(p) => (
                     <li ref={p.innerRef} {...p.draggableProps} {...p.dragHandleProps} className="as_was_to_be_div">
@@ -266,16 +266,16 @@ const Create_template = () => {
                             rows="5"
                             className="code-textarea"
                             placeholder="AS-WAS 코드를 입력해 주세요."
-                            value={asWasCodes[i]}
+                            value={nonAssetAsWasCodes[i]}
                             onChange={(e) => {
-                              const arr = [...asWasCodes];
+                              const arr = [...nonAssetAsWasCodes];
                               arr[i] = e.target.value;
-                              setAsWasCodes(arr);
+                              setNonAssetAsWasCodes(arr);
                             }}
                           />
                           <div className="flex">
                             <Frequency />
-                            <span className="ml-1 text-xs">{countOccurrences(asWasCodes[i]) === "0" ? "없음" : `${countOccurrences(asWasCodes[i])}번`}</span>
+                            <span className="ml-1 text-xs">{countOccurrences(nonAssetAsWasCodes[i]) === "0" ? "없음" : `${countOccurrences(nonAssetAsWasCodes[i])}번`}</span>
                           </div>
                         </div>
                         <div className="to_be_div">
