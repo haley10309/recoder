@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import { AutoComplete } from "primereact/autocomplete";
-import { templateOption } from "@/apis/apis";
+import { fetchTicketData } from "@/apis/apis";
 
 const divWrapperClasses = {
   dropdown: "flex flex-col gap-1 text-[12px] mr-10",
@@ -19,7 +19,7 @@ const InputDrop = ({ _wrapperProps, _divProps, _state, _title, _value, _setValue
   useEffect(() => {
     (async () => {
       try {
-        const data = await templateOption(_url);
+        const data = await fetchTicketData(_url);
         setOptions(data);
       } catch (e) {
         console.error(e);

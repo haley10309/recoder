@@ -2,7 +2,23 @@ import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 import InputDrop from "../../Components/Common/InputDrop";
 
-const CheckTemplate = ({ setSave_type, setAsWasCodes, setToBeCodes, setAsset_asWas, setAsset_toBe, setTemplateID, setPptNos, setAsset_pptNo, ticketNum, ticketURL, setTicketNum, setTicketURL, setLocalizedItems, setDeleteIds, setIsHotfixCreated }) => {
+const CheckTemplate = ({ 
+  setSave_type, 
+  setAsWasCodes, 
+  setToBeCodes, 
+  setAsset_asWas, 
+  setAsset_toBe, 
+  setTemplateID, 
+  setPptNos, 
+  setAsset_pptNo, 
+  ticketNum, 
+  ticketURL, 
+  setTicketNum, 
+  setTicketURL, 
+  setLocalizedItems, 
+  setDeleteIds, 
+  setIsHotfixCreated,
+}) => {
   const checkForExistingTemplate = async () => {
     try {
       // 1) 핫픽스 템플릿 존재 여부 확인
@@ -11,8 +27,9 @@ const CheckTemplate = ({ setSave_type, setAsWasCodes, setToBeCodes, setAsset_asW
         ticket_url: ticketURL,
       });
       const data = response.data;
+      const isExist = Array.isArray(data) && data.length > 0 && data[0].id > 0;
 
-      if (Array.isArray(data) && data.length > 0 && data[0].id > 0) {
+      if (isExist) {
         alert(`${ticketURL} 템플릿을 불러왔습니다.`);
         setSave_type("update");
         setIsHotfixCreated(true);

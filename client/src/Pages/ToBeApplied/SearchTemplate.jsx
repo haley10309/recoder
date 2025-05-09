@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ticketNumState,
   ticketUrlState,
@@ -9,7 +9,7 @@ import {
 } from "@/recoil/atoms/state";
 import CustomDropdownInput from "@/Components/Common/CustomDropdownInput";
 import { countryOptions } from "@/Components/Common/CoutryCode";
-import { templateSearch, templateOption } from "@/apis/apis";
+import { templateSearch, fetchTicketData } from "@/apis/apis";
 
 const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   const [ticketNumber, setTicketNumber] = useState(""); // 지라 티켓 번호
@@ -17,7 +17,6 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   const [ticketUrl, setTicketUrl] = useRecoilState(ticketUrlState); // 티켓에 해당하는 URL (Recoil)
   const [country_code, setCountry_code] = useRecoilState(countryCodeState);
   const setIsEnglishCountry = useSetRecoilState(isEnglishCountryState);
-  const isEnglish = useRecoilValue(isEnglishCountryState);
 
   const handleTicketNumberChange = (value) => {
     setTicketNumber(value);
@@ -30,8 +29,8 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const ticketData = await templateOption("get-ticket-number");
-        const urlData = await templateOption("get-ticket-url");
+        const ticketData = await fetchTicketData("get-ticket-number");
+        const urlData = await fetchTicketData("get-ticket-url");
 
         setTicketNumberOptions(ticketData.map((t) => t.name));
         setTicketUrlOptions(urlData.map((u) => u.name));

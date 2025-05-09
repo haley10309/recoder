@@ -10,7 +10,7 @@
 //   countryCodeState,
 //   ticketUrlState,
 // } from "@/recoil/atoms/state";
-// import { templateOption } from "@/apis/apis";
+// import { fetchTicketData } from "@/apis/apis";
 
 // const LocalizationToolPage = () => {
 //   const [ticketOptions, setTicketOptions] = useState([]);
@@ -37,7 +37,7 @@
 //   useEffect(() => {
 //     const fetchOptions = async () => {
 //       try {
-//         const data = await templateOption("get-ticket-number");
+//         const data = await fetchTicketData("get-ticket-number");
 //         setTicketOptions(data);
 //       } catch (err) {
 //         console.error("티켓 옵션 로딩 실패:", err);

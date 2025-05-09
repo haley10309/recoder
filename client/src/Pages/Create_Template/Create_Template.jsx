@@ -13,6 +13,9 @@ import TransBox from "../../Components/Common/TransBox";
 import TransFileUpload from "./TransFileUpload";
 
 const Create_template = () => {
+  const [ticketNum, setTicketNum] = useState("");
+  const [ticketURL, setTicketURL] = useState("");
+
   // AS-WAS / TO-BE states
   const [asWasCodes, setAsWasCodes] = useState(["", "", ""]);
   const [toBeCodes, setToBeCodes] = useState(["", "", ""]);
@@ -27,11 +30,7 @@ const Create_template = () => {
   const [templateID, setTemplateID] = useState("");
   const isTemplateAvailable = Boolean(templateID);
 
-  const [ticketNum, setTicketNum] = useState("");
-  const [ticketURL, setTicketURL] = useState("");
-
   // File upload and content
-  const [file, setFile] = useState(null);
   const [fileContent, setFileContent] = useState("");
 
   // Save flags
@@ -192,13 +191,51 @@ const Create_template = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[110px]">
-      <CheckTemplate setSave_type={setSave_type} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setAsset_asWas={setAsset_asWas} setAsset_toBe={setAsset_toBe} setTemplateID={setTemplateID} setPptNos={setPptNos} setAsset_pptNo={setAsset_pptNo} ticketNum={ticketNum} ticketURL={ticketURL} setTicketNum={setTicketNum} setTicketURL={setTicketURL} setLocalizedItems={setLocalizedItems} setDeleteIds={setDeleteIds} setIsHotfixCreated={setIsHotfixCreated} />
+      {/* 📄 핫픽스 템플릿 생성 및 불러오기 */}
+      <CheckTemplate 
+        setSave_type={setSave_type} 
+        setAsWasCodes={setAsWasCodes} 
+        setToBeCodes={setToBeCodes} 
+        setAsset_asWas={setAsset_asWas} 
+        setAsset_toBe={setAsset_toBe} 
+        setTemplateID={setTemplateID} 
+        setPptNos={setPptNos} 
+        setAsset_pptNo={setAsset_pptNo} 
+        ticketNum={ticketNum} 
+        ticketURL={ticketURL} 
+        setTicketNum={setTicketNum} 
+        setTicketURL={setTicketURL} 
+        setLocalizedItems={setLocalizedItems} 
+        setDeleteIds={setDeleteIds} 
+        setIsHotfixCreated={setIsHotfixCreated} 
+      />
 
-      <UploadFiles setPptNos={setPptNos} setAsWasCodes={setAsWasCodes} setToBeCodes={setToBeCodes} setAsset_pptNo={setAsset_pptNo} setAsset_asWas={setAsset_asWas} setAsset_toBe={setAsset_toBe} setFileContent={setFileContent} setFile={setFile} />
+      {/* 📤 파일 업로드 */}
+      <UploadFiles 
+        setPptNos={setPptNos} 
+        setAsWasCodes={setAsWasCodes} 
+        setToBeCodes={setToBeCodes} 
+        setAsset_pptNo={setAsset_pptNo} 
+        setAsset_asWas={setAsset_asWas} 
+        setAsset_toBe={setAsset_toBe} 
+        setFileContent={setFileContent} 
+      />
 
+      {/* ✅ AS-WAS / TO-BE 템플릿 */}
       <h2 className="font-bold text-black mb-5 text-[16px]">✅ AS-WAS / TO-BE 템플릿</h2>
       <div className="mb-5">
-        <Asset_Template asset_pptNo={asset_pptNo} asset_asWas={asset_asWas} asset_toBe={asset_toBe} addAssetArea={addAssetArea} removeAssetArea={removeAssetArea} isTemplateAvailable={isTemplateAvailable} setAsset_asWas={handleAssetAsWasChange} setAsset_toBe={handleAssetToBeChange} setAsset_pptNo={handleAssetPptNoChange} fileContent={fileContent} />
+        <Asset_Template 
+          asset_pptNo={asset_pptNo} 
+          asset_asWas={asset_asWas} 
+          asset_toBe={asset_toBe} 
+          addAssetArea={addAssetArea} 
+          removeAssetArea={removeAssetArea} 
+          isTemplateAvailable={isTemplateAvailable} 
+          setAsset_asWas={handleAssetAsWasChange} 
+          setAsset_toBe={handleAssetToBeChange} 
+          setAsset_pptNo={handleAssetPptNoChange} 
+          fileContent={fileContent} 
+        />
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
@@ -278,8 +315,10 @@ const Create_template = () => {
         </button>
       </div>
 
+      {/* 📤 번역 파일 업로드 */}
       <TransFileUpload setEnglishCopy={setEnglishCopy} />
 
+      {/* 🌐 로컬라이제이션 템플릿 */}
       <h2 className="font-bold text-black mb-5 text-[16px]">🌐 로컬라이제이션 템플릿</h2>
       <div className="flex flex-col">
         {localizedItems.map((item, idx) => (

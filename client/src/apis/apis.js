@@ -88,7 +88,7 @@ export const fileExecute = async ({
 };
 
 // ToBeApplied - 템플릿 선택지
-export const templateOption = async (_url) => {
+export const fetchTicketData = async (_url) => {
   let apiUrl = "";
 
   if (_url === "get-ticket-number") {

@@ -58,9 +58,13 @@ const ToBeApplied = () => {
 
   return (
     <Container>
+      {/* 🧾 핫픽스/로컬라이제이션 템플릿 불러오기 */}
       <SearchTemplate setTextareas={setTextareas} setCodePairs={setCodePairs} />
+
+      {/* 📤 파일 업로드 */}
       <FileConvert textareas={textareas} setTextareas={setTextareas} />
 
+      {/* 👀 AS-WAS / TO BE / Localization 확인하기 */}
       <WhiteBox>
         <FilterSection
           filter={filter}

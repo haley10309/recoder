@@ -3,7 +3,15 @@ import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 import arrowIcon from "@/assets/shift-fill.svg";
 
-export default function UploadFiles({ setPptNos, setAsWasCodes, setToBeCodes, setAsset_pptNo, setAsset_asWas, setAsset_toBe, setFileContent, setFile }) {
+export default function UploadFiles({ 
+  setPptNos, 
+  setAsWasCodes, 
+  setToBeCodes, 
+  setAsset_pptNo, 
+  setAsset_asWas, 
+  setAsset_toBe,
+  setFileContent, 
+ }) {
   const pptInputRef = useRef(null);
   const backUpInputRef = useRef(null);
 
@@ -82,7 +90,6 @@ export default function UploadFiles({ setPptNos, setAsWasCodes, setToBeCodes, se
     const f = e.target.files[0];
     if (!f) return;
     setBackUpFile(f);
-    setFile(f);
     const reader = new FileReader();
     reader.onload = (ev) => setFileContent(ev.target.result);
     reader.readAsText(f);

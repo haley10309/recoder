@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import { Dropdown } from "primereact/dropdown";
-import { templateOption } from "@/apis/apis";
+import { fetchTicketData } from "@/apis/apis";
 
 const divWrapperClasses = {
   dropdown: "ring-[#747D7E] flex h-[35px] gap-2 text-[12px] mr-10 flex-col",
@@ -35,7 +35,7 @@ const SettingDropdown = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await templateOption(_url);
+        const data = await fetchTicketData(_url);
         setOptions(data);
       } catch (error) {
         console.error("Error fetching data:", error);
