@@ -1,3 +1,5 @@
+-- local에서 초기 sql 세팅 시 한번만 사용
+
 create database testdb;
 
 use testdb;
