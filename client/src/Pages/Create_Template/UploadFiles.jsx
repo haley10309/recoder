@@ -5,12 +5,12 @@ import arrowIcon from "@/assets/shift-fill.svg";
 import { isAssetCode } from "@/utils/codeUtils";
 
 export default function UploadFiles({ 
-  setPptNos, 
+  setNonAssetPptNos, 
   setNonAssetAsWasCodes, 
-  setToBeCodes, 
-  setAsset_pptNo, 
-  setAsset_asWas, 
-  setAsset_toBe,
+  setNonAssetToBeCodes, 
+  setAssetPptNos, 
+  setAssetAsWasCodes, 
+  setAssetToBeCodes,
   setFileContent, 
  }) {
   const pptInputRef = useRef(null);
@@ -38,9 +38,9 @@ export default function UploadFiles({
         throw new Error("Invalid data format from server");
       }
 
-      const regularPptNos = [];
-      const regularAsWasCodes = [];
-      const regularToBeCodes = [];
+      const nonAssetPptNos = [];
+      const nonAssetAsWasCodes = [];
+      const nonAssetToBeCodes = [];
       const assetPptNos = [];
       const assetAsWasCodes = [];
       const assetToBeCodes = [];
@@ -53,18 +53,19 @@ export default function UploadFiles({
           assetAsWasCodes.push(a);
           assetToBeCodes.push(t);
         } else {
-          regularPptNos.push(pptNo);
-          regularAsWasCodes.push(a);
-          regularToBeCodes.push(t);
+          nonAssetPptNos.push(pptNo);
+          nonAssetAsWasCodes.push(a);
+          nonAssetToBeCodes.push(t);
         }
       });
 
-      setPptNos(regularPptNos);
-      setNonAssetAsWasCodes(regularAsWasCodes);
-      setToBeCodes(regularToBeCodes);
-      setAsset_pptNo(assetPptNos);
-      setAsset_asWas(assetAsWasCodes);
-      setAsset_toBe(assetToBeCodes);
+      setAssetPptNos(assetPptNos);
+      setAssetAsWasCodes(assetAsWasCodes);
+      setAssetToBeCodes(assetToBeCodes);
+
+      setNonAssetPptNos(nonAssetPptNos);
+      setNonAssetAsWasCodes(nonAssetAsWasCodes);
+      setNonAssetToBeCodes(nonAssetToBeCodes);
     } catch (error) {
       console.error("Error uploading PPT file:", error);
       alert("PPT 업로드에 실패했습니다.");

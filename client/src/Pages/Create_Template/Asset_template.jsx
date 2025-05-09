@@ -5,6 +5,7 @@ import "rodal/lib/rodal.css";
 import AddIcon from "@mui/icons-material/Add";
 import { countOccurrences as countOccurrencesUtil } from "@/utils/codeUtils";
 
+// TODO: 함수형 컴포넌트로 수정
 class Asset_Template extends React.Component {
   constructor(props) {
     super(props);
@@ -13,9 +14,9 @@ class Asset_Template extends React.Component {
 
   show() {
     this.setState({ visible: true });
-    console.log("in asset_template as was : ", this.props.asset_asWas);
-    console.log("in asset_template to be : ", this.props.asset_toBe);
-    console.log("in asset_template to be : ", this.props.asset_pptNo);
+    console.log("in asset_template pptNos : ", this.props.assetPptNos);
+    console.log("in asset_template asWas : ", this.props.assetAsWasCodes);
+    console.log("in asset_template toBe : ", this.props.assetToBeCodes);
   }
 
   hide() {
@@ -57,8 +58,8 @@ class Asset_Template extends React.Component {
             </div>
 
             <div className="asset_list" style={{ maxHeight: "500px", overflowY: "auto" }}>
-              {this.props.asset_asWas.length > 0 ? (
-                this.props.asset_asWas.map((code, index) => (
+              {this.props.assetAsWasCodes.length > 0 ? (
+                this.props.assetAsWasCodes.map((code, index) => (
                   <div className="asset_as_was_to_be_div" key={index}>
                     <div className="num_type">
                       <div className="ppt_no_col">
@@ -66,10 +67,10 @@ class Asset_Template extends React.Component {
                         <input
                           type="text"
                           className="ppt_no_text"
-                          value={this.props.asset_pptNo[index] || ""}
+                          value={this.props.assetPptNos[index] || ""}
                           onChange={(e) => {
-                            if (this.props.setAsset_pptNo) {
-                              this.props.setAsset_pptNo(index, e.target.value);
+                            if (this.props.setAssetPptNos) {
+                              this.props.setAssetPptNos(index, e.target.value);
                             }
                           }}
                         />
@@ -77,12 +78,12 @@ class Asset_Template extends React.Component {
                     </div>
 
                     <div className="as_was_div">
-                      <textarea value={code} className="code-textarea" onChange={(e) => this.props.setAsset_asWas(index, e.target.value)} placeholder="//" />
+                      <textarea value={code} className="code-textarea" onChange={(e) => this.props.setAssetAsWasCodes(index, e.target.value)} placeholder="//" />
                       <div className="duplicate-count">포함된 횟수: {this.countOccurrences(code)}</div>
                     </div>
 
                     <div className="to_be_div">
-                      <textarea value={this.props.asset_toBe[index] || ""} onChange={(e) => this.props.setAsset_toBe(index, e.target.value)} placeholder="//" className="code-textarea" />
+                      <textarea value={this.props.assetToBeCodes[index] || ""} onChange={(e) => this.props.setAssetToBeCodes(index, e.target.value)} placeholder="//" className="code-textarea" />
                     </div>
                     <button type="button" onClick={() => this.props.removeAssetArea(index)} className="asset_remove_button">
                       삭제

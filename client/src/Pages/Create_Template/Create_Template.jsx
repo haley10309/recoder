@@ -18,13 +18,13 @@ const Create_template = () => {
 
   // non-asset states
   const [nonAssetAsWasCodes, setNonAssetAsWasCodes] = useState(["", "", ""]);
-  const [toBeCodes, setToBeCodes] = useState(["", "", ""]);
-  const [pptNos, setPptNos] = useState(["", "", ""]);
+  const [nonAssetToBeCodes, setNonAssetToBeCodes] = useState(["", "", ""]);
+  const [nonAssetPptNos, setNonAssetPptNos] = useState(["", "", ""]);
 
   // asset states
-  const [asset_asWas, setAsset_asWas] = useState([]);
-  const [asset_toBe, setAsset_toBe] = useState([]);
-  const [asset_pptNo, setAsset_pptNo] = useState([]);
+  const [assetAsWasCodes, setAssetAsWasCodes] = useState([]);
+  const [assetToBeCodes, setAssetToBeCodes] = useState([]);
+  const [assetPptNos, setAssetPptNos] = useState([]);
 
   // Template and ticket info
   const [templateID, setTemplateID] = useState("");
@@ -68,40 +68,40 @@ const Create_template = () => {
   // add/remove handlers
   const addTextArea = () => {
     setNonAssetAsWasCodes((prev) => [...prev, ""]);
-    setToBeCodes((prev) => [...prev, ""]);
-    setPptNos((prev) => [...prev, ""]);
+    setNonAssetToBeCodes((prev) => [...prev, ""]);
+    setNonAssetPptNos((prev) => [...prev, ""]);
   };
   const removeTextArea = (idx) => {
     setNonAssetAsWasCodes((prev) => prev.filter((_, i) => i !== idx));
-    setToBeCodes((prev) => prev.filter((_, i) => i !== idx));
-    setPptNos((prev) => prev.filter((_, i) => i !== idx));
+    setNonAssetToBeCodes((prev) => prev.filter((_, i) => i !== idx));
+    setNonAssetPptNos((prev) => prev.filter((_, i) => i !== idx));
   };
   const addAssetArea = () => {
-    setAsset_asWas((prev) => [...prev, ""]);
-    setAsset_toBe((prev) => [...prev, ""]);
-    setAsset_pptNo((prev) => [...prev, ""]);
+    setAssetAsWasCodes((prev) => [...prev, ""]);
+    setAssetToBeCodes((prev) => [...prev, ""]);
+    setAssetPptNos((prev) => [...prev, ""]);
   };
 
   // Asset handlers
   const removeAssetArea = (i) => {
-    setAsset_asWas((prev) => prev.filter((_, idx) => idx !== i));
-    setAsset_toBe((prev) => prev.filter((_, idx) => idx !== i));
-    setAsset_pptNo((prev) => prev.filter((_, idx) => idx !== i));
+    setAssetAsWasCodes((prev) => prev.filter((_, idx) => idx !== i));
+    setAssetToBeCodes((prev) => prev.filter((_, idx) => idx !== i));
+    setAssetPptNos((prev) => prev.filter((_, idx) => idx !== i));
   };
   const handleAssetAsWasChange = (i, v) =>
-    setAsset_asWas((prev) => {
+    setAssetAsWasCodes((prev) => {
       const a = [...prev];
       a[i] = v;
       return a;
     });
   const handleAssetToBeChange = (i, v) =>
-    setAsset_toBe((prev) => {
+    setAssetToBeCodes((prev) => {
       const a = [...prev];
       a[i] = v;
       return a;
     });
   const handleAssetPptNoChange = (i, v) =>
-    setAsset_pptNo((prev) => {
+    setAssetPptNos((prev) => {
       const a = [...prev];
       a[i] = v;
       return a;
@@ -111,15 +111,15 @@ const Create_template = () => {
   const handleSave = async () => {
     // AS-WAS/TO-BE validation: 동시에 비어있는 row 차단
     for (let i = 0; i < nonAssetAsWasCodes.length; i++) {
-      if (!nonAssetAsWasCodes[i].trim() && !toBeCodes[i].trim()) {
+      if (!nonAssetAsWasCodes[i].trim() && !nonAssetToBeCodes[i].trim()) {
         alert("AS-WAS와 TO-BE 코드 중 최소 하나는 입력해 주세요.");
         return;
       }
     }
 
-    const combinedPptNos = [...pptNos, ...asset_pptNo];
-    const combinedAsWas = [...nonAssetAsWasCodes, ...asset_asWas];
-    const combinedToBe = [...toBeCodes, ...asset_toBe];
+    const combinedPptNos = [...nonAssetPptNos, ...assetPptNos];
+    const combinedAsWas = [...nonAssetAsWasCodes, ...assetAsWasCodes];
+    const combinedToBe = [...nonAssetToBeCodes, ...assetToBeCodes];
     const aswasTobeList = combinedAsWas.map((_, idx) => ({
       ppt_no: combinedPptNos[idx],
       aswas_code: combinedAsWas[idx],
@@ -154,8 +154,8 @@ const Create_template = () => {
       return arr;
     };
     setNonAssetAsWasCodes((p) => reorder(p, res.source.index, res.destination.index));
-    setToBeCodes((p) => reorder(p, res.source.index, res.destination.index));
-    setPptNos((p) => reorder(p, res.source.index, res.destination.index));
+    setNonAssetToBeCodes((p) => reorder(p, res.source.index, res.destination.index));
+    setNonAssetPptNos((p) => reorder(p, res.source.index, res.destination.index));
   };
 
   const countOccurrences = (code) => (fileContent ? countOccurrencesUtil(fileContent, code) || "0" : "");
@@ -196,13 +196,13 @@ const Create_template = () => {
       <CheckTemplate 
         setSaveType={setSaveType} 
         setIsTemplateCreated={setIsTemplateCreated} 
-        setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
-        setToBeCodes={setToBeCodes} 
-        setAsset_asWas={setAsset_asWas} 
-        setAsset_toBe={setAsset_toBe} 
         setTemplateID={setTemplateID} 
-        setPptNos={setPptNos} 
-        setAsset_pptNo={setAsset_pptNo} 
+        setNonAssetPptNos={setNonAssetPptNos} 
+        setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
+        setNonAssetToBeCodes={setNonAssetToBeCodes} 
+        setAssetPptNos={setAssetPptNos} 
+        setAssetAsWasCodes={setAssetAsWasCodes} 
+        setAssetToBeCodes={setAssetToBeCodes} 
         ticketNum={ticketNum} 
         ticketURL={ticketURL} 
         setTicketNum={setTicketNum} 
@@ -213,12 +213,12 @@ const Create_template = () => {
 
       {/* 📤 파일 업로드 */}
       <UploadFiles 
-        setPptNos={setPptNos} 
+        setNonAssetPptNos={setNonAssetPptNos} 
         setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
-        setToBeCodes={setToBeCodes} 
-        setAsset_pptNo={setAsset_pptNo} 
-        setAsset_asWas={setAsset_asWas} 
-        setAsset_toBe={setAsset_toBe} 
+        setNonAssetToBeCodes={setNonAssetToBeCodes} 
+        setAssetPptNos={setAssetPptNos} 
+        setAssetAsWasCodes={setAssetAsWasCodes} 
+        setAssetToBeCodes={setAssetToBeCodes} 
         setFileContent={setFileContent} 
       />
 
@@ -226,15 +226,15 @@ const Create_template = () => {
       <h2 className="font-bold text-black mb-5 text-[16px]">✅ AS-WAS / TO-BE 템플릿</h2>
       <div className="mb-5">
         <Asset_Template 
-          asset_pptNo={asset_pptNo} 
-          asset_asWas={asset_asWas} 
-          asset_toBe={asset_toBe} 
+          assetPptNos={assetPptNos} 
+          assetAsWasCodes={assetAsWasCodes} 
+          assetToBeCodes={assetToBeCodes} 
           addAssetArea={addAssetArea} 
           removeAssetArea={removeAssetArea} 
           isTemplateAvailable={isTemplateAvailable} 
-          setAsset_asWas={handleAssetAsWasChange} 
-          setAsset_toBe={handleAssetToBeChange} 
-          setAsset_pptNo={handleAssetPptNoChange} 
+          setAssetPptNos={handleAssetPptNoChange} 
+          setAssetAsWasCodes={handleAssetAsWasChange} 
+          setAssetToBeCodes={handleAssetToBeChange} 
           fileContent={fileContent} 
         />
       </div>
@@ -252,11 +252,11 @@ const Create_template = () => {
                         <input
                           type="text"
                           className="w-[30px] h-[30px] rounded-[5px] text-center border border-[#8B8B8B] outline-none focus:border-[#595880]"
-                          value={pptNos[i]}
+                          value={nonAssetPptNos[i]}
                           onChange={(e) => {
-                            const arr = [...pptNos];
+                            const arr = [...nonAssetPptNos];
                             arr[i] = e.target.value;
-                            setPptNos(arr);
+                            setNonAssetPptNos(arr);
                           }}
                         />
                       </div>
@@ -283,11 +283,11 @@ const Create_template = () => {
                             rows="5"
                             className="code-textarea"
                             placeholder="TO-BE 코드를 입력해 주세요."
-                            value={toBeCodes[i]}
+                            value={nonAssetToBeCodes[i]}
                             onChange={(e) => {
-                              const arr = [...toBeCodes];
+                              const arr = [...nonAssetToBeCodes];
                               arr[i] = e.target.value;
-                              setToBeCodes(arr);
+                              setNonAssetToBeCodes(arr);
                             }}
                           />
                         </div>

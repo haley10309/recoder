@@ -6,13 +6,13 @@ import { isAssetCode } from "@/utils/codeUtils";
 const CheckTemplate = ({ 
   setSaveType, 
   setIsTemplateCreated,
+  setNonAssetPptNos, 
   setNonAssetAsWasCodes, 
-  setToBeCodes, 
-  setAsset_asWas, 
-  setAsset_toBe, 
+  setNonAssetToBeCodes, 
+  setAssetPptNos, 
+  setAssetAsWasCodes, 
+  setAssetToBeCodes, 
   setTemplateID, 
-  setPptNos, 
-  setAsset_pptNo, 
   ticketNum, 
   ticketURL, 
   setTicketNum, 
@@ -51,25 +51,24 @@ const CheckTemplate = ({
         const nonAssetTobeList = aswasTobeList.filter((it) => !isAssetCode(it.tobe_code));
         const assetTobeList = aswasTobeList.filter((it) => isAssetCode(it.tobe_code));
         
-        // console.log('====')
-        // console.log('aswasTobeList',aswasTobeList)
-        // console.log('localizationList',localizationList)
-
         // 핫픽스 AS-WAS/TO-BE, 로컬라이제이션 세팅
         setTemplateID(templateId);
-        setPptNos(aswasTobeList.map((it) => it.ppt_no || ""));
+        setDeleteIds([]);
+
+        setNonAssetPptNos(nonAssetAswasList.map((it) => it.ppt_no || "")); // 특이사항(250509): nonAsset pptNos만 원본 aswasTobeList를 사용하고 있었는데, 실수로 판단되어 nonAssetAswasList로 수정함함
         setNonAssetAsWasCodes(nonAssetAswasList.map((it) => it.aswas_code?.trim() || ""));
-        setAsset_asWas(assetAswasList.map((it) => it.aswas_code?.trim() || ""));
-        setAsset_pptNo(assetAswasList.map((it) => it.ppt_no || ""));
-        setToBeCodes(nonAssetTobeList.map((it) => it.tobe_code?.trim() || ""));
-        setAsset_toBe(assetTobeList.map((it) => it.tobe_code?.trim() || ""));
+        setNonAssetToBeCodes(nonAssetTobeList.map((it) => it.tobe_code?.trim() || ""));
+
+        setAssetPptNos(assetAswasList.map((it) => it.ppt_no || ""));
+        setAssetAsWasCodes(assetAswasList.map((it) => it.aswas_code?.trim() || ""));
+        setAssetToBeCodes(assetTobeList.map((it) => it.tobe_code?.trim() || ""));
+
         setLocalizedItems(
           localizationList.map((it) => ({
             id: it.id,
             local_code: it.local_code,
           }))
         );
-        setDeleteIds([]);
       } else {
         alert("새로운 템플릿을 추가할 수 있습니다.");
         setSaveType("create");
