@@ -1,9 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
-import settingIcon from "@/assets/icon/setting-icon.svg";
-import applyIcon from "@/assets/icon/apply-icon.svg";
-import qaIcon from "@/assets/icon/qa-icon.svg";
+import settingIcon from "@/assets/icon/template-setting.png";
+import applyIcon from "@/assets/icon/template-apply.png";
+import qaIcon from "@/assets/icon/qa.png";
+import guideIcon from "@/assets/icon/guide.png";
 import logo from "@/assets/logo.png";
 
 const LeftNavBar = () => {
@@ -32,7 +33,7 @@ const LeftNavBar = () => {
           onClick={() => handleNavigate("/create-template")}
         >
           <IconImage src={settingIcon} alt="template setting" />
-          Template Setting
+          <NavButtonText active={isActive("/create-template")}>Template Setting</NavButtonText>
         </NavButton>
 
         <NavButton
@@ -40,7 +41,7 @@ const LeftNavBar = () => {
           onClick={() => handleNavigate("/tobe-applied")}
         >
           <IconImage src={applyIcon} alt="template apply" />
-          Template Apply
+          <NavButtonText active={isActive("/tobe-applied")}>Template Apply</NavButtonText>
         </NavButton>
 
         <NavButton
@@ -48,12 +49,15 @@ const LeftNavBar = () => {
           onClick={() => handleNavigate("/qa-check")}
         >
           <IconImage src={qaIcon} alt="QA" />
-          QA
+          <NavButtonText active={isActive("/qa-check")}>QA</NavButtonText>
         </NavButton>
 
-        <GuideButton onClick={() => handleNavigate("/guide")}>
-          Guide
-        </GuideButton>
+        <NavButton 
+          active={isActive("/guide")}
+          onClick={() => handleNavigate("/guide")}>
+          <IconImage src={guideIcon} alt="guide" />
+          <NavButtonText active={isActive("/guide")}>Guide</NavButtonText>
+          </NavButton>
       </ButtonGroup>
     </NavContainer>
   );
@@ -64,7 +68,7 @@ export default LeftNavBar;
 const NavContainer = styled.nav`
   display: flex;
   flex-direction: column;
-  background-color: #3b393d;
+  background-color: hsl(27, 100.00%, 80.40%);
   color: white;
   padding-top: 40px;
   padding-left: 8px;
@@ -100,20 +104,20 @@ const NavButton = styled.button`
   gap: 12px;
   padding: 16px;
   border-radius: 5px;
-  background-color: ${({ active }) => (active ? "#8C8C8C" : "transparent")};
+  background-color: ${({ active }) => (active ? "hsl(27, 90%, 70%)" : "transparent")};
   font-weight: ${({ active }) => (active ? "500" : "normal")};
 
   &:hover {
-    background-color: #8c8c8c;
+    background-color: hsl(27, 90%, 70%);
   }
+`;
+const NavButtonText = styled.div`
+  color: #4B1C2F ;
+  font-size: 14px;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: ${({ active }) => (active ? "700" : "400")};
 `;
 
 const IconImage = styled.img`
-  width: 22px;
-`;
-
-const GuideButton = styled(NavButton)`
-  justify-content: center;
-  font-weight: bold;
-  background-color: #8c8c8c;
+  width: 24px;
 `;

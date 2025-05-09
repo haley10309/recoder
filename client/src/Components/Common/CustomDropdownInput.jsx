@@ -55,7 +55,7 @@ export default CustomDropdownInput;
 
 const Container = styled.div`
   position: relative;
-  width: 13.125rem;
+  
 `;
 
 const InputWrapper = styled.div`

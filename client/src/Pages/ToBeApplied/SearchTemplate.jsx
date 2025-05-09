@@ -62,7 +62,7 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
       <Title>🧾 핫픽스/로컬라이제이션 템플릿 불러오기</Title>
       <Wrapper>
         <InputGrid>
-          <InputBox>
+          <InputBox style={{ width: "18rem" }}>
             <InputTitle>지라 티켓 번호</InputTitle>
             <CustomDropdownInput
               value={ticketNumber}
@@ -71,7 +71,7 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
               options={ticketNumberOptions}
             />
           </InputBox>
-          <InputBox>
+          <InputBox style={{ width: "24rem" }}>
             <InputTitle>URL</InputTitle>
             <CustomDropdownInput
               value={ticketUrl}
@@ -80,7 +80,7 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
               options={ticketUrlOptions}
             />
           </InputBox>
-          <InputBox>
+          <InputBox style={{ width: "6rem" }}>
             <InputTitle>SITECODE</InputTitle>
             <CustomDropdownInput
               value={country_code}
@@ -139,7 +139,7 @@ const InputBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-width: 12.5rem;
+  min-width: 12rem;
   flex: 0 1 auto;
 `;
 
