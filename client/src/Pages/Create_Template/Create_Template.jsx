@@ -34,8 +34,8 @@ const Create_template = () => {
   const [fileContent, setFileContent] = useState("");
 
   // Save flags
-  const [isHotfixCreated, setIsHotfixCreated] = useState(false);
-  const [save_type, setSave_type] = useState("");
+  const [isTemplateCreated, setIsTemplateCreated] = useState(false);
+  const [saveType, setSaveType] = useState(""); // 'create' or 'update'
 
   // Localization states
   const [englishCopy, setEnglishCopy] = useState([]);
@@ -133,12 +133,13 @@ const Create_template = () => {
     formData.append("aswas_tobe_list", JSON.stringify(aswasTobeList));
 
     try {
-      const url = save_type === "create" ? `${BASE_URL}/create` : `${BASE_URL}/update-template`;
+      const url = saveType === "create" ? `${BASE_URL}/create` : `${BASE_URL}/update-template`;
       await axios.post(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
       alert("템플릿이 성공적으로 저장되었습니다");
-      setIsHotfixCreated(true);
+      setIsTemplateCreated(true);
     } catch (err) {
       console.error(err);
+      setIsTemplateCreated(false);
       alert("템플릿 저장 중 오류가 발생하였습니다");
     }
   };
@@ -161,7 +162,7 @@ const Create_template = () => {
 
   // 로컬라이제이션 생성
   const handleCreateLocalization = async () => {
-    if (!isHotfixCreated) {
+    if (!isTemplateCreated) {
       alert("핫픽스 템플릿을 먼저 생성해 주세요.");
       return;
     }
@@ -182,10 +183,10 @@ const Create_template = () => {
       setDeleteIds([]);
       const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
       setLocalizedItems(data.localization_list || []);
-      alert(save_type === "create" ? "로컬라이제이션 템플릿이 생성되었습니다" : "로컬라이제이션 템플릿이 수정되었습니다");
+      alert(saveType === "create" ? "로컬라이제이션 템플릿이 생성되었습니다" : "로컬라이제이션 템플릿이 수정되었습니다");
     } catch (err) {
       console.error("[Error] handleCreateLocalization", err);
-      alert(save_type === "create" ? "로컬라이제이션 생성 중 오류가 발생했습니다" : "로컬라이제이션 수정 중 오류가 발생했습니다");
+      alert(saveType === "create" ? "로컬라이제이션 생성 중 오류가 발생했습니다" : "로컬라이제이션 수정 중 오류가 발생했습니다");
     }
   };
 
@@ -193,7 +194,8 @@ const Create_template = () => {
     <div className="bg-[#FFFFFF] p-[110px]">
       {/* 📄 핫픽스 템플릿 생성 및 불러오기 */}
       <CheckTemplate 
-        setSave_type={setSave_type} 
+        setSaveType={setSaveType} 
+        setIsTemplateCreated={setIsTemplateCreated} 
         setAsWasCodes={setAsWasCodes} 
         setToBeCodes={setToBeCodes} 
         setAsset_asWas={setAsset_asWas} 
@@ -207,7 +209,6 @@ const Create_template = () => {
         setTicketURL={setTicketURL} 
         setLocalizedItems={setLocalizedItems} 
         setDeleteIds={setDeleteIds} 
-        setIsHotfixCreated={setIsHotfixCreated} 
       />
 
       {/* 📤 파일 업로드 */}
@@ -311,7 +312,7 @@ const Create_template = () => {
         </button>
         <button type="button" className="save_button" onClick={handleSave}>
           {" "}
-          {save_type === "update" ? "핫픽스 템플릿 수정" : "핫픽스 템플릿 생성"}
+          {saveType === "update" ? "핫픽스 템플릿 수정" : "핫픽스 템플릿 생성"}
         </button>
       </div>
 
@@ -345,9 +346,9 @@ const Create_template = () => {
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>
-        <button type="button" className="save_button" onClick={handleCreateLocalization} disabled={!isHotfixCreated}>
+        <button type="button" className="save_button" onClick={handleCreateLocalization} disabled={!isTemplateCreated}>
           {" "}
-          {save_type === "update" ? "로컬라이제이션 템플릿 수정" : "로컬라이제이션 템플릿 생성"}
+          {saveType === "create" ? "로컬라이제이션 템플릿 생성" : "로컬라이제이션 템플릿 수정"}
         </button>
       </div>
     </div>

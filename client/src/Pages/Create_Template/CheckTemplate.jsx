@@ -3,7 +3,8 @@ import { BASE_URL } from "@/utils/routePath";
 import InputDrop from "../../Components/Common/InputDrop";
 
 const CheckTemplate = ({ 
-  setSave_type, 
+  setSaveType, 
+  setIsTemplateCreated,
   setAsWasCodes, 
   setToBeCodes, 
   setAsset_asWas, 
@@ -17,7 +18,6 @@ const CheckTemplate = ({
   setTicketURL, 
   setLocalizedItems, 
   setDeleteIds, 
-  setIsHotfixCreated,
 }) => {
   const checkForExistingTemplate = async () => {
     try {
@@ -31,8 +31,8 @@ const CheckTemplate = ({
 
       if (isExist) {
         alert(`${ticketURL} 템플릿을 불러왔습니다.`);
-        setSave_type("update");
-        setIsHotfixCreated(true);
+        setSaveType("update");
+        setIsTemplateCreated(true);
 
         // 2) 세부 내용 가져오기
         const detailRes = await axios.post(`${BASE_URL}/get-template-details`, {
@@ -41,35 +41,45 @@ const CheckTemplate = ({
         });
         const detailData = detailRes.data;
 
-        // 핫픽스 AS-WAS/TO-BE 세팅
-        setTemplateID(detailData.templateId);
-        const details = detailData.aswas_tobe_list || [];
+        const templateId = detailData.templateId;
+        const aswasTobeList = detailData.aswas_tobe_list || [];
+        const localizationList = detailData.localization_list || [];
 
-        setPptNos(details.map((it) => it.ppt_no || ""));
-        setAsWasCodes(details.filter((it) => !it.aswas_code?.trim().startsWith("//")).map((it) => it.aswas_code?.trim() || ""));
-        setToBeCodes(details.filter((it) => !it.tobe_code?.trim().startsWith("//")).map((it) => it.tobe_code?.trim() || ""));
-        setAsset_asWas(details.filter((it) => it.aswas_code?.trim().startsWith("//")).map((it) => it.aswas_code?.trim() || ""));
-        setAsset_pptNo(details.filter((it) => it.aswas_code?.trim().startsWith("//")).map((it) => it.ppt_no || ""));
-        setAsset_toBe(details.filter((it) => it.tobe_code?.trim().startsWith("//")).map((it) => it.tobe_code?.trim() || ""));
+        const nonAssetAswasList = aswasTobeList.filter((it) => !it.aswas_code?.trim().startsWith("//"));
+        const assetAswasList = aswasTobeList.filter((it) => it.aswas_code?.trim().startsWith("//"));
+        const nonAssetTobeList = aswasTobeList.filter((it) => !it.tobe_code?.trim().startsWith("//"));
+        const assetTobeList = aswasTobeList.filter((it) => it.tobe_code?.trim().startsWith("//"));
+        
+        // console.log('====')
+        // console.log('aswasTobeList',aswasTobeList)
+        // console.log('localizationList',localizationList)
 
-        // 로컬라이제이션 세팅
-        const localization = detailData.localization_list || [];
-        setDeleteIds([]);
+        // 핫픽스 AS-WAS/TO-BE, 로컬라이제이션 세팅
+        setTemplateID(templateId);
+        setPptNos(aswasTobeList.map((it) => it.ppt_no || ""));
+        setAsWasCodes(nonAssetAswasList.map((it) => it.aswas_code?.trim() || ""));
+        setAsset_asWas(assetAswasList.map((it) => it.aswas_code?.trim() || ""));
+        setAsset_pptNo(assetAswasList.map((it) => it.ppt_no || ""));
+        setToBeCodes(nonAssetTobeList.map((it) => it.tobe_code?.trim() || ""));
+        setAsset_toBe(assetTobeList.map((it) => it.tobe_code?.trim() || ""));
         setLocalizedItems(
-          localization.map((it) => ({
+          localizationList.map((it) => ({
             id: it.id,
             local_code: it.local_code,
           }))
         );
+        setDeleteIds([]);
       } else {
         alert("새로운 템플릿을 추가할 수 있습니다.");
-        setSave_type("create");
+        setSaveType("create");
+        setIsTemplateCreated(false);
         setLocalizedItems([{ local_code: "" }, { local_code: "" }]);
         setDeleteIds([]);
       }
     } catch (error) {
       console.error("Error checking for existing templates:", error);
       alert("템플릿 확인 중 오류가 발생했습니다.");
+      setIsTemplateCreated(false);
     }
   };
 

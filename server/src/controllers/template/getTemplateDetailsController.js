@@ -24,7 +24,7 @@ exports.getTemplateDetailsData = (req, res) => {
     const aswasTobeQuery = `
       SELECT awt.ppt_no, awt.aswas_code, awt.tobe_code
       FROM AsWasToBe awt 
-      WHERE awt.hotfix_id = ?`;
+      WHERE awt.hotfix_id = ?`; // hotfix_id = TemplateSetting.id
 
     const localizationQuery = `
       SELECT id, local_code
