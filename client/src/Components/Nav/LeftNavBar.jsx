@@ -23,7 +23,7 @@ const LeftNavBar = () => {
         <LogoImage
           src={logo}
           alt="logo"
-          onClick={() => handleNavigate("/tobe-applied")}
+          // onClick={() => handleNavigate("/tobe-applied")}
         />
       </LogoContainer>
 
@@ -37,11 +37,11 @@ const LeftNavBar = () => {
         </NavButton>
 
         <NavButton
-          active={isActive("/tobe-applied")}
+          active={isActive("/tobe-applied") || location.pathname === "/"} // 루트경로도 tobe-applied로 연결됨
           onClick={() => handleNavigate("/tobe-applied")}
         >
           <IconImage src={applyIcon} alt="template apply" />
-          <NavButtonText active={isActive("/tobe-applied")}>Template Apply</NavButtonText>
+          <NavButtonText active={isActive("/tobe-applied") || location.pathname === "/"}>Template Apply</NavButtonText>
         </NavButton>
 
         <NavButton
@@ -105,7 +105,7 @@ const NavButton = styled.button`
   padding: 16px;
   border-radius: 5px;
   background-color: ${({ active }) => (active ? "hsl(27, 90%, 70%)" : "transparent")};
-  font-weight: ${({ active }) => (active ? "500" : "normal")};
+  font-weight: ${({ active }) => (active ? "700" : "normal")};
 
   &:hover {
     background-color: hsl(27, 90%, 70%);
