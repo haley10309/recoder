@@ -258,17 +258,21 @@ const Create_template = () => {
                             type="text"
                             className="w-[30px] h-[30px] rounded-[5px] text-center border border-[#8B8B8B] outline-none focus:border-[#595880]"
                             value={nonAssetPptNos[i]}
-                            // onChange={(e) => {
-                            //   const arr = [...nonAssetPptNos];
-                            //   arr[i] = e.target.value;
-                            //   setNonAssetPptNos(arr);
-                            // }}
+                            onChange={(e) => {
+                              const arr = [...nonAssetPptNos];
+                              arr[i] = e.target.value;
+                              setNonAssetPptNos(arr);
+                            }}
                           />
                         </div>
 
                         <CopyTextButton
                           text={"ppt{숫자}로 복사"}
                           value={`ppt${nonAssetPptNos[i] ?? ''}`}
+                        />
+                        <CopyTextButton
+                          text={"슬라이드 {숫자}로 복사"}
+                          value={`슬라이드 ${nonAssetPptNos[i] ?? ''}`}
                         />
                         
                       </div>
@@ -279,24 +283,30 @@ const Create_template = () => {
                             className="code-textarea"
                             placeholder="AS-WAS 코드를 입력해 주세요."
                             value={nonAssetAsWasCodes[i]}
-                            // onChange={(e) => {
-                            //   const arr = [...nonAssetAsWasCodes];
-                            //   arr[i] = e.target.value;
-                            //   setNonAssetAsWasCodes(arr);
-                            // }}
+                            onChange={(e) => {
+                              const arr = [...nonAssetAsWasCodes];
+                              arr[i] = e.target.value;
+                              setNonAssetAsWasCodes(arr);
+                            }}
                           />
-                          <div className="flex">
+                          <div className="flex font-bold">
                             <div className="text-xs">
-                              <span className="ml-1 font-bold text-[#4b5563;]">
+                              <span className="ml-1 text-[#4b5563;]">
                                 [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
                               </span>
                             </div>
-                            <span className="ml-1 text-xs"
-                              style={{
-                                color: countOccurrences(nonAssetAsWasCodes[i]) === 1 ? "blue" : "red"
-                              }}>
-                                {`${countOccurrences(nonAssetAsWasCodes[i])}회`}
-                            </span>
+                            {originalHtmlFileContent ? (
+                              <span className="ml-1 text-xs"
+                                style={{
+                                  color: countOccurrences(nonAssetAsWasCodes[i]) === 1 ? "blue" : "red"
+                                }}>
+                                  {`${countOccurrences(nonAssetAsWasCodes[i])}회`}
+                              </span>
+                            ) : (
+                              <span className="ml-1 text-xs font-normal">
+                                {`(원본코드 업로드 필요)`}
+                              </span>
+                            )}
                           </div>
 
                           <CopyTextButton
@@ -311,11 +321,11 @@ const Create_template = () => {
                             className="code-textarea"
                             placeholder="TO-BE 코드를 입력해 주세요."
                             value={nonAssetToBeCodes[i]}
-                            // onChange={(e) => {
-                            //   const arr = [...nonAssetToBeCodes];
-                            //   arr[i] = e.target.value;
-                            //   setNonAssetToBeCodes(arr);
-                            // }}
+                            onChange={(e) => {
+                              const arr = [...nonAssetToBeCodes];
+                              arr[i] = e.target.value;
+                              setNonAssetToBeCodes(arr);
+                            }}
                           />
 
                           <div className="text-xs">
