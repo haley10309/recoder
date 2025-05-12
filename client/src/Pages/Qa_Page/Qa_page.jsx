@@ -15,7 +15,9 @@ import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 
 
 const Qa_page = () => {
-  return null;
+  return (
+    <div>준비중이에요.</div>
+  );
   
 //   const [_value, _setValue] = useState("");
 //   const [projectName, setProjectName] = useState("");
