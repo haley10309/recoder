@@ -28,9 +28,9 @@ const CheckTemplate = ({
         ticket_url: ticketURL,
       });
       const data = response.data;
-      const isExist = Array.isArray(data) && data.length > 0 && data[0].id > 0;
+      const isTemplateExist = Array.isArray(data) && data.length > 0 && data[0].id > 0;
 
-      if (isExist) {
+      if (isTemplateExist) {
         alert(`${ticketURL} 템플릿을 불러왔습니다.`);
         setSaveType("update");
         setIsTemplateCreated(true);
@@ -47,8 +47,8 @@ const CheckTemplate = ({
         const localizationList = detailData.localization_list || [];
 
         const nonAssetAswasList = aswasTobeList.filter((it) => !isAssetCode(it.aswas_code));
-        const assetAswasList = aswasTobeList.filter((it) => isAssetCode(it.aswas_code));
         const nonAssetTobeList = aswasTobeList.filter((it) => !isAssetCode(it.tobe_code));
+        const assetAswasList = aswasTobeList.filter((it) => isAssetCode(it.aswas_code));
         const assetTobeList = aswasTobeList.filter((it) => isAssetCode(it.tobe_code));
         
         // 핫픽스 AS-WAS/TO-BE, 로컬라이제이션 세팅
@@ -80,6 +80,7 @@ const CheckTemplate = ({
       console.error("Error checking for existing templates:", error);
       alert("템플릿 확인 중 오류가 발생했습니다.");
       setIsTemplateCreated(false);
+      setDeleteIds([]);
     }
   };
 
