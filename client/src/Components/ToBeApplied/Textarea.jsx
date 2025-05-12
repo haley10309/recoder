@@ -75,14 +75,25 @@ const BasicTextarea = ({
             onChange={(e) => setAsWasCode(e.target.value)}
             placeholder="As-Was code를 입력하세요."
           />
+          
+          <div className="flex">
+            <div className="text-xs">
+              <span className="ml-1 font-bold text-[#4b5563;]">
+                [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
+              </span>
+            </div>
+            <span className="ml-1 text-xs"
+              style={{
+                color: asWasOccurrenceCount === 1 ? "blue" : "red"
+              }}>
+                {`${asWasOccurrenceCount}회`}
+            </span>
+          </div>
+          
           <CopyTextButton
             text={"코드 복사"}
             value={transformedAsWasCode}
           />
-          <OccurrenceCount>
-            <strong>[AS-WAS] 일치하는 코드 출현 횟수:</strong>{" "}
-            {asWasOccurrenceCount > 0 ? `${asWasOccurrenceCount}회` : "없음"}
-          </OccurrenceCount>
 
           {matchedPart && (
             <MatchedPartWrapper>
@@ -120,14 +131,26 @@ const BasicTextarea = ({
             placeholder="To-Be code를 입력하세요."
             $isApplied={isApplied}
           />
+          
+          
+          <div className="flex">
+            <div className="text-xs">
+              <span className="ml-1 font-bold text-[#4b5563;]">
+                [TO-BE] 변환 후 코드 출현 횟수:
+              </span>
+            </div>
+            <span className="ml-1 text-xs"
+              style={{
+                color: toBeOccurrenceCount === 1 ? "blue" : "red"
+              }}>
+                {`${toBeOccurrenceCount}회`}
+            </span>
+          </div>
+
           <CopyTextButton
             text={"코드 복사"}
             value={toBeCode}
           />
-          <OccurrenceCount>
-            <strong>[TO-BE] 변환 후 코드 출현 횟수:</strong>{" "}
-            {toBeOccurrenceCount > 0 ? `${toBeOccurrenceCount}회` : "없음"}
-          </OccurrenceCount>
         </CodeBlock>
 
         {/* LOCALIZED TO-BE - 항상 렌더되지만 텍스트는 값이 있는 경우에만 */}
@@ -260,11 +283,6 @@ const Textarea = styled.textarea`
 const ErrorMessage = styled.div`
   font-size: 12px;
   color: #ffa600;
-`;
-
-const OccurrenceCount = styled.div`
-  font-size: 12px;
-  color: #4b5563;
 `;
 
 const MatchedPartWrapper = styled.div``;
