@@ -7,13 +7,12 @@ const CopiedContainer = styled.div`
   justify-content: center;
   align-items: center;
   border: 1px solid rgb(105, 105, 105);
-  background-color:rgb(255, 255, 255);
+  background-color:rgb(241, 241, 241);
   color: white;
-  font-weight: 600;
   font-size: 13px;
-  border-radius: 10px;
+  border-radius: 5px;
   width: 120px;
-  height: 40px;
+  height: 30px;
   padding: 3px 5px;
 `;
 const CopyCodeButton = styled.button`
@@ -21,13 +20,12 @@ const CopyCodeButton = styled.button`
   justify-content: center;
   align-items: center;
   border: 1px solid rgb(168, 168, 168);
-  background-color:rgb(255, 255, 255);
+  background-color:rgb(241, 241, 241);
   color: white;
-  font-weight: 600;
   font-size: 13px;
-  border-radius: 10px;
+  border-radius: 5px;
   width: 120px;
-  height: 40px;
+  height: 30px;
   padding: 3px 5px;
 `;
 
@@ -60,11 +58,11 @@ const CopyTextButton = ({ text, value, style={} }) => {
       borderColor: copyState !== 'none' ? "transparent" : undefined, 
       ...style,
     }}>
-      <div style={{ color: "white" }}>{copyState === 'copied' ? '복사 성공' : '복사 실패'}</div>
+      <div style={{ color: "white", fontSize: "11px" }}>{copyState === 'copied' ? '복사 성공' : '복사 실패'}</div>
     </CopiedContainer>
   ) : (
     <CopyCodeButton onClick={onClick} style={{ ...style }}>
-      <div style={{ color: "rgb(100, 100, 100)" }}>{text}</div>
+      <div style={{ color: "rgb(100, 100, 100)", fontSize: "11px" }}>{text}</div>
     </CopyCodeButton>
   )
 };
