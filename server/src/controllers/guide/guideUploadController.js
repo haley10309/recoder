@@ -46,10 +46,10 @@ exports.guideUploadData = async (req, res) => {
       console.log('toBeText',toBeText)
   }
 
-    console.log('=======')
-    console.log('pptNos',pptNos)
-    console.log('asWasEntries',asWasEntries.length,asWasEntries)
-    console.log('toBeEntries',toBeEntries.length,toBeEntries)
+    // console.log('=======')
+    // console.log('pptNos',pptNos)
+    // console.log('asWasEntries',asWasEntries.length,asWasEntries)
+    // console.log('toBeEntries',toBeEntries.length,toBeEntries)
 
     // 길이가 다르면 빈 항목 추가
     const maxLen = Math.max(asWasEntries.length, toBeEntries.length);
