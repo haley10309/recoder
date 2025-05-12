@@ -12,7 +12,7 @@ const localizationController = require("../controllers/localization/localTemplat
 const loaclDetailsController = require("../controllers/localization/localDetailsController");
 
 router.post("/translation_upload", upload.single('file'), cors(), localUploadController.localUploadData);
-router.post("/localization/english-copy", upload.single('file'), cors(), localEnglishCopyController.extractEnglishCopy);
+router.post("/localization/english-copy-list", upload.single('file'), cors(), localEnglishCopyController.extractEnglishCopyList);
 router.post("/localization/tobe-code-list", cors(), localGetTobecodeController.getTobeCodeByTicket);
 router.put("/localization/template",cors(), localizationController.updateLocalizationFull);
 router.post("/localization/get-local-details", cors(), loaclDetailsController.getlocalDetails);

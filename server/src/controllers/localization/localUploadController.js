@@ -30,7 +30,7 @@ const validCountryCodes = [
 //     let countryCount = {}; // 각 국가 코드마다 번역되는 문장이 몇개인지 저장 {CN:2, JP:1}
 //     let validCountries = []; // 유효한 국가 코드
 //     let invalidCountries = []; // 유효하지 않은 국가 코드
-//     let englishCopy = []; // 영어 원문
+//     let englishCopyList = []; // 영어 원문
 
 //     //각 국가 코드가 유효한 코드인지 확인
 //     countryCodes.forEach(code => {
@@ -49,7 +49,7 @@ const validCountryCodes = [
 //         const englishText = row[0]; // 영어 추출
     
 //         if (englishText) {
-//             englishCopy.push(englishText);
+//             englishCopyList.push(englishText);
 //         }
     
 //         for (let j = 1; j < row.length; j++) {
@@ -76,7 +76,7 @@ const validCountryCodes = [
 //         validCountries, 
 //         invalidCountries, 
 //         translations, 
-//         englishCopy 
+//         englishCopyList 
 //     });
 
 //   } catch (error) {
@@ -114,7 +114,7 @@ exports.localUploadData = (req, res) => {
       const countryCount = {};
       const validCountries = [];
       const invalidCountries = [];
-      const englishCopy = [];
+      const englishCopyList = [];
       const translations = {};
   
       countryCodes.forEach(({ code }) => {
@@ -130,9 +130,9 @@ exports.localUploadData = (req, res) => {
         const row = lines[i].split("\t");
         const englishText = row[copyColumnIndex]?.trim();
         if (englishText) {
-          englishCopy.push(englishText);
+          englishCopyList.push(englishText);
         } else {
-          englishCopy.push(""); // 빈 값이라도 자리 유지
+          englishCopyList.push(""); // 빈 값이라도 자리 유지
         }
   
         countryCodes.forEach(({ code, index }) => {
@@ -154,7 +154,7 @@ exports.localUploadData = (req, res) => {
         validCountries,
         invalidCountries,
         translations,
-        englishCopy
+        englishCopyList,
       });
     } catch (error) {
       console.error("Error processing file:", error);

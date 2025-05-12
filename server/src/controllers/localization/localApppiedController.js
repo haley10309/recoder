@@ -36,7 +36,7 @@ exports.translateHtmlWithTxt = (req, res) => {
 
     const headers = lines[0].split("\t");
     const countryCodes = headers.slice(1);
-    const englishCopy = [];
+    const englishCopyList = [];
     const translations = {};
     countryCodes.forEach(code => translations[code] = []);
 
@@ -44,7 +44,7 @@ exports.translateHtmlWithTxt = (req, res) => {
       const row = lines[i].split("\t");
       const englishText = row[0];
       if (!englishText) continue;
-      englishCopy.push(englishText);
+      englishCopyList.push(englishText);
       for (let j = 1; j < row.length; j++) {
         const cc = countryCodes[j - 1];
         const value = row[j]?.trim();
@@ -87,14 +87,14 @@ exports.translateHtmlWithTxt = (req, res) => {
 
             const innerText = stripHtmlTags(htmlMatchedPart);
 
-            const matchIndex = englishCopy.findIndex(copy => clean(innerText).includes(clean(copy)));
+            const matchIndex = englishCopyList.findIndex(copy => clean(innerText).includes(clean(copy)));
 
-            console.log("innerText:", JSON.stringify(innerText));
-            console.log("englishCopy", englishCopy.map(c => JSON.stringify(c)));
-            console.log("matchIndex:", matchIndex);
-            console.log("번역어:", translations[country_code]?.[matchIndex]);
+            // console.log("innerText:", JSON.stringify(innerText));
+            // console.log("englishCopyList", englishCopyList.map(c => JSON.stringify(c)));
+            // console.log("matchIndex:", matchIndex);
+            // console.log("번역어:", translations[country_code]?.[matchIndex]);
 
-            const originalEnglish = englishCopy[matchIndex];
+            const originalEnglish = englishCopyList[matchIndex];
             const translated = translations[country_code]?.[matchIndex];
 
             if (matchIndex !== -1 && translated && translated !== '#N/A') {

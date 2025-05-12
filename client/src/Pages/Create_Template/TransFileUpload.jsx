@@ -17,7 +17,7 @@ export default function TransFileUpload({ isTemplateCreated, setEnglishCopyList 
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await axios.post(`${BASE_URL}/localization/english-copy`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+      const res = await axios.post(`${BASE_URL}/localization/english-copy-list`, formData, { headers: { "Content-Type": "multipart/form-data" } });
       setEnglishCopyList(res.data.englishCopyList);
     } catch (error) {
       console.error("Error uploading translation file:", error);

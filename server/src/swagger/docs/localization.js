@@ -33,7 +33,7 @@
 
 /**
  * @swagger
- * /localization/english-copy:
+ * /localization/english-copy-list:
  *   post:
  *     summary: 업로드된 텍스트 파일에서 영어 원문만 추출
  *     tags:
@@ -59,7 +59,7 @@
  *             schema:
  *               type: object
  *               properties:
- *                 englishCopy:
+ *                 englishCopyList:
  *                   type: array
  *                   items:
  *                     type: string
