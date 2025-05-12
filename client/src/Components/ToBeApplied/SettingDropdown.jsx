@@ -58,7 +58,7 @@ const SettingDropdown = ({
       )}
     >
       <div className="flex gap-2 justify-center items-start">
-        {_title && (
+        {!!_title && (
           <div className="flex items-start font-[600] gap-2">{_title}</div>
         )}
       </div>

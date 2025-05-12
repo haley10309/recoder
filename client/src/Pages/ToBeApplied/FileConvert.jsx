@@ -140,7 +140,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
         handleTranslationUpload={handleTranslationUpload}
       />
 
-      {fileName && (
+      {!!fileName && (
         <>
           <FileConvertBottonBox>
             <FileConvertButtons
