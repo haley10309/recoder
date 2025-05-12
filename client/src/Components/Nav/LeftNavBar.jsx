@@ -23,7 +23,7 @@ const LeftNavBar = () => {
         <LogoImage
           src={logo}
           alt="logo"
-          // onClick={() => handleNavigate("/tobe-applied")}
+          onClick={() => handleNavigate("/")}
         />
       </LogoContainer>
 
