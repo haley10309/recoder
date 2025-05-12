@@ -3,7 +3,7 @@ import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 import arrowIcon from "@/assets/shift-fill.svg";
 
-export default function TransFileUpload({ isTemplateCreated, setEnglishCopy }) {
+export default function TransFileUpload({ isTemplateCreated, setEnglishCopyList }) {
   const transInputRef = useRef(null);
   const [transFile, setTransFile] = useState(null);
 
@@ -18,7 +18,7 @@ export default function TransFileUpload({ isTemplateCreated, setEnglishCopy }) {
     formData.append("file", file);
     try {
       const res = await axios.post(`${BASE_URL}/localization/english-copy`, formData, { headers: { "Content-Type": "multipart/form-data" } });
-      setEnglishCopy(res.data.englishCopy);
+      setEnglishCopyList(res.data.englishCopyList);
     } catch (error) {
       console.error("Error uploading translation file:", error);
       alert("번역 업로드에 실패했습니다.");
@@ -50,7 +50,7 @@ export default function TransFileUpload({ isTemplateCreated, setEnglishCopy }) {
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
           <p className="mt-3 font-[500] text-[15px]">번역.txt 파일을 업로드 해 주세요</p>
           <input type="file" accept=".txt" ref={transInputRef} onChange={handleTransFileChange} className="hidden" />
-          {transFile && (
+          {!!transFile && (
             <div className="mt-2 text-center text-[13px]">
               <p>{transFile.name}</p>
               <p>{formatFileSize(transFile.size)}</p>

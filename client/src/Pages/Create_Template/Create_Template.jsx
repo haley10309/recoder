@@ -31,14 +31,14 @@ const Create_template = () => {
   const isTemplateAvailable = Boolean(templateID);
 
   // File upload and content
-  const [originalHtmlFileContent, setOriginalHtmlFileContent] = useState("");
+  const [originalHtmlFile, setOriginalHtmlFile] = useState("");
 
   // Save flags
   const [saveType, setSaveType] = useState(""); // 'create' | 'update'
   const [isTemplateCreated, setIsTemplateCreated] = useState(false); // 템플릿이 이미 만들어져 있으면 true로
 
   // Localization states
-  const [englishCopy, setEnglishCopy] = useState([]);
+  const [englishCopyList, setEnglishCopyList] = useState([]);
   const [tobeCodeList, setTobeCodeList] = useState([]);
 
   const [localizedItems, setLocalizedItems] = useState([{ local_code: "" }, { local_code: "" }]);
@@ -46,7 +46,7 @@ const Create_template = () => {
 
   // tobe-code-list API call
   useEffect(() => {
-    if (englishCopy.length && ticketNum && ticketURL) {
+    if (englishCopyList.length && ticketNum && ticketURL) {
       axios
         .post(`${BASE_URL}/localization/tobe-code-list`, {
           ticket_num: ticketNum,
@@ -55,15 +55,15 @@ const Create_template = () => {
         .then((res) => setTobeCodeList(res.data.tobe_code_list || []))
         .catch((err) => console.error(err));
     }
-  }, [englishCopy, ticketNum, ticketURL]);
+  }, [englishCopyList, ticketNum, ticketURL]);
 
   // map to localizedItems
   useEffect(() => {
-    if (englishCopy.length) {
-      const items = tobeCodeList.filter((item) => englishCopy.some((orig) => item.tobe_code.includes(orig))).map((item) => ({ id: item.id, local_code: item.tobe_code }));
+    if (englishCopyList.length) {
+      const items = tobeCodeList.filter((item) => englishCopyList.some((orig) => item.tobe_code.includes(orig))).map((item) => ({ id: item.id, local_code: item.tobe_code }));
       if (items.length) setLocalizedItems(items);
     }
-  }, [tobeCodeList, englishCopy]);
+  }, [tobeCodeList, englishCopyList]);
 
   // add/remove handlers
   const addTextArea = () => {
@@ -158,10 +158,10 @@ const Create_template = () => {
   //   setNonAssetPptNos((p) => reorder(p, res.source.index, res.destination.index));
   // };
 
-  const countOccurrences = (asWasCode) => kind_countOccurrences(originalHtmlFileContent, asWasCode);
+  const countOccurrences = (asWasCode) => kind_countOccurrences(originalHtmlFile, asWasCode);
 
   // 로컬라이제이션 생성
-  const handleCreateLocalization = async () => {
+  const handleCreateOrUpdateLocalization = async () => {
     if (!isTemplateCreated) {
       alert("핫픽스 템플릿을 먼저 생성해 주세요.");
       return;
@@ -183,10 +183,10 @@ const Create_template = () => {
       setDeleteIds([]);
       const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
       setLocalizedItems(data.localization_list || []);
-      alert(saveType === "create" ? "로컬라이제이션 템플릿이 생성되었습니다" : "로컬라이제이션 템플릿이 수정되었습니다");
+      alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
     } catch (err) {
-      console.error("[Error] handleCreateLocalization", err);
-      alert(saveType === "create" ? "로컬라이제이션 생성 중 오류가 발생했습니다" : "로컬라이제이션 수정 중 오류가 발생했습니다");
+      console.error("[Error] handleCreateOrUpdateLocalization", err);
+      alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
     }
   };
 
@@ -219,7 +219,7 @@ const Create_template = () => {
         setAssetPptNos={setAssetPptNos} 
         setAssetAsWasCodes={setAssetAsWasCodes} 
         setAssetToBeCodes={setAssetToBeCodes} 
-        setOriginalHtmlFileContent={setOriginalHtmlFileContent} 
+        setOriginalHtmlFile={setOriginalHtmlFile} 
       />
 
       {/* ✅ AS-WAS / TO-BE 템플릿 */}
@@ -236,7 +236,7 @@ const Create_template = () => {
           setAssetPptNos={handleAssetPptNoChange} 
           setAssetAsWasCodes={handleAssetAsWasChange} 
           setAssetToBeCodes={handleAssetToBeChange} 
-          originalHtmlFileContent={originalHtmlFileContent} 
+          originalHtmlFile={originalHtmlFile} 
         />
       </div>
 
@@ -295,7 +295,7 @@ const Create_template = () => {
                                 [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
                               </span>
                             </div>
-                            {originalHtmlFileContent ? (
+                            {originalHtmlFile ? (
                               <span className="ml-1 text-xs"
                                 style={{
                                   color: countOccurrences(nonAssetAsWasCodes[i]) === 1 ? "blue" : "red"
@@ -365,7 +365,7 @@ const Create_template = () => {
       {/* 📤 번역 파일 업로드 */}
       <TransFileUpload 
         isTemplateCreated={isTemplateCreated} 
-        setEnglishCopy={setEnglishCopy} 
+        setEnglishCopyList={setEnglishCopyList} 
       />
 
       {/* 🌐 로컬라이제이션 템플릿 */}
@@ -375,7 +375,7 @@ const Create_template = () => {
           <TransBox
             key={idx}
             text={item.local_code}
-            highlights={englishCopy}
+            highlights={englishCopyList}
             onChange={(newTxt) => {
               setLocalizedItems((prev) => {
                 const a = [...prev];
@@ -395,8 +395,8 @@ const Create_template = () => {
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>
-        <button type="button" className="save_button" onClick={handleCreateLocalization} disabled={!isTemplateCreated}>
-          {` 로컬라이제이션 템플릿 ${saveType === "update" ? "수정" : "생성"}`}
+        <button type="button" className="save_button" onClick={handleCreateOrUpdateLocalization} disabled={!isTemplateCreated}>
+          {saveType === "update" ? ` 로컬라이제이션 템플릿 수정` : ` 로컬라이제이션 템플릿 생성`}
         </button>
       </div>
     </div>

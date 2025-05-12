@@ -138,15 +138,15 @@ export const uploadTranslationDeck = async (file) => {
       }
     );
 
-    const { translations, englishCopy, validCountries } = response.data;
+    const { translations, englishCopyList, validCountries } = response.data;
 
-    if (!translations || !englishCopy) {
+    if (!translations || !englishCopyList) {
       throw new Error("❌ 번역덱 데이터가 비어 있습니다.");
     }
 
     return {
       translations,
-      englishCopy,
+      englishCopyList,
       validCountries,
     };
   } catch (error) {

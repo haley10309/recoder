@@ -11,7 +11,7 @@ export default function UploadFiles({
   setAssetPptNos, 
   setAssetAsWasCodes, 
   setAssetToBeCodes,
-  setOriginalHtmlFileContent, 
+  setOriginalHtmlFile, 
  }) {
   const pptInputRef = useRef(null);
   const backUpInputRef = useRef(null);
@@ -85,7 +85,7 @@ export default function UploadFiles({
     if (!f) return;
     setBackUpFile(f);
     const reader = new FileReader();
-    reader.onload = (ev) => setOriginalHtmlFileContent(ev.target.result);
+    reader.onload = (ev) => setOriginalHtmlFile(ev.target.result);
     reader.readAsText(f);
   };
 
@@ -98,7 +98,7 @@ export default function UploadFiles({
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
           <p className="mt-3 text-[#32383E] font-[500] text-[15px] text-center">PPT.txt 파일을 업로드 해 주세요</p>
           <input type="file" accept=".txt" ref={pptInputRef} onChange={handlePptFileChange} className="hidden" />
-          {pptFile && (
+          {!!pptFile && (
             <div className="mt-2 text-center text-[13px]">
               <p className="text-black">{pptFile.name}</p>
               <p className="text-black">{formatFileSize(pptFile.size)}</p>
@@ -112,7 +112,7 @@ export default function UploadFiles({
           <p className="mt-3 font-[500] text-[15px] text-center">원본코드.html 파일을 업로드 해 주세요</p>
           <p className="mt-3 font-[500] text-[15px] text-center text-[#6b7280]">(*템플릿 생성은 UK 기준이므로 UK 파일 업로드. 250509 이후 변경사항 있으면 데이에게 전달)</p>
           <input type="file" accept=".html" ref={backUpInputRef} onChange={handleOriginalHtmlFileChange} className="hidden" />
-          {backUpFile && (
+          {!!backUpFile && (
             <div className="mt-2 text-center text-[13px]">
               <p>{backUpFile.name}</p>
               <p>{formatFileSize(backUpFile.size)}</p>

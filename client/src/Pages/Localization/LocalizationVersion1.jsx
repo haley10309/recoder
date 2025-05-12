@@ -35,7 +35,7 @@ const LocalizationVersion1 = () => {
 
       setValidCountries(response.data.validCountries);
       setTranslations(response.data.translations || {});
-      setEnglish_copies(response.data.englishCopy || []);
+      setEnglish_copies(response.data.englishCopyList || []);
       if (rows.length === 0) {
         setRows(
           new Array(4).fill(null).map(() => ({

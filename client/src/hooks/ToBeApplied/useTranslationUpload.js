@@ -36,7 +36,7 @@ export function useTranslationUpload(country_code) {
       setTxtUploadProgress(100);
 
       try {
-        const { translations, englishCopy, validCountries } =
+        const { translations, englishCopyList, validCountries } =
           await uploadTranslationDeck(file);
 
         setValidCountries(validCountries);
@@ -46,8 +46,8 @@ export function useTranslationUpload(country_code) {
         const countryTranslations = translations[currentCountry] || [];
 
         const dictionary = {};
-        for (let i = 0; i < englishCopy.length; i++) {
-          const key = englishCopy[i]?.trim();
+        for (let i = 0; i < englishCopyList.length; i++) {
+          const key = englishCopyList[i]?.trim();
           const value = countryTranslations[i]?.trim();
           if (value && key !== value) {
             dictionary[key] = value;
