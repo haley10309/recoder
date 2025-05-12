@@ -4,7 +4,6 @@ import { BASE_URL } from "@/utils/routePath";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { kind_countOccurrences } from "@/utils/codeUtils";
 import AddIcon from "@mui/icons-material/Add";
-import Frequency from "@Create_Template/Frequency";
 import CheckTemplate from "./CheckTemplate";
 import UploadFiles from "./UploadFiles";
 import Asset_Template from "./Asset_template";
@@ -32,7 +31,7 @@ const Create_template = () => {
   const isTemplateAvailable = Boolean(templateID);
 
   // File upload and content
-  const [fileContent, setFileContent] = useState("");
+  const [originalHtmlFileContent, setOriginalHtmlFileContent] = useState("");
 
   // Save flags
   const [saveType, setSaveType] = useState(""); // 'create' | 'update'
@@ -159,7 +158,7 @@ const Create_template = () => {
   //   setNonAssetPptNos((p) => reorder(p, res.source.index, res.destination.index));
   // };
 
-  const countOccurrences = (asWasCode) => kind_countOccurrences(fileContent, asWasCode);
+  const countOccurrences = (asWasCode) => kind_countOccurrences(originalHtmlFileContent, asWasCode);
 
   // 로컬라이제이션 생성
   const handleCreateLocalization = async () => {
@@ -213,19 +212,20 @@ const Create_template = () => {
       />
 
       {/* 📤 파일 업로드 */}
-      <UploadFiles 
+      <UploadFiles
         setNonAssetPptNos={setNonAssetPptNos} 
         setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
         setNonAssetToBeCodes={setNonAssetToBeCodes} 
         setAssetPptNos={setAssetPptNos} 
         setAssetAsWasCodes={setAssetAsWasCodes} 
         setAssetToBeCodes={setAssetToBeCodes} 
-        setFileContent={setFileContent} 
+        setOriginalHtmlFileContent={setOriginalHtmlFileContent} 
       />
 
       {/* ✅ AS-WAS / TO-BE 템플릿 */}
       <h2 className="font-bold text-black mb-5 text-[16px]">✅ AS-WAS / TO-BE 템플릿</h2>
       <div className="mb-5">
+        {/* Asset */}
         <Asset_Template 
           assetPptNos={assetPptNos} 
           assetAsWasCodes={assetAsWasCodes} 
@@ -236,13 +236,14 @@ const Create_template = () => {
           setAssetPptNos={handleAssetPptNoChange} 
           setAssetAsWasCodes={handleAssetAsWasChange} 
           setAssetToBeCodes={handleAssetToBeChange} 
-          fileContent={fileContent} 
+          originalHtmlFileContent={originalHtmlFileContent} 
         />
       </div>
 
       <DragDropContext 
         // onDragEnd={onDragEnd} // 컴포넌트 동작 안해서 기능 사용 안함
       >
+        {/* Non-Asset */}
         <Droppable droppableId="droppable">
           {(prov) => (
             <ul {...prov.droppableProps} ref={prov.innerRef} className="as_was_to_be_row">
@@ -257,11 +258,11 @@ const Create_template = () => {
                             type="text"
                             className="w-[30px] h-[30px] rounded-[5px] text-center border border-[#8B8B8B] outline-none focus:border-[#595880]"
                             value={nonAssetPptNos[i]}
-                            onChange={(e) => {
-                              const arr = [...nonAssetPptNos];
-                              arr[i] = e.target.value;
-                              setNonAssetPptNos(arr);
-                            }}
+                            // onChange={(e) => {
+                            //   const arr = [...nonAssetPptNos];
+                            //   arr[i] = e.target.value;
+                            //   setNonAssetPptNos(arr);
+                            // }}
                           />
                         </div>
 
@@ -278,14 +279,16 @@ const Create_template = () => {
                             className="code-textarea"
                             placeholder="AS-WAS 코드를 입력해 주세요."
                             value={nonAssetAsWasCodes[i]}
-                            onChange={(e) => {
-                              const arr = [...nonAssetAsWasCodes];
-                              arr[i] = e.target.value;
-                              setNonAssetAsWasCodes(arr);
-                            }}
+                            // onChange={(e) => {
+                            //   const arr = [...nonAssetAsWasCodes];
+                            //   arr[i] = e.target.value;
+                            //   setNonAssetAsWasCodes(arr);
+                            // }}
                           />
                           <div className="flex">
-                            <Frequency />
+                            <div className="text-xs">
+                              <span className="ml-1 font-bold text-[#4b5563;]">[AS-WAS] 일치하는 코드 출현 횟수 : </span>
+                            </div>
                             <span className="ml-1 text-xs"
                               style={{
                                 color: countOccurrences(nonAssetAsWasCodes[i]) === 1 ? "blue" : "red"
@@ -306,11 +309,11 @@ const Create_template = () => {
                             className="code-textarea"
                             placeholder="TO-BE 코드를 입력해 주세요."
                             value={nonAssetToBeCodes[i]}
-                            onChange={(e) => {
-                              const arr = [...nonAssetToBeCodes];
-                              arr[i] = e.target.value;
-                              setNonAssetToBeCodes(arr);
-                            }}
+                            // onChange={(e) => {
+                            //   const arr = [...nonAssetToBeCodes];
+                            //   arr[i] = e.target.value;
+                            //   setNonAssetToBeCodes(arr);
+                            // }}
                           />
 
                           <div className="text-xs">

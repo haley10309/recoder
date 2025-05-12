@@ -24,11 +24,11 @@ class Asset_Template extends React.Component {
   }
 
   countOccurrences = (asWasCode) => {
-    if (!this.props.fileContent || !asWasCode) {
+    if (!this.props.originalHtmlFileContent || !asWasCode) {
       return "Run Test를 통해 알아보세요";
     }
 
-    const occurrenceCount = countOccurrencesUtil(this.props.fileContent, asWasCode);
+    const occurrenceCount = countOccurrencesUtil(this.props.originalHtmlFileContent, asWasCode);
     return occurrenceCount !== "null" ? occurrenceCount : "0";
   };
 
