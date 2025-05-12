@@ -40,7 +40,7 @@ db.connect((err) => {
   if (err) {
     console.error('Database connection failed:', err);
   } else {
-    console.log('Connected to the database');
+    console.log('✅ Connected to the database');
   }
 });
 
@@ -54,7 +54,7 @@ db.on('error', (err) => {
       if (err) {
         console.error('Reconnection failed:', err);
       } else {
-        console.log('Reconnected to the database');
+        console.log('✅ Reconnected to the database');
       }
     });
   } else {

@@ -42,14 +42,7 @@ exports.guideUploadData = async (req, res) => {
       toBeEntries = toBeText.split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/).map(s => s.trim()).filter(Boolean);
    
       (/\r?\n\s*\r?\n\s*\r?\n\s*\r?\n/)
-
-      console.log('toBeText',toBeText)
   }
-
-    // console.log('=======')
-    // console.log('pptNos',pptNos)
-    // console.log('asWasEntries',asWasEntries.length,asWasEntries)
-    // console.log('toBeEntries',toBeEntries.length,toBeEntries)
 
     // 길이가 다르면 빈 항목 추가
     const maxLen = Math.max(asWasEntries.length, toBeEntries.length);
@@ -66,11 +59,6 @@ exports.guideUploadData = async (req, res) => {
     toBeCodes.push(...toBeEntries);
   });
 
-  // console.log('----')
-  // console.log('pptNos',pptNos)
-  // console.log('asWasCodes',asWasCodes)
-  // console.log('toBeCodes',toBeCodes)
-  
   // 응답 전송
   res.json({
     pptNos,
