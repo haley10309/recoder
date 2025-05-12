@@ -313,10 +313,14 @@ const Create_template = () => {
                             }}
                           />
 
+                          <div className="text-xs">
+                            <span className="ml-1 font-bold text-[#4b5563;]">[TO-BE]</span>
+                          </div>
+
                           <CopyTextButton
                             text={"코드 복사"}
                             value={nonAssetToBeCodes[i]}
-                            style={{ marginTop: "30px" }}
+                            style={{ marginTop: "15px" }}
                           />
                         </div>
                       </div>
