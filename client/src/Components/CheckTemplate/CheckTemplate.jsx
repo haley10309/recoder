@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
-import InputDrop from "../../Components/Common/InputDrop";
+import InputDrop from "../Common/InputDrop";
 import { isAssetCode } from "@/utils/codeUtils";
 
 const CheckTemplate = ({ 

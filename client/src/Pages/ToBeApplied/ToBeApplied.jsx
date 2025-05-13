@@ -57,7 +57,7 @@ const ToBeApplied = () => {
   };
 
   return (
-    <Container>
+    <div className="bg-[#FFFFFF] p-[40px]">
       {/* 🧾 핫픽스/로컬라이제이션 템플릿 불러오기 */}
       <SearchTemplate setTextareas={setTextareas} setCodePairs={setCodePairs} />
 
@@ -83,17 +83,11 @@ const ToBeApplied = () => {
           filterTobe={filterTobe}
         />
       </WhiteBox>
-    </Container>
+    </div>
   );
 };
 
 export default ToBeApplied;
-
-const Container = styled.div`
-  padding: 6.875rem;
-  background-color: #ffffff;
-  min-height: 100vh;
-`;
 
 const WhiteBox = styled.div`
   display: flex;
