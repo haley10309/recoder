@@ -3,7 +3,12 @@ import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 import arrowIcon from "@/assets/shift-fill.svg";
 
-export default function TransFileUpload({ isTemplateCreated, setEnglishCopyList }) {
+export default function TransFileUpload({ 
+  isTemplateCreated,
+  tobeCodeList,
+  setEnglishCopyList,
+  setLocalizedItems,
+}) {
   const transInputRef = useRef(null);
   const [transFile, setTransFile] = useState(null);
 
@@ -17,8 +22,24 @@ export default function TransFileUpload({ isTemplateCreated, setEnglishCopyList 
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await axios.post(`${BASE_URL}/localization/english-copy-list`, formData, { headers: { "Content-Type": "multipart/form-data" } });
-      setEnglishCopyList(res.data.englishCopyList);
+      // 1. englishCopyList 받아오고 업데이트
+      const res = await axios.post(
+        `${BASE_URL}/localization/english-copy-list`, 
+        formData, 
+        { headers: { "Content-Type": "multipart/form-data" } },
+      );
+      const englishCopyList = res.data.englishCopyList;
+      setEnglishCopyList(englishCopyList);
+      
+      // 2. localizedItems 업데이트
+      if (englishCopyList.length > 0) {
+        // 이미 존재하는 tobeCodeList에서 번역이 필요한 item만 뽑아내기
+        const items = tobeCodeList
+                        .filter((item) => englishCopyList.some((copyItem) => item.tobe_code.includes(copyItem)))
+                        .map((item) => ({ id: item.id, local_code: item.tobe_code }));
+        
+        if (items.length > 0) setLocalizedItems(items);
+      }
     } catch (error) {
       console.error("Error uploading translation file:", error);
       alert("번역 업로드에 실패했습니다.");
