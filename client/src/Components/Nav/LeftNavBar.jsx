@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import settingIcon from "@/assets/icon/template-setting.png";
+import localizationIcon from "@/assets/icon/localization.png";
 import applyIcon from "@/assets/icon/template-apply.png";
 import qaIcon from "@/assets/icon/qa.png";
 import guideIcon from "@/assets/icon/guide.png";
@@ -29,19 +30,27 @@ const LeftNavBar = () => {
 
       <ButtonGroup>
         <NavButton
-          active={isActive("/create-template")}
+          active={location.pathname === "/" || isActive("/create-template")}
           onClick={() => handleNavigate("/create-template")}
         >
-          <IconImage src={settingIcon} alt="template setting" />
-          <NavButtonText active={isActive("/create-template")}>Template Setting</NavButtonText>
+          <IconImage src={settingIcon} alt="create/update template" />
+          <NavButtonText active={location.pathname === "/" || isActive("/create-template")}>Create/Update Template</NavButtonText>
+        </NavButton>
+        
+        <NavButton
+          active={isActive("/localize-template")}
+          onClick={() => handleNavigate("/localize-template")}
+        >
+          <IconImage src={localizationIcon} alt="localize template" />
+          <NavButtonText active={isActive("/localize-template")}>Localize Template</NavButtonText>
         </NavButton>
 
         <NavButton
-          active={isActive("/tobe-applied") || location.pathname === "/"} // 루트경로도 tobe-applied로 연결됨
+          active={isActive("/tobe-applied")}
           onClick={() => handleNavigate("/tobe-applied")}
         >
-          <IconImage src={applyIcon} alt="template apply" />
-          <NavButtonText active={isActive("/tobe-applied") || location.pathname === "/"}>Template Apply</NavButtonText>
+          <IconImage src={applyIcon} alt="apply template" />
+          <NavButtonText active={isActive("/tobe-applied")}>Apply Template</NavButtonText>
         </NavButton>
 
         <NavButton
@@ -115,7 +124,7 @@ const NavButtonText = styled.div`
   color: #4B1C2F ;
   font-size: 14px;
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-weight: ${({ active }) => (active ? "700" : "400")};
+  font-weight: ${({ active }) => (active ? "700" : "normal")};
 `;
 
 const IconImage = styled.img`

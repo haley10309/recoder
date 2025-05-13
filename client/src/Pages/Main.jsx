@@ -1,11 +1,11 @@
-import ToBeApplied from "@ToBeApplied/ToBeApplied"
+import Create_Template from "./Create_Template/Create_Template";
 
 const Main = () => {
     return (
-    <>
-        <ToBeApplied />
-    </>
-    );
+        <>
+            <Create_Template />
+        </>
+    );  
 }
 
 export default Main

@@ -11,7 +11,7 @@ const CopiedContainer = styled.div`
   color: white;
   font-size: 13px;
   border-radius: 5px;
-  width: 120px;
+  width: 130px;
   height: 30px;
   padding: 3px 5px;
 `;
@@ -24,7 +24,7 @@ const CopyCodeButton = styled.button`
   color: white;
   font-size: 13px;
   border-radius: 5px;
-  width: 120px;
+  width: 130px;
   height: 30px;
   padding: 3px 5px;
 `;
