@@ -90,11 +90,11 @@ export default function UploadFiles({
   };
 
   return (
-    <div className="mt-[100px] mb-[100px] w-full">
+    <div className="mt-[50px] mb-[50px] w-full">
       <h2 className="font-bold text-black text-[16px] mb-[15px]">📤 파일 업로드</h2>
       <div className="flex justify-center gap-[40px] bg-[#f9f9f9] rounded-[8px] py-[30px] shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
         {/* PPT.txt 업로드 박스 */}
-        <div className="flex flex-col justify-center items-center w-[330px] h-[200px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" onClick={() => pptInputRef.current.click()}>
+        <div className="flex flex-col justify-center items-center w-[330px] h-[160px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" onClick={() => pptInputRef.current.click()}>
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
           <p className="mt-3 text-[#32383E] font-[500] text-[15px] text-center">PPT.txt 파일을 업로드 해 주세요</p>
           <input type="file" accept=".txt" ref={pptInputRef} onChange={handlePptFileChange} className="hidden" />
@@ -107,10 +107,12 @@ export default function UploadFiles({
         </div>
 
         {/* 원본코드.html 업로드 박스 */}
-        <div className="flex flex-col justify-center items-center w-[330px] h-[200px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" onClick={() => backUpInputRef.current.click()}>
+        <div 
+          className="flex flex-col justify-center items-center w-[330px] h-[160px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" 
+          onClick={() => backUpInputRef.current.click()}>
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
           <p className="mt-3 font-[500] text-[15px] text-center">원본코드.html 파일을 업로드 해 주세요</p>
-          <p className="mt-3 font-[500] text-[15px] text-center text-[#6b7280]">(*템플릿 생성은 UK 기준이므로 UK 파일 업로드. 250509 이후 변경사항 있으면 데이에게 전달)</p>
+          <p className="mt-3 font-[500] text-[12px] text-center text-[#6b7280]">(*템플릿 생성은 UK 기준이므로 UK 파일 업로드. <br/> 250513 이후 변경사항 있으면 데이에게 전달)</p>
           <input type="file" accept=".html" ref={backUpInputRef} onChange={handleOriginalHtmlFileChange} className="hidden" />
           {!!backUpFile && (
             <div className="mt-2 text-center text-[13px]">

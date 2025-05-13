@@ -38,6 +38,7 @@ const LeftNavBar = () => {
         </NavButton>
         
         <NavButton
+        // TODO: Create/Update Localization Template으로 이름 바꾸기
           active={isActive("/localize-template")}
           onClick={() => handleNavigate("/localize-template")}
         >

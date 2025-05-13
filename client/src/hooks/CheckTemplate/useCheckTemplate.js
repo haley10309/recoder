@@ -13,13 +13,13 @@ export const useCheckTemplate = () => {
   const [isTemplateCreated, setIsTemplateCreated] = useState(false); // 템플릿이 이미 만들어져 있으면 true로
 
   // TODO: local_code: localized_tobe_code로 수정 필요
-  const [localizedItems, setLocalizedItems] = useState([{ local_code: "" }, { local_code: "" }]); // copy 적용 필요한 tobe_code를 모아둔 리스트
+  const [localizedItems, setLocalizedItems] = useState([{ local_code: "" }]); // copy 적용 필요한 tobe_code를 모아둔 리스트
   const [deleteIds, setDeleteIds] = useState([]);
 
   // non-asset states
-  const [nonAssetAsWasCodes, setNonAssetAsWasCodes] = useState(["", "", ""]);
-  const [nonAssetToBeCodes, setNonAssetToBeCodes] = useState(["", "", ""]);
-  const [nonAssetPptNos, setNonAssetPptNos] = useState(["", "", ""]);
+  const [nonAssetAsWasCodes, setNonAssetAsWasCodes] = useState([""]);
+  const [nonAssetToBeCodes, setNonAssetToBeCodes] = useState([""]);
+  const [nonAssetPptNos, setNonAssetPptNos] = useState([""]);
 
   // asset states
   const [assetAsWasCodes, setAssetAsWasCodes] = useState([]);
@@ -28,7 +28,7 @@ export const useCheckTemplate = () => {
 
   // Template and ticket info
   const [templateID, setTemplateID] = useState("");
-  const isTemplateAvailable = Boolean(templateID);
+  // const isTemplateAvailable = Boolean(templateID);
 
   // File upload and content
   const [originalHtmlFile, setOriginalHtmlFile] = useState("");
@@ -114,44 +114,47 @@ export const useCheckTemplate = () => {
     }
   };
 
+  const hasInvalidAsWasCount = () => {
+    return nonAssetAsWasCodes.some(code => countOccurrences(code) !== 1)
+  };
+
   return {
-      ticketNum,
-      setTicketNum,
-      ticketURL,
-      setTicketURL,
-      saveType,
-      setSaveType,
-      isTemplateCreated,
-      setIsTemplateCreated,
-      localizedItems,
-      setLocalizedItems,
-      deleteIds,
-      setDeleteIds,
-      nonAssetAsWasCodes,
-      setNonAssetAsWasCodes,
-      nonAssetToBeCodes,
-      setNonAssetToBeCodes,
-      nonAssetPptNos,
-      setNonAssetPptNos,
-      assetAsWasCodes,
-      setAssetAsWasCodes,
-      assetToBeCodes,
-      setAssetToBeCodes,
-      assetPptNos,
-      setAssetPptNos,
-      templateID,
-      setTemplateID,
-      isTemplateAvailable,
-      originalHtmlFile,
-      setOriginalHtmlFile,
-      addTextArea,
-      removeTextArea,
-      addAssetArea,
-      removeAssetArea,
-      handleAssetAsWasChange,
-      handleAssetToBeChange,
-      handleAssetPptNoChange,
-      countOccurrences,
-      handleSaveTemplate,
+    ticketNum,
+    setTicketNum,
+    ticketURL,
+    setTicketURL,
+    saveType,
+    setSaveType,
+    isTemplateCreated,
+    setIsTemplateCreated,
+    localizedItems,
+    setLocalizedItems,
+    deleteIds,
+    setDeleteIds,
+    nonAssetAsWasCodes,
+    setNonAssetAsWasCodes,
+    nonAssetToBeCodes,
+    setNonAssetToBeCodes,
+    nonAssetPptNos,
+    setNonAssetPptNos,
+    assetAsWasCodes,
+    setAssetAsWasCodes,
+    assetToBeCodes,
+    setAssetToBeCodes,
+    assetPptNos,
+    setAssetPptNos,
+    setTemplateID,
+    originalHtmlFile,
+    setOriginalHtmlFile,
+    addTextArea,
+    removeTextArea,
+    addAssetArea,
+    removeAssetArea,
+    handleAssetAsWasChange,
+    handleAssetToBeChange,
+    handleAssetPptNoChange,
+    countOccurrences,
+    handleSaveTemplate,
+    hasInvalidAsWasCount,
   };
 };

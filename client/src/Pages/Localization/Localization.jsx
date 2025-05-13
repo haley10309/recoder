@@ -1,10 +1,48 @@
 import React, { useState, useEffect } from "react";
-// import TemplateSelect from "@LocalizationComponent/TemplateSelect";
-// import TxtFileUpload from "@LocalizationComponent/TxtFileUpload";
-// import CountryRows from "@LocalizationComponent/CountryRows";
-// import { localizationDummyData } from "@/dummy_data/setting_dummy";
+
+import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
+import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 
 const Localization = () => {
+  const {
+      ticketNum,
+      setTicketNum,
+      ticketURL,
+      setTicketURL,
+      saveType,
+      setSaveType,
+      isTemplateCreated,
+      setIsTemplateCreated,
+      localizedItems,
+      setLocalizedItems,
+      deleteIds,
+      setDeleteIds,
+      nonAssetAsWasCodes,
+      setNonAssetAsWasCodes,
+      nonAssetToBeCodes,
+      setNonAssetToBeCodes,
+      nonAssetPptNos,
+      setNonAssetPptNos,
+      assetAsWasCodes,
+      setAssetAsWasCodes,
+      assetToBeCodes,
+      setAssetToBeCodes,
+      assetPptNos,
+      setAssetPptNos,
+      setTemplateID,
+      originalHtmlFile,
+      setOriginalHtmlFile,
+      addTextArea,
+      removeTextArea,
+      addAssetArea,
+      removeAssetArea,
+      handleAssetAsWasChange,
+      handleAssetToBeChange,
+      handleAssetPptNoChange,
+      countOccurrences,
+      handleSaveTemplate,
+  } = useCheckTemplate();
+
   const [project, setProject] = useState("");
   const [pdp, setPdp] = useState("");
   const [product, setProduct] = useState("");
@@ -69,21 +107,29 @@ const Localization = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
-      {/* <TemplateSelect
-        {...{ project, pdp, product, setProject, setPdp, setProduct }}
+      {/* 📄 템플릿 불러오기 */}
+      <h2 className="font-bold text-black text-[16px] mb-[15px]">📄 템플릿 불러오기</h2>
+      <CheckTemplate
+        path="localize-template"
+        ticketNum={ticketNum}
+        ticketURL={ticketURL}
+        setTicketNum={setTicketNum}
+        setTicketURL={setTicketURL}
+        setTemplateID={setTemplateID}
+        setIsTemplateCreated={setIsTemplateCreated}
+        setSaveType={setSaveType}
+        setNonAssetPptNos={setNonAssetPptNos}
+        setNonAssetAsWasCodes={setNonAssetAsWasCodes}
+        setNonAssetToBeCodes={setNonAssetToBeCodes}
+        setAssetPptNos={setAssetPptNos}
+        setAssetAsWasCodes={setAssetAsWasCodes}
+        setAssetToBeCodes={setAssetToBeCodes}
+        setLocalizedItems={setLocalizedItems}
+        setDeleteIds={setDeleteIds}
       />
-      <TxtFileUpload
-        {...{ filename, setFilename, setValidCountries, setTranslationData }}
-      />
-      <CountryRows {...{ validCountries, translationData }} />
-
-      <div className="text-right mt-8">
-        <button className="bg-blue-100 hover:bg-blue-200 text-blue-600 rounded px-3 py-1 cursor-pointer">
-          다운로드
-        </button>
-      </div> */}
-
       
+      {/* TODO: create-template에 있던 컴포넌트 잘 옮기기~ */}
+      {/* TODO: 원본코드도 올려야 하나? */}
 
       {/* 📤 번역 파일 업로드 */}
       {/* <TransFileUpload 
@@ -94,7 +140,7 @@ const Localization = () => {
       /> */}
 
       {/* 🌐 로컬라이제이션 템플릿 */}
-      <h2 className="font-bold text-black mb-5 text-[16px]">🌐 로컬라이제이션 템플릿</h2>
+      <h2 className="font-bold text-black text-[16px] mb-[15px] mt-[30px]">🌐 로컬라이제이션 템플릿</h2>
       {/* <div className="flex flex-col">
         {localizedItems.map((item, idx) => (
           <TransBox
