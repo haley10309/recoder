@@ -5,6 +5,7 @@ import Asset_Template from "@/Pages/Create_Template/Asset_template";
 import CopyTextButton from "../Common/CopyTextButton";
 
 const TemplateCodeEditor = ({
+  checkOnlyInvalidCount,
   saveType,
   assetPptNos,
   assetAsWasCodes,
@@ -25,8 +26,37 @@ const TemplateCodeEditor = ({
   setNonAssetAsWasCodes,
   setNonAssetToBeCodes,
   handleSaveTemplate,
-  hasInvalidAsWasCount,
+  checkHasInvalidAsWasCount,
 }) => {
+  // TODO: 항목 수정하면 미친듯이 에러를 뿜는다. 확인하기.
+
+  if (checkOnlyInvalidCount) {
+    return (
+      <div className="mt-[30px] mb-[20px] flex flex-col items-center">
+        {originalHtmlFile ? (
+          <>
+            {checkHasInvalidAsWasCount() ? (
+              <div style={{ color: "#ff0019", fontSize: "15px", fontWeight: "bold" }}>
+                ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. <br/> Create/Update Template 페이지에서 템플릿을 수정한 뒤 다시 시도하세요.
+              </div>
+            ) : (
+              <div style={{ color: "#00c93c", fontSize: "15px", fontWeight: "bold" }}>
+                ✅모든 항목의 '원본코드 내 AS-WAS 코드 출현 횟수'가 1이에요. 템플릿으로 사용해도 좋아요.
+              </div>
+            )}
+            <div style={{ color: "#858585", fontSize: "12px" }}>
+                (non-asset 기준. asset은 포함시키지 않았음)
+            </div>
+          </>
+        ) : (
+          <div style={{ color: "grey", fontSize: "15px", fontWeight: "bold" }}>
+            💁‍♀️원본코드를 업로드해야 코드 출현 횟수를 확인할 수 있어요.
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Asset */}
@@ -44,7 +74,31 @@ const TemplateCodeEditor = ({
         />
       </div>
 
+      <div className="mt-[30px] mb-[20px] flex flex-col items-center">
+        {originalHtmlFile ? (
+          <>
+            {checkHasInvalidAsWasCount() ? (
+              <div style={{ color: "#ff0019", fontSize: "15px", fontWeight: "bold" }}>
+                👇👇 ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. 확인이 필요해요! 👇👇
+              </div>
+            ) : (
+              <div style={{ color: "#00c93c", fontSize: "15px", fontWeight: "bold" }}>
+                ✅모든 항목의 '원본코드 내 AS-WAS 코드 출현 횟수'가 1이에요. 템플릿으로 사용해도 좋아요.
+              </div>
+            )}
+            <div style={{ color: "#858585", fontSize: "12px" }}>
+                (non-asset 기준. asset은 포함시키지 않았음)
+            </div>
+          </>
+        ) : (
+          <div style={{ color: "grey", fontSize: "15px", fontWeight: "bold" }}>
+            💁‍♀️원본코드를 업로드해야 코드 출현 횟수를 확인할 수 있어요.
+          </div>
+        )}
+      </div>
+
       {/* Non-Asset */}
+      {/** TODO: 최적화 필요 */}
       {nonAssetAsWasCodes.map((nonAssetAsWasCode, i) => (
         <div key={i} index={i} className="as_was_to_be_div">
           <div className="flex flex-col justify-center items-center gap-[10px]">
@@ -139,23 +193,6 @@ const TemplateCodeEditor = ({
           </button>
         </div>
       ))}
-
-      {!!originalHtmlFile && (
-        <div className="mt-[30px] mb-[20px] flex flex-col items-center">
-          {hasInvalidAsWasCount() ? (
-            <div style={{ color: "#ff0019", fontSize: "15px", fontWeight: "bold" }}>
-              👇👇 ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. 확인이 필요해요! 👇👇
-            </div>
-          ) : (
-            <div style={{ color: "#00c93c", fontSize: "15px", fontWeight: "bold" }}>
-              ✅모든 항목의 '원본코드 내 AS-WAS 코드 출현 횟수'가 1이에요. 템플릿으로 사용해도 좋아요.
-            </div>
-          )}
-          <div style={{ color: "#858585", fontSize: "12px" }}>
-              (non-asset 기준. asset은 포함시키지 않았음)
-          </div>
-        </div>
-      )}
 
       <div className="flex gap-[15px] save_button_div">
         <button onClick={addTextArea} className="plus-button rounded-[10px]">

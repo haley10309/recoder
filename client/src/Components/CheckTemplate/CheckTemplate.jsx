@@ -48,7 +48,7 @@ const CheckTemplate = ({
 
         const templateId = detailData.templateId;
         const aswasTobeList = detailData.aswas_tobe_list || [];
-        const localizationList = detailData.localization_list || [];
+        const localizationList = detailData.localization_list || []; // TODO: CreateTemplate에서는 필요없음음
 
         const nonAssetAswasList = aswasTobeList.filter((it) => !isAssetCode(it.aswas_code));
         const nonAssetTobeList = aswasTobeList.filter((it) => !isAssetCode(it.tobe_code));
@@ -76,7 +76,7 @@ const CheckTemplate = ({
       } else {
         setSaveType("create");
         setIsTemplateCreated(false);
-        setLocalizedItems([{ local_code: "" }, { local_code: "" }]);
+        setLocalizedItems([{ local_code: "" }]);
         setDeleteIds([]);
         
         if (path === 'create-template') {

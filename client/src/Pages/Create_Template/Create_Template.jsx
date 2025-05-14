@@ -43,7 +43,7 @@ const Create_Template = () => {
       handleAssetPptNoChange,
       countOccurrences,
       handleSaveTemplate,
-      hasInvalidAsWasCount,
+      checkHasInvalidAsWasCount,
   } = useCheckTemplate();
 
   return (
@@ -71,6 +71,7 @@ const Create_Template = () => {
 
       {/* 📤 파일 업로드 */}
       <UploadFiles
+        isUploadOnlyOriginHtmlFile={false}
         setNonAssetPptNos={setNonAssetPptNos} 
         setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
         setNonAssetToBeCodes={setNonAssetToBeCodes} 
@@ -83,6 +84,7 @@ const Create_Template = () => {
       {/* ✅ AS-WAS / TO-BE 템플릿 */}
       <h2 className="font-bold text-black mb-5 text-[16px]">✅ AS-WAS / TO-BE 템플릿</h2>
       <TemplateCodeEditor
+        checkOnlyInvalidCount={false}
         saveType={saveType}
         assetPptNos={assetPptNos}
         assetAsWasCodes={assetAsWasCodes}
@@ -103,7 +105,7 @@ const Create_Template = () => {
         setNonAssetAsWasCodes={setNonAssetAsWasCodes}
         setNonAssetToBeCodes={setNonAssetToBeCodes}
         handleSaveTemplate={handleSaveTemplate}
-        hasInvalidAsWasCount={hasInvalidAsWasCount}
+        checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
       />
     </div>
   );

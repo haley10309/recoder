@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 
 import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
+import TransFileUpload from "./TransFileUpload";
+import TemplateCodeEditor from "@/Components/TemplateCodeEditor/TemplateCodeEditor";
+import UploadFiles from "../Create_Template/UploadFiles";
 
 const Localization = () => {
   const {
@@ -41,6 +44,7 @@ const Localization = () => {
       handleAssetPptNoChange,
       countOccurrences,
       handleSaveTemplate,
+      checkHasInvalidAsWasCount,
   } = useCheckTemplate();
 
   const [project, setProject] = useState("");
@@ -50,9 +54,9 @@ const Localization = () => {
   const [validCountries, setValidCountries] = useState([]);
   const [translationData, setTranslationData] = useState({});
   
-// Localization states
-// const [englishCopyList, setEnglishCopyList] = useState([]);
-// const [tobeCodeList, setTobeCodeList] = useState([]);
+  // Localization states
+  const [englishCopyList, setEnglishCopyList] = useState([]);
+  const [tobeCodeList, setTobeCodeList] = useState([]);
 
   // 로컬라이제이션 생성
   // const handleCreateOrUpdateLocalization = async () => {
@@ -128,16 +132,53 @@ const Localization = () => {
         setDeleteIds={setDeleteIds}
       />
       
-      {/* TODO: create-template에 있던 컴포넌트 잘 옮기기~ */}
-      {/* TODO: 원본코드도 올려야 하나? */}
+      {/* 📤 파일 업로드 */}
+      <UploadFiles
+        isUploadOnlyOriginHtmlFile={true}
+        setNonAssetPptNos={setNonAssetPptNos} 
+        setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
+        setNonAssetToBeCodes={setNonAssetToBeCodes} 
+        setAssetPptNos={setAssetPptNos} 
+        setAssetAsWasCodes={setAssetAsWasCodes} 
+        setAssetToBeCodes={setAssetToBeCodes} 
+        setOriginalHtmlFile={setOriginalHtmlFile} 
+      />
+      
+      {/* ✅ AS-WAS / TO-BE 템플릿 */}
+      <TemplateCodeEditor
+        checkOnlyInvalidCount={true}
+        saveType={saveType}
+        assetPptNos={assetPptNos}
+        assetAsWasCodes={assetAsWasCodes}
+        assetToBeCodes={assetToBeCodes}
+        nonAssetPptNos={nonAssetPptNos}
+        nonAssetAsWasCodes={nonAssetAsWasCodes}
+        nonAssetToBeCodes={nonAssetToBeCodes}
+        addAssetArea={addAssetArea}
+        removeAssetArea={removeAssetArea}
+        addTextArea={addTextArea}
+        removeTextArea={removeTextArea}
+        originalHtmlFile={originalHtmlFile}
+        countOccurrences={countOccurrences}
+        handleAssetPptNoChange={handleAssetPptNoChange}
+        handleAssetAsWasChange={handleAssetAsWasChange}
+        handleAssetToBeChange={handleAssetToBeChange}
+        setNonAssetPptNos={setNonAssetPptNos}
+        setNonAssetAsWasCodes={setNonAssetAsWasCodes}
+        setNonAssetToBeCodes={setNonAssetToBeCodes}
+        handleSaveTemplate={handleSaveTemplate}
+        checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
+      />
 
       {/* 📤 번역 파일 업로드 */}
-      {/* <TransFileUpload 
+      <TransFileUpload
         isTemplateCreated={isTemplateCreated}
         tobeCodeList={tobeCodeList}
         setEnglishCopyList={setEnglishCopyList}
         setLocalizedItems={setLocalizedItems}
-      /> */}
+        hasOriginalHtmlFile={!!originalHtmlFile}
+        checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
+      />
 
       {/* 🌐 로컬라이제이션 템플릿 */}
       <h2 className="font-bold text-black text-[16px] mb-[15px] mt-[30px]">🌐 로컬라이제이션 템플릿</h2>

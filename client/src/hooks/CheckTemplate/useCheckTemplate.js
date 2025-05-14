@@ -114,7 +114,7 @@ export const useCheckTemplate = () => {
     }
   };
 
-  const hasInvalidAsWasCount = () => {
+  const checkHasInvalidAsWasCount = () => {
     return nonAssetAsWasCodes.some(code => countOccurrences(code) !== 1)
   };
 
@@ -155,6 +155,6 @@ export const useCheckTemplate = () => {
     handleAssetPptNoChange,
     countOccurrences,
     handleSaveTemplate,
-    hasInvalidAsWasCount,
+    checkHasInvalidAsWasCount,
   };
 };
