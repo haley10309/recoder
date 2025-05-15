@@ -32,7 +32,7 @@ exports.getTobeCodeByTicket = (req, res) => {
       SELECT ppt_no, tobe_code
       FROM AsWasToBe
       WHERE hotfix_id = ?
-    `;
+    `; // hotfix_id = TemplateSetting.id
 
     db.query(getTobeCodesQuery, [templateId], (err, rows) => {
       if (err) {
