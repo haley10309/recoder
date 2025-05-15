@@ -128,7 +128,7 @@ npm run dev # dev script 참고 -> server/package.json
     ```bash
     git checkout main
     git pull origin main
-    git checkout -b 브랜치명명
+    git checkout -b 브랜치명
     ```
 
 - 기능 개발 후 main 브랜치로 Pull Request를 보내 병합 (코드리뷰는 생략하고 각자 직접 병합 버튼 누르기)
