@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
+import AddIcon from "@mui/icons-material/Add";
+import axios from "axios";
 
 import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import TransFileUpload from "./TransFileUpload";
 import TemplateCodeEditor from "@/Components/TemplateCodeEditor/TemplateCodeEditor";
 import UploadFiles from "../Create_Template/UploadFiles";
+import TransBox from "@/Components/Common/TransBox";
+import Gap from "@/Components/Common/Gap";
+import TitleLabel from "@/Components/Common/TitleLabel";
 
 const Localization = () => {
   const {
@@ -56,63 +61,50 @@ const Localization = () => {
   
   // Localization states
   const [englishCopyList, setEnglishCopyList] = useState([]);
-  const [tobeCodeList, setTobeCodeList] = useState([]);
+  const tobeCodes = nonAssetToBeCodes.slice(0); // TODO: nonAsset만인데, asset도 다뤄야하면 수정 필요
 
   // 로컬라이제이션 생성
-  // const handleCreateOrUpdateLocalization = async () => {
-  //   if (!isTemplateCreated) {
-  //     alert("핫픽스 템플릿을 먼저 생성해 주세요.");
-  //     return;
-  //   }
-  //   try {
-  //     const body = { 
-  //       ticket_num: ticketNum, 
-  //       ticket_url: ticketURL, 
-  //       localization_list: 
-  //         localizedItems.map((item) => (
-  //           item.id 
-  //             ? { id: item.id, local_code: item.local_code }
-  //             : { local_code: item.local_code }
-  //         )), 
-  //       delete_ids: deleteIds,
-  //     };
+  const handleCreateOrUpdateLocalization = async () => {
+    // TODO: 이외 다른 조건도 모두 체크
+    // if (!isTemplateCreated) {
+    //   alert("핫픽스 템플릿을 먼저 생성해 주세요.");
+    //   return;
+    // }
+
+    // try {
+    //   const body = { 
+    //     ticket_num: ticketNum, 
+    //     ticket_url: ticketURL, 
+    //     localization_list: 
+    //       localizedItems.map((item) => (
+    //         item.id 
+    //           ? { id: item.id, local_code: item.local_code }
+    //           : { local_code: item.local_code }
+    //       )), 
+    //     delete_ids: deleteIds,
+    //   };
       
-  //     await axios.put(`${BASE_URL}/localization/template`, body, { headers: { "Content-Type": "application/json" } });
-  //     setDeleteIds([]);
-  //     const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
-  //     setLocalizedItems(data.localization_list || []);
-  //     alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
-  //   } catch (err) {
-  //     console.error("[Error] handleCreateOrUpdateLocalization", err);
-  //     alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
-  //   }
-  // };
+    //   await axios.put(`${BASE_URL}/localization/template`, body, { headers: { "Content-Type": "application/json" } });
+    //   setDeleteIds([]);
+    //   const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
+    //   setLocalizedItems(data.localization_list || []);
+    //   alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
+    // } catch (err) {
+    //   console.error("[Error] handleCreateOrUpdateLocalization", err);
+    //   alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
+    // }
+  };
 
   useEffect(() => {
     // setValidCountries(localizationDummyData.validCountries);
     // setTranslationData(localizationDummyData.translationData);
   }, []);
 
-  // tobe-code-list API call
-  // useEffect(() => {
-  //   // TODO: tobecode list를 다시 덮어버리는데, 이거 수정하기
-  //   if (englishCopyList.length > 0 && ticketNum && ticketURL) {
-  //     // tobe 코드를 다시 바꿔야 하는 이유???
-  //     // 로컬라이제이션이랑 아예 분리할거면 이건 안하는게 맞음
-  //     axios
-  //       .post(`${BASE_URL}/localization/tobe-code-list`, {
-  //         ticket_num: ticketNum,
-  //         ticket_url: ticketURL,
-  //       })
-  //       .then((res) => setTobeCodeList(res.data.tobe_code_list || []))
-  //       .catch((err) => console.error(err));
-  //   }
-  // }, [englishCopyList, ticketNum, ticketURL]);
-
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
-      {/* 📄 템플릿 불러오기 */}
-      <h2 className="font-bold text-black text-[16px] mb-[15px]">📄 템플릿 불러오기</h2>
+      <TitleLabel text="📄 템플릿 불러오기" />
+      <Gap gap={15} />
+
       <CheckTemplate
         path="localize-template"
         ticketNum={ticketNum}
@@ -131,8 +123,10 @@ const Localization = () => {
         setLocalizedItems={setLocalizedItems}
         setDeleteIds={setDeleteIds}
       />
-      
-      {/* 📤 파일 업로드 */}
+
+      <TitleLabel text="📤 파일 업로드(선택)" />
+      <Gap gap={15} />
+
       <UploadFiles
         isUploadOnlyOriginHtmlFile={true}
         setNonAssetPptNos={setNonAssetPptNos} 
@@ -173,7 +167,7 @@ const Localization = () => {
       {/* 📤 번역 파일 업로드 */}
       <TransFileUpload
         isTemplateCreated={isTemplateCreated}
-        tobeCodeList={tobeCodeList}
+        tobeCodes={tobeCodes}
         setEnglishCopyList={setEnglishCopyList}
         setLocalizedItems={setLocalizedItems}
         hasOriginalHtmlFile={!!originalHtmlFile}
@@ -181,11 +175,13 @@ const Localization = () => {
       />
 
       {/* 🌐 로컬라이제이션 템플릿 */}
-      <h2 className="font-bold text-black text-[16px] mb-[15px] mt-[30px]">🌐 로컬라이제이션 템플릿</h2>
-      {/* <div className="flex flex-col">
+      <TitleLabel text="🌐 로컬라이제이션 템플릿" />
+      <Gap gap={15} />
+      <div className="flex flex-col">
         {localizedItems.map((item, idx) => (
           <TransBox
             key={idx}
+            itemId={item.id}
             text={item.local_code}
             highlights={englishCopyList}
             onChange={(newTxt) => {
@@ -196,6 +192,7 @@ const Localization = () => {
               });
             }}
             onDelete={() => {
+              // TODO: id 활용 부분 전부 다시 체크, id로 통일?
               setLocalizedItems((prev) => prev.filter((_, i) => i !== idx));
               if (item.id) setDeleteIds((prev) => [...prev, item.id]);
             }}
@@ -207,10 +204,15 @@ const Localization = () => {
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>
-        <button type="button" className="save_button" onClick={handleCreateOrUpdateLocalization} disabled={!isTemplateCreated}>
+        <button 
+          type="button" 
+          className="save_button" 
+          onClick={handleCreateOrUpdateLocalization} 
+          disabled={!isTemplateCreated} // TODO: 확인 && disabled 조건들 모두 확인 전체 코드에서
+        >
           {saveType === "update" ? ` 로컬라이제이션 템플릿 수정` : ` 로컬라이제이션 템플릿 생성`}
         </button>
-      </div> */}
+      </div>
     </div>
   );
 };

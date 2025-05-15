@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { uploadTranslationDeck } from "@/apis/apis";
-
+// TODO: 코드 확인
 export function useTranslationUpload(country_code) {
   const [translationsByCountry, setTranslationsByCountry] = useState({});
   const [currentTranslations, setCurrentTranslations] = useState({});

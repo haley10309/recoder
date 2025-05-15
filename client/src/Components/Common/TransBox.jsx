@@ -1,17 +1,16 @@
 import React, { useEffect, useRef } from "react";
 import "@Components/Common/TransBox.scss";
 
-export default function TransBox({ text: initialText, highlights = [], onChange, onDelete }) {
+export default function TransBox({ 
+  text: initialText, 
+  highlights = [], 
+  onChange, 
+  onDelete,
+  itemId,
+}) {
   const editableRef = useRef(null);
 
-  // 초기 텍스트 반영 & 하이라이트
-  useEffect(() => {
-    if (editableRef.current) {
-      editableRef.current.innerHTML = escapeHtml(initialText);
-      applyHighlights();
-    }
-  }, [initialText, highlights]);
-
+  // TODO: 여기 코드 보기
   // 영어 원본 부분만 빨간색으로 감싸기
   const applyHighlights = () => {
     if (!editableRef.current) return;
@@ -29,16 +28,40 @@ export default function TransBox({ text: initialText, highlights = [], onChange,
     onChange?.(newText);
   };
 
+  // 초기 텍스트 반영 & 하이라이트
+  useEffect(() => {
+    if (editableRef.current) {
+      editableRef.current.innerHTML = escapeHtml(initialText);
+      applyHighlights();
+    }
+  }, [initialText, highlights]);
+
   return (
     <div className="flex gap-[20px] justify-center mb-4 p-[30px] bg-[#f9f9f9] rounded-[8px] shadow-[0_2px_5px_rgba(0,0,0,0.1)] transition-colors duration-200 ease-linear">
       {/* 레이아웃 유지를 위한 invisible 요소 */}
-      <div className="flex items-center invisible">
+      {/* <div className="flex items-center invisible">
         <label className="font-[16px]">PPT NO.</label>
         <input type="text" className="w-[30px] h-[30px] rounded-[5px] ml-[10px] text-center border border-[#8B8B8B] outline-none focus:border-[#595880]" />
-      </div>
+      </div> */}
+
       {/* 텍스트 입력 및 하이라이트 영역 */}
-      <div ref={editableRef} contentEditable suppressContentEditableWarning onBlur={handleBlur} data-placeholder="번역할 텍스트를 입력해 주세요." className="p-[8px] w-[80%] h-[140px] bg-[#e4e4e4] rounded-[5px] text-[16px] font-[500] whitespace-pre-wrap break-all outline-none border border-[#ccc] focus:border-[#595880] translate-scroll" />
-      <button type="button" onClick={onDelete} className="px-4 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white">
+      <div>(id 추가예정)</div>
+      <div
+        className="p-[8px] w-[80%] h-[180px] bg-[#e4e4e4] rounded-[5px] text-[16px] font-[500] whitespace-pre-wrap break-all outline-none border border-[#ccc] focus:border-[#595880] translate-scroll" 
+      >
+        <div 
+          ref={editableRef} 
+          contentEditable 
+          suppressContentEditableWarning 
+          onBlur={handleBlur} 
+          data-placeholder="번역할 텍스트를 입력해 주세요." 
+        />
+      </div>
+      <button 
+        type="button" 
+        onClick={onDelete} 
+        className="px-4 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white"
+      >
         삭제
       </button>
     </div>

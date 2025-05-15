@@ -30,6 +30,7 @@ const LeftNavBar = () => {
 
       <ButtonGroup>
         <NavButton
+        // TODO: active prop에 문제가 있는듯하다. 콘솔 확인.
           active={location.pathname === "/" || isActive("/create-template")}
           onClick={() => handleNavigate("/create-template")}
         >

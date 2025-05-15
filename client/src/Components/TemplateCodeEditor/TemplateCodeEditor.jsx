@@ -50,7 +50,7 @@ const TemplateCodeEditor = ({
           </>
         ) : (
           <div style={{ color: "grey", fontSize: "15px", fontWeight: "bold" }}>
-            💁‍♀️원본코드를 업로드해야 코드 출현 횟수를 확인할 수 있어요.
+            💁‍♀️원본코드를 업로드해야 '원본코드 내 AS-WAS 코드 출현 횟수'를 확인할 수 있어요.
           </div>
         )}
       </div>

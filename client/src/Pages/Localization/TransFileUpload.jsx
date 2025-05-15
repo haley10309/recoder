@@ -6,7 +6,7 @@ import arrowIcon from "@/assets/shift-fill.svg";
 
 export default function TransFileUpload({ 
   isTemplateCreated,
-  tobeCodeList,
+  tobeCodes,
   setEnglishCopyList,
   setLocalizedItems,
   hasOriginalHtmlFile,
@@ -35,13 +35,15 @@ export default function TransFileUpload({
       );
       const englishCopyList = res.data.englishCopyList;
       setEnglishCopyList(englishCopyList);
-      
+
       // 2. localizedItems 업데이트
       if (englishCopyList.length > 0) {
-        // 이미 존재하는 tobeCodeList에서 번역이 필요한 item만 뽑아내기
-        const items = tobeCodeList
-                        .filter((item) => englishCopyList.some((copyItem) => item.tobe_code.includes(copyItem)))
-                        .map((item) => ({ id: item.id, local_code: item.tobe_code }));
+        // 이미 존재하는 tobeCodes에서 번역이 필요한 item만 뽑아내기
+        const items = tobeCodes
+                        .filter((tobeCode) => englishCopyList.some((copyItem) => tobeCode.includes(copyItem)))
+                        // .map((tobeCode) => ({ id: tobeCode.id, local_code: tobeCode }));
+                        .map((tobeCode) => ({ local_code: tobeCode })); // TODO: id 기존거 활용 필요
+                        // .map((tobeCode, idx) => ({ id: idx, local_code: tobeCode })); // TODO: id 기준. 맨첨에 넘겨줄 때 있는지, 구분을 위한 목적이 뭔지.
         
         if (items.length > 0) setLocalizedItems(items);
       }
