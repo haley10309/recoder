@@ -63,7 +63,7 @@ const BasicTextarea = ({
         <PptNo>
           <TextBold>p. {pptNo}</TextBold>
           <CopyTextButton
-            text={"ppt{숫자}로 복사"}
+            text={"'ppt{숫자}'로 복사"}
             value={`ppt${pptNo ?? ''}`}
           />
         </PptNo>
@@ -76,10 +76,11 @@ const BasicTextarea = ({
             placeholder="As-Was code를 입력하세요."
           />
           
-          <div className="flex">
+          <div className="flex font-bold">
             <div className="text-xs">
-              <span className="ml-1 font-bold text-[#4b5563;]">
+              <span className="ml-1 text-[#4b5563;]">
                 [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
+                {/** TODO: (원본코드 업로드 필요) 추가 필? */}
               </span>
             </div>
             <span className="ml-1 text-xs"
@@ -133,9 +134,9 @@ const BasicTextarea = ({
           />
           
           
-          <div className="flex">
+          <div className="flex font-bold">
             <div className="text-xs">
-              <span className="ml-1 font-bold text-[#4b5563;]">
+              <span className="ml-1 text-[#4b5563;]">
                 [TO-BE] 변환 후 코드 출현 횟수:
               </span>
             </div>

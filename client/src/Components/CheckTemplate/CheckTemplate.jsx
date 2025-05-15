@@ -48,7 +48,7 @@ const CheckTemplate = ({
 
         const templateId = detailData.templateId;
         const aswasTobeList = detailData.aswas_tobe_list || [];
-        const localizationList = detailData.localization_list || []; // TODO: CreateTemplate에서는 필요없음음
+        const localizationList = detailData.localization_list || [];
 
         const nonAssetAswasList = aswasTobeList.filter((it) => !isAssetCode(it.aswas_code));
         const nonAssetTobeList = aswasTobeList.filter((it) => !isAssetCode(it.tobe_code));
@@ -67,6 +67,7 @@ const CheckTemplate = ({
         setAssetAsWasCodes(assetAswasList.map((it) => it.aswas_code?.trim() || ""));
         setAssetToBeCodes(assetTobeList.map((it) => it.tobe_code?.trim() || ""));
 
+        // TODO: localization id 가져올 때 이대로 가져오면 되는건지 체크~
         setLocalizedItems(
           localizationList.map((it) => ({
             id: it.id,
