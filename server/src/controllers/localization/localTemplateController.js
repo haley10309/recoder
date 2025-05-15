@@ -13,6 +13,8 @@ exports.updateLocalizationFull = (req, res) => {
       return res.status(404).json({ success: false, message: "No such template." });
     }
 
+    // TODO: id 관리... 아예 체계적으로 해야됨. 애초에 템플릿 불러올 때부터. -> localization의 id 관리 기준을 알아야 됨.
+    // TODO: 있는건 있는대로, 없으면 auto increase 되도록?
     const hotfix_id = results[0].id;
     const insertItems = localization_list.filter(item => !item.id);
     const updateItems = localization_list.filter(item => item.id);
