@@ -28,8 +28,6 @@ const TemplateCodeEditor = ({
   handleSaveTemplate,
   checkHasInvalidAsWasCount,
 }) => {
-  // TODO: 항목 수정하면 미친듯이 에러를 뿜는다. 확인하기.
-
   if (checkOnlyInvalidCount) {
     return (
       <div className="mt-[30px] mb-[20px] flex flex-col items-center">
@@ -98,9 +96,8 @@ const TemplateCodeEditor = ({
       </div>
 
       {/* Non-Asset */}
-      {/** TODO: 최적화 필요 */}
-      {nonAssetAsWasCodes.map((nonAssetAsWasCode, i) => (
-        <div key={i} index={i} className="as_was_to_be_div">
+      {[...Array(nonAssetAsWasCodes.length)].map((_, i) => (
+        <div key={`non-asset-${i}`} index={i} className="as_was_to_be_div">
           <div className="flex flex-col justify-center items-center gap-[10px]">
             <div className="flex items-center gap-[10px]">
               <label className="font-[16px]">PPT NO.</label>
@@ -131,9 +128,9 @@ const TemplateCodeEditor = ({
                 rows="5"
                 className="code-textarea"
                 placeholder="AS-WAS 코드를 입력해 주세요."
-                value={nonAssetAsWasCode}
+                value={nonAssetAsWasCodes[i]}
                 onChange={(e) => {
-                  const arr = [...nonAssetAsWasCode];
+                  const arr = [...nonAssetAsWasCodes];
                   arr[i] = e.target.value;
                   setNonAssetAsWasCodes(arr);
                 }}
@@ -147,9 +144,9 @@ const TemplateCodeEditor = ({
                 {originalHtmlFile ? (
                   <span className="ml-1 text-xs"
                     style={{
-                      color: countOccurrences(nonAssetAsWasCode) === 1 ? "blue" : "red"
+                      color: countOccurrences(nonAssetAsWasCodes[i]) === 1 ? "blue" : "red"
                     }}>
-                      {`${countOccurrences(nonAssetAsWasCode)}회`}
+                      {`${countOccurrences(nonAssetAsWasCodes[i])}회`}
                   </span>
                 ) : (
                   <span className="ml-1 text-xs font-normal text-[#ff7300]">
@@ -160,7 +157,7 @@ const TemplateCodeEditor = ({
 
               <CopyTextButton
                 text={"코드 복사"}
-                value={nonAssetAsWasCode}
+                value={nonAssetAsWasCodes[i]}
                 style={{ marginTop: "15px" }}
               />
             </div>
