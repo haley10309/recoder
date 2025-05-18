@@ -93,11 +93,6 @@ exports.translateHtmlWithTxt = (req, res) => {
 
             const matchIndex = englishCopyList.findIndex(copy => clean(innerText).includes(clean(copy)));
 
-            // console.log("innerText:", JSON.stringify(innerText));
-            // console.log("englishCopyList", englishCopyList.map(c => JSON.stringify(c)));
-            // console.log("matchIndex:", matchIndex);
-            // console.log("번역어:", translations[country_code]?.[matchIndex]);
-
             const originalEnglish = englishCopyList[matchIndex];
             const translated = translations[country_code]?.[matchIndex];
 

@@ -16,23 +16,11 @@ const EditTemplate = () => {
       setIsTemplateCreated,
       setLocalizationEntries,
       setDeleteIds,
-      nonAssetAsWasCodes,
-      setNonAssetAsWasCodes,
-      nonAssetToBeCodes,
-      setNonAssetToBeCodes,
-      nonAssetPptNos,
-      setNonAssetPptNos,
-      assetAsWasCodes,
-      setAssetAsWasCodes,
-      assetToBeCodes,
-      setAssetToBeCodes,
-      assetPptNos,
-      setAssetPptNos,
       setTemplateID,
       originalHtmlFile,
       setOriginalHtmlFile,
-      addTextArea,
-      removeTextArea,
+      addNonAssetTextArea,
+      removeNonAssetTextArea,
       addAssetArea,
       removeAssetArea,
       handleAssetAsWasChange,
@@ -41,6 +29,13 @@ const EditTemplate = () => {
       countOccurrences,
       handleSaveTemplate,
       checkHasInvalidAsWasCount,
+      assetCodeChanges,
+      nonAssetCodeChanges,
+      setNonAssetCodeChanges,
+      setAssetCodeChanges,
+      handleNonAssetPptNoChange,
+      handleNonAssetAswasChange,
+      handleNonAssetTobeChange,
   } = useCheckTemplate();
 
   return (
@@ -48,34 +43,18 @@ const EditTemplate = () => {
       {/* 📄 템플릿 불러오기 */}
       <h2 className="font-bold text-black text-[16px] mb-[15px]">📄 템플릿 불러오기</h2>
       <CheckTemplate
-        path="edit-template"
-        ticketNum={ticketNum}
-        ticketURL={ticketURL}
-        setTicketNum={setTicketNum}
-        setTicketURL={setTicketURL}
-        setTemplateID={setTemplateID}
-        setIsTemplateCreated={setIsTemplateCreated}
-        setSaveType={setSaveType}
-        setNonAssetPptNos={setNonAssetPptNos}
-        setNonAssetAsWasCodes={setNonAssetAsWasCodes}
-        setNonAssetToBeCodes={setNonAssetToBeCodes}
-        setAssetPptNos={setAssetPptNos}
-        setAssetAsWasCodes={setAssetAsWasCodes}
-        setAssetToBeCodes={setAssetToBeCodes}
         setLocalizationEntries={setLocalizationEntries}
         setDeleteIds={setDeleteIds}
+        setAssetCodeChanges={setAssetCodeChanges}
+        setNonAssetCodeChanges={setNonAssetCodeChanges}
       />
 
       {/* 📤 파일 업로드 */}
       <UploadFiles
         isUploadOnlyOriginHtmlFile={false}
-        setNonAssetPptNos={setNonAssetPptNos} 
-        setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
-        setNonAssetToBeCodes={setNonAssetToBeCodes} 
-        setAssetPptNos={setAssetPptNos} 
-        setAssetAsWasCodes={setAssetAsWasCodes} 
-        setAssetToBeCodes={setAssetToBeCodes} 
         setOriginalHtmlFile={setOriginalHtmlFile} 
+        setAssetCodeChanges={setAssetCodeChanges}
+        setNonAssetCodeChanges={setNonAssetCodeChanges}
       />
 
       {/* ✅ AS-WAS / TO-BE 템플릿 */}
@@ -83,26 +62,22 @@ const EditTemplate = () => {
       <TemplateCodeEditor
         checkOnlyInvalidCount={false}
         saveType={saveType}
-        assetPptNos={assetPptNos}
-        assetAsWasCodes={assetAsWasCodes}
-        assetToBeCodes={assetToBeCodes}
-        nonAssetPptNos={nonAssetPptNos}
-        nonAssetAsWasCodes={nonAssetAsWasCodes}
-        nonAssetToBeCodes={nonAssetToBeCodes}
+        assetCodeChanges={assetCodeChanges}
         addAssetArea={addAssetArea}
         removeAssetArea={removeAssetArea}
-        addTextArea={addTextArea}
-        removeTextArea={removeTextArea}
+        addNonAssetTextArea={addNonAssetTextArea}
+        removeNonAssetTextArea={removeNonAssetTextArea}
         originalHtmlFile={originalHtmlFile}
         countOccurrences={countOccurrences}
         handleAssetPptNoChange={handleAssetPptNoChange}
         handleAssetAsWasChange={handleAssetAsWasChange}
         handleAssetToBeChange={handleAssetToBeChange}
-        setNonAssetPptNos={setNonAssetPptNos}
-        setNonAssetAsWasCodes={setNonAssetAsWasCodes}
-        setNonAssetToBeCodes={setNonAssetToBeCodes}
         handleSaveTemplate={handleSaveTemplate}
         checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
+        nonAssetCodeChanges={nonAssetCodeChanges}
+        handleNonAssetPptNoChange={handleNonAssetPptNoChange}
+        handleNonAssetAswasChange={handleNonAssetAswasChange}
+        handleNonAssetTobeChange={handleNonAssetTobeChange}
       />
     </div>
   );

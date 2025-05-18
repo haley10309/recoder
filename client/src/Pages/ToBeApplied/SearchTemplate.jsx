@@ -58,7 +58,7 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
 
   return (
     <>
-      <Title>🧾 핫픽스/로컬라이제이션 템플릿 불러오기</Title>
+      <Title>🧾 핫픽스(문구수정하기)/로컬라이제이션 템플릿 불러오기</Title>
       <Wrapper>
         <InputGrid>
           <InputBox style={{ width: "18rem" }}>

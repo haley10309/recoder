@@ -8,12 +8,10 @@ import { countOccurrences as countOccurrencesUtil } from "@/utils/codeUtils";
 const AssetTemplate = ({
   content,
   originalHtmlFile,
-  assetPptNos,
-  assetAsWasCodes,
-  assetToBeCodes,
-  setAssetPptNos,
-  setAssetAsWasCodes,
-  setAssetToBeCodes,
+  assetCodeChanges,
+  handleAssetPptNoChange,
+  handleAssetAsWasChange,
+  handleAssetToBeChange,
   addAssetArea,
   onSave,
   removeAssetArea,
@@ -22,9 +20,7 @@ const AssetTemplate = ({
 
   const show = () => {
     setVisible(true);
-    console.log("in AssetTemplate pptNos : ", assetPptNos);
-    console.log("in AssetTemplate asWas : ", assetAsWasCodes);
-    console.log("in AssetTemplate toBe : ", assetToBeCodes);
+    // console.log("assetCodeChangess : ", assetCodeChanges);
   }
 
   const hide = () => {
@@ -41,7 +37,6 @@ const AssetTemplate = ({
   };
 
   const handleSave = () => {
-    console.log("Saving asset data...");
     onSave();
     hide();
   };
@@ -76,8 +71,8 @@ const AssetTemplate = ({
           </div>
 
           <div className="asset_list" style={{ maxHeight: "500px", overflowY: "auto" }}>
-            {assetAsWasCodes.length > 0 ? (
-              assetAsWasCodes.map((code, index) => (
+            {assetCodeChanges.length > 0 ? (
+              assetCodeChanges.map((item, index) => (
                 <div className="asset_as_was_to_be_div" key={index}>
                   <div className="num_type">
                     <div className="ppt_no_col">
@@ -85,10 +80,10 @@ const AssetTemplate = ({
                       <input
                         type="text"
                         className="ppt_no_text"
-                        value={assetPptNos[index] || ""}
+                        value={item.ppt_no}
                         onChange={(e) => {
-                          if (setAssetPptNos) {
-                            setAssetPptNos(index, e.target.value);
+                          if (handleAssetPptNoChange) {
+                            handleAssetPptNoChange(index, e.target.value);
                           }
                         }}
                       />
@@ -97,18 +92,18 @@ const AssetTemplate = ({
 
                   <div className="as_was_div">
                     <textarea
-                      value={code}
+                      value={item.aswas_code}
                       className="code-textarea"
-                      onChange={(e) => setAssetAsWasCodes(index, e.target.value)}
+                      onChange={(e) => handleAssetAsWasChange(index, e.target.value)}
                       placeholder="//"
                     />
-                    <div className="duplicate-count">포함된 횟수: {countOccurrences(code)}</div>
+                    <div className="duplicate-count">포함된 횟수: {countOccurrences(item.aswas_code)}</div>
                   </div>
 
                   <div className="to_be_div">
                     <textarea
-                      value={assetToBeCodes[index] || ""}
-                      onChange={(e) => setAssetToBeCodes(index, e.target.value)}
+                      value={item.tobe_code}
+                      onChange={(e) => handleAssetToBeChange(index, e.target.value)}
                       placeholder="//"
                       className="code-textarea"
                     />

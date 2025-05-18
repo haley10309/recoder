@@ -8,7 +8,6 @@ const guideUploadController = require("../controllers/guide/guideUploadControlle
 // const guideUploadControllerV2 = require("../controllers/guide/guideUploadControllerV2");
 
 router.post("/guide-upload", upload.single("txtfile"), cors(), guideUploadController.guideUploadData);
-
 // router.post("/guide-upload", upload.single("txtfile"), cors(), guideUploadControllerV2.guideUploadData);
 
 module.exports = router;

@@ -28,6 +28,14 @@ exports.updateLocalizationFull = (req, res) => {
     const updateQuery = `UPDATE TemplateLocalizationEntries SET code_context = ? WHERE id = ?`;
     const deleteQuery = `UPDATE TemplateLocalizationEntries SET deleted_at = NOW() WHERE id = ?`;
 
+    const insertPromise = insertItems.length > 0
+      ? new Promise((resolve, reject) => {
+          db.query(insertQuery, [insertValues], (err) => {
+            if (err) return reject(err);
+            resolve();
+          });
+        })
+      : Promise.resolve(0);
     const updatePromises = updateItems.map(item => {
       return new Promise((resolve, reject) => {
         db.query(updateQuery, [item.code_context, item.id], err => {
@@ -45,26 +53,13 @@ exports.updateLocalizationFull = (req, res) => {
       });
     });
 
-    const insertPromise = insertItems.length > 0
-      ? new Promise((resolve, reject) => {
-          db.query(insertQuery, [insertValues], (err) => {
-            if (err) return reject(err);
-            resolve();
-          });
-        })
-      : Promise.resolve(0);
-
     Promise.all([
       insertPromise,
       ...updatePromises,
       ...deletePromises,
     ])
-      .then(([inserted, ...rest]) => {
-        console.log('❤️/localization/template 결과', {
-          inserted,
-          rest,
-        })
-        res.json({ success: true });
+      .then(() => {
+        res.json();
       })
       .catch(err => {
         console.error("Error processing localization:", err);

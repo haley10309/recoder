@@ -10,12 +10,6 @@ const CheckTemplate = ({
   path,
   setSaveType, 
   setIsTemplateCreated,
-  setNonAssetPptNos, 
-  setNonAssetAsWasCodes, 
-  setNonAssetToBeCodes, 
-  setAssetPptNos, 
-  setAssetAsWasCodes, 
-  setAssetToBeCodes, 
   setTemplateID, 
   ticketNum, 
   ticketURL, 
@@ -23,10 +17,12 @@ const CheckTemplate = ({
   setTicketURL, 
   setLocalizationEntries, 
   setDeleteIds, 
+  setAssetCodeChanges, 
+  setNonAssetCodeChanges, 
 }) => {
   const checkForExistingTemplate = async () => {
     try {
-      // 1) 핫픽스 템플릿 존재 여부 확인
+      // 1) 템플릿 존재 여부 확인
       const response = await axios.post(`${BASE_URL}/check-template-exsist`, {
         ticket_num: ticketNum,
         ticket_url: ticketURL,
@@ -48,24 +44,32 @@ const CheckTemplate = ({
 
         const templateId = detailData.templateId;
         const codeChanges = detailData.codeChanges || [];
-        const localizationEntries = detailData.localizationEntries || [];
+        const localizationEntries = detailData.localizationEntries || []; // TODO: 이것도 콘솔 찍어서 확인하기. id 제대로 오는지.
 
-        const nonAssetAswasList = codeChanges.filter((it) => !isAssetCode(it.aswas_code));
-        const nonAssetTobeList = codeChanges.filter((it) => !isAssetCode(it.tobe_code));
-        const assetAswasList = codeChanges.filter((it) => isAssetCode(it.aswas_code));
-        const assetTobeList = codeChanges.filter((it) => isAssetCode(it.tobe_code));
+        // (250519 기준) aswas_code 기준으로 asset인지 non-asset인지 나눈다.
+        const nonAssetCodeChanges = codeChanges
+                                      .filter((it) => !isAssetCode(it.aswas_code))
+                                      .map( it => ({
+                                        id: it.id,
+                                        ppt_no: it.ppt_no || "",
+                                        aswas_code: it.aswas_code?.trim() || "",
+                                        tobe_code: it.tobe_code?.trim() || "",
+                                      }) );
+        const assetCodeChanges = codeChanges
+                                      .filter((it) => isAssetCode(it.aswas_code))
+                                      .map( it => ({
+                                        id: it.id,
+                                        ppt_no: it.ppt_no || "",
+                                        aswas_code: it.aswas_code?.trim() || "",
+                                        tobe_code: it.tobe_code?.trim() || "",
+                                      }) );
+
+        setNonAssetCodeChanges(nonAssetCodeChanges);
+        setAssetCodeChanges(assetCodeChanges);
         
-        // 핫픽스 AS-WAS/TO-BE, 로컬라이제이션 세팅
+        // 템플릿 AS-WAS/TO-BE, 로컬라이제이션 세팅
         setTemplateID(templateId);
         setDeleteIds([]);
-
-        setNonAssetPptNos(nonAssetAswasList.map((it) => it.ppt_no || ""));
-        setNonAssetAsWasCodes(nonAssetAswasList.map((it) => it.aswas_code?.trim() || ""));
-        setNonAssetToBeCodes(nonAssetTobeList.map((it) => it.tobe_code?.trim() || ""));
-
-        setAssetPptNos(assetAswasList.map((it) => it.ppt_no || ""));
-        setAssetAsWasCodes(assetAswasList.map((it) => it.aswas_code?.trim() || ""));
-        setAssetToBeCodes(assetTobeList.map((it) => it.tobe_code?.trim() || ""));
 
         setLocalizationEntries(
           localizationEntries.map((it) => ({
@@ -73,6 +77,7 @@ const CheckTemplate = ({
             code_context: it.code_context,
           }))
         );
+
       } else {
         setSaveType("create");
         setIsTemplateCreated(false);

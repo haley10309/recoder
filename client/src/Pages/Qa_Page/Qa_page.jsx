@@ -57,12 +57,6 @@ const Qa_page = () => {
 
 //   const checkForExistingTemplate = async () => {
 //     try {
-//       console.log("Sending data to /check-template:", {
-//         projectName,
-//         PDP,
-//         productName,
-//       });
-  
 //       const response = await axios.post(
 //         `${BASE_URL}/check-template`,
 //         {

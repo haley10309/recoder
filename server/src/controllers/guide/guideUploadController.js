@@ -2,6 +2,7 @@
 // 가이드 업로드 후, 처리 로직
 
 exports.guideUploadData = async (req, res) => {
+  // TODO: 나눠서 보내지말고 하나로 보내고 클라이언트에서도 그렇게 한방에 처리하기
   if (!req.file) {
     return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
   }
@@ -42,7 +43,7 @@ exports.guideUploadData = async (req, res) => {
       toBeEntries = toBeText.split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/).map(s => s.trim()).filter(Boolean);
    
       (/\r?\n\s*\r?\n\s*\r?\n\s*\r?\n/)
-  }
+   }
 
     // 길이가 다르면 빈 항목 추가
     const maxLen = Math.max(asWasEntries.length, toBeEntries.length);

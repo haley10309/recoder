@@ -58,7 +58,7 @@ const ToBeApplied = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
-      {/* 🧾 핫픽스/로컬라이제이션 템플릿 불러오기 */}
+      {/* 🧾 핫픽스/로컬라이제이션 템플릿 불러오기 // TODO: 핫픽스 문구 수정하기 */}
       <SearchTemplate setTextareas={setTextareas} setCodePairs={setCodePairs} />
 
       {/* 📤 파일 업로드 */}

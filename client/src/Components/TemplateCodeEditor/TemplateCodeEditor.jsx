@@ -7,26 +7,22 @@ import CopyTextButton from "../Common/CopyTextButton";
 const TemplateCodeEditor = ({
   checkOnlyInvalidCount,
   saveType,
-  assetPptNos,
-  assetAsWasCodes,
-  assetToBeCodes,
-  nonAssetPptNos,
-  nonAssetAsWasCodes,
-  nonAssetToBeCodes,
+  assetCodeChanges,
   addAssetArea,
   removeAssetArea,
-  addTextArea,
-  removeTextArea,
+  addNonAssetTextArea,
+  removeNonAssetTextArea,
   originalHtmlFile,
   countOccurrences,
   handleAssetPptNoChange,
   handleAssetAsWasChange,
   handleAssetToBeChange,
-  setNonAssetPptNos,
-  setNonAssetAsWasCodes,
-  setNonAssetToBeCodes,
   handleSaveTemplate,
   checkHasInvalidAsWasCount,
+  nonAssetCodeChanges,
+  handleNonAssetPptNoChange,
+  handleNonAssetAswasChange,
+  handleNonAssetTobeChange,
 }) => {
   if (checkOnlyInvalidCount) {
     return (
@@ -60,14 +56,12 @@ const TemplateCodeEditor = ({
       {/* Asset */}
       <div className="mb-[40px]">
         <AssetTemplate
-          assetPptNos={assetPptNos} 
-          assetAsWasCodes={assetAsWasCodes} 
-          assetToBeCodes={assetToBeCodes} 
+          assetCodeChanges={assetCodeChanges}
+          handleAssetPptNoChange={handleAssetPptNoChange}
+          handleAssetAsWasChange={handleAssetAsWasChange}
+          handleAssetToBeChange={handleAssetToBeChange}
           addAssetArea={addAssetArea} 
           removeAssetArea={removeAssetArea} 
-          setAssetPptNos={handleAssetPptNoChange} 
-          setAssetAsWasCodes={handleAssetAsWasChange} 
-          setAssetToBeCodes={handleAssetToBeChange} 
           originalHtmlFile={originalHtmlFile} 
         />
       </div>
@@ -96,30 +90,28 @@ const TemplateCodeEditor = ({
       </div>
 
       {/* Non-Asset */}
-      {[...Array(nonAssetAsWasCodes.length)].map((_, i) => (
-        <div key={`non-asset-${i}`} index={i} className="as_was_to_be_div">
+      {nonAssetCodeChanges.map((item, idx) => (
+        <div key={`non-asset-code-change-${idx}`} index={idx} className="as_was_to_be_div">
           <div className="flex flex-col justify-center items-center gap-[10px]">
             <div className="flex items-center gap-[10px]">
               <label className="font-[16px]">PPT NO.</label>
               <input
                 type="text"
                 className="w-[30px] h-[30px] rounded-[5px] text-center border border-[#8B8B8B] outline-none focus:border-[#595880]"
-                value={nonAssetPptNos[i]}
-                onChange={(e) => {
-                  const arr = [...nonAssetPptNos];
-                  arr[i] = e.target.value;
-                  setNonAssetPptNos(arr);
-                }}
+                value={item.ppt_no}
+                onChange={(e) => handleNonAssetPptNoChange(idx, e.target.value)}
               />
             </div>
 
+            <div style={{ fontSize: "10px" }}>CodeChange.id: {item.id ? item.id : "-"}</div>
+
             <CopyTextButton
               text={"'ppt{숫자}'로 복사"}
-              value={`ppt${nonAssetPptNos[i] ?? ''}`}
+              value={`ppt${item.ppt_no ?? ''}`}
             />
             <CopyTextButton
               text={"'슬라이드 {숫자}'로 복사"}
-              value={`슬라이드 ${nonAssetPptNos[i] ?? ''}`}
+              value={`슬라이드 ${item.ppt_no ?? ''}`}
             />
           </div>
           <div className="w-[80%] flex gap-[20px] justify-between">
@@ -128,12 +120,8 @@ const TemplateCodeEditor = ({
                 rows="5"
                 className="code-textarea"
                 placeholder="AS-WAS 코드를 입력해 주세요."
-                value={nonAssetAsWasCodes[i]}
-                onChange={(e) => {
-                  const arr = [...nonAssetAsWasCodes];
-                  arr[i] = e.target.value;
-                  setNonAssetAsWasCodes(arr);
-                }}
+                value={item.aswas_code}
+                onChange={(e) => handleNonAssetAswasChange(idx, e.target.value)}
               />
               <div className="flex font-bold">
                 <div className="text-xs">
@@ -144,9 +132,9 @@ const TemplateCodeEditor = ({
                 {originalHtmlFile ? (
                   <span className="ml-1 text-xs"
                     style={{
-                      color: countOccurrences(nonAssetAsWasCodes[i]) === 1 ? "blue" : "red"
+                      color: countOccurrences(item.aswas_code) === 1 ? "blue" : "red"
                     }}>
-                      {`${countOccurrences(nonAssetAsWasCodes[i])}회`}
+                      {`${countOccurrences(item.aswas_code)}회`}
                   </span>
                 ) : (
                   <span className="ml-1 text-xs font-normal text-[#ff7300]">
@@ -157,7 +145,7 @@ const TemplateCodeEditor = ({
 
               <CopyTextButton
                 text={"코드 복사"}
-                value={nonAssetAsWasCodes[i]}
+                value={item.aswas_code}
                 style={{ marginTop: "15px" }}
               />
             </div>
@@ -166,12 +154,8 @@ const TemplateCodeEditor = ({
                 rows="5"
                 className="code-textarea"
                 placeholder="TO-BE 코드를 입력해 주세요."
-                value={nonAssetToBeCodes[i]}
-                onChange={(e) => {
-                  const arr = [...nonAssetToBeCodes];
-                  arr[i] = e.target.value;
-                  setNonAssetToBeCodes(arr);
-                }}
+                value={item.tobe_code}
+                onChange={(e) => handleNonAssetTobeChange(idx, e.target.value)}
               />
 
               <div className="text-xs">
@@ -180,24 +164,24 @@ const TemplateCodeEditor = ({
 
               <CopyTextButton
                 text={"코드 복사"}
-                value={nonAssetToBeCodes[i]}
+                value={item.tobe_code}
                 style={{ marginTop: "15px" }}
               />
             </div>
           </div>
-          <button type="button" onClick={() => removeTextArea(i)} className="px-4 mb-6 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white">
+          <button type="button" onClick={() => removeNonAssetTextArea(idx)} className="px-4 mb-6 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white">
             삭제
           </button>
         </div>
       ))}
 
       <div className="flex gap-[15px] save_button_div">
-        <button onClick={addTextArea} className="plus-button rounded-[10px]">
+        <button onClick={addNonAssetTextArea} className="plus-button rounded-[10px]">
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>
         <button type="button" className="save_button" onClick={handleSaveTemplate}>
-          {saveType === "update" ? ` 핫픽스 템플릿 수정` : ` 핫픽스 템플릿 생성`}
+          {saveType === "update" ? ` 템플릿 수정` : ` 템플릿 생성`}
         </button>
       </div>
     </>

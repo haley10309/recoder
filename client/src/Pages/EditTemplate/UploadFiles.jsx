@@ -6,13 +6,9 @@ import { isAssetCode } from "@/utils/codeUtils";
 
 export default function UploadFiles({ 
   isUploadOnlyOriginHtmlFile,
-  setNonAssetPptNos, 
-  setNonAssetAsWasCodes, 
-  setNonAssetToBeCodes, 
-  setAssetPptNos, 
-  setAssetAsWasCodes, 
-  setAssetToBeCodes,
-  setOriginalHtmlFile, 
+  setOriginalHtmlFile,
+  setAssetCodeChanges,
+  setNonAssetCodeChanges,
  }) {
   const pptInputRef = useRef(null);
   const backUpInputRef = useRef(null);
@@ -39,34 +35,29 @@ export default function UploadFiles({
         throw new Error("Invalid data format from server");
       }
 
-      const nonAssetPptNos = [];
-      const nonAssetAsWasCodes = [];
-      const nonAssetToBeCodes = [];
-      const assetPptNos = [];
-      const assetAsWasCodes = [];
-      const assetToBeCodes = [];
+      const assetCodeChanges = [];
+      const nonAssetCodeChanges = [];
 
       pptNos.forEach((pptNo, idx) => {
-        const a = asWasCodes[idx] || "";
-        const t = toBeCodes[idx] || "";
-        if (isAssetCode(a) || isAssetCode(t)) {
-          assetPptNos.push(pptNo);
-          assetAsWasCodes.push(a);
-          assetToBeCodes.push(t);
+        const aswasCode = asWasCodes[idx] || "";
+        const tobeCode = toBeCodes[idx] || "";
+        if (isAssetCode(aswasCode)) { // (250519 기준) aswasCode가 asset인지 아닌지로 판단.
+          assetCodeChanges.push({
+            ppt_no: pptNo,
+            aswas_code: aswasCode,
+            tobe_code: tobeCode,
+          });
         } else {
-          nonAssetPptNos.push(pptNo);
-          nonAssetAsWasCodes.push(a);
-          nonAssetToBeCodes.push(t);
+          nonAssetCodeChanges.push({
+            ppt_no: pptNo,
+            aswas_code: aswasCode,
+            tobe_code: tobeCode,
+          });
         }
       });
 
-      setAssetPptNos(assetPptNos);
-      setAssetAsWasCodes(assetAsWasCodes);
-      setAssetToBeCodes(assetToBeCodes);
-
-      setNonAssetPptNos(nonAssetPptNos);
-      setNonAssetAsWasCodes(nonAssetAsWasCodes);
-      setNonAssetToBeCodes(nonAssetToBeCodes);
+      setAssetCodeChanges(assetCodeChanges);
+      setNonAssetCodeChanges(nonAssetCodeChanges);
     } catch (error) {
       console.error("Error uploading PPT file:", error);
       alert("PPT 업로드에 실패했습니다.");

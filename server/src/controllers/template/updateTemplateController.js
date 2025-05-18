@@ -25,9 +25,9 @@ exports.updateTemplateData = async (req, res) => {
         return res.status(500).json({ error: "Failed to fetch existing entries" });
       }
 
-      const existingIds = existingRows.map(row => row.id);
-      const incomingIds = parsedCodeChanges.filter(row => !!row.id).map(row => row.id);
-      const idsToDelete = existingIds.filter(id => !incomingIds.includes(id));
+      const existingIds = existingRows.map(row => row.id);  // 데이터베이스에 있는 애들
+      const incomingIds = parsedCodeChanges.filter(row => !!row.id).map(row => row.id); // 업데이트 목록 중 id가 이미 있는 애들
+      const idsToDelete = existingIds.filter(id => !incomingIds.includes(id)); // 데이터베이스에 있는 애들 중 업데이트 목록에서 없는 애들 -> 삭제 대상 
 
       // 삭제 대상 처리
       const deletePromises = idsToDelete.map(id => {

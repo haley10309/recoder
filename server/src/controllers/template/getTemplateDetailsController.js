@@ -23,7 +23,7 @@ exports.getTemplateDetailsData = (req, res) => {
     const templateId = results[0].id;
 
     const getCodeChangesQuery = `
-      SELECT ppt_no, aswas_code, tobe_code
+      SELECT id, ppt_no, aswas_code, tobe_code
       FROM TemplateCodeChanges
       WHERE template_id = ? AND deleted_at IS NULL
     `;

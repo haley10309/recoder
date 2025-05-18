@@ -14,7 +14,7 @@ const PreviewPanel = ({
 }) => {
   const getStatusText = () => {
     if (uploadStatus === "success") {
-      return "핫픽스 작업이 완료된 파일이 생성되었습니다!";
+      return "핫픽스 작업이 완료된 파일이 생성되었습니다!"; // TODO: 핫픽스 문구 삭제 후 다른 문구로 대체하기
     } else if (uploadStatus === "fail") {
       return "파일 생성 실패";
     } else if (localizationStatus === "success") {

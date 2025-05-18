@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
-import axios from "axios";
 
 import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
@@ -23,25 +22,12 @@ const EditLocalizationEntries = () => {
       setIsTemplateCreated,
       localizationEntries,
       setLocalizationEntries,
-      deleteIds,
-      setDeleteIds,
-      nonAssetAsWasCodes,
-      setNonAssetAsWasCodes,
-      nonAssetToBeCodes,
-      setNonAssetToBeCodes,
-      nonAssetPptNos,
-      setNonAssetPptNos,
-      assetAsWasCodes,
-      setAssetAsWasCodes,
-      assetToBeCodes,
-      setAssetToBeCodes,
-      assetPptNos,
-      setAssetPptNos,
+      setDeleteIds, // TODO: editLocalizaionEntries에서 delete 어떻게 활용중인지 보기
       setTemplateID,
       originalHtmlFile,
       setOriginalHtmlFile,
-      addTextArea,
-      removeTextArea,
+      addNonAssetTextArea,
+      removeNonAssetTextArea,
       addAssetArea,
       removeAssetArea,
       handleAssetAsWasChange,
@@ -50,6 +36,12 @@ const EditLocalizationEntries = () => {
       countOccurrences,
       handleSaveTemplate,
       checkHasInvalidAsWasCount,
+      nonAssetCodeChanges,
+      setNonAssetCodeChanges,
+      setAssetCodeChanges,
+      handleNonAssetPptNoChange,
+      handleNonAssetAswasChange,
+      handleNonAssetTobeChange,
   } = useCheckTemplate();
 
   const [project, setProject] = useState("");
@@ -61,13 +53,14 @@ const EditLocalizationEntries = () => {
   
   // states
   const [englishCopyList, setEnglishCopyList] = useState([]);
-  const tobeCodes = nonAssetToBeCodes.slice(0);
+  const tobeCodes = nonAssetCodeChanges.map((item) => item.tobe_code);
+  
 
   // 로컬라이제이션 생성
   const handleCreateOrUpdateLocalization = async () => {
     // TODO: 이외 다른 조건도 모두 체크
     // if (!isTemplateCreated) {
-    //   alert("핫픽스 템플릿을 먼저 생성해 주세요.");
+    //   alert("템플릿을 먼저 생성해 주세요.");
     //   return;
     // }
 
@@ -114,14 +107,10 @@ const EditLocalizationEntries = () => {
         setTemplateID={setTemplateID}
         setIsTemplateCreated={setIsTemplateCreated}
         setSaveType={setSaveType}
-        setNonAssetPptNos={setNonAssetPptNos}
-        setNonAssetAsWasCodes={setNonAssetAsWasCodes}
-        setNonAssetToBeCodes={setNonAssetToBeCodes}
-        setAssetPptNos={setAssetPptNos}
-        setAssetAsWasCodes={setAssetAsWasCodes}
-        setAssetToBeCodes={setAssetToBeCodes}
         setLocalizationEntries={setLocalizationEntries}
         setDeleteIds={setDeleteIds}
+        setAssetCodeChanges={setAssetCodeChanges}
+        setNonAssetCodeChanges={setNonAssetCodeChanges}
       />
 
       <TitleLabel text="📤 파일 업로드(선택)" />
@@ -129,39 +118,30 @@ const EditLocalizationEntries = () => {
 
       <UploadFiles
         isUploadOnlyOriginHtmlFile={true}
-        setNonAssetPptNos={setNonAssetPptNos} 
-        setNonAssetAsWasCodes={setNonAssetAsWasCodes} 
-        setNonAssetToBeCodes={setNonAssetToBeCodes} 
-        setAssetPptNos={setAssetPptNos} 
-        setAssetAsWasCodes={setAssetAsWasCodes} 
-        setAssetToBeCodes={setAssetToBeCodes} 
         setOriginalHtmlFile={setOriginalHtmlFile} 
+        setAssetCodeChanges={setAssetCodeChanges}
+        setNonAssetCodeChanges={setNonAssetCodeChanges}
       />
       
       {/* ✅ AS-WAS / TO-BE 템플릿 */}
       <TemplateCodeEditor
         checkOnlyInvalidCount={true}
         saveType={saveType}
-        assetPptNos={assetPptNos}
-        assetAsWasCodes={assetAsWasCodes}
-        assetToBeCodes={assetToBeCodes}
-        nonAssetPptNos={nonAssetPptNos}
-        nonAssetAsWasCodes={nonAssetAsWasCodes}
-        nonAssetToBeCodes={nonAssetToBeCodes}
         addAssetArea={addAssetArea}
         removeAssetArea={removeAssetArea}
-        addTextArea={addTextArea}
-        removeTextArea={removeTextArea}
+        addNonAssetTextArea={addNonAssetTextArea}
+        removeNonAssetTextArea={removeNonAssetTextArea}
         originalHtmlFile={originalHtmlFile}
         countOccurrences={countOccurrences}
         handleAssetPptNoChange={handleAssetPptNoChange}
         handleAssetAsWasChange={handleAssetAsWasChange}
         handleAssetToBeChange={handleAssetToBeChange}
-        setNonAssetPptNos={setNonAssetPptNos}
-        setNonAssetAsWasCodes={setNonAssetAsWasCodes}
-        setNonAssetToBeCodes={setNonAssetToBeCodes}
         handleSaveTemplate={handleSaveTemplate}
         checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
+        nonAssetCodeChanges={nonAssetCodeChanges}
+        handleNonAssetPptNoChange={handleNonAssetPptNoChange}
+        handleNonAssetAswasChange={handleNonAssetAswasChange}
+        handleNonAssetTobeChange={handleNonAssetTobeChange}
       />
 
       {/* 📤 번역 파일 업로드 */}

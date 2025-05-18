@@ -16,14 +16,9 @@ export const useCheckTemplate = () => {
   const [deleteIds, setDeleteIds] = useState([]);
 
   // non-asset states
-  const [nonAssetAsWasCodes, setNonAssetAsWasCodes] = useState([""]);
-  const [nonAssetToBeCodes, setNonAssetToBeCodes] = useState([""]);
-  const [nonAssetPptNos, setNonAssetPptNos] = useState([""]);
-
+  const [nonAssetCodeChanges, setNonAssetCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
   // asset states
-  const [assetAsWasCodes, setAssetAsWasCodes] = useState([]);
-  const [assetToBeCodes, setAssetToBeCodes] = useState([]);
-  const [assetPptNos, setAssetPptNos] = useState([]);
+  const [assetCodeChanges, setAssetCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
 
   // Template and ticket info
   const [templateID, setTemplateID] = useState("");
@@ -32,86 +27,74 @@ export const useCheckTemplate = () => {
   // File upload and content
   const [originalHtmlFile, setOriginalHtmlFile] = useState("");
 
-  // add/remove handlers
-  const addTextArea = () => {
-    setNonAssetPptNos((prev) => [...prev, ""]);
-    setNonAssetAsWasCodes((prev) => [...prev, ""]);
-    setNonAssetToBeCodes((prev) => [...prev, ""]);
+  // Non-Asset handlers
+  const addNonAssetTextArea = () => {
+    setNonAssetCodeChanges(prev => [...prev, { ppt_no: "", aswas_code: "", tobe_code: "" }])
   };
-  const removeTextArea = (idx) => {
-    setNonAssetPptNos((prev) => prev.filter((_, i) => i !== idx));
-    setNonAssetAsWasCodes((prev) => prev.filter((_, i) => i !== idx));
-    setNonAssetToBeCodes((prev) => prev.filter((_, i) => i !== idx));
+  const removeNonAssetTextArea = (idx) => {
+    setNonAssetCodeChanges((prev) => prev.filter((_, i) => i !== idx))
   };
-  const addAssetArea = () => {
-    setAssetPptNos((prev) => [...prev, ""]);
-    setAssetAsWasCodes((prev) => [...prev, ""]);
-    setAssetToBeCodes((prev) => [...prev, ""]);
+  const handleNonAssetPptNoChange = (i, v) => {
+    const arr = [...nonAssetCodeChanges];
+    arr[i].ppt_no = v;
+    setNonAssetCodeChanges(arr);
+  };
+  const handleNonAssetAswasChange = (i, v) => {
+    const arr = [...nonAssetCodeChanges];
+    arr[i].aswas_code = v;
+    setNonAssetCodeChanges(arr);
+  };
+  const handleNonAssetTobeChange = (i, v) => {
+    const arr = [...nonAssetCodeChanges];
+    arr[i].tobe_code = v;
+    setNonAssetCodeChanges(arr);
   };
 
   // Asset handlers
-  const removeAssetArea = (i) => {
-    setAssetAsWasCodes((prev) => prev.filter((_, idx) => idx !== i));
-    setAssetToBeCodes((prev) => prev.filter((_, idx) => idx !== i));
-    setAssetPptNos((prev) => prev.filter((_, idx) => idx !== i));
+  const addAssetArea = () => {
+    setAssetCodeChanges((prev) => [...prev, { ppt_no: "", aswas_code: "", tobe_code: "" }])
   };
-  const handleAssetAsWasChange = (i, v) =>
-    setAssetAsWasCodes((prev) => {
-      const a = [...prev];
-      a[i] = v;
-      return a;
-    });
-  const handleAssetToBeChange = (i, v) =>
-    setAssetToBeCodes((prev) => {
-      const a = [...prev];
-      a[i] = v;
-      return a;
-    });
-  const handleAssetPptNoChange = (i, v) =>
-    setAssetPptNos((prev) => {
-      const a = [...prev];
-      a[i] = v;
-      return a;
-    });
+  const removeAssetArea = (idx) => {
+    setAssetCodeChanges((prev) => prev.filter((_, i) => i !== idx))
+  };
+  const handleAssetPptNoChange = (i, v) => {
+    const arr = [...assetCodeChanges];
+    arr[i].ppt_no = v;
+    setAssetCodeChanges(arr);
+  }
+  const handleAssetAsWasChange = (i, v) => {
+    const arr = [...assetCodeChanges];
+    arr[i].aswas_code = v;
+    setAssetCodeChanges(arr);
+  }
+  const handleAssetToBeChange = (i, v) => {
+    const arr = [...assetCodeChanges];
+    arr[i].tobe_code = v;
+    setAssetCodeChanges(arr);
+  }
 
   const countOccurrences = (asWasCode) => kind_countOccurrences(originalHtmlFile, asWasCode);
 
-  // 핫픽스 템플릿 저장
+  // 템플릿 저장
   const handleSaveTemplate = async () => {
     // AS-WAS/TO-BE validation: 동시에 비어있는 row 차단
-    for (let i = 0; i < nonAssetAsWasCodes.length; i++) {
-      if (!nonAssetAsWasCodes[i].trim() && !nonAssetToBeCodes[i].trim()) {
-        alert("AS-WAS와 TO-BE 코드 중 최소 하나는 입력해 주세요.");
-        return;
-      }
+    if (nonAssetCodeChanges.some(item => !item.aswas_code.trim() && !item.tobe_code.trim())) {
+      alert("AS-WAS와 TO-BE 코드 중 최소 하나는 입력해 주세요.");
+      return;
     }
 
-    const combinedPptNos = [...nonAssetPptNos, ...assetPptNos];
-    const combinedAsWas = [...nonAssetAsWasCodes, ...assetAsWasCodes];
-    const combinedToBe = [...nonAssetToBeCodes, ...assetToBeCodes];
-    const codeChangeList = combinedAsWas.map((_, idx) => ({
-      ppt_no: combinedPptNos[idx],
-      aswas_code: combinedAsWas[idx],
-      tobe_code: combinedToBe[idx],
-    }));
-    const formData = new FormData();
-    formData.append("template_id", templateID);
-    formData.append("ticket_num", ticketNum);
-    formData.append("ticket_url", ticketURL);
-    formData.append("code_changes", JSON.stringify(codeChangeList));
-
-
+    const combinedCodeChanges = [...nonAssetCodeChanges, ...assetCodeChanges];
     try {
       if (saveType === "create") {
         const formData = new FormData();
         formData.append("ticket_num", ticketNum);
         formData.append("ticket_url", ticketURL);
-        formData.append("code_changes", JSON.stringify(codeChangeList));
+        formData.append("code_changes", JSON.stringify(combinedCodeChanges));
         await axios.post(`${BASE_URL}/create-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
       } else {
         const formData = new FormData();
         formData.append("template_id", templateID);
-        formData.append("code_changes", JSON.stringify(codeChangeList));
+        formData.append("code_changes", JSON.stringify(combinedCodeChanges));
         await axios.post(`${BASE_URL}/update-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
       }
       setIsTemplateCreated(true);
@@ -124,7 +107,7 @@ export const useCheckTemplate = () => {
   };
 
   const checkHasInvalidAsWasCount = () => {
-    return nonAssetAsWasCodes.some(code => countOccurrences(code) !== 1)
+    return nonAssetCodeChanges.some(item => countOccurrences(item.aswas_code) !== 1);
   };
 
   return {
@@ -140,30 +123,27 @@ export const useCheckTemplate = () => {
     setLocalizationEntries,
     deleteIds,
     setDeleteIds,
-    nonAssetAsWasCodes,
-    setNonAssetAsWasCodes,
-    nonAssetToBeCodes,
-    setNonAssetToBeCodes,
-    nonAssetPptNos,
-    setNonAssetPptNos,
-    assetAsWasCodes,
-    setAssetAsWasCodes,
-    assetToBeCodes,
-    setAssetToBeCodes,
-    assetPptNos,
-    setAssetPptNos,
+
     setTemplateID,
     originalHtmlFile,
     setOriginalHtmlFile,
-    addTextArea,
-    removeTextArea,
+    addNonAssetTextArea,
+    removeNonAssetTextArea,
     addAssetArea,
     removeAssetArea,
-    handleAssetAsWasChange,
-    handleAssetToBeChange,
-    handleAssetPptNoChange,
     countOccurrences,
     handleSaveTemplate,
     checkHasInvalidAsWasCount,
+
+    assetCodeChanges,
+    nonAssetCodeChanges,
+    setAssetCodeChanges,
+    setNonAssetCodeChanges,
+    handleAssetAsWasChange,
+    handleAssetToBeChange,
+    handleAssetPptNoChange,
+    handleNonAssetPptNoChange,
+    handleNonAssetAswasChange,
+    handleNonAssetTobeChange,
   };
 };
