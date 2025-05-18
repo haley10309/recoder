@@ -42,7 +42,7 @@ const LeftNavBar = () => {
           onClick={() => handleNavigate("/edit-localization-entries")}
         >
           <IconImage src={localizationIcon} alt="edit localization entries" />
-          <NavButtonText $active={isActive("/edit-localization-entries")}>Localize Template</NavButtonText>
+          <NavButtonText $active={isActive("/edit-localization-entries")}>Edit Localization Entries</NavButtonText>
         </NavButton>
 
         <NavButton
