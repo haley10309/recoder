@@ -21,7 +21,7 @@ exports.getTemplateDetailsData = (req, res) => {
     }
 
     const templateId = results[0].id;
-
+// TODO: 이미 있는 TemplateCodeChanges는 id가 오겠군. update-template때 쓰이니까 주의~
     const aswasTobeQuery = `
       SELECT ppt_no, aswas_code, tobe_code
       FROM AsWasToBe

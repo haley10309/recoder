@@ -4,100 +4,93 @@ const db = require("../../config/db");
 
 exports.updateTemplateData = async (req, res) => {
   try {
-    const { templateId, ticket_num, ticket_url, aswas_tobe_list } = req.body;
+    const { template_id, code_changes } = req.body;
 
-    if (!templateId) {
-      return res.status(400).json({ error: "templateId is required for updating." });
+    if (!template_id) {
+      return res.status(400).json({ error: "template_id is required for updating." });
     }
 
-    let parsedAsWasToBeList;
+    let parsedCodeChanges;
     try {
-      parsedAsWasToBeList = JSON.parse(aswas_tobe_list);
+      parsedCodeChanges = JSON.parse(code_changes);
     } catch (error) {
-      return res.status(400).json({ error: "Invalid format for aswas_tobe_list" });
+      return res.status(400).json({ error: "Invalid format for code_changes" });
     }
 
-    // 1. TemplateSetting 정보 업데이트
-    const updateTemplateQuery = `
-      UPDATE TemplateSetting 
-      SET ticket_num = ?, ticket_url = ?
-      WHERE id = ?`;
-
-    db.query(updateTemplateQuery, [ticket_num, ticket_url, templateId], (err) => {
+    // 기존 TemplateCodeChanges 목록 조회
+    const getExistingRowsQuery = `SELECT id FROM TemplateCodeChanges WHERE template_id = ?`;
+    db.query(getExistingRowsQuery, [template_id], (err, existingRows) => {
       if (err) {
-        console.error("Error updating template:", err);
-        return res.status(500).json({ error: "Failed to update template" });
+        console.error("Error fetching existing IDs:", err);
+        return res.status(500).json({ error: "Failed to fetch existing entries" });
       }
 
-      // 2. 기존 AsWasToBe ID 목록 조회
-      const getExistingIdsQuery = `SELECT id FROM AsWasToBe WHERE hotfix_id = ?`;
-      db.query(getExistingIdsQuery, [templateId], (err, existingRows) => {
-        if (err) {
-          console.error("Error fetching existing IDs:", err);
-          return res.status(500).json({ error: "Failed to fetch existing entries" });
-        }
+      const existingIds = existingRows.map(row => row.id);
+      const incomingIds = parsedCodeChanges.filter(row => !!row.id).map(row => row.id);
+      const idsToDelete = existingIds.filter(id => !incomingIds.includes(id));
 
-        const existingIds = existingRows.map(row => row.id);
-        const incomingIds = parsedAsWasToBeList.filter(row => row.id).map(row => row.id);
-        const idsToDelete = existingIds.filter(id => !incomingIds.includes(id));
+      // TODO: 모든 테이블에서 deleted_at is not null 조건 추가필요
+      // TODO: 모든 테이블에서 deleted_at is not null 조건 추가필요
+      // TODO: 모든 테이블에서 deleted_at is not null 조건 추가필요
 
-        // 3. 삭제 대상 처리
-        const deletePromises = idsToDelete.map(id => {
-          return new Promise((resolve, reject) => {
-            db.query(`DELETE FROM AsWasToBe WHERE id = ?`, [id], (err) => {
+      // 삭제 대상 처리
+      const deletePromises = idsToDelete.map(id => {
+        return new Promise((resolve, reject) => {
+          db.query(`UPDATE TemplateCodeChanges SET deleted_at = NOW() WHERE id = ?`, [id], (err) => {
+            if (err) {
+              console.error("Error deleting row:", err);
+              return reject(err);
+            }
+            resolve();
+          });
+        });
+      });
+
+      // 삽입 및 수정 처리
+      const upsertPromises = parsedCodeChanges.map(item => {
+        const { id, ppt_no, aswas_code, tobe_code } = item;
+
+        return new Promise((resolve, reject) => {
+          if (id) {
+            // UPDATE
+            const updateQuery = `
+              UPDATE TemplateCodeChanges
+              SET ppt_no = ?, aswas_code = ?, tobe_code = ?
+              WHERE id = ?
+            `;
+            db.query(updateQuery, [ppt_no, aswas_code, tobe_code, id], (err) => {
               if (err) {
-                console.error("Error deleting row:", err);
+                console.error("Error updating row:", err);
                 return reject(err);
               }
               resolve();
             });
-          });
+          } else {
+            // INSERT
+            const insertQuery = `
+              INSERT INTO TemplateCodeChanges (ppt_no, aswas_code, tobe_code, template_id)
+              VALUES (?, ?, ?, ?)
+            `;
+            db.query(insertQuery, [ppt_no, aswas_code, tobe_code, template_id], (err) => {
+              if (err) {
+                console.error("Error inserting row:", err);
+                return reject(err);
+              }
+              resolve();
+            });
+          }
         });
-
-        // 4. 삽입 및 수정 처리
-        const upsertPromises = parsedAsWasToBeList.map(item => {
-          const { id, ppt_no, aswas_code, tobe_code } = item;
-
-          return new Promise((resolve, reject) => {
-            if (id) {
-              // UPDATE
-              const updateQuery = `
-                UPDATE AsWasToBe
-                SET ppt_no = ?, aswas_code = ?, tobe_code = ?
-                WHERE id = ?`;
-              db.query(updateQuery, [ppt_no, aswas_code, tobe_code, id], (err) => {
-                if (err) {
-                  console.error("Error updating row:", err);
-                  return reject(err);
-                }
-                resolve();
-              });
-            } else {
-              // INSERT
-              const insertQuery = `
-                INSERT INTO AsWasToBe (ppt_no, aswas_code, tobe_code, hotfix_id)
-                VALUES (?, ?, ?, ?)`;
-              db.query(insertQuery, [ppt_no, aswas_code, tobe_code, templateId], (err) => {
-                if (err) {
-                  console.error("Error inserting row:", err);
-                  return reject(err);
-                }
-                resolve();
-              });
-            }
-          });
-        });
-
-        // 5. 모두 실행
-        Promise.all([...deletePromises, ...upsertPromises])
-          .then(() => {
-            res.status(200).json({ message: "Template updated successfully (upsert handled)" });
-          })
-          .catch((err) => {
-            console.error("Error processing entries:", err);
-            res.status(500).json({ error: "Failed to update entries" });
-          });
       });
+
+      // Promises 모두 실행
+      Promise.all([...deletePromises, ...upsertPromises])
+        .then(() => {
+          res.status(200).json({ message: "Template updated successfully (upsert handled)" });
+        })
+        .catch((err) => {
+          console.error("Error processing entries:", err);
+          res.status(500).json({ error: "Failed to update entries" });
+        });
     });
   } catch (error) {
     console.error("Unexpected error:", error);

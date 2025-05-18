@@ -1,4 +1,5 @@
 /**
+ * // TODO: 250519 이후 업데이트 필요
  * @swagger
  * /check-template-exist:
  *   post:

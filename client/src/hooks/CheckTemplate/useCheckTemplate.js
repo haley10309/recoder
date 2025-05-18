@@ -96,17 +96,27 @@ export const useCheckTemplate = () => {
       tobe_code: combinedToBe[idx],
     }));
     const formData = new FormData();
-    formData.append("templateId", templateID);
+    formData.append("template_id", templateID);
     formData.append("ticket_num", ticketNum);
     formData.append("ticket_url", ticketURL);
     formData.append("code_changes", JSON.stringify(codeChangeList));
 
+
     try {
-      // TODO: update-template 다시 확인 formData
-      const url = saveType === "create" ? `${BASE_URL}/create-template` : `${BASE_URL}/update-template`;
-      await axios.post(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
-      alert("템플릿이 성공적으로 저장되었습니다");
+      if (saveType === "create") {
+        const formData = new FormData();
+        formData.append("ticket_num", ticketNum);
+        formData.append("ticket_url", ticketURL);
+        formData.append("code_changes", JSON.stringify(codeChangeList));
+        await axios.post(`${BASE_URL}/create-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+      } else {
+        const formData = new FormData();
+        formData.append("template_id", templateID);
+        formData.append("code_changes", JSON.stringify(codeChangeList));
+        await axios.post(`${BASE_URL}/update-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+      }
       setIsTemplateCreated(true);
+      alert("템플릿이 성공적으로 저장되었습니다");
     } catch (err) {
       console.error(err);
       setIsTemplateCreated(false);
