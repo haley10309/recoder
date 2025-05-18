@@ -90,7 +90,7 @@ export const useCheckTemplate = () => {
     const combinedPptNos = [...nonAssetPptNos, ...assetPptNos];
     const combinedAsWas = [...nonAssetAsWasCodes, ...assetAsWasCodes];
     const combinedToBe = [...nonAssetToBeCodes, ...assetToBeCodes];
-    const aswasTobeList = combinedAsWas.map((_, idx) => ({
+    const codeChangeList = combinedAsWas.map((_, idx) => ({
       ppt_no: combinedPptNos[idx],
       aswas_code: combinedAsWas[idx],
       tobe_code: combinedToBe[idx],
@@ -99,10 +99,10 @@ export const useCheckTemplate = () => {
     formData.append("templateId", templateID);
     formData.append("ticket_num", ticketNum);
     formData.append("ticket_url", ticketURL);
-    formData.append("create_date", new Date().toISOString().split("T")[0]);
-    formData.append("aswas_tobe_list", JSON.stringify(aswasTobeList));
+    formData.append("code_changes", JSON.stringify(codeChangeList));
 
     try {
+      // TODO: update-template 다시 확인 formData
       const url = saveType === "create" ? `${BASE_URL}/create-template` : `${BASE_URL}/update-template`;
       await axios.post(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
       alert("템플릿이 성공적으로 저장되었습니다");
