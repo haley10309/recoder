@@ -70,58 +70,6 @@
  *         description: 서버 내부 오류
  */
 
-
-/**
- * @swagger
- * /localization/tobe-code-list:
- *   post:
- *     summary: tobe_code 조회
- *     tags:
- *       - Localization
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - ticket_num
- *               - ticket_url
- *             properties:
- *               ticket_num:
- *                 type: string
- *                 description: 티켓 번호
- *               ticket_url:
- *                 type: string
- *                 description: 티켓 URL
- *     responses:
- *       200:
- *         description: 해당 템플릿의 tobe_code 목록 조회 성공
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 templateId:
- *                   type: integer
- *                 tobe_code_list:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       ppt_no:
- *                         type: string
- *                       tobe_code:
- *                         type: string
- *       400:
- *         description: ticket_num 또는 ticket_url이 누락된 경우
- *       404:
- *         description: 해당 템플릿을 찾을 수 없는 경우
- *       500:
- *         description: 서버 에러
- */
-
-
 /**
  * @swagger
  * /localization/template:
@@ -187,34 +135,4 @@
  *                 deleted:
  *                   type: integer
  *                   example: 2
- */
-
-/**
- * @swagger
- * /localization/get-local-details:
- *   post:
- *     summary: 로컬라이제이션 템플릿 세부 정보 조회
- *     tags:
- *          - Localization
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - ticket_num
- *               - ticket_url
- *             properties:
- *               ticket_num:
- *                 type: string
- *               ticket_url:
- *                 type: string
- *     responses:
- *       200:
- *         description: 템플릿 세부 정보 조회 성공
- *       404:
- *         description: 필수 필드 누락 또는 잘못된 형식
- *       500:
- *          description: 서버 내부 오류류
  */
