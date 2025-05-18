@@ -30,44 +30,43 @@ const LeftNavBar = () => {
 
       <ButtonGroup>
         <NavButton
-        // TODO: active prop에 문제가 있는듯하다. 콘솔 확인.
-          active={location.pathname === "/" || isActive("/edit-template")}
+          $active={location.pathname === "/" || isActive("/edit-template")}
           onClick={() => handleNavigate("/edit-template")}
         >
           <IconImage src={settingIcon} alt="edit template" />
-          <NavButtonText active={location.pathname === "/" || isActive("/edit-template")}>Edit Template</NavButtonText>
+          <NavButtonText $active={location.pathname === "/" || isActive("/edit-template")}>Edit Template</NavButtonText>
         </NavButton>
         
         <NavButton
-        // TODO: Create/Update Localization Template으로 이름 바꾸기
-          active={isActive("/localize-template")}
+        // TODO: 이름 어울리게 네이밍
+          $active={isActive("/localize-template")}
           onClick={() => handleNavigate("/localize-template")}
         >
           <IconImage src={localizationIcon} alt="localize template" />
-          <NavButtonText active={isActive("/localize-template")}>Localize Template</NavButtonText>
+          <NavButtonText $active={isActive("/localize-template")}>Localize Template</NavButtonText>
         </NavButton>
 
         <NavButton
-          active={isActive("/tobe-applied")}
+          $active={isActive("/tobe-applied")}
           onClick={() => handleNavigate("/tobe-applied")}
         >
           <IconImage src={applyIcon} alt="apply template" />
-          <NavButtonText active={isActive("/tobe-applied")}>Apply Template</NavButtonText>
+          <NavButtonText $active={isActive("/tobe-applied")}>Apply Template</NavButtonText>
         </NavButton>
 
         <NavButton
-          active={isActive("/qa-check")}
+          $active={isActive("/qa-check")}
           onClick={() => handleNavigate("/qa-check")}
         >
           <IconImage src={qaIcon} alt="QA" />
-          <NavButtonText active={isActive("/qa-check")}>QA</NavButtonText>
+          <NavButtonText $active={isActive("/qa-check")}>QA</NavButtonText>
         </NavButton>
 
         <NavButton 
-          active={isActive("/guide")}
+          $active={isActive("/guide")}
           onClick={() => handleNavigate("/guide")}>
           <IconImage src={guideIcon} alt="guide" />
-          <NavButtonText active={isActive("/guide")}>Guide</NavButtonText>
+          <NavButtonText $active={isActive("/guide")}>Guide</NavButtonText>
           </NavButton>
       </ButtonGroup>
     </NavContainer>
@@ -115,8 +114,8 @@ const NavButton = styled.button`
   gap: 12px;
   padding: 16px;
   border-radius: 5px;
-  background-color: ${({ active }) => (active ? "hsl(27, 90%, 70%)" : "transparent")};
-  font-weight: ${({ active }) => (active ? "700" : "normal")};
+  background-color: ${(props) => (props.$active ? "hsl(27, 90%, 70%)" : "transparent")};
+  font-weight: ${(props) => (props.$active ? "700" : "normal")};
 
   &:hover {
     background-color: hsl(27, 90%, 70%);
@@ -126,7 +125,7 @@ const NavButtonText = styled.div`
   color: #4B1C2F ;
   font-size: 14px;
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-weight: ${({ active }) => (active ? "700" : "normal")};
+  font-weight: ${(props) => (props.$active ? "700" : "normal")};
 `;
 
 const IconImage = styled.img`
