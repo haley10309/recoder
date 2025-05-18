@@ -60,10 +60,10 @@ exports.updateLocalizationFull = (req, res) => {
       ...deletePromises,
     ])
       .then(([inserted, ...rest]) => {
-        // console.log('❤️/localization/template 결과', {
-        //   inserted,
-        //   rest,
-        // })
+        console.log('❤️/localization/template 결과', {
+          inserted,
+          rest,
+        })
         res.json({ success: true });
       })
       .catch(err => {

@@ -7,9 +7,9 @@ import Qa_page from "@Pages/Qa_Page/Qa_page";
 import Footer from "@Components/Nav/Footer";
 import Guide from "@Pages/Guide/Guide";
 import "./style/global.css";
-import LocalizationVersion1 from "./Pages/Localization/LocalizationVersion1";
 import LeftNavBar from "@Components/Nav/LeftNavBar";
-import Localization from "./Pages/Localization/Localization";
+import EditLocalizationEntries from "./Pages/EditLocalizationEntries/EditLocalizationEntries";
+import LocalizationVersion1 from "./Pages/EditLocalizationEntries/LocalizationVersion1"; // TODO:?
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Main />} />
                 <Route path="/edit-template" element={<EditTemplate />} />
-                <Route path="/localize-template" element={<Localization />} />
+                <Route path="/edit-localization-entries" element={<EditLocalizationEntries />} />
                 <Route path="/tobe-applied" element={<ToBeApplied />} />
                 <Route path="/qa-check" element={<Qa_page />} />
                 <Route path="/guide" element={<Guide />} />

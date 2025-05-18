@@ -38,12 +38,11 @@ const LeftNavBar = () => {
         </NavButton>
         
         <NavButton
-        // TODO: 이름 어울리게 네이밍
-          $active={isActive("/localize-template")}
-          onClick={() => handleNavigate("/localize-template")}
+          $active={isActive("/edit-localization-entries")}
+          onClick={() => handleNavigate("/edit-localization-entries")}
         >
-          <IconImage src={localizationIcon} alt="localize template" />
-          <NavButtonText $active={isActive("/localize-template")}>Localize Template</NavButtonText>
+          <IconImage src={localizationIcon} alt="edit localization entries" />
+          <NavButtonText $active={isActive("/edit-localization-entries")}>Localize Template</NavButtonText>
         </NavButton>
 
         <NavButton

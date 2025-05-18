@@ -10,12 +10,7 @@
       "@Guide/*": ["src/Pages/Guide/*"],
       "@Qa_Page/*": ["src/Pages/Qa_Page/*"],
       "@ToBeApplied/*": ["src/Pages/ToBeApplied/*"],
-      "@Translation/*": ["src/Pages/Translation/*"],
-      "@Localization/*": ["src/Pages/Localization/*"],
-      "@DummyData/*": ["src/dummy_data/*"],
-      "@LocalizationComponent/*": ["src/Components/Localization/*"],
-      "@Hooks/*": ["src/hooks/*"],
-      "@Utils/*": ["src/utils/*"]
+      "@EditLocalizationEntries/*": ["src/Pages/EditLocalizationEntries/*"],
     }
   },
   "include": ["src"]

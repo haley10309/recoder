@@ -6,9 +6,9 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import ShowDetail from "@Localization/ShowDetail";
+import ShowDetail from "@/Pages/EditLocalizationEntries/ShowDetail";
 import styled from "styled-components";
-
+// TODO: 코드확인필요
 const LocalizationVersion1 = () => {
   const [translationFile, setTranslationFile] = useState(null);
   const [translations, setTranslations] = useState({});

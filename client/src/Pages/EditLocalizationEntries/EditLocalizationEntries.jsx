@@ -11,7 +11,7 @@ import TransBox from "@/Components/Common/TransBox";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 
-const Localization = () => {
+const EditLocalizationEntries = () => {
   const {
       ticketNum,
       setTicketNum,
@@ -59,9 +59,9 @@ const Localization = () => {
   const [validCountries, setValidCountries] = useState([]);
   const [translationData, setTranslationData] = useState({});
   
-  // Localization states
+  // states
   const [englishCopyList, setEnglishCopyList] = useState([]);
-  const tobeCodes = nonAssetToBeCodes.slice(0); // TODO: nonAsset만인데, asset도 다뤄야하면 수정 필요
+  const tobeCodes = nonAssetToBeCodes.slice(0);
 
   // 로컬라이제이션 생성
   const handleCreateOrUpdateLocalization = async () => {
@@ -106,7 +106,7 @@ const Localization = () => {
       <Gap gap={15} />
 
       <CheckTemplate
-        path="localize-template"
+        path="edit-localization-entries"
         ticketNum={ticketNum}
         ticketURL={ticketURL}
         setTicketNum={setTicketNum}
@@ -217,4 +217,4 @@ const Localization = () => {
   );
 };
 
-export default Localization;
+export default EditLocalizationEntries;
