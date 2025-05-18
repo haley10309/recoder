@@ -25,12 +25,20 @@ exports.updateLocalizationFull = (req, res) => {
 
     const insertValues = insertItems.map(item => [item.code_context, templateId]);
     const insertQuery = `INSERT INTO TemplateLocalizationEntries (code_context, template_id) VALUES ?`;
-    const updateQuery = `UPDATE TemplateLocalizationEntries SET code_context = ? WHERE id = ? AND template_id = ?`;
-    const deleteQuery = `DELETE FROM TemplateLocalizationEntries WHERE id IN (?) AND template_id = ?`;
+    const updateQuery = `UPDATE TemplateLocalizationEntries SET code_context = ? WHERE id = ?`;
+    const deleteQuery = `UPDATE TemplateLocalizationEntries SET deleted_at = NOW() WHERE id = ?`;
 
     const updatePromises = updateItems.map(item => {
       return new Promise((resolve, reject) => {
-        db.query(updateQuery, [item.code_context, item.id, templateId], err => {
+        db.query(updateQuery, [item.code_context, item.id], err => {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
+    });
+    const deletePromises = delete_ids.map(deleteId => {
+      return new Promise((resolve, reject) => {
+        db.query(deleteQuery, [deleteId], (err) => {
           if (err) return reject(err);
           resolve();
         });
@@ -39,18 +47,9 @@ exports.updateLocalizationFull = (req, res) => {
 
     const insertPromise = insertItems.length > 0
       ? new Promise((resolve, reject) => {
-          db.query(insertQuery, [insertValues], (err, result) => {
+          db.query(insertQuery, [insertValues], (err) => {
             if (err) return reject(err);
-            resolve(result.affectedRows);
-          });
-        })
-      : Promise.resolve(0);
-
-    const deletePromise = delete_ids.length > 0
-      ? new Promise((resolve, reject) => {
-          db.query(deleteQuery, [delete_ids, templateId], (err, result) => {
-            if (err) return reject(err);
-            resolve(result.affectedRows);
+            resolve();
           });
         })
       : Promise.resolve(0);
@@ -58,17 +57,14 @@ exports.updateLocalizationFull = (req, res) => {
     Promise.all([
       insertPromise,
       ...updatePromises,
-      deletePromise
+      ...deletePromises,
     ])
       .then(([inserted, ...rest]) => {
-        const deleted = rest.pop(); 
-        const updated = rest.length;
-        res.json({
-          success: true,
-          inserted,
-          updated,
-          deleted
-        });
+        // console.log('❤️/localization/template 결과', {
+        //   inserted,
+        //   rest,
+        // })
+        res.json({ success: true });
       })
       .catch(err => {
         console.error("Error processing localization:", err);
