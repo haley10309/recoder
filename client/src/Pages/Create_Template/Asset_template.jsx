@@ -42,8 +42,11 @@ class Asset_Template extends React.Component {
     return (
       <div className="asset-template">
         <button className="flex py-3 px-20 justify-center items-center bg-[#000] text-white font-[600] text-[13px] rounded-[10px]" onClick={this.show.bind(this)}>
-          {`Asset(<<< 이거 사용하나요?? 이 텍스트를 본 순간 사용여부 데이에게 전달필요!!!)`}
+          {`Asset`}
         </button>
+        <div style={{ fontSize: 12, color: "gray" }}>
+          (250519 기준 사용중단. Non-Asset만 사용)
+        </div>
 
         <Rodal width={1000} height={700} visible={this.state.visible} onClose={this.hide.bind(this)}>
           <div>
