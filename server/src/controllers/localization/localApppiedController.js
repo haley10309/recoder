@@ -17,11 +17,11 @@ const stripHtmlTags = (str) => str.replace(/<[^>]+>/g, '').trim();
 const clean = (s) => normalizeForComparison(s).replace(/["'\[\]\-·*]/g, '');
 
 exports.translateHtmlWithTxt = (req, res) => {
-  const { hotfix_id, country_code } = req.body;
+  const { template_id, country_code } = req.body;
   const htmlFile = req.files?.file?.[0];
   const txtFile = req.files?.txtfile?.[0];
 
-  if (!htmlFile || !txtFile || !hotfix_id || !country_code) {
+  if (!htmlFile || !txtFile || !template_id || !country_code) {
     return res.status(400).json({ success: false, message: "파일 또는 필수 정보가 누락되었습니다." });
   }
 
@@ -53,7 +53,7 @@ exports.translateHtmlWithTxt = (req, res) => {
     }
 
     const query = "SELECT id, code_context FROM TemplateLocalizationEntries WHERE template_id = ?";
-    db.query(query, [hotfix_id], (err, results) => {
+    db.query(query, [template_id], (err, results) => {
       if (err) {
         return res.status(500).json({ success: false, message: "DB 조회 실패", error: err });
       }

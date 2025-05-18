@@ -48,7 +48,7 @@ exports.updateLocalizationFull = (req, res) => {
 
     const deletePromise = delete_ids.length > 0
       ? new Promise((resolve, reject) => {
-          db.query(deleteQuery, [delete_ids, hotfix_id], (err, result) => {
+          db.query(deleteQuery, [delete_ids, templateId], (err, result) => {
             if (err) return reject(err);
             resolve(result.affectedRows);
           });

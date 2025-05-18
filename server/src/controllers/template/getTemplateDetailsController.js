@@ -35,13 +35,13 @@ exports.getTemplateDetailsData = (req, res) => {
 
     db.query(getCodeChangesQuery, [templateId], (err1, codeChanges) => {
       if (err1) {
-        console.error("Error fetching AsWasToBe:", err1);
+        console.error("Error fetching TemplateCodeChanges:", err1);
         return res.status(500).json({ error: "Failed to fetch aswas_tobe_list" });
       }
 
       db.query(getLocalizationEntriesQuery, [templateId], (err2, localizationEntries) => {
         if (err2) {
-          console.error("Error fetching Localization:", err2);
+          console.error("Error fetching TemplateLocalizationEntries:", err2);
           return res.status(500).json({ error: "Failed to fetch localization" });
         }
 
