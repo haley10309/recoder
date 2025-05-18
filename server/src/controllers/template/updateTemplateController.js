@@ -18,7 +18,7 @@ exports.updateTemplateData = async (req, res) => {
     }
 
     // 기존 TemplateCodeChanges 목록 조회
-    const getExistingRowsQuery = `SELECT id FROM TemplateCodeChanges WHERE template_id = ?`;
+    const getExistingRowsQuery = `SELECT id FROM TemplateCodeChanges WHERE template_id = ? AND deleted_at IS NULL`;
     db.query(getExistingRowsQuery, [template_id], (err, existingRows) => {
       if (err) {
         console.error("Error fetching existing IDs:", err);
@@ -28,10 +28,6 @@ exports.updateTemplateData = async (req, res) => {
       const existingIds = existingRows.map(row => row.id);
       const incomingIds = parsedCodeChanges.filter(row => !!row.id).map(row => row.id);
       const idsToDelete = existingIds.filter(id => !incomingIds.includes(id));
-
-      // TODO: 모든 테이블에서 deleted_at is not null 조건 추가필요
-      // TODO: 모든 테이블에서 deleted_at is not null 조건 추가필요
-      // TODO: 모든 테이블에서 deleted_at is not null 조건 추가필요
 
       // 삭제 대상 처리
       const deletePromises = idsToDelete.map(id => {

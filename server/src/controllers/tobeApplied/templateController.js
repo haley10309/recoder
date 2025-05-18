@@ -7,7 +7,7 @@ exports.templateData = (req, res) => {
     SELECT template.id, templateCodeChange.aswas_code, templateCodeChange.tobe_code , templateCodeChange.id, templateCodeChange.ppt_no
     FROM Templates template
     JOIN TemplateCodeChanges templateCodeChange ON template.id = templateCodeChange.template_id
-    WHERE template.ticket_num = ? AND template.ticket_url = ?
+    WHERE template.ticket_num = ? AND template.ticket_url = ? AND deleted_at IS NULL
   `;
   
   db.query(query, [ticket_num, ticket_url], (error, results) => {
@@ -23,4 +23,4 @@ exports.templateData = (req, res) => {
     }
 
   });
-  };
+};

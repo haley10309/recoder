@@ -7,7 +7,7 @@ exports.checkTemplateData = (req, res) => {
 
   const query = `
     SELECT * FROM Templates 
-    WHERE ticket_num = ? AND ticket_url = ?
+    WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL
   `;
 
   db.query(

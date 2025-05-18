@@ -7,7 +7,7 @@ exports.getTemplateDetailsData = (req, res) => {
   const templateQuery = `
     SELECT id 
     FROM Templates
-    WHERE ticket_num = ? AND ticket_url = ?
+    WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL
   `;
 
   db.query(templateQuery, [ticket_num, ticket_url], (err, results) => {
@@ -25,12 +25,12 @@ exports.getTemplateDetailsData = (req, res) => {
     const getCodeChangesQuery = `
       SELECT ppt_no, aswas_code, tobe_code
       FROM TemplateCodeChanges
-      WHERE template_id = ?
+      WHERE template_id = ? AND deleted_at IS NULL
     `;
     const getLocalizationEntriesQuery = `
       SELECT id, code_context
       FROM TemplateLocalizationEntries
-      WHERE template_id = ?
+      WHERE template_id = ? AND deleted_at IS NULL
     `;
 
     db.query(getCodeChangesQuery, [templateId], (err1, codeChanges) => {

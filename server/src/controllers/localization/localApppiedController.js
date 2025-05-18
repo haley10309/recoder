@@ -52,7 +52,11 @@ exports.translateHtmlWithTxt = (req, res) => {
       }
     }
 
-    const query = "SELECT id, code_context FROM TemplateLocalizationEntries WHERE template_id = ?";
+    const query = `
+      SELECT id, code_context
+      FROM TemplateLocalizationEntries
+      WHERE template_id = ? AND deleted_at IS NULL
+    `;
     db.query(query, [template_id], (err, results) => {
       if (err) {
         return res.status(500).json({ success: false, message: "DB 조회 실패", error: err });

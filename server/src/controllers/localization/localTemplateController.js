@@ -11,7 +11,7 @@ exports.updateLocalizationFull = (req, res) => {
   const findTemplateQuery = `
     SELECT id
     FROM Templates
-    WHERE ticket_num = ? AND ticket_url = ?
+    WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL
   `;
 
   db.query(findTemplateQuery, [ticket_num, ticket_url], (err, results) => {
