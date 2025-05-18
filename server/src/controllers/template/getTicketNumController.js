@@ -2,7 +2,7 @@
 const db = require("../../config/db");
   
 exports.getTicketNumData = (req, res) => {
-const query = "SELECT DISTINCT ticket_num AS name FROM TemplateSetting";
+const query = "SELECT DISTINCT ticket_num AS name FROM Templates";
 
 db.query(query, (err, results) => {
     if (err) {

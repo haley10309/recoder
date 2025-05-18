@@ -2,7 +2,7 @@
 const db = require("../../config/db");
 
 exports.getTicketURLData = (req, res) => {
-    const query = "SELECT DISTINCT ticket_url AS name FROM TemplateSetting";
+    const query = "SELECT DISTINCT ticket_url AS name FROM Templates";
   
     db.query(query, (err, results) => {
       if (err) {
