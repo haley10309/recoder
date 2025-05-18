@@ -1,7 +1,7 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 
-import Asset_Template from "@/Pages/Create_Template/Asset_template";
+import AssetTemplate from "@/Pages/Create_Template/AssetTemplate";
 import CopyTextButton from "../Common/CopyTextButton";
 
 const TemplateCodeEditor = ({
@@ -61,7 +61,7 @@ const TemplateCodeEditor = ({
     <>
       {/* Asset */}
       <div className="mb-[40px]">
-        <Asset_Template
+        <AssetTemplate
           assetPptNos={assetPptNos} 
           assetAsWasCodes={assetAsWasCodes} 
           assetToBeCodes={assetToBeCodes} 
