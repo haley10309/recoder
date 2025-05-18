@@ -20,7 +20,7 @@ export function useLocalizationApply({
   ) => {
     let result = htmlString;
     localizationList.forEach((item) => {
-      let originalBlock = item.local_code;
+      let originalBlock = item.code_context;
       let blockDoc = new DOMParser().parseFromString(
         originalBlock,
         "text/html"
@@ -36,8 +36,8 @@ export function useLocalizationApply({
         }
       });
 
-      if (result.includes(item.local_code)) {
-        result = result.replace(item.local_code, originalBlock);
+      if (result.includes(item.code_context)) {
+        result = result.replace(item.code_context, originalBlock);
       }
     });
 
@@ -50,7 +50,7 @@ export function useLocalizationApply({
 
   const handleApplyLocalization = async (ticketNum, ticketUrl) => {
     try {
-      const localization_list = await fetchLocalizationList(
+      const localizationEntries = await fetchLocalizationList(
         ticketNum,
         ticketUrl
       );
@@ -63,7 +63,7 @@ export function useLocalizationApply({
           const localizedToBe = applyLocalizedTemplateBlocks(
             textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
             currentTranslations,
-            localization_list
+            localizationEntries
           );
 
           const errorState = Object.keys(currentTranslations).some((key) => {
@@ -80,8 +80,8 @@ export function useLocalizationApply({
 
       // 전체 HTML 변환
       let localizedHtml = downloadedFileContent;
-      localization_list.forEach((item) => {
-        let originalBlock = item.local_code;
+      localizationEntries.forEach((item) => {
+        let originalBlock = item.code_context;
         let blockDoc = new DOMParser().parseFromString(
           originalBlock,
           "text/html"
@@ -97,8 +97,8 @@ export function useLocalizationApply({
           }
         });
 
-        if (localizedHtml.includes(item.local_code)) {
-          localizedHtml = localizedHtml.replace(item.local_code, originalBlock);
+        if (localizedHtml.includes(item.code_context)) {
+          localizedHtml = localizedHtml.replace(item.code_context, originalBlock);
         }
       });
 

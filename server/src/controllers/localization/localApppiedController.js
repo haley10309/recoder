@@ -52,7 +52,7 @@ exports.translateHtmlWithTxt = (req, res) => {
       }
     }
 
-    const query = "SELECT id, local_code FROM localization WHERE hotfix_id = ?";
+    const query = "SELECT id, code_context FROM TemplateLocalizationEntries WHERE template_id = ?";
     db.query(query, [hotfix_id], (err, results) => {
       if (err) {
         return res.status(500).json({ success: false, message: "DB 조회 실패", error: err });
@@ -61,15 +61,15 @@ exports.translateHtmlWithTxt = (req, res) => {
       const matches = [];
       const replacedResults = [];
 
-      results.forEach(({ id, local_code }) => {
-        const normalizedCode = normalizeForComparison(local_code);
+      results.forEach(({ id, code_context }) => {
+        const normalizedCode = normalizeForComparison(code_context);
         const matched = normalizedHtml.includes(normalizedCode);
 
         let htmlMatchedPart = null;
         let context = null;
 
         if (matched) {
-          const rawCode = local_code
+          const rawCode = code_context
             .replace(/\\"/g, '"')
             .replace(/\\n/g, '\n')
             .replace(/\\t/g, '\t')

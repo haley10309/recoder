@@ -21,36 +21,36 @@ exports.getTemplateDetailsData = (req, res) => {
     }
 
     const templateId = results[0].id;
-// TODO: 이미 있는 TemplateCodeChanges는 id가 오겠군. update-template때 쓰이니까 주의~
-    const aswasTobeQuery = `
+
+    const getCodeChangesQuery = `
       SELECT ppt_no, aswas_code, tobe_code
-      FROM AsWasToBe
-      WHERE hotfix_id = ?
+      FROM TemplateCodeChanges
+      WHERE template_id = ?
+    `;
+    const getLocalizationEntriesQuery = `
+      SELECT id, code_context
+      FROM TemplateLocalizationEntries
+      WHERE template_id = ?
     `;
 
-    const localizationQuery = `
-      SELECT id, local_code
-      FROM localization
-      WHERE hotfix_id = ?`;
+    db.query(getCodeChangesQuery, [templateId], (err1, codeChanges) => {
+      if (err1) {
+        console.error("Error fetching AsWasToBe:", err1);
+        return res.status(500).json({ error: "Failed to fetch aswas_tobe_list" });
+      }
 
-      db.query(aswasTobeQuery, [templateId], (err1, aswasTobeResults) => {
-        if (err1) {
-          console.error("Error fetching AsWasToBe:", err1);
-          return res.status(500).json({ error: "Failed to fetch aswas_tobe_list" });
+      db.query(getLocalizationEntriesQuery, [templateId], (err2, localizationEntries) => {
+        if (err2) {
+          console.error("Error fetching Localization:", err2);
+          return res.status(500).json({ error: "Failed to fetch localization" });
         }
-  
-        db.query(localizationQuery, [templateId], (err2, localizationResults) => {
-          if (err2) {
-            console.error("Error fetching Localization:", err2);
-            return res.status(500).json({ error: "Failed to fetch localization" });
-          }
-  
-          res.json({
-            templateId,
-            aswas_tobe_list: aswasTobeResults,
-            localization_list: localizationResults
-          });
+
+        res.json({
+          templateId,
+          codeChanges,
+          localizationEntries,
         });
       });
     });
-  };
+  });
+};

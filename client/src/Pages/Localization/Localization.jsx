@@ -21,8 +21,8 @@ const Localization = () => {
       setSaveType,
       isTemplateCreated,
       setIsTemplateCreated,
-      localizedItems,
-      setLocalizedItems,
+      localizationEntries,
+      setLocalizationEntries,
       deleteIds,
       setDeleteIds,
       nonAssetAsWasCodes,
@@ -75,11 +75,11 @@ const Localization = () => {
     //   const body = { 
     //     ticket_num: ticketNum, 
     //     ticket_url: ticketURL, 
-    //     localization_list: 
-    //       localizedItems.map((item) => (
+    //     localizationEntries: 
+    //       localizationEntries.map((item) => (
     //         item.id 
-    //           ? { id: item.id, local_code: item.local_code }
-    //           : { local_code: item.local_code }
+    //           ? { id: item.id, code_context: item.code_context }
+    //           : { code_context: item.code_context }
     //       )), 
     //     delete_ids: deleteIds,
     //   };
@@ -87,7 +87,7 @@ const Localization = () => {
     //   await axios.put(`${BASE_URL}/localization/template`, body, { headers: { "Content-Type": "application/json" } });
     //   setDeleteIds([]);
     //   const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
-    //   setLocalizedItems(data.localization_list || []);
+    //   setLocalizationEntries(data.localizationEntries || []);
     //   alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
     // } catch (err) {
     //   console.error("[Error] handleCreateOrUpdateLocalization", err);
@@ -120,7 +120,7 @@ const Localization = () => {
         setAssetPptNos={setAssetPptNos}
         setAssetAsWasCodes={setAssetAsWasCodes}
         setAssetToBeCodes={setAssetToBeCodes}
-        setLocalizedItems={setLocalizedItems}
+        setLocalizationEntries={setLocalizationEntries}
         setDeleteIds={setDeleteIds}
       />
 
@@ -169,7 +169,7 @@ const Localization = () => {
         isTemplateCreated={isTemplateCreated}
         tobeCodes={tobeCodes}
         setEnglishCopyList={setEnglishCopyList}
-        setLocalizedItems={setLocalizedItems}
+        setLocalizationEntries={setLocalizationEntries}
         hasOriginalHtmlFile={!!originalHtmlFile}
         checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
       />
@@ -178,29 +178,29 @@ const Localization = () => {
       <TitleLabel text="🌐 로컬라이제이션 템플릿" />
       <Gap gap={15} />
       <div className="flex flex-col">
-        {localizedItems.map((item, idx) => (
+        {localizationEntries.map((item, idx) => (
           <TransBox
             key={idx}
             itemId={item.id}
-            text={item.local_code}
+            text={item.code_context}
             highlights={englishCopyList}
             onChange={(newTxt) => {
-              setLocalizedItems((prev) => {
+              setLocalizationEntries((prev) => {
                 const a = [...prev];
-                a[idx].local_code = newTxt;
+                a[idx].code_context = newTxt;
                 return a;
               });
             }}
             onDelete={() => {
               // TODO: id 활용 부분 전부 다시 체크, id로 통일?
-              setLocalizedItems((prev) => prev.filter((_, i) => i !== idx));
+              setLocalizationEntries((prev) => prev.filter((_, i) => i !== idx));
               if (item.id) setDeleteIds((prev) => [...prev, item.id]);
             }}
           />
         ))}
       </div>
       <div className="flex gap-[15px] save_button_div mt-[50px]">
-        <button className="plus-button rounded-[10px]" onClick={() => setLocalizedItems((prev) => [...prev, { local_code: "" }])}>
+        <button className="plus-button rounded-[10px]" onClick={() => setLocalizationEntries((prev) => [...prev, { code_context: "" }])}>
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>

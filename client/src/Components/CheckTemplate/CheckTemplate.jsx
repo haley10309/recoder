@@ -21,7 +21,7 @@ const CheckTemplate = ({
   ticketURL, 
   setTicketNum, 
   setTicketURL, 
-  setLocalizedItems, 
+  setLocalizationEntries, 
   setDeleteIds, 
 }) => {
   const checkForExistingTemplate = async () => {
@@ -47,19 +47,19 @@ const CheckTemplate = ({
         const detailData = detailRes.data;
 
         const templateId = detailData.templateId;
-        const aswasTobeList = detailData.aswas_tobe_list || [];
-        const localizationList = detailData.localization_list || [];
+        const codeChanges = detailData.codeChanges || [];
+        const localizationEntries = detailData.localizationEntries || [];
 
-        const nonAssetAswasList = aswasTobeList.filter((it) => !isAssetCode(it.aswas_code));
-        const nonAssetTobeList = aswasTobeList.filter((it) => !isAssetCode(it.tobe_code));
-        const assetAswasList = aswasTobeList.filter((it) => isAssetCode(it.aswas_code));
-        const assetTobeList = aswasTobeList.filter((it) => isAssetCode(it.tobe_code));
+        const nonAssetAswasList = codeChanges.filter((it) => !isAssetCode(it.aswas_code));
+        const nonAssetTobeList = codeChanges.filter((it) => !isAssetCode(it.tobe_code));
+        const assetAswasList = codeChanges.filter((it) => isAssetCode(it.aswas_code));
+        const assetTobeList = codeChanges.filter((it) => isAssetCode(it.tobe_code));
         
         // 핫픽스 AS-WAS/TO-BE, 로컬라이제이션 세팅
         setTemplateID(templateId);
         setDeleteIds([]);
 
-        setNonAssetPptNos(nonAssetAswasList.map((it) => it.ppt_no || "")); // 특이사항(250509): nonAsset pptNos만 원본 aswasTobeList를 사용하고 있었는데, 실수로 판단되어 nonAssetAswasList로 수정함함
+        setNonAssetPptNos(nonAssetAswasList.map((it) => it.ppt_no || ""));
         setNonAssetAsWasCodes(nonAssetAswasList.map((it) => it.aswas_code?.trim() || ""));
         setNonAssetToBeCodes(nonAssetTobeList.map((it) => it.tobe_code?.trim() || ""));
 
@@ -67,17 +67,16 @@ const CheckTemplate = ({
         setAssetAsWasCodes(assetAswasList.map((it) => it.aswas_code?.trim() || ""));
         setAssetToBeCodes(assetTobeList.map((it) => it.tobe_code?.trim() || ""));
 
-        // TODO: localization id 가져올 때 이대로 가져오면 되는건지 체크~
-        setLocalizedItems(
-          localizationList.map((it) => ({
+        setLocalizationEntries(
+          localizationEntries.map((it) => ({
             id: it.id,
-            local_code: it.local_code,
+            code_context: it.code_context,
           }))
         );
       } else {
         setSaveType("create");
         setIsTemplateCreated(false);
-        setLocalizedItems([{ local_code: "" }]);
+        setLocalizationEntries([{ code_context: "" }]);
         setDeleteIds([]);
         
         if (path === 'create-template') {

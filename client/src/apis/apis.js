@@ -116,7 +116,7 @@ export const fetchLocalizationList = async (ticket_num, ticket_url) => {
       ticket_url,
     });
 
-    return response.data.localization_list || [];
+    return response.data.localizationEntries || [];
   } catch (error) {
     console.error("로컬라이제이션 API 호출 실패:", error);
     throw error;

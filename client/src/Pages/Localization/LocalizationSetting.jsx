@@ -74,7 +74,7 @@
 //       );
 //       return {
 //         ...row,
-//         localization: matchedLocal?.local_code || "",
+//         localization: matchedLocal?.code_context || "",
 //         localized: !!matchedLocal,
 //         completed: row.toBeMatch && !!matchedLocal,
 //       };

@@ -13,11 +13,8 @@ const Create_Template = () => {
       setTicketURL,
       saveType,
       setSaveType,
-      isTemplateCreated,
       setIsTemplateCreated,
-      localizedItems,
-      setLocalizedItems,
-      deleteIds,
+      setLocalizationEntries,
       setDeleteIds,
       nonAssetAsWasCodes,
       setNonAssetAsWasCodes,
@@ -65,7 +62,7 @@ const Create_Template = () => {
         setAssetPptNos={setAssetPptNos}
         setAssetAsWasCodes={setAssetAsWasCodes}
         setAssetToBeCodes={setAssetToBeCodes}
-        setLocalizedItems={setLocalizedItems}
+        setLocalizationEntries={setLocalizationEntries}
         setDeleteIds={setDeleteIds}
       />
 

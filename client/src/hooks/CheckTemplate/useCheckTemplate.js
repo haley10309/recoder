@@ -12,8 +12,7 @@ export const useCheckTemplate = () => {
   const [saveType, setSaveType] = useState(""); // 'create' | 'update'
   const [isTemplateCreated, setIsTemplateCreated] = useState(false); // 템플릿이 이미 만들어져 있으면 true로
 
-  // TODO: local_code: localized_tobe_code로 or 적절한 이름으로 수정 필요
-  const [localizedItems, setLocalizedItems] = useState([{ local_code: "" }]); // copy 적용 필요한 tobe_code를 모아둔 리스트
+  const [localizationEntries, setLocalizationEntries] = useState([{ code_context: "" }]); // copy 적용 필요한 tobe_code를 모아둔 리스트
   const [deleteIds, setDeleteIds] = useState([]);
 
   // non-asset states
@@ -137,8 +136,8 @@ export const useCheckTemplate = () => {
     setSaveType,
     isTemplateCreated,
     setIsTemplateCreated,
-    localizedItems,
-    setLocalizedItems,
+    localizationEntries,
+    setLocalizationEntries,
     deleteIds,
     setDeleteIds,
     nonAssetAsWasCodes,
