@@ -11,9 +11,7 @@ CREATE TABLE Templates (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    CONSTRAINT unique_ticket_num UNIQUE (ticket_num),
-    CONSTRAINT unique_ticket_url UNIQUE (ticket_url)
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
 CREATE TABLE TemplateCodeChanges (
