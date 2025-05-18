@@ -6,7 +6,7 @@ exports.checkTemplateData = (req, res) => {
   const { ticket_num, ticket_url } = req.body;
 
   const query = `
-    SELECT * FROM TemplateSetting 
+    SELECT * FROM Templates 
     WHERE ticket_num = ? AND ticket_url = ?
   `;
 
