@@ -14,8 +14,8 @@ const updateTemplateController = require("../controllers/template/updateTemplate
 router.post("/check-template-exsist", cors(), checkTemplateController.checkTemplateData);
 router.post("/get-template-details", cors(), getTemplateDetailsController.getTemplateDetailsData);
 router.post("/create-template", upload.single('file'), cors(), createTemplateController.createTemplateData);
+router.post("/update-template", multer().none(), cors(), updateTemplateController.updateTemplateData);
 router.get("/get-ticket-number", cors(), getTicketNumController.getTicketNumData);
 router.get("/get-ticket-url", cors(), getTicketURLController.getTicketURLData);
-router.post("/update-template", multer().none(), cors(), updateTemplateController.updateTemplateData);
 
 module.exports = router;
