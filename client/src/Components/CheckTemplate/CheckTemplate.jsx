@@ -27,13 +27,13 @@ const CheckTemplate = ({
   const checkForExistingTemplate = async () => {
     try {
       // 1) 핫픽스 템플릿 존재 여부 확인
-      const response = await axios.post(`${BASE_URL}/check-template`, {
+      const response = await axios.post(`${BASE_URL}/check-template-exsist`, {
         ticket_num: ticketNum,
         ticket_url: ticketURL,
       });
       const data = response.data;
-      const isTemplateExist = Array.isArray(data) && data.length > 0 && data[0].id > 0;
-
+      const isTemplateExist = data.isTemplateExist;
+ 
       if (isTemplateExist) {
         alert(`${ticketURL} 템플릿을 불러왔습니다.`);
         setSaveType("update");

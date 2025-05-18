@@ -18,7 +18,10 @@ exports.checkTemplateData = (req, res) => {
         console.error("Error fetching templates:", err);
         return res.status(500).json({ error: "Failed to fetch templates" });
       }
-      res.json(results);
+      const isTemplateExist = results.length > 0;
+      res.json({
+        isTemplateExist,
+      });
     }
   );
 };

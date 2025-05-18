@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /check-template:
+ * /check-template-exist:
  *   post:
  *     summary: 템플릿 존재 여부 확인
  *     tags: [Template]
@@ -23,7 +23,7 @@
  *          
  *     responses:
  *       200:
- *         description: 템플릿 존재 여부 및 데이터 반환
+ *         description: 템플릿 존재 여부 반환 (isTemplateExist)
  *       400:
  *         description: 잘못된 요청
  *       500:
@@ -33,7 +33,7 @@
 
 /**
  * @swagger
- * /create:
+ * /create-template:
  *   post:
  *     summary: 템플릿 생성 및 DB 저장
  *     tags: [Template]

@@ -103,7 +103,7 @@ export const useCheckTemplate = () => {
     formData.append("aswas_tobe_list", JSON.stringify(aswasTobeList));
 
     try {
-      const url = saveType === "create" ? `${BASE_URL}/create` : `${BASE_URL}/update-template`;
+      const url = saveType === "create" ? `${BASE_URL}/create-template` : `${BASE_URL}/update-template`;
       await axios.post(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
       alert("템플릿이 성공적으로 저장되었습니다");
       setIsTemplateCreated(true);

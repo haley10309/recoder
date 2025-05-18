@@ -5,9 +5,10 @@ exports.getTemplateDetailsData = (req, res) => {
   const { ticket_num, ticket_url } = req.body;
 
   const templateQuery = `
-    SELECT ts.id 
-    FROM TemplateSetting ts 
-    WHERE ts.ticket_num = ? AND ts.ticket_url = ?`;
+    SELECT id 
+    FROM Templates
+    WHERE ticket_num = ? AND ticket_url = ?
+  `;
 
   db.query(templateQuery, [ticket_num, ticket_url], (err, results) => {
     if (err) {
@@ -25,7 +26,7 @@ exports.getTemplateDetailsData = (req, res) => {
       SELECT ppt_no, aswas_code, tobe_code
       FROM AsWasToBe
       WHERE hotfix_id = ?
-    `; // hotfix_id = TemplateSetting.id
+    `;
 
     const localizationQuery = `
       SELECT id, local_code
