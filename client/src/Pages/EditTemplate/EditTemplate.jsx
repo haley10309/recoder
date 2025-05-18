@@ -45,8 +45,8 @@ const EditTemplate = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
-      {/* 📄 템플릿 생성 또는 불러오기 */}
-      <h2 className="font-bold text-black text-[16px] mb-[15px]">📄 템플릿 생성 또는 불러오기</h2>
+      {/* 📄 템플릿 불러오기 */}
+      <h2 className="font-bold text-black text-[16px] mb-[15px]">📄 템플릿 불러오기</h2>
       <CheckTemplate
         path="edit-template"
         ticketNum={ticketNum}
