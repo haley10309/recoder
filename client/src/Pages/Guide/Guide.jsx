@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "@Guide/Guide.scss"; // Import CSS for styling
 import guide_kv from "@/assets/guide/guide_kv.png";
-import create_template_nav from "@/assets/guide/create_template_nav.png";
 import tobe_applied_1 from "@/assets/guide/tobe_applied_6.png";
 import tobe_applied_2 from "@/assets/guide/tobe_applied_7.png";
 import tobe_applied_3 from "@/assets/guide/tobe_applied_8.png";

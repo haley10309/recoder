@@ -6,7 +6,7 @@ import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import TransFileUpload from "./TransFileUpload";
 import TemplateCodeEditor from "@/Components/TemplateCodeEditor/TemplateCodeEditor";
-import UploadFiles from "../Create_Template/UploadFiles";
+import UploadFiles from "../EditTemplate/UploadFiles";
 import TransBox from "@/Components/Common/TransBox";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";

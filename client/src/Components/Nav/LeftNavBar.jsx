@@ -31,11 +31,11 @@ const LeftNavBar = () => {
       <ButtonGroup>
         <NavButton
         // TODO: active prop에 문제가 있는듯하다. 콘솔 확인.
-          active={location.pathname === "/" || isActive("/create-template")}
-          onClick={() => handleNavigate("/create-template")}
+          active={location.pathname === "/" || isActive("/edit-template")}
+          onClick={() => handleNavigate("/edit-template")}
         >
-          <IconImage src={settingIcon} alt="create/update template" />
-          <NavButtonText active={location.pathname === "/" || isActive("/create-template")}>Create/Update Template</NavButtonText>
+          <IconImage src={settingIcon} alt="edit template" />
+          <NavButtonText active={location.pathname === "/" || isActive("/edit-template")}>Edit Template</NavButtonText>
         </NavButton>
         
         <NavButton

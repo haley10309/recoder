@@ -1,7 +1,7 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 
-import AssetTemplate from "@/Pages/Create_Template/AssetTemplate";
+import AssetTemplate from "@/Pages/EditTemplate/AssetTemplate";
 import CopyTextButton from "../Common/CopyTextButton";
 
 const TemplateCodeEditor = ({
@@ -37,7 +37,7 @@ const TemplateCodeEditor = ({
           <>
             {checkHasInvalidAsWasCount() ? (
               <div style={{ color: "#ff0019", fontSize: "15px", fontWeight: "bold" }}>
-                ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. <br/> Create/Update Template 페이지에서 템플릿을 수정한 뒤 다시 시도하세요.
+                ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. <br/> Edit Template 페이지에서 템플릿을 수정한 뒤 다시 시도하세요.
               </div>
             ) : (
               <div style={{ color: "#00c93c", fontSize: "15px", fontWeight: "bold" }}>

@@ -18,7 +18,7 @@ export default ({ mode }) => {
     resolve: {
       alias: [
         { find: "@", replacement: "/src" },
-        { find: "@Create_Template", replacement: "/src/Pages/Create_Template" },
+        { find: "@EditTemplate", replacement: "/src/Pages/EditTemplate" },
         { find: "@public", replacement: "/public" },
         { find: "@Guide", replacement: "/src/Pages/Guide" },
         { find: "@Qa_Page", replacement: "/src/Pages/Qa_Page" },

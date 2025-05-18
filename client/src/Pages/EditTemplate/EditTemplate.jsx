@@ -1,11 +1,11 @@
 import React from "react";
 import CheckTemplate from "../../Components/CheckTemplate/CheckTemplate";
 import UploadFiles from "./UploadFiles";
-import "@Create_Template/Create_Template.scss";
+import "@EditTemplate/EditTemplate.scss";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import TemplateCodeEditor from "@/Components/TemplateCodeEditor/TemplateCodeEditor";
 
-const Create_Template = () => {
+const EditTemplate = () => {
   const {
       ticketNum,
       setTicketNum,
@@ -48,7 +48,7 @@ const Create_Template = () => {
       {/* 📄 템플릿 생성 또는 불러오기 */}
       <h2 className="font-bold text-black text-[16px] mb-[15px]">📄 템플릿 생성 또는 불러오기</h2>
       <CheckTemplate
-        path="create-template"
+        path="edit-template"
         ticketNum={ticketNum}
         ticketURL={ticketURL}
         setTicketNum={setTicketNum}
@@ -108,4 +108,4 @@ const Create_Template = () => {
   );
 };
 
-export default Create_Template;
+export default EditTemplate;

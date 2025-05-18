@@ -4,7 +4,7 @@ import InputDrop from "../Common/InputDrop";
 import { isAssetCode } from "@/utils/codeUtils";
 
 /**
- * path: 'create-template' | 'localize-template' // 페이지 종류에 따라 템플릿 불러오기에 따른 동작이 다름
+ * path: 'edit-template' | 'localize-template' // 페이지 종류에 따라 템플릿 불러오기에 따른 동작이 다름
  */
 const CheckTemplate = ({
   path,
@@ -79,11 +79,11 @@ const CheckTemplate = ({
         setLocalizationEntries([{ code_context: "" }]);
         setDeleteIds([]);
         
-        if (path === 'create-template') {
+        if (path === 'edit-template') {
           alert("새로운 템플릿을 추가할 수 있습니다.");
         }
         if (path === 'localize-template') {
-          alert("Create/Update Template 페이지에서 먼저 템플릿을 생성해주세요.");
+          alert("Edit Template 페이지에서 먼저 템플릿을 생성해주세요.");
         }
       }
     } catch (error) {

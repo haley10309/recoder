@@ -1,9 +1,9 @@
-import Create_Template from "./Create_Template/Create_Template";
+import EditTemplate from "./EditTemplate/EditTemplate";
 
 const Main = () => {
     return (
         <>
-            <Create_Template />
+            <EditTemplate />
         </>
     );  
 }

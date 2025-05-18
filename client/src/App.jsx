@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import Main from "@Pages/Main";
-import Create_Template from "@Pages/Create_Template/Create_Template";
+import EditTemplate from "@/Pages/EditTemplate/EditTemplate";
 import ToBeApplied from "@Pages/ToBeApplied/ToBeApplied";
 import Qa_page from "@Pages/Qa_Page/Qa_page";
 import Footer from "@Components/Nav/Footer";
@@ -23,7 +23,7 @@ function App() {
             <div className="w-[82%]">
               <Routes>
                 <Route path="/" element={<Main />} />
-                <Route path="/create-template" element={<Create_Template />} />
+                <Route path="/edit-template" element={<EditTemplate />} />
                 <Route path="/localize-template" element={<Localization />} />
                 <Route path="/tobe-applied" element={<ToBeApplied />} />
                 <Route path="/qa-check" element={<Qa_page />} />
