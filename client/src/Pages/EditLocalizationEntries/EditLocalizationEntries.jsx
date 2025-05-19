@@ -18,14 +18,11 @@ const EditLocalizationEntries = () => {
       ticketURL,
       setTicketURL,
       saveType,
-      setSaveType,
       isTemplateCreated,
-      setIsTemplateCreated,
       localizationEntries,
       setLocalizationEntries,
       deleteIds,
       setDeleteIds, // TODO: editLocalizaionEntries에서 delete 어떻게 활용중인지 보기 - 하나는 데이터베이스에서 자동 추출이고 하나는 이렇게 deleteIds 써서, 통일이 필요하겠다.
-      setTemplateID,
       originalHtmlFile,
       setOriginalHtmlFile,
       addNonAssetTextArea,
@@ -44,6 +41,7 @@ const EditLocalizationEntries = () => {
       handleNonAssetPptNoChange,
       handleNonAssetAswasChange,
       handleNonAssetTobeChange,
+      checkForExistingTemplate,
   } = useCheckTemplate();
 
   const [englishCopyList, setEnglishCopyList] = useState([]);
@@ -91,18 +89,11 @@ const EditLocalizationEntries = () => {
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplate
-        path="edit-localization-entries"
         ticketNum={ticketNum}
         ticketURL={ticketURL}
         setTicketNum={setTicketNum}
         setTicketURL={setTicketURL}
-        setTemplateID={setTemplateID}
-        setIsTemplateCreated={setIsTemplateCreated}
-        setLocalizationEntries={setLocalizationEntries}
-        setSaveType={setSaveType}
-        setDeleteIds={setDeleteIds}
-        setAssetCodeChanges={setAssetCodeChanges}
-        setNonAssetCodeChanges={setNonAssetCodeChanges}
+        onClick={() => checkForExistingTemplate("edit-localization-entries")}
       />
       <Gap gap={50} />
 

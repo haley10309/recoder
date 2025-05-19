@@ -14,11 +14,6 @@ const EditTemplate = () => {
       ticketURL,
       setTicketURL,
       saveType,
-      setSaveType,
-      setIsTemplateCreated,
-      setLocalizationEntries,
-      setDeleteIds,
-      setTemplateID,
       originalHtmlFile,
       setOriginalHtmlFile,
       addNonAssetTextArea,
@@ -38,6 +33,7 @@ const EditTemplate = () => {
       handleNonAssetPptNoChange,
       handleNonAssetAswasChange,
       handleNonAssetTobeChange,
+      checkForExistingTemplate,
   } = useCheckTemplate();
 
   return (
@@ -45,18 +41,11 @@ const EditTemplate = () => {
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplate
-        path="edit-template"
         ticketNum={ticketNum}
         ticketURL={ticketURL}
         setTicketNum={setTicketNum}
         setTicketURL={setTicketURL}
-        setTemplateID={setTemplateID}
-        setIsTemplateCreated={setIsTemplateCreated}
-        setLocalizationEntries={setLocalizationEntries}
-        setSaveType={setSaveType}
-        setDeleteIds={setDeleteIds}
-        setAssetCodeChanges={setAssetCodeChanges}
-        setNonAssetCodeChanges={setNonAssetCodeChanges}
+        onClick={() => checkForExistingTemplate("edit-template")}
       />
       <Gap gap={50} />
 

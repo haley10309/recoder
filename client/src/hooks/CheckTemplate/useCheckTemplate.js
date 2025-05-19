@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-import { kind_countOccurrences } from "@/utils/codeUtils";
+import { isAssetCode, kind_countOccurrences } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
 
 export const useCheckTemplate = () => {
@@ -11,6 +11,7 @@ export const useCheckTemplate = () => {
   // Save flags
   const [saveType, setSaveType] = useState(""); // 'create' | 'update'
   const [isTemplateCreated, setIsTemplateCreated] = useState(false); // 템플릿이 이미 만들어져 있으면 true로
+  const [hasL10nUploadHistory , setHasL10nUploadHistory] = useState(false); // 템플릿에 이미 localizationEntry 업로드 히스토리가 있는지 (있으면 번역파일 업로드 막기 용도)
 
   const [localizationEntries, setLocalizationEntries] = useState([{ code_context: "" }]); // copy 적용 필요한 tobe_code를 모아둔 리스트
   const [deleteIds, setDeleteIds] = useState([]);
@@ -75,6 +76,10 @@ export const useCheckTemplate = () => {
 
   const countOccurrences = (asWasCode) => kind_countOccurrences(originalHtmlFile, asWasCode);
 
+  const checkHasInvalidAsWasCount = () => {
+    return nonAssetCodeChanges.some(item => countOccurrences(item.aswas_code) !== 1);
+  };
+
   // 템플릿 저장
   const handleSaveTemplate = async () => {
     // AS-WAS/TO-BE validation: 동시에 비어있는 row 차단
@@ -106,8 +111,88 @@ export const useCheckTemplate = () => {
     }
   };
 
-  const checkHasInvalidAsWasCount = () => {
-    return nonAssetCodeChanges.some(item => countOccurrences(item.aswas_code) !== 1);
+  /**
+   * @param path 'edit-template' | 'edit-localization-entries' // 페이지 종류에 따라 템플릿 불러오기에 따른 안내문구가 다름
+   */
+  const checkForExistingTemplate = async (
+    path
+  ) => {
+    try {
+      // 1) 템플릿 존재 여부 확인
+      const response = await axios.post(`${BASE_URL}/check-template-exsist`, {
+        ticket_num: ticketNum,
+        ticket_url: ticketURL,
+      });
+      const data = response.data;
+
+      const isTemplateExist = data.isTemplateExist;
+      if (isTemplateExist) {
+        alert(`${ticketURL} 템플릿을 불러왔습니다.`);
+        setSaveType("update");
+        setIsTemplateCreated(true);
+
+        // 2) 세부 내용 가져오기
+        const detailRes = await axios.post(`${BASE_URL}/get-template-details`, {
+          ticket_num: ticketNum,
+          ticket_url: ticketURL,
+        });
+        const detailData = detailRes.data;
+
+        const templateId = detailData.templateId;
+        const codeChanges = detailData.codeChanges || [];
+        const localizationEntries = detailData.localizationEntries || [];
+
+        // (250519 기준) aswas_code 기준으로 asset인지 non-asset인지 나눈다.
+        const nonAssetCodeChanges = codeChanges
+                                      .filter((it) => !isAssetCode(it.aswas_code))
+                                      .map( it => ({
+                                        id: it.id,
+                                        ppt_no: it.ppt_no || "",
+                                        aswas_code: it.aswas_code?.trim() || "",
+                                        tobe_code: it.tobe_code?.trim() || "",
+                                      }) );
+        const assetCodeChanges = codeChanges
+                                      .filter((it) => isAssetCode(it.aswas_code))
+                                      .map( it => ({
+                                        id: it.id,
+                                        ppt_no: it.ppt_no || "",
+                                        aswas_code: it.aswas_code?.trim() || "",
+                                        tobe_code: it.tobe_code?.trim() || "",
+                                      }) );
+
+        setNonAssetCodeChanges(nonAssetCodeChanges);
+        setAssetCodeChanges(assetCodeChanges);
+        
+        // 템플릿 AS-WAS/TO-BE, 로컬라이제이션 세팅
+        setTemplateID(templateId);
+        setDeleteIds([]);
+
+        setLocalizationEntries(
+          localizationEntries.map((it) => ({
+            id: it.id,
+            code_context: it.code_context,
+          }))
+        );
+
+      } else {
+        setSaveType("create");
+        setIsTemplateCreated(false);
+        setLocalizationEntries([{ code_context: "" }]);
+        setDeleteIds([]);
+        
+        if (path === 'edit-template') {
+          alert("새로운 템플릿을 추가할 수 있습니다.");
+        }
+        if (path === 'edit-localization-entries') {
+          alert("Edit Template 페이지에서 먼저 템플릿을 생성해주세요.");
+        }
+      }
+    } catch (error) {
+      console.error("Error checking for existing templates:", error);
+      alert("템플릿 확인 중 오류가 발생했습니다.");
+      setIsTemplateCreated(false);
+      setDeleteIds([]);
+    }
   };
 
   return {
@@ -116,15 +201,13 @@ export const useCheckTemplate = () => {
     ticketURL,
     setTicketURL,
     saveType,
-    setSaveType,
     isTemplateCreated,
-    setIsTemplateCreated,
     localizationEntries,
     setLocalizationEntries,
     deleteIds,
     setDeleteIds,
+    checkForExistingTemplate,
 
-    setTemplateID,
     originalHtmlFile,
     setOriginalHtmlFile,
     addNonAssetTextArea,
