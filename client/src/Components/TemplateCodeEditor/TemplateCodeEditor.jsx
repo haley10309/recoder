@@ -3,6 +3,7 @@ import AddIcon from "@mui/icons-material/Add";
 
 import AssetTemplate from "@/Pages/EditTemplate/AssetTemplate";
 import CopyTextButton from "../Common/CopyTextButton";
+import Gap from "../Common/Gap";
 
 const TemplateCodeEditor = ({
   checkOnlyInvalidCount,
@@ -30,11 +31,11 @@ const TemplateCodeEditor = ({
         {originalHtmlFile ? (
           <>
             {checkHasInvalidAsWasCount() ? (
-              <div style={{ color: "#ff0019", fontSize: "15px", fontWeight: "bold" }}>
-                ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. <br/> Edit Template 페이지에서 템플릿을 수정한 뒤 다시 시도하세요.
+              <div style={{ color: "#ff0019", fontSize: "15px", fontWeight: "bold", textAlign: "center" }}>
+                ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. <br/> Edit Template 페이지에서 템플릿을 확인해주세요.
               </div>
             ) : (
-              <div style={{ color: "#00c93c", fontSize: "15px", fontWeight: "bold" }}>
+              <div style={{ color: "#00c93c", fontSize: "15px", fontWeight: "bold", textAlign: "center" }}>
                 ✅모든 항목의 '원본코드 내 AS-WAS 코드 출현 횟수'가 1이에요. 템플릿으로 사용해도 좋아요.
               </div>
             )}
@@ -43,8 +44,12 @@ const TemplateCodeEditor = ({
             </div>
           </>
         ) : (
-          <div style={{ color: "grey", fontSize: "15px", fontWeight: "bold" }}>
-            💁‍♀️원본코드를 업로드해야 '원본코드 내 AS-WAS 코드 출현 횟수'를 확인할 수 있어요.
+          <div className="flex flex-col">
+            <Gap gap={40} />
+            <div style={{ color: "grey", fontSize: "15px", fontWeight: "bold" }}>
+              💁‍♀️원본코드를 업로드해야 '원본코드 내 AS-WAS 코드 출현 횟수'를 확인할 수 있어요.
+            </div>
+            <Gap gap={40} />
           </div>
         )}
       </div>
@@ -54,17 +59,15 @@ const TemplateCodeEditor = ({
   return (
     <>
       {/* Asset */}
-      <div>
-        <AssetTemplate
-          assetCodeChanges={assetCodeChanges}
-          handleAssetPptNoChange={handleAssetPptNoChange}
-          handleAssetAsWasChange={handleAssetAsWasChange}
-          handleAssetToBeChange={handleAssetToBeChange}
-          addAssetArea={addAssetArea} 
-          removeAssetArea={removeAssetArea} 
-          originalHtmlFile={originalHtmlFile} 
-        />
-      </div>
+      <AssetTemplate
+        assetCodeChanges={assetCodeChanges}
+        handleAssetPptNoChange={handleAssetPptNoChange}
+        handleAssetAsWasChange={handleAssetAsWasChange}
+        handleAssetToBeChange={handleAssetToBeChange}
+        addAssetArea={addAssetArea} 
+        removeAssetArea={removeAssetArea} 
+        originalHtmlFile={originalHtmlFile} 
+      />
 
       <div className="flex flex-col items-center">
         {originalHtmlFile ? (
@@ -169,7 +172,11 @@ const TemplateCodeEditor = ({
               />
             </div>
           </div>
-          <button type="button" onClick={() => removeNonAssetTextArea(idx)} className="px-4 mb-6 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white">
+          <button
+            type="button"
+            onClick={() => removeNonAssetTextArea(idx)}
+            className="px-4 mb-6 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white"
+          >
             삭제
           </button>
         </div>

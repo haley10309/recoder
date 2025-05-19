@@ -55,6 +55,7 @@ const EditLocalizationEntries = () => {
   const [englishCopyList, setEnglishCopyList] = useState([]);
   const tobeCodes = nonAssetCodeChanges.map((item) => item.tobe_code);
   
+  const canUploadTransFile = isTemplateCreated;
 
   // 로컬라이제이션 생성
   const handleCreateOrUpdateLocalization = async () => {
@@ -153,8 +154,6 @@ const EditLocalizationEntries = () => {
         tobeCodes={tobeCodes}
         setEnglishCopyList={setEnglishCopyList}
         setLocalizationEntries={setLocalizationEntries}
-        hasOriginalHtmlFile={!!originalHtmlFile}
-        checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
       />
       <Gap gap={50} />
 
@@ -175,7 +174,7 @@ const EditLocalizationEntries = () => {
               });
             }}
             onDelete={() => {
-              // TODO: id 활용 부분 전부 다시 체크, id로 통일?
+              // TODO: id 활용 부분 전부 다시 체크
               setLocalizationEntries((prev) => prev.filter((_, i) => i !== idx));
               if (item.id) setDeleteIds((prev) => [...prev, item.id]);
             }}
@@ -183,7 +182,10 @@ const EditLocalizationEntries = () => {
         ))}
       </div>
       <div className="flex gap-[15px] save_button_div mt-[50px]">
-        <button className="plus-button rounded-[10px]" onClick={() => setLocalizationEntries((prev) => [...prev, { code_context: "" }])}>
+        <button
+          className="plus-button rounded-[10px]"
+          onClick={() => setLocalizationEntries((prev) => [...prev, { code_context: "" }])}
+        >
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>
@@ -191,7 +193,7 @@ const EditLocalizationEntries = () => {
           type="button" 
           className="save_button" 
           onClick={handleCreateOrUpdateLocalization} 
-          disabled={!isTemplateCreated} // TODO: 확인 && disabled 조건들 모두 확인 전체 코드에서
+          disabled={!canUploadTransFile}
         >
           {saveType === "update" ? ` 로컬라이제이션 템플릿 수정` : ` 로컬라이제이션 템플릿 생성`}
         </button>
