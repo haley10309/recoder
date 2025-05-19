@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { fetchLocalizationList } from "@/apis/apis";
-
+// TODO: 코드 확인
 export function useLocalizationApply({
   downloadedFileContent,
   fileName,

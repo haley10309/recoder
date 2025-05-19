@@ -29,9 +29,8 @@ const LocalizationEntriesEditor = ({
               });
             }}
             onDelete={() => {
-              // TODO: id 활용 부분 전부 다시 체크
-              setLocalizationEntries((prev) => prev.filter((_, i) => i !== idx));
               if (item.id) setDeleteIds((prev) => [...prev, item.id]);
+              setLocalizationEntries((prev) => prev.filter((_, i) => i !== idx));
             }}
           />
         ))}

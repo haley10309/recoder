@@ -6,7 +6,7 @@ import arrowIcon from "@/assets/shift-fill.svg";
 
 export default function TransFileUpload({ 
   isTemplateCreated,
-  tobeCodes, // TODO: 이름 적절?
+  nonAssetCodeChanges,
   setEnglishCopyList,
   setLocalizationEntries,
 }) {
@@ -36,12 +36,12 @@ export default function TransFileUpload({
 
       // 2. localizationEntries 업데이트
       if (englishCopyList.length > 0) {
-        // 이미 존재하는 tobeCodes에서 번역이 필요한 item만 뽑아내기
-        const items = tobeCodes
-                        .filter((tobeCode) => englishCopyList.some((copyItem) => tobeCode.includes(copyItem)))
-                        .map((tobeCode) => ({ id: tobeCode.id, code_context: tobeCode })); // TODO: id 이렇게 넘겨주면 되는건지 다시 확인 
-        
-        if (items.length > 0) setLocalizationEntries(items);
+        // 이미 존재하는 nonAssetCodeChanges에서 번역이 필요한 item만 뽑아내기
+        const items = nonAssetCodeChanges
+                        .filter(({ tobe_code }) => englishCopyList.some((copyItem) => tobe_code.includes(copyItem)))
+                        .map((codeChangeItem) => ({ code_context: codeChangeItem.tobe_code }));
+                        // TODO: codeChangeItem의 id를 넣으면 안되고... 기존에 있던 localizationEntries의걸 넣던가 해야됨. 기존에 있는 경우와 없는 경우 모두 생각해야됨.
+        setLocalizationEntries(items)
       }
     } catch (error) {
       console.error("Error uploading translation file:", error);

@@ -43,21 +43,12 @@ const EditLocalizationEntries = () => {
       handleNonAssetTobeChange,
   } = useCheckTemplate();
 
-  const [project, setProject] = useState("");
-  const [pdp, setPdp] = useState("");
-  const [product, setProduct] = useState("");
-  const [filename, setFilename] = useState("파일을 선택해주세요");
-  const [validCountries, setValidCountries] = useState([]);
-  const [translationData, setTranslationData] = useState({});
-  
-  // states
   const [englishCopyList, setEnglishCopyList] = useState([]);
-  const tobeCodes = nonAssetCodeChanges.map((item) => item.tobe_code);
-  
   const canUploadTransFile = isTemplateCreated;
 
   // 로컬라이제이션 생성
   const handleCreateOrUpdateLocalization = async () => {
+    // TODO: 이외 다른 조건도 모두 체크
     // TODO: 이외 다른 조건도 모두 체크
     // if (!isTemplateCreated) {
     //   alert("템플릿을 먼저 생성해 주세요.");
@@ -150,7 +141,7 @@ const EditLocalizationEntries = () => {
       <Gap gap={15} />
       <TransFileUpload
         isTemplateCreated={isTemplateCreated}
-        tobeCodes={tobeCodes}
+        nonAssetCodeChanges={nonAssetCodeChanges}
         setEnglishCopyList={setEnglishCopyList}
         setLocalizationEntries={setLocalizationEntries}
       />
