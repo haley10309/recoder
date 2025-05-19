@@ -13,13 +13,14 @@ const LocalizationEntriesEditor = ({
   setDeleteIds,
 }) => {
   return (
+    // TODO: 빨간색 표시 몇개인지도 알려주기?
     <>
       <div className="flex flex-col">
         {localizationEntries.map((item, idx) => (
           <TransBox
             key={idx}
             itemId={item.id}
-            text={item.code_context}
+            codeContext={item.code_context}
             highlights={englishCopyList}
             onChange={(newTxt) => {
               setLocalizationEntries((prev) => {
@@ -43,7 +44,7 @@ const LocalizationEntriesEditor = ({
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>
-        <button 
+        <button
           type="button" 
           className="save_button" 
           onClick={handleCreateOrUpdateLocalization} 

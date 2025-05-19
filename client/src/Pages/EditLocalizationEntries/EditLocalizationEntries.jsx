@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
 import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
@@ -8,6 +9,7 @@ import UploadFiles from "../EditTemplate/UploadFiles";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import LocalizationEntriesEditor from "./LocalizationEntriesEditor";
+import { BASE_URL } from "@/utils/routePath";
 
 const EditLocalizationEntries = () => {
   const {
@@ -21,7 +23,8 @@ const EditLocalizationEntries = () => {
       setIsTemplateCreated,
       localizationEntries,
       setLocalizationEntries,
-      setDeleteIds, // TODO: editLocalizaionEntries에서 delete 어떻게 활용중인지 보기
+      deleteIds,
+      setDeleteIds, // TODO: editLocalizaionEntries에서 delete 어떻게 활용중인지 보기 - 하나는 데이터베이스에서 자동 추출이고 하나는 이렇게 deleteIds 써서, 통일이 필요하겠다.
       setTemplateID,
       originalHtmlFile,
       setOriginalHtmlFile,
@@ -48,41 +51,40 @@ const EditLocalizationEntries = () => {
 
   // 로컬라이제이션 생성
   const handleCreateOrUpdateLocalization = async () => {
-    // TODO: 이외 다른 조건도 모두 체크
-    // TODO: 이외 다른 조건도 모두 체크
-    // if (!isTemplateCreated) {
-    //   alert("템플릿을 먼저 생성해 주세요.");
-    //   return;
-    // }
+    if (!canUploadTransFile) {
+      alert("로컬라이제이션 템플릿을 저장할 수 없어요");
+      return;
+    }
 
-    // try {
-    //   const body = { 
-    //     ticket_num: ticketNum, 
-    //     ticket_url: ticketURL, 
-    //     localizationEntries: 
-    //       localizationEntries.map((item) => (
-    //         item.id 
-    //           ? { id: item.id, code_context: item.code_context }
-    //           : { code_context: item.code_context }
-    //       )), 
-    //     delete_ids: deleteIds,
-    //   };
+    console.log("db 상 id 잘 포함되는지 확인! localizationEntries",localizationEntries)
+
+    try {
+      const body = {
+        ticket_num: ticketNum,
+        ticket_url: ticketURL,
+        localization_entries:
+          localizationEntries.map((item) => (
+            item.id 
+              ? { id: item.id, code_context: item.code_context }
+              : { code_context: item.code_context }
+          )),
+        delete_ids: deleteIds,
+      };
       
-    //   await axios.put(`${BASE_URL}/localization/template`, body, { headers: { "Content-Type": "application/json" } });
-    //   setDeleteIds([]);
-    //   const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
-    //   setLocalizationEntries(data.localizationEntries || []);
-    //   alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
-    // } catch (err) {
-    //   console.error("[Error] handleCreateOrUpdateLocalization", err);
-    //   alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
-    // }
-  };
+      // TemplateLocalizaionEntries 삽입/수정/삭제
+      await axios.put(`${BASE_URL}/localization/template`, body, { headers: { "Content-Type": "application/json" } });
+      setDeleteIds([]);
 
-  useEffect(() => {
-    // setValidCountries(localizationDummyData.validCountries);
-    // setTranslationData(localizationDummyData.translationData);
-  }, []);
+      // db에 저장된 localizaionEntries 가져오기
+      const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
+      setLocalizationEntries(data.localizationEntries || []);
+
+      alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
+    } catch (err) {
+      console.error("[Error] handleCreateOrUpdateLocalization", err);
+      alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
+    }
+  };
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
