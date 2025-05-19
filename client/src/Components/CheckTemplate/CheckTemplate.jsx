@@ -28,8 +28,8 @@ const CheckTemplate = ({
         ticket_url: ticketURL,
       });
       const data = response.data;
+
       const isTemplateExist = data.isTemplateExist;
- 
       if (isTemplateExist) {
         alert(`${ticketURL} 템플릿을 불러왔습니다.`);
         setSaveType("update");

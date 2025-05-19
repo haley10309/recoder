@@ -82,7 +82,7 @@ export default function UploadFiles({
   };
 
   return (
-    <div className="mt-[50px] mb-[50px] w-full">
+    <div className="w-full">
       <div className="flex justify-center gap-[40px] bg-[#f9f9f9] rounded-[8px] py-[30px] shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
         {/* PPT.txt 업로드 박스 */}
 

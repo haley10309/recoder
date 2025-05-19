@@ -97,7 +97,6 @@ const EditLocalizationEntries = () => {
     <div className="bg-[#FFFFFF] p-[40px]">
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
-
       <CheckTemplate
         path="edit-localization-entries"
         ticketNum={ticketNum}
@@ -106,24 +105,26 @@ const EditLocalizationEntries = () => {
         setTicketURL={setTicketURL}
         setTemplateID={setTemplateID}
         setIsTemplateCreated={setIsTemplateCreated}
-        setSaveType={setSaveType}
         setLocalizationEntries={setLocalizationEntries}
+        setSaveType={setSaveType}
         setDeleteIds={setDeleteIds}
         setAssetCodeChanges={setAssetCodeChanges}
         setNonAssetCodeChanges={setNonAssetCodeChanges}
       />
+      <Gap gap={50} />
 
       <TitleLabel text="📤 파일 업로드(선택)" />
       <Gap gap={15} />
-
       <UploadFiles
         isUploadOnlyOriginHtmlFile={true}
         setOriginalHtmlFile={setOriginalHtmlFile} 
         setAssetCodeChanges={setAssetCodeChanges}
         setNonAssetCodeChanges={setNonAssetCodeChanges}
       />
+      <Gap gap={50} />
       
-      {/* ✅ AS-WAS / TO-BE 템플릿 */}
+      <TitleLabel text="✅ AS-WAS / TO-BE 템플릿 (코드 출현 횟수 확인용)" />
+      <Gap gap={15} />
       <TemplateCodeEditor
         checkOnlyInvalidCount={true}
         saveType={saveType}
@@ -143,8 +144,10 @@ const EditLocalizationEntries = () => {
         handleNonAssetAswasChange={handleNonAssetAswasChange}
         handleNonAssetTobeChange={handleNonAssetTobeChange}
       />
+      <Gap gap={50} />
 
-      {/* 📤 번역 파일 업로드 */}
+      <TitleLabel text="📤 번역 파일 업로드" />
+      <Gap gap={15} />
       <TransFileUpload
         isTemplateCreated={isTemplateCreated}
         tobeCodes={tobeCodes}
@@ -153,8 +156,8 @@ const EditLocalizationEntries = () => {
         hasOriginalHtmlFile={!!originalHtmlFile}
         checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
       />
+      <Gap gap={50} />
 
-      {/* 🌐 로컬라이제이션 템플릿 */}
       <TitleLabel text="🌐 로컬라이제이션 템플릿" />
       <Gap gap={15} />
       <div className="flex flex-col">

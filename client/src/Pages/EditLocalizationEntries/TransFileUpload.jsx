@@ -58,8 +58,7 @@ export default function TransFileUpload({
   };
 
   return (
-    <div className="mt-[100px] mb-[100px] w-full ">
-      <h2 className="font-bold text-black text-[16px] mb-[15px]">📤 번역 파일 업로드</h2>
+    <div className="w-full ">
       {!isTemplateCreated ? (
         <p className="font-bold text-[#ff0019] text-[14px] mb-[15px]">⚠️ 템플릿을 생성하거나 불러와야 번역파일을 업로드할 수 있어요.</p>
       ) : !hasOriginalHtmlFile ? (

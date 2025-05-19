@@ -4,6 +4,8 @@ import UploadFiles from "./UploadFiles";
 import "@EditTemplate/EditTemplate.scss";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import TemplateCodeEditor from "@/Components/TemplateCodeEditor/TemplateCodeEditor";
+import Gap from "@/Components/Common/Gap";
+import TitleLabel from "@/Components/Common/TitleLabel";
 
 const EditTemplate = () => {
   const {
@@ -40,25 +42,36 @@ const EditTemplate = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
-      {/* 📄 템플릿 불러오기 */}
-      <h2 className="font-bold text-black text-[16px] mb-[15px]">📄 템플릿 불러오기</h2>
+      <TitleLabel text="📄 템플릿 불러오기" />
+      <Gap gap={15} />
       <CheckTemplate
+        path="edit-template"
+        ticketNum={ticketNum}
+        ticketURL={ticketURL}
+        setTicketNum={setTicketNum}
+        setTicketURL={setTicketURL}
+        setTemplateID={setTemplateID}
+        setIsTemplateCreated={setIsTemplateCreated}
         setLocalizationEntries={setLocalizationEntries}
+        setSaveType={setSaveType}
         setDeleteIds={setDeleteIds}
         setAssetCodeChanges={setAssetCodeChanges}
         setNonAssetCodeChanges={setNonAssetCodeChanges}
       />
+      <Gap gap={50} />
 
-      {/* 📤 파일 업로드 */}
+      <TitleLabel text="📤 파일 업로드" />
+      <Gap gap={15} />
       <UploadFiles
         isUploadOnlyOriginHtmlFile={false}
         setOriginalHtmlFile={setOriginalHtmlFile} 
         setAssetCodeChanges={setAssetCodeChanges}
         setNonAssetCodeChanges={setNonAssetCodeChanges}
       />
+      <Gap gap={50} />
 
-      {/* ✅ AS-WAS / TO-BE 템플릿 */}
-      <h2 className="font-bold text-black mb-5 text-[16px]">✅ AS-WAS / TO-BE 템플릿</h2>
+      <TitleLabel text="✅ AS-WAS / TO-BE 템플릿" />
+      <Gap gap={15} />
       <TemplateCodeEditor
         checkOnlyInvalidCount={false}
         saveType={saveType}

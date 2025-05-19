@@ -26,7 +26,7 @@ const TemplateCodeEditor = ({
 }) => {
   if (checkOnlyInvalidCount) {
     return (
-      <div className="mt-[30px] mb-[20px] flex flex-col items-center">
+      <div className="flex flex-col items-center">
         {originalHtmlFile ? (
           <>
             {checkHasInvalidAsWasCount() ? (
@@ -54,7 +54,7 @@ const TemplateCodeEditor = ({
   return (
     <>
       {/* Asset */}
-      <div className="mb-[40px]">
+      <div>
         <AssetTemplate
           assetCodeChanges={assetCodeChanges}
           handleAssetPptNoChange={handleAssetPptNoChange}
@@ -66,7 +66,7 @@ const TemplateCodeEditor = ({
         />
       </div>
 
-      <div className="mt-[30px] mb-[20px] flex flex-col items-center">
+      <div className="flex flex-col items-center">
         {originalHtmlFile ? (
           <>
             {checkHasInvalidAsWasCount() ? (
