@@ -61,7 +61,7 @@ Re-coder는 txt 가이드 파일에서 데이터를 추출하고 템플릿을 �
     DB_PORT=3306 # 데이터베이스 포트
     DB_USER=root # 데이터베이스 사용자 계정 ID
     DB_PASSWORD=1111 # 데이터베이스 사용자 계정 PW
-    DB_NAME=testdb # 연결할 데이터베이스 이름 (실제 배포된 db 이름은 다를수도 있어 확인 필요)
+    DB_NAME=recoder_db # 연결할 데이터베이스 이름 (실제 배포된 db 이름은 다를수도 있어 확인 필요)
     CLIENT=http://localhost:5173 # cors 허용할 클라이언트 호스트
     PORT=5000 # 서버 포트
     ```
@@ -72,7 +72,7 @@ Re-coder는 txt 가이드 파일에서 데이터를 추출하고 템플릿을 �
     DB_PORT=8090
     DB_USER=root
     DB_PASSWORD=0000
-    DB_NAME=testDB
+    DB_NAME=testDB # // (250519기준) recoder_db로 변경해야하는데 아직은 문제 있어 추후 수정 예정
     CLIENT=http://localhost:5173
     PORT=5000
     ```
