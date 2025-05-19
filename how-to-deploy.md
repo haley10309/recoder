@@ -15,7 +15,8 @@ or
 
 > docker compose down # 컨테이너 멈추고 삭제 (무중단 배포 아님)
 or
-> docker rm -f raw_auto_server # client는 raw_auto_cleint
+> docker rm -f raw_auto_server
+> docker rm -f raw_auto_client
 
 > docker compose up -d --build # 컨테이너 빌드 -> 재배포
 ```
@@ -29,7 +30,7 @@ or
     DB_PORT=3306
     DB_USER=seoul_center
     DB_PASSWORD=0000
-    DB_NAME=testDB
+    DB_NAME=testDB // (250519기준) recoder_db로 변경해야하는데 아직은 문제 있어 추후 수정 예정
     CLIENT=http://121.252.183.22:8088
     PORT=8080
     ```
