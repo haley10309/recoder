@@ -3,7 +3,7 @@ import CheckTemplate from "../../Components/CheckTemplate/CheckTemplate";
 import UploadFiles from "./UploadFiles";
 import "@EditTemplate/EditTemplate.scss";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
-import TemplateCodeEditor from "@/Components/TemplateCodeEditor/TemplateCodeEditor";
+import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 
@@ -72,7 +72,7 @@ const EditTemplate = () => {
 
       <TitleLabel text="✅ AS-WAS / TO-BE 템플릿" />
       <Gap gap={15} />
-      <TemplateCodeEditor
+      <CodeChangesEditor
         checkOnlyInvalidCount={false}
         saveType={saveType}
         assetCodeChanges={assetCodeChanges}

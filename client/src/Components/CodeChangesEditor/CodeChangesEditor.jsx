@@ -5,7 +5,7 @@ import AssetTemplate from "@/Pages/EditTemplate/AssetTemplate";
 import CopyTextButton from "../Common/CopyTextButton";
 import Gap from "../Common/Gap";
 
-const TemplateCodeEditor = ({
+const CodeChangesEditor = ({
   checkOnlyInvalidCount,
   saveType,
   assetCodeChanges,
@@ -195,4 +195,4 @@ const TemplateCodeEditor = ({
   );
 };
 
-export default TemplateCodeEditor;
+export default CodeChangesEditor;

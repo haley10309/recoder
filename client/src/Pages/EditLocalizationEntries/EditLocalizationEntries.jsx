@@ -4,7 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import TransFileUpload from "./TransFileUpload";
-import TemplateCodeEditor from "@/Components/TemplateCodeEditor/TemplateCodeEditor";
+import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
 import UploadFiles from "../EditTemplate/UploadFiles";
 import TransBox from "@/Components/Common/TransBox";
 import Gap from "@/Components/Common/Gap";
@@ -126,7 +126,7 @@ const EditLocalizationEntries = () => {
       
       <TitleLabel text="✅ AS-WAS / TO-BE 템플릿 (코드 출현 횟수 확인용)" />
       <Gap gap={15} />
-      <TemplateCodeEditor
+      <CodeChangesEditor
         checkOnlyInvalidCount={true}
         saveType={saveType}
         addAssetArea={addAssetArea}
