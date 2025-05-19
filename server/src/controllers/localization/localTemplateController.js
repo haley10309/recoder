@@ -1,8 +1,9 @@
-// 번역 템플릿 삽입, 삭제, 수정
+// TemplateLocalizaionEntries 삽입/수정/삭제
+
 const db = require("../../config/db");
 
 exports.updateLocalizationFull = (req, res) => {
-  const { ticket_num, ticket_url, localizationEntries = [], delete_ids = [] } = req.body; // localizationEntries, delete_ids 기본값 []로 안전하게 설정
+  const { ticket_num, ticket_url, localization_entries = [], delete_ids = [] } = req.body; // localization_entries, delete_ids 기본값 []로 안전하게 설정
 
   if (!ticket_num || !ticket_url) {
     return res.status(400).json({ success: false, message: "ticket_num and ticket_url are required." });
@@ -20,8 +21,8 @@ exports.updateLocalizationFull = (req, res) => {
     }
 
     const templateId = results[0].id;
-    const insertItems = localizationEntries.filter(item => !item.id);
-    const updateItems = localizationEntries.filter(item => !!item.id);
+    const insertItems = localization_entries.filter(item => !item.id);
+    const updateItems = localization_entries.filter(item => !!item.id);
 
     const insertValues = insertItems.map(item => [item.code_context, templateId]);
     const insertQuery = `INSERT INTO TemplateLocalizationEntries (code_context, template_id) VALUES ?`;
