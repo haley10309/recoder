@@ -1,20 +1,22 @@
 import React, { useEffect, useRef } from "react";
 import "@Components/Common/TransBox.scss";
+import CopyTextButton from "./CopyTextButton";
+import Gap from "./Gap";
 
 export default function TransBox({ 
-  text: initialText, 
+  itemId,
+  codeContext: initialCodeContext, 
   highlights = [], 
   onChange, 
   onDelete,
-  itemId,
 }) {
   const editableRef = useRef(null);
 
-  // TODO: 여기 코드 보기
+  // TODO: 빨간색으로 감싸는 부분에서 보완할 부분은 없는지 후순위로 체크
   // 영어 원본 부분만 빨간색으로 감싸기
   const applyHighlights = () => {
     if (!editableRef.current) return;
-    let html = escapeHtml(initialText);
+    let html = escapeHtml(initialCodeContext);
     highlights.forEach((substr) => {
       const safe = escapeHtml(substr);
       html = html.split(safe).join(`<span class="text-red-500">${safe}</span>`);
@@ -31,35 +33,36 @@ export default function TransBox({
   // 초기 텍스트 반영 & 하이라이트
   useEffect(() => {
     if (editableRef.current) {
-      editableRef.current.innerHTML = escapeHtml(initialText);
+      editableRef.current.innerHTML = escapeHtml(initialCodeContext);
       applyHighlights();
     }
-  }, [initialText, highlights]);
+  }, [initialCodeContext, highlights]);
 
   return (
     <div className="flex gap-[20px] justify-center mb-4 p-[30px] bg-[#f9f9f9] rounded-[8px] shadow-[0_2px_5px_rgba(0,0,0,0.1)] transition-colors duration-200 ease-linear">
-      {/* 레이아웃 유지를 위한 invisible 요소 */}
-      {/* <div className="flex items-center invisible">
-        <label className="font-[16px]">PPT NO.</label>
-        <input type="text" className="w-[30px] h-[30px] rounded-[5px] ml-[10px] text-center border border-[#8B8B8B] outline-none focus:border-[#595880]" />
-      </div> */}
-
       {/* 텍스트 입력 및 하이라이트 영역 */}
-      <div>(id 추가예정)</div>
+      <div style={{ fontSize: "12px" }}>LocalizationEntry.id: {itemId ? itemId : "-"}</div>
       <div
-        className="p-[8px] w-[80%] h-[180px] bg-[#e4e4e4] rounded-[5px] text-[16px] font-[500] whitespace-pre-wrap break-all outline-none border border-[#ccc] focus:border-[#595880] translate-scroll" 
+        className="p-[8px] w-[80%]" 
       >
-        <div 
-          ref={editableRef} 
-          contentEditable 
-          suppressContentEditableWarning 
-          onBlur={handleBlur} 
-          data-placeholder="번역할 텍스트를 입력해 주세요." 
+        <div className="h-[180px] bg-[#e4e4e4] rounded-[5px] text-[16px] font-[500] whitespace-pre-wrap break-all outline-none border border-[#ccc] focus:border-[#595880] translate-scroll">
+          <div
+            ref={editableRef}
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={handleBlur}
+            data-placeholder="번역할 텍스트를 입력해 주세요."
+          />
+        </div>
+        <Gap gap={10} />
+        <CopyTextButton
+          text={"코드 복사"}
+          value={initialCodeContext}
         />
       </div>
       <button 
-        type="button" 
-        onClick={onDelete} 
+        type="button"
+        onClick={onDelete}
         className="px-4 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white"
       >
         삭제
