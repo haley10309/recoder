@@ -42,6 +42,7 @@ const EditLocalizationEntries = () => {
       handleNonAssetAswasChange,
       handleNonAssetTobeChange,
       checkForExistingTemplate,
+      hasL10nUploadHistory,
   } = useCheckTemplate();
 
   const [englishCopyList, setEnglishCopyList] = useState([]);
@@ -134,6 +135,7 @@ const EditLocalizationEntries = () => {
       <Gap gap={15} />
       <TransFileUpload
         isTemplateCreated={isTemplateCreated}
+        hasL10nUploadHistory={hasL10nUploadHistory}
         nonAssetCodeChanges={nonAssetCodeChanges}
         setEnglishCopyList={setEnglishCopyList}
         setLocalizationEntries={setLocalizationEntries}

@@ -6,6 +6,7 @@ import arrowIcon from "@/assets/shift-fill.svg";
 
 export default function TransFileUpload({ 
   isTemplateCreated,
+  hasL10nUploadHistory,
   nonAssetCodeChanges,
   setEnglishCopyList,
   setLocalizationEntries,
@@ -13,7 +14,7 @@ export default function TransFileUpload({
   const transInputRef = useRef(null);
   const [transFile, setTransFile] = useState(null);
 
-  const canUploadTransFile = isTemplateCreated;
+  const canUploadTransFile = isTemplateCreated && !hasL10nUploadHistory;
 
   function formatFileSize(size) {
     if (size < 1024) return `${size} B`;
@@ -55,10 +56,14 @@ export default function TransFileUpload({
     handleTransSubmit(f);
   };
 
+
   return (
+    
     <div className="w-full ">
       {!isTemplateCreated ? (
         <p className="font-bold text-[#ff0019] text-[14px] mb-[15px]">⚠️ 템플릿을 불러와야 번역 파일을 업로드할 수 있어요.</p>
+      ) : hasL10nUploadHistory ? (
+        <p className="font-bold text-[#ff0019] text-[14px] mb-[15px]">⚠️ 이미 업로드된 LocalizationEntries가 있어요. 아래 단계에서 이어서 작업하거나, 새로 작업하고 싶다면 기존 LocalizationEntries를 모두 삭제해야 번역 파일을 업로드할 수 있어요.</p>
       ) : (
         <p className="font-bold text-[#00c93c] text-[14px] mb-[15px]">✅ 번역 파일을 업로드할 수 있어요!</p>
       )}
