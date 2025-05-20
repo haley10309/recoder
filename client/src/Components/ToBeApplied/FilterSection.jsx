@@ -30,7 +30,6 @@ const FilterSection = ({ filter, setFilter, filterTobe, setFilterTobe }) => {
 
   return (
     <TitleRow>
-      <Title>👀 AS-WAS / TO BE / Localization 확인하기</Title>
       <DropdownGroup>
         <DropdownContainer
           tabIndex={0}

@@ -15,8 +15,8 @@ const EditLocalizationEntries = () => {
   const {
       ticketNum,
       setTicketNum,
-      ticketURL,
-      setTicketURL,
+      ticketUrl,
+      setTicketUrl,
       saveType,
       isTemplateCreated,
       localizationEntries,
@@ -60,7 +60,7 @@ const EditLocalizationEntries = () => {
     try {
       const body = {
         ticket_num: ticketNum,
-        ticket_url: ticketURL,
+        ticket_url: ticketUrl,
         localization_entries:
           localizationEntries.map((item) => (
             item.id 
@@ -75,7 +75,7 @@ const EditLocalizationEntries = () => {
       setDeleteIds([]);
 
       // db에 저장된 localizaionEntries 가져오기
-      const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketURL });
+      const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketUrl });
       setLocalizationEntries(data.localizationEntries || []);
 
       alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
@@ -91,9 +91,9 @@ const EditLocalizationEntries = () => {
       <Gap gap={15} />
       <CheckTemplate
         ticketNum={ticketNum}
-        ticketURL={ticketURL}
+        ticketUrl={ticketUrl}
         setTicketNum={setTicketNum}
-        setTicketURL={setTicketURL}
+        setTicketUrl={setTicketUrl}
         onClick={() => checkForExistingTemplate("edit-localization-entries")}
       />
       <Gap gap={50} />

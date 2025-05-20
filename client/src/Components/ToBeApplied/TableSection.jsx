@@ -1,20 +1,17 @@
 import BasicTextarea from "@/Components/ToBeApplied/Textarea";
 import styled from "styled-components";
-import { useRecoilValue } from "recoil";
-import { isEnglishCountryState } from "@/recoil/atoms/state";
 
 const TableSection = ({
   filteredTextareas,
-  codePairs,
-  country_code,
+  codeChanges,
+  countryCode,
   handleAsWasCodeChange,
   handleToBeCodeChange,
   handleCheckedChange,
   filter,
   filterTobe,
+  isEnglishCountry,
 }) => {
-  const isEnglishCountry = useRecoilValue(isEnglishCountryState);
-
   return (
     <TableWrapper>
       <TableHeader>
@@ -42,10 +39,10 @@ const TableSection = ({
           pptNo={textarea.pptNo} // ✅ 바로 사용
           asWasCode={textarea.asWasCode.replace(
             /\/uk\//g,
-            `/${country_code}/`
+            `/${countryCode}/`
           )}
           setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-          toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${country_code}/`)}
+          toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${countryCode}/`)}
           setToBeCode={(value) => handleToBeCodeChange(index, value)}
           localizedToBeCode={textarea.localizedToBeCode}
           setLocalizedToBeCode={(value) =>
@@ -57,11 +54,12 @@ const TableSection = ({
           checked={textarea.checked}
           filter={filter}
           filterTobe={filterTobe}
-          country_code={country_code}
+          countryCode={countryCode}
           matchedPart={textarea.matchedPart}
           asWasOccurrenceCount={textarea.asWasOccurrenceCount}
           toBeOccurrenceCount={textarea.toBeOccurrenceCount}
           errorState={textarea.errorState}
+          isEnglishCountry={isEnglishCountry}
         />
       ))}
     </TableWrapper>

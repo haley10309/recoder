@@ -6,7 +6,7 @@ import { BASE_URL } from "@/utils/routePath";
 
 export const useCheckTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
-  const [ticketURL, setTicketURL] = useState("");
+  const [ticketUrl, setTicketUrl] = useState("");
 
   // Save flags
   const [saveType, setSaveType] = useState(""); // 'create' | 'update'
@@ -89,20 +89,20 @@ export const useCheckTemplate = () => {
       // 1) 템플릿 존재 여부 확인
       const response = await axios.post(`${BASE_URL}/check-template-exsist`, {
         ticket_num: ticketNum,
-        ticket_url: ticketURL,
+        ticket_url: ticketUrl,
       });
       const data = response.data;
 
       const isTemplateExist = data.isTemplateExist;
       if (isTemplateExist) {
-        alert(`${ticketURL} 템플릿을 불러왔습니다.`);
+        alert(`${ticketUrl} 템플릿을 불러왔습니다.`);
         setSaveType("update");
         setIsTemplateCreated(true);
 
         // 2) 세부 내용 가져오기
         const detailRes = await axios.post(`${BASE_URL}/get-template-details`, {
           ticket_num: ticketNum,
-          ticket_url: ticketURL,
+          ticket_url: ticketUrl,
         });
         const detailData = detailRes.data;
 
@@ -177,7 +177,7 @@ export const useCheckTemplate = () => {
       if (saveType === "create") {
         const formData = new FormData();
         formData.append("ticket_num", ticketNum);
-        formData.append("ticket_url", ticketURL);
+        formData.append("ticket_url", ticketUrl);
         formData.append("code_changes", JSON.stringify(combinedCodeChanges));
         await axios.post(`${BASE_URL}/create-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
       } else {
@@ -198,8 +198,8 @@ export const useCheckTemplate = () => {
   return {
     ticketNum,
     setTicketNum,
-    ticketURL,
-    setTicketURL,
+    ticketUrl,
+    setTicketUrl,
     saveType,
     isTemplateCreated,
     localizationEntries,

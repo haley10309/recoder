@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { uploadTranslationDeck } from "@/apis/apis";
 // TODO: 코드 확인
-export function useTranslationUpload(country_code) {
+export function useTranslationUpload(countryCode) {
   const [translationsByCountry, setTranslationsByCountry] = useState({});
   const [currentTranslations, setCurrentTranslations] = useState({});
   const [validCountries, setValidCountries] = useState([]);
@@ -42,7 +42,7 @@ export function useTranslationUpload(country_code) {
         setValidCountries(validCountries);
         setTranslationsByCountry(translations);
 
-        const currentCountry = country_code;
+        const currentCountry = countryCode;
         const countryTranslations = translations[currentCountry] || [];
 
         const dictionary = {};

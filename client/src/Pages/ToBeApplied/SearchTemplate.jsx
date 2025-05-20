@@ -1,52 +1,66 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  ticketNumState,
-  ticketUrlState,
-  countryCodeState,
-  isEnglishCountryState,
-} from "@/recoil/atoms/state";
+import axios from "axios";
+
 import CustomDropdownInput from "@/Components/Common/CustomDropdownInput";
 import { countryOptions } from "@/Components/Common/CoutryCode";
-import { templateSearch, fetchTicketData } from "@/apis/apis";
+import { BASE_URL } from "@/utils/routePath";
+import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 
-const SearchTemplate = ({ setTextareas, setCodePairs }) => {
-  const [ticketNumber, setTicketNumber] = useState(""); // 지라 티켓 번호
-  const setTicketNum = useSetRecoilState(ticketNumState);
-  const [ticketUrl, setTicketUrl] = useRecoilState(ticketUrlState); // 티켓에 해당하는 URL (Recoil)
-  const [country_code, setCountry_code] = useRecoilState(countryCodeState);
-  const setIsEnglishCountry = useSetRecoilState(isEnglishCountryState);
+const SearchTemplate = ({
+  setTextareas,
+  setCodeChanges,
+  ticketNum,
+  ticketUrl,
+  setTicketNum,
+  setTicketUrl,
+  countryCode,
+  setCountryCode,
+  setIsEnglishCountry,
+  // onClick,
+}) => {
+  // 템플릿 조회
+  const templateSearch = async () => {
+    try {
+      const response = await axios.post(`${BASE_URL}/template`, {
+        ticket_num: ticketNum,
+        ticket_url: ticketUrl,
+      });
+  
+      console.log("🔥 응답 결과:", response.data);
 
-  const handleTicketNumberChange = (value) => {
-    setTicketNumber(value);
-    setTicketNum(value); // Recoil 업데이트
+      if (response.data.template_id) {
+        const codeChanges = response.data.code_changes;
+        const newTextareas = codeChanges.map((pair) => ({
+          asWasCode: pair.aswas_code,
+          toBeCode: pair.tobe_code,
+          pptNo: pair.ppt_no,
+          checked: true,
+        }));
+  
+        setTextareas(newTextareas);
+        setCodeChanges(codeChanges);
+
+        alert("성공적으로 템플릿을 불러왔습니다.");
+      } else {
+        console.warn("⚠️ 실패 응답 메시지:", response.data.message);
+        alert(
+          response.data.message ||
+            "유효하지 않은 템플릿입니다.\n템플릿을 다시 확인해주세요."
+        );
+      }
+    } catch (error) {
+      console.error("❌ Error fetching code pairs:", error);
+      alert("서버 요청에 실패했습니다. 콘솔을 확인해주세요.");
+    }
   };
 
-  const [ticketNumberOptions, setTicketNumberOptions] = useState([]); // 티켓 번호 드롭다운 옵션
-  const [ticketUrlOptions, setTicketUrlOptions] = useState([]); // URL 드롭다운 옵션
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const ticketData = await fetchTicketData("get-ticket-number");
-        const urlData = await fetchTicketData("get-ticket-url");
-
-        setTicketNumberOptions(ticketData.map((t) => t.name));
-        setTicketUrlOptions(urlData.map((u) => u.name));
-      } catch (err) {
-        console.error("옵션 로딩 실패:", err);
-      }
-    };
-    fetchOptions();
-  }, []);
-
   const handleSearchTemplate = async () => {
-    await templateSearch(ticketNumber, ticketUrl, setTextareas, setCodePairs);
+    await templateSearch();
   };
 
   const handleCountryChange = (inputValue) => {
-    setCountry_code(inputValue);
+    setCountryCode(inputValue);
 
     const selected = countryOptions.find((c) => c.name === inputValue);
     if (selected) {
@@ -58,10 +72,16 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
 
   return (
     <>
-      <Title>🧾 핫픽스(문구수정하기)/로컬라이제이션 템플릿 불러오기</Title>
+      <CheckTemplate
+        ticketNum={ticketNum}
+        ticketUrl={ticketUrl}
+        setTicketNum={setTicketNum}
+        setTicketUrl={setTicketUrl}
+        // onClick={onClick}
+      />
       <Wrapper>
         <InputGrid>
-          <InputBox style={{ width: "18rem" }}>
+          {/* <InputBox style={{ width: "18rem" }}>
             <InputTitle>지라 티켓 번호</InputTitle>
             <CustomDropdownInput
               value={ticketNumber}
@@ -69,8 +89,8 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
               placeholder="지라 티켓 번호"
               options={ticketNumberOptions}
             />
-          </InputBox>
-          <InputBox style={{ width: "24rem" }}>
+          </InputBox> */}
+          {/* <InputBox style={{ width: "24rem" }}>
             <InputTitle>URL</InputTitle>
             <CustomDropdownInput
               value={ticketUrl}
@@ -78,11 +98,11 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
               placeholder="/smartphones/galaxy-s24-ultra/compare/"
               options={ticketUrlOptions}
             />
-          </InputBox>
+          </InputBox> */}
           <InputBox style={{ width: "6rem" }}>
             <InputTitle>SITECODE</InputTitle>
             <CustomDropdownInput
-              value={country_code}
+              value={countryCode}
               onChange={handleCountryChange}
               placeholder="국가 코드 선택"
               options={countryOptions.map((c) => c.name)}
@@ -99,14 +119,6 @@ const SearchTemplate = ({ setTextareas, setCodePairs }) => {
 
 export default SearchTemplate;
 
-const Title = styled.p`
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 140%;
-  margin-bottom: 0.94rem;
-`;
-
 const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -120,20 +132,17 @@ const Wrapper = styled.div`
   margin-bottom: 1rem;
   gap: 2rem;
 `;
-
 const InputTitle = styled.div`
   font-size: 0.8rem;
   font-weight: 700;
   line-height: 140%;
 `;
-
 const InputGrid = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-grow: 1;
   gap: 3rem;
 `;
-
 const InputBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -141,13 +150,11 @@ const InputBox = styled.div`
   min-width: 12rem;
   flex: 0 1 auto;
 `;
-
 const ButtonBox = styled.div`
   display: flex;
   align-items: flex-end;
   flex-shrink: 0;
 `;
-
 const ConfirmButton = styled.button`
   width: 10.9375rem;
   height: 2.5625rem;
@@ -159,116 +166,3 @@ const ConfirmButton = styled.button`
   font-size: 0.875rem;
   cursor: pointer;
 `;
-
-// import SettingDropdown from "@/Components/ToBeApplied/SettingDropdown";
-// import Country_code from "@/Components/ToBeApplied/CountryCode";
-// import { useState } from "react";
-// import { useRecoilState } from "recoil";
-// import { templateSearch } from "@/apis/apis";
-// import { countryCodeState } from "@/recoil/atoms/state";
-// import { ticketUrlState } from "../../recoil/atoms/state";
-// import styled from "styled-components";
-
-// const Wrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   padding: 32px;
-//   background-color: white;
-//   border-radius: 10px;
-//   border: 1px solid #d1d5db;
-//   color: #32383e;
-// `;
-
-// const Title = styled.h2`
-//   font-weight: bold;
-//   color: black;
-//   margin-bottom: 20px;
-//   font-size: 16px;
-// `;
-
-// const FlexColumn = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   width: 100%;
-// `;
-
-// const TopRow = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-// `;
-
-// const LeftInputs = styled.div`
-//   display: flex;
-//   justify-content: flex-start;
-//   align-items: center;
-//   padding: 0 8px;
-//   overflow-x: auto;
-// `;
-
-// const LoadButtonWrapper = styled.div`
-//   display: flex;
-//   justify-content: center;
-// `;
-
-// const LoadButton = styled.button`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   background-color: #009900;
-//   color: white;
-//   font-weight: 600;
-//   font-size: 13px;
-//   border-radius: 10px;
-//   height: 40px;
-//   width: 130px;
-// `;
-
-// const SearchTemplate = ({ setTextareas, setCodePairs }) => {
-//   const [ticketNum, setTicketNum] = useState("");
-//   const [ticketURL, setTicketURL] = useRecoilState(ticketUrlState);
-//   const [country_code, setCountry_code] = useRecoilState(countryCodeState);
-
-//   const handleSetting = async () => {
-//     templateSearch(ticketNum, ticketURL, setTextareas, setCodePairs);
-//   };
-
-//   return (
-//     <Wrapper>
-//       <Title>템플릿 불러오기</Title>
-//       <FlexColumn>
-//         <TopRow>
-//           <LeftInputs>
-//             <SettingDropdown
-//               _inputProps={{ placeholder: "WSC20200078-9816" }}
-//               _title="Jira 티켓 번호"
-//               _onChange={() => {}}
-//               _value={ticketNum}
-//               _setValue={setTicketNum}
-//               _url="get-ticket-number"
-//             />
-//             <SettingDropdown
-//               _inputProps={{
-//                 placeholder: "/smartphones/galaxy-s24-ultra/compare/",
-//               }}
-//               _title="Page URL"
-//               _onChange={() => {}}
-//               _value={ticketURL}
-//               _setValue={setTicketURL}
-//               _url="get-ticket-url"
-//             />
-//             <Country_code
-//               country_code={country_code}
-//               setCountry_code={setCountry_code}
-//             />
-//           </LeftInputs>
-//           <LoadButtonWrapper>
-//             <LoadButton onClick={handleSetting}>불러오기</LoadButton>
-//           </LoadButtonWrapper>
-//         </TopRow>
-//       </FlexColumn>
-//     </Wrapper>
-//   );
-// };
-
-// export default SearchTemplate;

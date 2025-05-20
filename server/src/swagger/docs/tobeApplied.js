@@ -14,7 +14,7 @@
  *             type: object
  *             required:
  *               - file
- *               - codePairs
+ *               - codeChanges
  *               - ticket_url
  *               - countryCode
  *             properties:
@@ -22,7 +22,7 @@
  *                 type: string
  *                 format: binary
  *                 description: 원본 HTML 파일
- *               codePairs:
+ *               codeChanges:
  *                 type: string
  *                 description: JSON 문자열 형식의 코드 치환 목록
  *                 example: '[{"asWasCode": "old code", "toBeCode": "new code"}]'

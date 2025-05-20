@@ -11,8 +11,8 @@ const EditTemplate = () => {
   const {
       ticketNum,
       setTicketNum,
-      ticketURL,
-      setTicketURL,
+      ticketUrl,
+      setTicketUrl,
       saveType,
       originalHtmlFile,
       setOriginalHtmlFile,
@@ -42,9 +42,9 @@ const EditTemplate = () => {
       <Gap gap={15} />
       <CheckTemplate
         ticketNum={ticketNum}
-        ticketURL={ticketURL}
+        ticketUrl={ticketUrl}
         setTicketNum={setTicketNum}
-        setTicketURL={setTicketURL}
+        setTicketUrl={setTicketUrl}
         onClick={() => checkForExistingTemplate("edit-template")}
       />
       <Gap gap={50} />

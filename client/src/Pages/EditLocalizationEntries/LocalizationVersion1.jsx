@@ -40,7 +40,7 @@ const LocalizationVersion1 = () => {
         setRows(
           new Array(4).fill(null).map(() => ({
             id: Date.now(),
-            country_code: "",
+            countryCode: "",
             htmlFiles: [],
             status: null,
           }))
@@ -53,17 +53,17 @@ const LocalizationVersion1 = () => {
 
   const handleTranslate = async (index) => {
     const row = rows[index];
-    if (!row.country_code || row.htmlFiles.length === 0) {
+    if (!row.countryCode || row.htmlFiles.length === 0) {
       alert(
         "Please select a country and upload HTML files before translating."
       );
       return;
     }
 
-    const localCopies = translations[row.country_code] || [];
+    const localCopies = translations[row.countryCode] || [];
     const formData = new FormData();
     row.htmlFiles.forEach((file) => formData.append("htmlFiles", file));
-    formData.append("country_code", row.country_code);
+    formData.append("country_code", row.countryCode);
     formData.append("english_copies", JSON.stringify(english_copies));
     formData.append("local_copies", JSON.stringify(localCopies));
 
@@ -118,7 +118,7 @@ const LocalizationVersion1 = () => {
 
   const handleCountryChange = (index, newCode) => {
     const updatedRows = [...rows];
-    updatedRows[index].country_code = newCode;
+    updatedRows[index].countryCode = newCode;
     setRows(updatedRows);
   };
 
@@ -156,7 +156,7 @@ const LocalizationVersion1 = () => {
               <RowActions>
                 {/* 국가 선택 */}
                 <Translation_country_code
-                  country_code={row.country_code}
+                  countryCode={row.countryCode}
                   validCountries={validCountries}
                   onChange={(code) => handleCountryChange(index, code)}
                 />
@@ -203,7 +203,7 @@ const LocalizationVersion1 = () => {
                 ...rows,
                 {
                   id: Date.now(),
-                  country_code: "",
+                  countryCode: "",
                   htmlFiles: [],
                   status: null,
                 },

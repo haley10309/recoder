@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Copy from "@/assets/copy.png";
-import { useRecoilValue } from "recoil";
-import { isEnglishCountryState } from "@/recoil/atoms/state";
 import CopyTextButton from "../Common/CopyTextButton";
 
 const BasicTextarea = ({
@@ -17,18 +15,18 @@ const BasicTextarea = ({
   checked,
   onCheckedChange,
   filter,
-  country_code,
+  countryCode,
   matchedPart,
   asWasOccurrenceCount,
   toBeOccurrenceCount,
   errorState,
+  isEnglishCountry,
 }) => {
-  const isEnglishCountry = useRecoilValue(isEnglishCountryState);
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
 
   const transformedAsWasCode = asWasCode?.replace(
     /\/uk\//g,
-    `/${country_code}/`
+    `/${countryCode}/`
   );
 
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);

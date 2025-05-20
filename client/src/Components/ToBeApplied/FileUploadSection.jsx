@@ -6,7 +6,6 @@ import HtmlFileIcon from "@/assets/union.svg";
 const FileUploadSection = ({ fileName, htmlUploadStatus, handleFileChange, isEnglishCountry, txtUploadStatus, txtFileName, handleTranslationUpload }) => {
   return (
     <>
-      <SectionTitle>📤 파일 업로드</SectionTitle>
       <ConvertSection>
         <ConvertContainer>
           {/* HTML 업로드 */}

@@ -2,10 +2,10 @@
 const { replaceCode } = require('../../utils/codeUtils');
 
 exports.processFileData = (req, res) => {
-  const codePairs = JSON.parse(req.body.codePairs);
+  const codeChanges = JSON.parse(req.body.codeChanges);
   const { ticket_url, countryCode } = req.body;
 
-  if (!req.file || !codePairs || codePairs.length === 0 || !ticket_url || !countryCode) {
+  if (!req.file || !codeChanges || codeChanges.length === 0 || !ticket_url || !countryCode) {
     return res.status(400).json({
       success: false,
       message: "File, code pairs, product name, and country code are required.",
@@ -16,7 +16,7 @@ exports.processFileData = (req, res) => {
     let originalCode = req.file.buffer.toString('utf-8');
     const changeResults = [];
 
-    codePairs.forEach(({ asWasCode, toBeCode }, index) => {
+    codeChanges.forEach(({ asWasCode, toBeCode }, index) => {
       const { newCode, changed, matchedPart } = replaceCode(originalCode, asWasCode, toBeCode);
       changeResults.push({ pairIndex: index, changed: !!changed, matchedPart });
       if (changed) {

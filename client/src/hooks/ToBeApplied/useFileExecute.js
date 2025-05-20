@@ -7,7 +7,7 @@ export function useFileExecute({
   fileContent,
   textareas,
   setTextareas,
-  country_code,
+  countryCode,
   ticketUrl,
 }) {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -22,7 +22,7 @@ export function useFileExecute({
       const { changed, matchedPart, updatedToBe } =
         changeResults.find((result) => result.pairIndex === index) || {};
 
-      const lowerCaseCode = country_code?.toLowerCase?.() || "";
+      const lowerCaseCode = countryCode?.toLowerCase?.() || "";
 
       const normalizePath = (code) =>
         code?.replace(new RegExp(`/${lowerCaseCode}/`, "g"), "/uk/")?.trim();
@@ -62,7 +62,7 @@ export function useFileExecute({
   };
 
   const handleExecute = async () => {
-    const lowerCaseCode = country_code?.toLowerCase?.() || "";
+    const lowerCaseCode = countryCode?.toLowerCase?.() || "";
 
     const updatedTextareas = textareas.map((textarea) => ({
       ...textarea,
@@ -86,14 +86,13 @@ export function useFileExecute({
       const formData = new FormData();
       formData.append("file", originalFile);
 
-      const codePairs = updatedTextareas
+      const codeChanges = updatedTextareas
         .filter((textarea) => textarea.changed)
         .map((textarea) => ({
           asWasCode: textarea.asWasCode,
           toBeCode: textarea.toBeCode,
         }));
-
-      formData.append("codePairs", JSON.stringify(codePairs));
+      formData.append("codeChanges", JSON.stringify(codeChanges));
 
       try {
         const result = await fileExecute({
@@ -105,7 +104,7 @@ export function useFileExecute({
           updatedTextareas,
           updateTextareasWithResults: setTextareas,
           ticketUrl,
-          country_code,
+          countryCode,
         });
 
         if (result) {

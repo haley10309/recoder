@@ -1,13 +1,5 @@
 import React from "react";
-import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import {
-  countryCodeState,
-  ticketUrlState,
-  ticketNumState,
-  isEnglishCountryState,
-} from "@/recoil/atoms/state";
-
 import { useFileUpload } from "@/hooks/ToBeApplied/useFileUpload";
 import { useTranslationUpload } from "@/hooks/ToBeApplied/useTranslationUpload";
 import { useFileExecute } from "@/hooks/ToBeApplied/useFileExecute";
@@ -17,12 +9,7 @@ import FileUploadSection from "@/Components/ToBeApplied/FileUploadSection";
 import FileConvertButtons from "@/Components/ToBeApplied/FileConvertButtons";
 import PreviewPanel from "@/Components/ToBeApplied/PreviewPanel";
 
-const FileConvert = ({ textareas, setTextareas }) => {
-  const country_code = useRecoilValue(countryCodeState);
-  const ticketUrl = useRecoilValue(ticketUrlState);
-  const ticketNum = useRecoilValue(ticketNumState);
-  const isEnglishCountry = useRecoilValue(isEnglishCountryState);
-
+const FileConvert = ({ ticketNum, ticketUrl, textareas, setTextareas, countryCode, isEnglishCountry }) => {
   // HTML 파일 업로드 훅
   const {
     originalFile,
@@ -39,7 +26,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
     txtFileName,
     txtUploadProgress,
     handleTranslationUpload,
-  } = useTranslationUpload(country_code);
+  } = useTranslationUpload(countryCode);
 
   // 코드 실행 훅
   const {
@@ -55,7 +42,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
     fileContent,
     textareas,
     setTextareas,
-    country_code,
+    countryCode,
     ticketUrl,
   });
 
@@ -70,7 +57,7 @@ const FileConvert = ({ textareas, setTextareas }) => {
     downloadedFileContent,
     fileName,
     setTextareas,
-    country_code,
+    countryCode,
     currentTranslations,
   });
 

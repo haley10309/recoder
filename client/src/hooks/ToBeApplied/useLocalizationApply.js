@@ -5,7 +5,7 @@ export function useLocalizationApply({
   downloadedFileContent,
   fileName,
   setTextareas,
-  country_code,
+  countryCode,
   currentTranslations,
 }) {
   const [localizedFileContent, setLocalizedFileContent] = useState("");
@@ -55,7 +55,7 @@ export function useLocalizationApply({
         ticketUrl
       );
 
-      const lowerCaseCode = country_code?.toLowerCase?.() || "";
+      const lowerCaseCode = countryCode?.toLowerCase?.() || "";
 
       // textareas 업데이트하는 로직
       setTextareas((prev) =>

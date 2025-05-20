@@ -2,14 +2,14 @@ import React from "react";
 import { Dropdown } from "primereact/dropdown";
 import { twMerge } from "tailwind-merge";
 
-const localization_country_code = ({ country_code, validCountries, onChange }) => {
+const localization_country_code = ({ countryCode, validCountries, onChange }) => {
 
     const countryOptions = validCountries.map((code) => ({ name: code, code }));
 
     return (
         <div className={twMerge("w-48")}>
             <Dropdown
-                value={countryOptions.find((option) => option.code === country_code)}
+                value={countryOptions.find((option) => option.code === countryCode)}
                 options={countryOptions}
                 onChange={(e) => onChange(e.value.code)}
                 optionLabel="name"

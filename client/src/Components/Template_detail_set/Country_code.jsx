@@ -12,7 +12,7 @@ const divClasses = {
   default:"focus-within:bg-none w-48 h-full p-4 ring-1 ring-black flex justify-center align-center items-center font-medium",
 };
 
-const Country_code = ({ country_code, setCountry_code }) => {
+const Country_code = ({ countryCode, setCountryCode }) => {
   const countryOptions = [
     { name: "AE", code: "ae" },
     { name: "AE_AR", code: "ae_ar" },
@@ -161,10 +161,10 @@ const Country_code = ({ country_code, setCountry_code }) => {
         >
           <Dropdown
             value={countryOptions.find(
-              (option) => option.code === country_code
+              (option) => option.code === countryCode
             )}
             options={countryOptions}
-            onChange={(e) => setCountry_code(e.value.code)}
+            onChange={(e) => setCountryCode(e.value.code)}
             optionLabel="name"
             placeholder="선택"
             filter
