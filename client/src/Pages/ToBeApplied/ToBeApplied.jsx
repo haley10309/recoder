@@ -18,7 +18,7 @@ const ToBeApplied = () => {
     setIsEnglishCountry,
     textareas,
     setTextareas,
-    checkForExistingTemplate,
+    // checkForExistingTemplate,
   } = useSearchTemplate();
 
   const [codeChanges, setCodeChanges] = useState([]);
@@ -92,6 +92,7 @@ const ToBeApplied = () => {
         ticketUrl={ticketUrl}
         textareas={textareas}
         setTextareas={setTextareas}
+        countryCode={countryCode}
         isEnglishCountry={isEnglishCountry}
       />
       <Gap gap={50} />
