@@ -63,8 +63,8 @@ const SearchTemplate = ({
     setCountryCode(inputValue);
 
     const selected = countryOptions.find((c) => c.name === inputValue);
-    if (selected) {
-      setIsEnglishCountry(selected.isEnglish ?? false);
+    if (selected && selected.isEnglish) {
+      setIsEnglishCountry(true);
     } else {
       setIsEnglishCountry(false);
     }
