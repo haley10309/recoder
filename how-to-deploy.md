@@ -1,11 +1,14 @@
 ### 도커 재배포 명령어
 
 ```cmd
-> ssh seoul_center@121.252.183.22 -p 10022 # PASSWORD=Jack12!@
+> ssh seoul_center@121.252.183.22 -p 10022
+> 비밀번호 # PASSWORD=Jack12!@
 
-> cd ../rawcode_auto/rawcode_auto_monorepo
+> cd rawcode_auto/rawcode_auto_monorepo
+> (참고) 전체 path: /home/seoul_center/rawcode_auto/...
 
 > git pull origin main
+> git log # 최신 커밋 한번더 확인
 
 > cd server
 or
