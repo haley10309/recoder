@@ -142,7 +142,7 @@ const EditLocalizationEntries = () => {
       />
       <Gap gap={50} />
 
-      <TitleLabel text="🌐 로컬라이제이션 템플릿" />
+      <TitleLabel text={`🌐 로컬라이제이션 템플릿 (${localizationEntries.length}개)`} />
       <Gap gap={15} />
       <LocalizationEntriesEditor
         saveType={saveType}

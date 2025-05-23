@@ -19,6 +19,7 @@ const LocalizationEntriesEditor = ({
         {localizationEntries.map((item, idx) => (
           <TransBox
             key={idx}
+            indexText={`${idx + 1} of ${localizationEntries.length}`}
             itemId={item.id}
             codeContext={item.code_context}
             highlights={englishCopyList}
