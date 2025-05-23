@@ -9,7 +9,14 @@ import FileUploadSection from "@/Components/ToBeApplied/FileUploadSection";
 import FileConvertButtons from "@/Components/ToBeApplied/FileConvertButtons";
 import PreviewPanel from "@/Components/ToBeApplied/PreviewPanel";
 
-const FileConvert = ({ ticketNum, ticketUrl, textareas, setTextareas, countryCode, isEnglishCountry }) => {
+const FileConvert = ({
+  ticketNum,
+  ticketUrl,
+  textareas,
+  setTextareas,
+  countryCode,
+  isEnglishCountry,
+}) => {
   // HTML 파일 업로드 훅
   const {
     originalFile,
@@ -24,7 +31,6 @@ const FileConvert = ({ ticketNum, ticketUrl, textareas, setTextareas, countryCod
     currentTranslations,
     txtUploadStatus,
     txtFileName,
-    txtUploadProgress,
     handleTranslationUpload,
   } = useTranslationUpload(countryCode);
 
