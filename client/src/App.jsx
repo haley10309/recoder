@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { RecoilRoot } from "recoil";
+import * as jwtDecodeLib from "jwt-decode";
+
 import Main from "@Pages/Main";
 import EditTemplate from "@/Pages/EditTemplate/EditTemplate";
 import ToBeApplied from "@Pages/ToBeApplied/ToBeApplied";
@@ -10,34 +12,96 @@ import "./style/global.css";
 import LeftNavBar from "@Components/Nav/LeftNavBar";
 import EditLocalizationEntries from "./Pages/EditLocalizationEntries/EditLocalizationEntries";
 import LocalizationVersion1 from "./Pages/EditLocalizationEntries/LocalizationVersion1"; // TODO:?
+import Login from "./Pages/Login/Login";
+import RequireAuth from "./Pages/RequireAuth";
+import Register from "./Pages/Register/Register";
+import { useSetRecoilState } from "recoil";
+import { nameEnState } from "./recoil/atoms/state";
 
 function App() {
+  const setNameEn = useSetRecoilState(nameEnState);
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      const decoded = jwtDecodeLib.jwtDecode(token);
+      if (decoded?.name_en) {
+        setNameEn(decoded.name_en);
+      }
+    }
+  }, []);
+
+
   return (
     <>
-      <RecoilRoot>
-        <div className="App flex">
-          <BrowserRouter>
-            <div className="w-[18%]">
-              <LeftNavBar />
-            </div>
-            <div className="w-[82%]">
-              <Routes>
-                <Route path="/" element={<Main />} />
-                <Route path="/edit-template" element={<EditTemplate />} />
-                <Route path="/edit-localization-entries" element={<EditLocalizationEntries />} />
-                <Route path="/tobe-applied" element={<ToBeApplied />} />
-                <Route path="/qa-check" element={<Qa_page />} />
-                <Route path="/guide" element={<Guide />} />
-                <Route
-                  path="/localizationversion1"
-                  element={<LocalizationVersion1 />}
-                />
-              </Routes>
-              <Footer />
-            </div>
-          </BrowserRouter>
-        </div>
-      </RecoilRoot>
+      <div className="App flex">
+        <BrowserRouter>
+          <div className="w-[18%]">
+            <LeftNavBar />
+          </div>
+          <div className="w-[82%]">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route
+                path="/"
+                element={
+                  <RequireAuth>
+                    <Main />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/edit-template"
+                element={
+                  <RequireAuth>
+                    <EditTemplate />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/edit-localization-entries"
+                element={
+                  <RequireAuth>
+                    <EditLocalizationEntries />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/tobe-applied"
+                element={
+                  <RequireAuth>
+                    <ToBeApplied />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/qa-check"
+                element={
+                  <RequireAuth>
+                    <Qa_page />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/guide"
+                element={
+                  <Guide />
+                }
+              />
+              <Route
+                path="/localizationversion1"
+                element={
+                  <RequireAuth>
+                    <LocalizationVersion1 />
+                  </RequireAuth>
+                }
+              />
+            </Routes>
+            <Footer />
+          </div>
+        </BrowserRouter>
+      </div>
     </>
   );
 }
