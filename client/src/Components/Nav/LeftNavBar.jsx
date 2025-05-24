@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { useRecoilState } from "recoil";
+import * as jwtDecodeLib from "jwt-decode";
 
 import settingIcon from "@/assets/icon/template-setting.png";
 import localizationIcon from "@/assets/icon/localization.png";
@@ -7,16 +10,43 @@ import applyIcon from "@/assets/icon/template-apply.png";
 import qaIcon from "@/assets/icon/qa.png";
 import guideIcon from "@/assets/icon/guide.png";
 import logo from "@/assets/logo.png";
+import Gap from "../Common/Gap";
+import { getMotivationText } from "@/utils/commonUtils";
+import { nameEnState } from "@/recoil/atoms/state";
 
 const LeftNavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [nameEn, setNameEn] = useRecoilState(nameEnState);
+  const [motivationText, setMotivationText] = useState("");
 
   const handleNavigate = (path) => {
     navigate(path);
   };
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    setNameEn("");
+    navigate("/");
+  };
+
+  useEffect(() => {
+    if (nameEn) {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        const decoded = jwtDecodeLib.jwtDecode(token);
+        const lastLoggedInAt = decoded.last_logged_in_at;
+        if (!motivationText) {
+          const text = getMotivationText(new Date(lastLoggedInAt), nameEn);
+          setMotivationText(text);
+        }
+      }
+
+    }
+  }, [nameEn]);
 
   return (
     <NavContainer>
@@ -27,6 +57,17 @@ const LeftNavBar = () => {
           onClick={() => handleNavigate("/")}
         />
       </LogoContainer>
+      <Gap gap={30} />
+
+      {!!nameEn && (
+        <>
+          <NameEnContainer>
+            <NameText>{nameEn.charAt(0).toUpperCase() + nameEn.slice(1)}</NameText>
+            <MotivationText>{motivationText}</MotivationText>
+          </NameEnContainer>
+          <Gap gap={30} />
+        </>
+      )}
 
       <ButtonGroup>
         <NavButton
@@ -68,6 +109,12 @@ const LeftNavBar = () => {
           <NavButtonText $active={isActive("/guide")}>Guide</NavButtonText>
           </NavButton>
       </ButtonGroup>
+
+      {!!nameEn && (
+        <LogoutButton onClick={handleLogout}>
+          로그아웃
+        </LogoutButton>
+      )}
     </NavContainer>
   );
 };
@@ -87,7 +134,23 @@ const NavContainer = styled.nav`
   height: 100vh;
   font-size: 12px;
 `;
-
+const NameEnContainer = styled.div`
+  padding: 20px 12px;
+  text-align: center;
+  background-color: #ffffff1a;
+  border-top: 1px solid #ffffff33;
+`;
+const NameText = styled.div`
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+`;
+const MotivationText = styled.div`
+  font-size: 12px;
+  color: #fff;
+  opacity: 0.85;
+`;
 const LogoContainer = styled.div`
   display: flex;
   align-items: center;
@@ -104,7 +167,6 @@ const ButtonGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 40px;
 `;
 
 const NavButton = styled.button`
@@ -129,4 +191,20 @@ const NavButtonText = styled.div`
 
 const IconImage = styled.img`
   width: 24px;
+`;
+const LogoutButton = styled.button`
+  margin-top: auto; /* 하단 고정 */
+  padding: 12px 16px;
+  border: none;
+  color:rgb(82, 82, 82);  /* 텍스트는 사이드바 글자색과 맞춤 */
+  font-weight: 700;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+
+  &:hover {
+    background-color: hsl(27, 80%, 65%);  /* 호버 시 약간 더 진하게 */
+  }
 `;
