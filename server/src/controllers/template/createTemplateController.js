@@ -1,5 +1,4 @@
 // 템플릿 생성
-
 const db = require("../../config/db");
 
 exports.createTemplateData = (req, res) => {
