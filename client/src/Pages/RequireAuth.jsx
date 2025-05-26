@@ -6,7 +6,7 @@ const RequireAuth = ({ children }) => {
   const token = localStorage.getItem('authToken');
   const nameEn = useRecoilValue(nameEnState);
 
-  if (!token) {
+  if (!token || !nameEn) {
     return <Navigate to="/login" replace />;
   }
 

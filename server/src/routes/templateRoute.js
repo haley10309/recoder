@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const cors = require("cors");
+const { authenticateToken } = require("../middleware/auth");
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const checkTemplateController = require("../controllers/template/checkTemplateController");
@@ -12,6 +14,7 @@ const getTemplateDetailsController = require("../controllers/template/getTemplat
 const updateTemplateController = require("../controllers/template/updateTemplateController");
 
 router.post("/check-template-exsist", cors(), checkTemplateController.checkTemplateData);
+// router.post("/check-template-exsist", cors(), authenticateToken, checkTemplateController.checkTemplateData);
 router.post("/get-template-details", cors(), getTemplateDetailsController.getTemplateDetailsData);
 router.post("/create-template", upload.single('file'), cors(), createTemplateController.createTemplateData);
 router.post("/update-template", multer().none(), cors(), updateTemplateController.updateTemplateData);

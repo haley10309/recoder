@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import * as jwtDecodeLib from "jwt-decode";
 
-import { BASE_URL } from '@/utils/routePath';
 import { nameEnState } from '@/recoil/atoms/state';
+import defaultAxios from '@/apis/defaultAxios';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,7 +18,7 @@ const Login = () => {
     setErrorMsg('');
 
     try {
-      const res = await axios.post(`${BASE_URL}/admin/login`, {
+      const res = await defaultAxios.post('/admin/login', {
         email,
         password,
       });
