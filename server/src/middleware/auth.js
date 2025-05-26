@@ -1,11 +1,12 @@
-import jwt from "jsonwebtoken";
 
 const dotenv = require("dotenv");
 dotenv.config();
 
+const jwt = require("jsonwebtoken");
+
 const SECRET_KEY = process.env.JWT_SECRET;
 
-export const authenticateToken = (req, res, next) => {
+const authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(" ")[1]; // 'Bearer token값' 에서 token만 추출
 
@@ -21,3 +22,5 @@ export const authenticateToken = (req, res, next) => {
     return res.status(403).json({ message: "유효하지 않은 토큰입니다." });
   }
 };
+
+module.exports = authenticateToken;
