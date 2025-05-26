@@ -22,13 +22,13 @@ const templateRoutes = require("./src/routes/templateRoute");
 const guideUploadRoutes = require("./src/routes/guideUploadRoute");
 const tobeAppliedRoutes = require("./src/routes/tobeAppliedRoute");
 const localizationRoutes = require("./src/routes/localizationRoute");
-const adminRoutes = require('./src/routes/admin');
+// const adminRoutes = require('./src/routes/admin');
 
 app.use("/", guideUploadRoutes);
 app.use("/", templateRoutes);
 app.use("/", tobeAppliedRoutes);
 app.use("/", localizationRoutes);
-app.use('/admin', adminRoutes);
+// app.use('/admin', adminRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 console.log(`📘 Swagger 문서 👉 http://localhost:${process.env.PORT}/api-docs`);
