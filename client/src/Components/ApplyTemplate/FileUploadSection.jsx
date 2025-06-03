@@ -27,7 +27,7 @@ const FileUploadSection = ({ fileName, htmlUploadStatus, handleFileChange, isEng
                   <img src={FileUploadIcon} alt="Upload" />
                   <p>Backup HTML 을 업로드 해주세요.</p>
                 </FileDropInner>
-                <input id="dropzone-file" type="file" onChange={handleFileChange} hidden />
+                <input id="dropzone-file" type="file" accept=".html" onChange={handleFileChange} hidden />
               </FileDropLabel>
             )}
           </div>
@@ -52,7 +52,7 @@ const FileUploadSection = ({ fileName, htmlUploadStatus, handleFileChange, isEng
                     <img src={FileUploadIcon} alt="Upload" />
                     <p>번역덱 TXT 파일을 업로드 해주세요.</p>
                   </FileDropInner>
-                  <input id="dropzone-txt" type="file" onChange={handleTranslationUpload} hidden />
+                  <input id="dropzone-txt" type="file" accept=".txt" onChange={handleTranslationUpload} hidden />
                 </FileDropLabel>
               )}
             </div>

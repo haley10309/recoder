@@ -3,48 +3,30 @@ import styled from "styled-components";
 
 import CustomDropdownInput from "@/Components/Common/CustomDropdownInput";
 import { countryOptions } from "@/Components/Common/CoutryCode";
-import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 
-const SearchTemplate = ({
-  ticketNum,
-  ticketUrl,
-  setTicketNum,
-  setTicketUrl,
+const SiteCode = ({
   countryCode,
-  handleSearchTemplate,
   handleCountryChange,
 }) => {
 
   return (
-    <>
-      <CheckTemplate
-        ticketNum={ticketNum}
-        ticketUrl={ticketUrl}
-        setTicketNum={setTicketNum}
-        setTicketUrl={setTicketUrl}
-        // onClick={onClick}
-      />
-      <Wrapper>
-        <InputGrid>
-          <InputBox style={{ width: "6rem" }}>
-            <InputTitle>SITECODE</InputTitle>
-            <CustomDropdownInput
-              value={countryCode}
-              onChange={handleCountryChange}
-              placeholder="국가 코드 선택"
-              options={countryOptions.map((c) => c.name)}
-            />
-          </InputBox>
-        </InputGrid>
-        <ButtonBox>
-          <ConfirmButton onClick={handleSearchTemplate}>불러오기</ConfirmButton>
-        </ButtonBox>
-      </Wrapper>
-    </>
+    <Wrapper>
+      <InputGrid>
+        <InputBox style={{ width: "6rem" }}>
+          <InputTitle>SITECODE</InputTitle>
+          <CustomDropdownInput
+            value={countryCode}
+            onChange={handleCountryChange}
+            placeholder="국가코드 선택"
+            options={countryOptions.map((c) => c.name)}
+          />
+        </InputBox>
+      </InputGrid>
+    </Wrapper>
   );
 };
 
-export default SearchTemplate;
+export default SiteCode;
 
 const Wrapper = styled.div`
   display: flex;

@@ -1,10 +1,11 @@
-import SearchTemplate from "@ApplyTemplate/SearchTemplate";
+import SiteCode from "@/Pages/ApplyTemplate/SiteCode";
 import FileConvert from "@ApplyTemplate/FileConvert";
 import TableSection from "@/Components/ApplyTemplate/TableSection";
 import styled from "styled-components";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
-import { useSearchTemplate } from "@/hooks/SearchTemplate/useSearchTemplate";
+import { useSearchTemplate } from "@/hooks/ApplyTemplate/useSearchTemplate";
+import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 
 const ApplyTemplate = () => {
   const {
@@ -30,13 +31,19 @@ const ApplyTemplate = () => {
     <div className="bg-[#FFFFFF] p-[40px]">
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
-      <SearchTemplate
+      <CheckTemplate
         ticketNum={ticketNum}
         ticketUrl={ticketUrl}
         setTicketNum={setTicketNum}
         setTicketUrl={setTicketUrl}
+        onClick={() => handleSearchTemplate()}
+      />
+      <Gap gap={50} />
+
+      <TitleLabel text="🗺️ 국가코드 선택" />
+      <Gap gap={15} />
+      <SiteCode
         countryCode={countryCode}
-        handleSearchTemplate={handleSearchTemplate}
         handleCountryChange={handleCountryChange}
       />
       <Gap gap={50} />
