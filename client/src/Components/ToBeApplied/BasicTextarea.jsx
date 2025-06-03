@@ -71,7 +71,7 @@ const BasicTextarea = ({
           <Textarea
             value={transformedAsWasCode}
             onChange={(e) => setAsWasCode(e.target.value)}
-            placeholder="As-Was code를 입력하세요."
+            placeholder="AS-WAS code를 입력하세요."
           />
           
           <div className="flex font-bold">
@@ -127,7 +127,7 @@ const BasicTextarea = ({
           <Textarea
             value={toBeCode}
             onChange={(e) => setToBeCode(e.target.value)}
-            placeholder="To-Be code를 입력하세요."
+            placeholder="TO-BE code를 입력하세요."
             $isApplied={isApplied}
           />
           
