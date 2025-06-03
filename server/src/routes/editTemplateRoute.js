@@ -6,12 +6,12 @@ const cors = require("cors");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-const checkTemplateController = require("../controllers/template/checkTemplateController");
-const createTemplateController = require("../controllers/template/createTemplateController");
-const getTicketNumController = require("../controllers/template/getTicketNumController");
-const getTicketURLController = require("../controllers/template/getTicketURLController");
-const getTemplateDetailsController = require("../controllers/template/getTemplateDetailsController");
-const updateTemplateController = require("../controllers/template/updateTemplateController");
+const checkTemplateController = require("../controllers/editTemplate/checkTemplateController");
+const createTemplateController = require("../controllers/editTemplate/createTemplateController");
+const getTicketNumController = require("../controllers/editTemplate/getTicketNumController");
+const getTicketURLController = require("../controllers/editTemplate/getTicketURLController");
+const getTemplateDetailsController = require("../controllers/editTemplate/getTemplateDetailsController");
+const updateTemplateController = require("../controllers/editTemplate/updateTemplateController");
 
 router.post("/check-template-exsist", cors(), checkTemplateController.checkTemplateData);
 // router.post("/check-template-exsist", cors(), authenticateToken, checkTemplateController.checkTemplateData);

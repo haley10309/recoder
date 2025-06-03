@@ -18,18 +18,17 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const templateRoutes = require("./src/routes/templateRoute");
-const guideUploadRoutes = require("./src/routes/guideUploadRoute");
-const applyTemplateRoutes = require("./src/routes/applyTemplateRoute");
-const localizationRoutes = require("./src/routes/localizationRoute");
-// const adminRoutes = require("./src/routes/admin");
+const editTemplateRoute = require("./src/routes/editTemplateRoute");
+const editLocalizationEntriesRoute = require("./src/routes/editLocalizationEntriesRoute");
+const applyTemplateRoute = require("./src/routes/applyTemplateRoute");
+const guideRoute = require("./src/routes/guideRoute");
+// const adminRoute = require("./src/routes/adminRoute");
 
-app.use("/", guideUploadRoutes);
-app.use("/", templateRoutes);
-app.use("/", applyTemplateRoutes);
-app.use("/", localizationRoutes);
-// app.use("/admin", adminRoutes);
-// app.use("/", adminRoutes);
+app.use("/", editTemplateRoute);
+app.use("/", editLocalizationEntriesRoute);
+app.use("/", applyTemplateRoute);
+app.use("/", guideRoute);
+// app.use("/admin", adminRoute);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 console.log(`📘 Swagger 문서 👉 http://localhost:${process.env.PORT}/api-docs`);
