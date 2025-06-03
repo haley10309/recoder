@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /process-file:
+ * /convert-aswas-to-tobe-codes:
  *   post:
  *     summary: HTML 파일에 As-Was To-Be 코드를 적용하여 변경된 파일 내용 반환
  *     tags: [Apply_Template]

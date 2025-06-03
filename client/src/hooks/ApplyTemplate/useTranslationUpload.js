@@ -9,7 +9,7 @@ export function useTranslationUpload(countryCode) {
   const [txtFileName, setTxtFileName] = useState("");
   const [txtUploadProgress, setTxtUploadProgress] = useState(0);
 
-  const handleTranslationUpload = async (e) => {
+  const handleTranslationTxtUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) {
       setTxtUploadStatus("fail");
@@ -77,6 +77,6 @@ export function useTranslationUpload(countryCode) {
     validCountries,
     txtUploadStatus,
     txtFileName,
-    handleTranslationUpload,
+    handleTranslationTxtUpload,
   };
 }

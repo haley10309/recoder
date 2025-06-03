@@ -2,28 +2,27 @@ import React from "react";
 import styled from "styled-components";
 
 const FileConvertButtons = ({
+  countryCode,
   fileName,
   isProcessing,
-  handleExecute,
+  handleConvertByCountryCode,
   isEnglishCountry,
   handleApplyLocalization,
-  ticketNum,
-  ticketUrl,
 }) => {
   return (
     <ButtonBox>
       <ConvertButton
-        onClick={handleExecute}
+        onClick={handleConvertByCountryCode}
         disabled={isProcessing || !fileName}
         $active={!!fileName && !isProcessing}
       >
-        {isProcessing ? "코드 변환 중.." : "코드 변환"}
+        {isProcessing ? "코드 변환 중.." : `/uk/ -> /${countryCode.toLowerCase()}/ 변환`}
       </ConvertButton>
 
-      {!isEnglishCountry && (
+      {isEnglishCountry === false && (
         <ConvertButton
           $bgColor="black"
-          onClick={() => handleApplyLocalization(ticketNum, ticketUrl)}
+          onClick={handleApplyLocalization}
           disabled={!fileName}
           $active={!!fileName}
         >

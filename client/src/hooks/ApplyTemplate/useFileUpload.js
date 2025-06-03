@@ -8,7 +8,7 @@ export function useFileUpload() {
   const [uploadStatus, setUploadStatus] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const handleFileChange = (e) => {
+  const handleBackupFileUpload = (e) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) {
       setHtmlUploadStatus("fail");
@@ -59,7 +59,7 @@ export function useFileUpload() {
     htmlUploadStatus,
     uploadStatus,
     uploadProgress,
-    handleFileChange,
+    handleBackupFileUpload,
     setOriginalFile,
     setFileContent,
     setFileName,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fileExecute } from "@/apis/apis";
+import { convertAsWasToToBeCodes } from "@/apis/apis";
 import { countOccurrences } from "@/utils/codeUtils";
 
 export function useFileExecute({
@@ -61,7 +61,7 @@ export function useFileExecute({
     setTextareas(updatedTextareas);
   };
 
-  const handleExecute = async () => {
+  const handleConvertByCountryCode = async () => {
     const lowerCaseCode = countryCode?.toLowerCase?.() || "";
 
     const updatedTextareas = textareas.map((textarea) => ({
@@ -95,7 +95,7 @@ export function useFileExecute({
       formData.append("codeChanges", JSON.stringify(codeChanges));
 
       try {
-        const result = await fileExecute({
+        const result = await convertAsWasToToBeCodes({
           setUploadProgress,
           setIsProcessing,
           handleChangeResults,
@@ -133,6 +133,6 @@ export function useFileExecute({
     uploadStatus,
     downloadedFileContent,
     downloadedFileName,
-    handleExecute,
+    handleConvertByCountryCode,
   };
 }

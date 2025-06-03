@@ -1,9 +1,8 @@
 import axios from "axios";
 import { BASE_URL } from "@/utils/routePath";
 
-
 // 실행
-export const fileExecute = async ({
+export const convertAsWasToToBeCodes = async ({
   setUploadProgress,
   setIsProcessing,
   handleChangeResults,
@@ -20,7 +19,7 @@ export const fileExecute = async ({
     formData.append("ticket_url", String(ticketUrl));
     formData.append("countryCode", String(countryCode));
 
-    const response = await axios.post(`${BASE_URL}/process-file`, formData, {
+    const response = await axios.post(`${BASE_URL}/convert-aswas-to-tobe-codes`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

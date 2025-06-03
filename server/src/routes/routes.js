@@ -29,6 +29,8 @@ router.post("/extract-english-copy-list", upload.single('file'), cors(), localEn
 router.put("/update-localization-entries",cors(), localizationController.updateLocalizationEntries);
 
 /** 3) Apply Template */
+const processFileController = require("../controllers/applyTemplate/processFileController");
+router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), processFileController.convertAsWasToToBeCodes);
 
 /** 4) Guide */
 const guideUploadController = require("../controllers/guide/guideUploadController");
@@ -41,8 +43,6 @@ router.post("/guide-upload", upload.single("txtfile"), cors(), guideUploadContro
 // router.post("/admin/register", cors(), registerController.register);
 
 /** (Deprecated) */
-// const processFileController = require("../controllers/applyTemplate/processFileController");
-// router.post("/process-file", upload.single('file'), cors(), processFileController.processFileData);
 // const guideUploadControllerV2 = require("../controllers/guide/guideUploadControllerV2");
 // router.post("/guide-upload", upload.single("txtfile"), cors(), guideUploadControllerV2.guideUploadData);
 // const localUploadController = require("../controllers/editLocalizationEntries/localUploadController");

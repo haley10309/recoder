@@ -23,7 +23,7 @@ const FileConvert = ({
     fileContent,
     fileName,
     htmlUploadStatus,
-    handleFileChange,
+    handleBackupFileUpload,
   } = useFileUpload();
 
   // 번역덱 업로드 훅
@@ -31,7 +31,7 @@ const FileConvert = ({
     currentTranslations,
     txtUploadStatus,
     txtFileName,
-    handleTranslationUpload,
+    handleTranslationTxtUpload,
   } = useTranslationUpload(countryCode);
 
   // 코드 실행 훅
@@ -42,7 +42,7 @@ const FileConvert = ({
     uploadStatus,
     downloadedFileContent,
     downloadedFileName,
-    handleExecute,
+    handleConvertByCountryCode,
   } = useFileExecute({
     originalFile,
     fileContent,
@@ -126,38 +126,36 @@ const FileConvert = ({
       <FileUploadSection
         fileName={fileName}
         htmlUploadStatus={htmlUploadStatus}
-        handleFileChange={handleFileChange}
+        handleBackupFileUpload={handleBackupFileUpload}
         isEnglishCountry={isEnglishCountry}
         txtUploadStatus={txtUploadStatus}
         txtFileName={txtFileName}
-        handleTranslationUpload={handleTranslationUpload}
+        countryCode={countryCode}
+        handleTranslationTxtUpload={handleTranslationTxtUpload}
       />
 
       {!!fileName && (
-        <>
-          <FileConvertBottonBox>
-            <FileConvertButtons
-              fileName={fileName}
-              isProcessing={isProcessing}
-              handleExecute={handleExecute}
-              isEnglishCountry={isEnglishCountry}
-              handleApplyLocalization={handleApplyLocalization}
-              ticketNum={ticketNum}
-              ticketUrl={ticketUrl}
-            />
+        <FileConvertBottonBox>
+          <FileConvertButtons
+            countryCode={countryCode}
+            fileName={fileName}
+            isProcessing={isProcessing}
+            handleConvertByCountryCode={handleConvertByCountryCode}
+            isEnglishCountry={isEnglishCountry}
+            handleApplyLocalization={() => handleApplyLocalization(ticketNum, ticketUrl)}
+          />
 
-            <PreviewPanel
-              downloadedFileName={downloadedFileName}
-              uploadProgress={uploadProgress}
-              uploadStatus={uploadStatus}
-              localizationStatus={localizationStatus}
-              isExecuted={isExecuted}
-              isLocalizationApplied={isLocalizationApplied}
-              handleDownload={handleDownload}
-              handleLocalizedDownload={handleLocalizedDownload}
-            />
-          </FileConvertBottonBox>
-        </>
+          <PreviewPanel
+            downloadedFileName={downloadedFileName}
+            uploadProgress={uploadProgress}
+            uploadStatus={uploadStatus}
+            localizationStatus={localizationStatus}
+            isExecuted={isExecuted}
+            isLocalizationApplied={isLocalizationApplied}
+            handleDownload={handleDownload}
+            handleLocalizedDownload={handleLocalizedDownload}
+          />
+        </FileConvertBottonBox>
       )}
     </>
   );

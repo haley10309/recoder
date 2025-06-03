@@ -75,20 +75,27 @@ const BasicTextarea = ({
             onChange={(e) => setAsWasCode(e.target.value)}
             placeholder="AS-WAS code를 입력하세요."
           />
-          
+
           <div className="flex font-bold">
             <div className="text-xs">
               <span className="ml-1 text-[#4b5563;]">
                 [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
-                {/** TODO: (원본코드 업로드 필요) 추가 필? */}
               </span>
             </div>
-            <span className="ml-1 text-xs"
-              style={{
-                color: asWasOccurrenceCount === 1 ? "blue" : "red"
-              }}>
-                {`${asWasOccurrenceCount}회`}
-            </span>
+            {/* TODO: 변수 이 컴포넌트로 끌고올 수 있도록 */}
+            {/* {originalHtmlFile ? ( */}
+            {true ? (
+              <span className="ml-1 text-xs"
+                style={{
+                  color: asWasOccurrenceCount === 1 ? "blue" : "red"
+                }}>
+                  {`${asWasOccurrenceCount}회`}
+              </span>
+            ) : (
+              <span className="ml-1 text-xs font-normal text-[#ff7300]">
+                (원본코드 업로드 필요)
+              </span>
+            )}
           </div>
           
           <CopyTextButton
@@ -133,19 +140,12 @@ const BasicTextarea = ({
             $isApplied={isApplied}
           />
           
-          
           <div className="flex font-bold">
             <div className="text-xs">
               <span className="ml-1 text-[#4b5563;]">
-                [TO-BE] 변환 후 코드 출현 횟수:
+                [TO-BE]
               </span>
             </div>
-            <span className="ml-1 text-xs"
-              style={{
-                color: toBeOccurrenceCount === 1 ? "blue" : "red"
-              }}>
-                {`${toBeOccurrenceCount}회`}
-            </span>
           </div>
 
           <CopyTextButton
@@ -241,7 +241,7 @@ const Textarea = styled.textarea`
 
   border: ${({ $errorState, $isApplied, $isLocalizedChanged }) => {
     if ($errorState) return "2px solid #ffa600";
-    if ($isApplied === "yes") return "2px solid green";
+    if ($isApplied === "yes") return "2px solid blue";
     if ($isApplied === "no") return "2px solid red";
     if ($isLocalizedChanged) return "2px solid green";
     return "1px solid #d1d5db";

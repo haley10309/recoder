@@ -99,6 +99,7 @@ export const useSearchTemplate = () => {
     }
 
     if (filterTobe === "yes") {
+      // TODO: isApplied는 또 뭐임
       filtered = filtered.filter((textarea) => textarea.isApplied === "yes");
     } else if (filterTobe === "no") {
       filtered = filtered.filter((textarea) => textarea.isApplied === "no");

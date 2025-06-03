@@ -1,7 +1,7 @@
 // apply template 실행 기능
 const { replaceCode } = require('../../utils/codeUtils');
 
-exports.processFileData = (req, res) => {
+exports.convertAsWasToToBeCodes = (req, res) => {
   const codeChanges = JSON.parse(req.body.codeChanges);
   const { ticket_url, countryCode } = req.body;
   
