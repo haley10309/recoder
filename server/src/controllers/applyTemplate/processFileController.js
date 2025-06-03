@@ -1,4 +1,4 @@
-// tobe applied 실행 기능
+// apply template 실행 기능
 const { replaceCode } = require('../../utils/codeUtils');
 
 exports.processFileData = (req, res) => {

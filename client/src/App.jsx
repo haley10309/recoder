@@ -68,7 +68,7 @@ function App() {
                 }
               />
               <Route
-                path="/tobe-applied"
+                path="/apply-template"
                 element={
                   <RequireAuth>
                     <ApplyTemplate />

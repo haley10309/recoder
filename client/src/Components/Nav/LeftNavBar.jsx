@@ -87,11 +87,11 @@ const LeftNavBar = () => {
         </NavButton>
 
         <NavButton
-          $active={isActive("/tobe-applied")}
-          onClick={() => handleNavigate("/tobe-applied")}
+          $active={isActive("/apply-template")}
+          onClick={() => handleNavigate("/apply-template")}
         >
           <IconImage src={applyIcon} alt="apply template" />
-          <NavButtonText $active={isActive("/tobe-applied")}>Apply Template</NavButtonText>
+          <NavButtonText $active={isActive("/apply-template")}>Apply Template</NavButtonText>
         </NavButton>
 
         <NavButton

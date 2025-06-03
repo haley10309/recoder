@@ -2,8 +2,8 @@
  * @swagger
  * /process-file:
  *   post:
- *     summary: HTML 파일에 AsWas-ToBe 코드를 적용하여 변경된 파일 내용 반환
- *     tags: [Tobe_Applied]
+ *     summary: HTML 파일에 As-Was To-Be 코드를 적용하여 변경된 파일 내용 반환
+ *     tags: [Apply_Template]
  *     consumes:
  *       - multipart/form-data
  *     requestBody:
@@ -72,7 +72,7 @@
  * /template:
  *   post:
  *     summary: 템플릿 정보 조회
- *     tags: [Tobe_Applied]
+ *     tags: [Apply_Template]
  *     requestBody:
  *       required: true
  *       content:

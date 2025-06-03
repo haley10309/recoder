@@ -20,13 +20,13 @@ app.use(express.urlencoded({ extended: true }));
 
 const templateRoutes = require("./src/routes/templateRoute");
 const guideUploadRoutes = require("./src/routes/guideUploadRoute");
-const tobeAppliedRoutes = require("./src/routes/tobeAppliedRoute");
+const applyTemplateRoutes = require("./src/routes/applyTemplateRoute");
 const localizationRoutes = require("./src/routes/localizationRoute");
 // const adminRoutes = require("./src/routes/admin");
 
 app.use("/", guideUploadRoutes);
 app.use("/", templateRoutes);
-app.use("/", tobeAppliedRoutes);
+app.use("/", applyTemplateRoutes);
 app.use("/", localizationRoutes);
 // app.use("/admin", adminRoutes);
 // app.use("/", adminRoutes);

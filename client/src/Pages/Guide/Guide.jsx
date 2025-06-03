@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "@Guide/Guide.scss"; // Import CSS for styling
 import guide_kv from "@/assets/guide/guide_kv.png";
-import tobe_applied_1 from "@/assets/guide/tobe_applied_6.png";
-import tobe_applied_2 from "@/assets/guide/tobe_applied_7.png";
-import tobe_applied_3 from "@/assets/guide/tobe_applied_8.png";
+import apply_template_1 from "@/assets/guide/apply_template_6.png";
+import apply_template_2 from "@/assets/guide/apply_template_7.png";
+import apply_template_3 from "@/assets/guide/apply_template_8.png";
 import qa_check_1 from "@/assets/guide/qa_check_1.png";
 import qa_check_2 from "@/assets/guide/qa_check_2.png";
 import qa_check_3 from "@/assets/guide/qa_check_3.png";
@@ -110,11 +110,11 @@ const Guide = () => {
       <div id="section3" className="guide-section">
         <h1 className="guide_title">코드 적용 가이드</h1>
         <h2 className="explain_h2">1. 템플릿 호출 방식</h2>
-        <img className="img_guide" src={tobe_applied_1} />
+        <img className="img_guide" src={apply_template_1} />
         <h2 className="explain_h2">2. 템플릿 호출 되었을 때 화면 및 대상 파일 업로드화면</h2>
-        <img className="img_guide" src={tobe_applied_2} />
+        <img className="img_guide" src={apply_template_2} />
         <h2 className="explain_h2">3. 템플릿 적용 대상 파일 업로드 시 화면</h2>
-        <img className="img_guide" src={tobe_applied_3} />
+        <img className="img_guide" src={apply_template_3} />
       </div>
       <div id="section4" className="guide-section">
         <h2 className="guide_title">QA 가이드</h2>
