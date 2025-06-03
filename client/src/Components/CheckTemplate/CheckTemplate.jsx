@@ -14,9 +14,11 @@ const CheckTemplate = ({
         <InputDrop _wrapperProps={{ className: "w-[260px]" }} _title="지라 티켓 번호" _value={ticketNum} _setValue={setTicketNum} _url="get-ticket-number" />
         <InputDrop _wrapperProps={{ className: "w-[400px] mx-auto" }} _title="URL" _value={ticketUrl} _setValue={setTicketUrl} _url="get-ticket-url" />
       </div>
-      <button className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px]" onClick={onClick}>
-        확인
-      </button>
+      {onClick ? (
+        <button className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px]" onClick={onClick}>
+          확인
+        </button>
+      ) : null}
     </div>
   );
 };
