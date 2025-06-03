@@ -73,7 +73,6 @@ export const useSearchTemplate = () => {
         setAssetCodeChanges(assetCodeChanges);
         
         // 템플릿 AS-WAS/TO-BE, 로컬라이제이션 세팅
-        // setTemplateID(templateId);
         // setDeleteIds([]);
 
         setLocalizationEntries(

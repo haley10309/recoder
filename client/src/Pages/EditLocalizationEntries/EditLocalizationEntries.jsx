@@ -55,8 +55,6 @@ const EditLocalizationEntries = () => {
       return;
     }
 
-    console.log("db 상 id 잘 포함되는지 확인! localizationEntries",localizationEntries)
-
     try {
       const body = {
         ticket_num: ticketNum,
@@ -142,7 +140,7 @@ const EditLocalizationEntries = () => {
       />
       <Gap gap={50} />
 
-      <TitleLabel text={`🌐 로컬라이제이션 템플릿 (${localizationEntries.length}개)`} />
+      <TitleLabel text={`🌐 로컬라이제이션 템플릿`} />
       <Gap gap={15} />
       <LocalizationEntriesEditor
         saveType={saveType}

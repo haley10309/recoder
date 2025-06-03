@@ -4,6 +4,7 @@ import Copy from "@/assets/copy.png";
 import CopyTextButton from "../Common/CopyTextButton";
 
 const BasicTextarea = ({
+  indexText,
   pptNo,
   asWasCode,
   setAsWasCode,
@@ -47,16 +48,17 @@ const BasicTextarea = ({
     localizedToBeCode && localizedToBeCode !== toBeCode;
 
   return (
-    <Container style={{backgroundColor:"pink"}}>
-      <Wrapper $isEnglishCountry={isEnglishCountry}>
-        <CheckboxWrapper>
+    <Container>
+      <div style={{ fontSize: "12px", paddingLeft: "15px", paddingTop: "10px" }}>{indexText}</div>
+      <Wrapper>
+        {/* <CheckboxWrapper>
           <Checkbox
             type="checkbox"
             checked={checked}
             onChange={onCheckedChange}
             disabled={isCheckboxDisabled}
           />
-        </CheckboxWrapper>
+        </CheckboxWrapper> */}
 
         <PptNo>
           <TextBold>p. {pptNo}</TextBold>
@@ -158,7 +160,7 @@ const BasicTextarea = ({
             <Textarea
               value={localizedToBeCode || ""}
               onChange={(e) => setLocalizedToBeCode(e.target.value)}
-              placeholder="로컬라이제이션을 적용하세요."
+              placeholder="Localization을 적용하세요."
               $isLocalizedChanged={isLocalizedChanged}
               $errorState={errorState}
             />
@@ -173,15 +175,6 @@ const BasicTextarea = ({
             )}
           </CodeBlock>
         )}
-
-        {/* 
-        <ToBeAppliedWrapper>
-          {isApplied === "yes" ? (
-            <YesIcon src={Yes} alt="yes" />
-          ) : (
-            <NoIcon src={No} alt="no" />
-          )}
-        </ToBeAppliedWrapper> */}
       </Wrapper>
     </Container>
   );
@@ -193,12 +186,12 @@ export default BasicTextarea;
 
 const Container = styled.div`
   margin-bottom: 1rem;
+  background-color: #f6f6f6;
 `;
 
 const Wrapper = styled.div`
   display: flex;
   padding: 1rem;
-  background-color: #f6f6f6;
   border-bottom: 1px solid #d1d5db;
   align-items: flex-start;
   gap: 1rem;

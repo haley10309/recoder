@@ -27,8 +27,6 @@ const SearchTemplate = ({
         ticket_url: ticketUrl,
       });
   
-      console.log("🔥 응답 결과:", response.data);
-
       if (response.data.template_id) {
         const codeChanges = response.data.code_changes;
         const newTextareas = codeChanges.map((pair) => ({

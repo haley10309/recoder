@@ -14,8 +14,8 @@ const FilterSection = ({ filter, setFilter, filterTobe, setFilterTobe }) => {
 
   const filterTobeOptions = [
     { label: "전체 항목", value: "all" },
-    { label: "To-Be 적용", value: "yes" },
-    { label: "To-Be 미적용", value: "no" },
+    { label: "TO-BE 적용", value: "yes" },
+    { label: "TO-BE 미적용", value: "no" },
   ];
 
   const handleFilterSelect = (value) => {

@@ -1,9 +1,8 @@
-import BasicTextarea from "@/Components/ToBeApplied/Textarea";
+import BasicTextarea from "@/Components/ToBeApplied/BasicTextarea";
 import styled from "styled-components";
 
 const TableSection = ({
   filteredTextareas,
-  codeChanges,
   countryCode,
   handleAsWasCodeChange,
   handleToBeCodeChange,
@@ -15,27 +14,28 @@ const TableSection = ({
   return (
     <TableWrapper>
       <TableHeader>
-        <HeaderCell width={isEnglishCountry ? "5%" : "5%"}>항목</HeaderCell>
+        {/* <HeaderCell width={isEnglishCountry ? "5%" : "5%"}>항목</HeaderCell> */}
         <HeaderCell width={isEnglishCountry ? "10%" : "13%"}>
           PPT NO.
         </HeaderCell>
         <HeaderCell width={isEnglishCountry ? "45%" : "25%"}>
-          As-Was Code
+          AS-WAS Code
         </HeaderCell>
         <HeaderCell width={isEnglishCountry ? "40%" : "27%"}>
-          To-Be Code
+          TO-BE Code
         </HeaderCell>
         {!isEnglishCountry && (
-          <HeaderCell width="28%">로컬라이제이션</HeaderCell>
+          <HeaderCell width="28%">Localization</HeaderCell>
         )}
         {/* <HeaderCell width={isEnglishCountry ? "10%" : "10%"}>
           작업 완료 여부
         </HeaderCell> */}
       </TableHeader>
 
-      {filteredTextareas().map((textarea, index) => (
+      {filteredTextareas.map((textarea, index) => (
         <BasicTextarea
           key={index}
+          indexText={`${index + 1} of ${filteredTextareas.length}`}
           pptNo={textarea.pptNo} // ✅ 바로 사용
           asWasCode={textarea.asWasCode.replace(
             /\/uk\//g,
@@ -67,7 +67,6 @@ const TableSection = ({
 };
 
 const TableWrapper = styled.div`
-  margin-bottom: 80px;
   width: 100%;
 `;
 

@@ -49,8 +49,8 @@ const ToBeApplied = () => {
     setTextareas(newTextareas);
   };
 
-  const filteredTextareas = () => {
-    let filtered = textareas;
+  const filterTextareas = () => {
+    let filtered = textareas.slice(0);
 
     if (filter === "checked") {
       filtered = filtered.filter((textarea) => textarea.checked);
@@ -97,18 +97,17 @@ const ToBeApplied = () => {
       />
       <Gap gap={50} />
 
-      <TitleLabel text="👀 AS-WAS / TO BE / Localization 확인하기" />
+      <TitleLabel text="👀 AS-WAS / TO-BE / Localization 확인하기" />
       <Gap gap={15} />
       <WhiteBox>
-        <FilterSection
+        {/* <FilterSection
           filter={filter}
           setFilter={setFilter}
           filterTobe={filterTobe}
           setFilterTobe={setFilterTobe}
-        />
+        /> */}
         <TableSection
-          filteredTextareas={filteredTextareas}
-          codeChanges={codeChanges}
+          filteredTextareas={filterTextareas()}
           countryCode={countryCode}
           handleAsWasCodeChange={handleAsWasCodeChange}
           handleToBeCodeChange={handleToBeCodeChange}
@@ -129,5 +128,4 @@ const WhiteBox = styled.div`
   display: flex;
   flex-direction: column;
   color: #32383e;
-  margin-top: 2rem;
 `;
