@@ -2,7 +2,7 @@
 
 const db = require("../../config/db");
 
-exports.updateLocalizationFull = (req, res) => {
+exports.updateLocalizationEntries = (req, res) => {
   const { ticket_num, ticket_url, localization_entries = [], delete_ids = [] } = req.body; // localization_entries, delete_ids 기본값 []로 안전하게 설정
 
   if (!ticket_num || !ticket_url) {

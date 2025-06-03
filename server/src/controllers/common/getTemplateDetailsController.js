@@ -1,16 +1,16 @@
 // 템플릿 세부 내용 조회
-
 const db = require("../../config/db");
+
 exports.getTemplateDetailsData = (req, res) => {
   const { ticket_num, ticket_url } = req.body;
 
-  const templateQuery = `
+  const findTemplateQuery = `
     SELECT id 
     FROM Templates
     WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL
   `;
 
-  db.query(templateQuery, [ticket_num, ticket_url], (err, results) => {
+  db.query(findTemplateQuery, [ticket_num, ticket_url], (err, results) => {
     if (err) {
       console.error("Error fetching template ID:", err);
       return res.status(500).json({ error: "Failed to fetch template details" });

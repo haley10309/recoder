@@ -19,6 +19,9 @@ export const useCheckTemplate = () => {
   const [localizationEntries, setLocalizationEntries] = useState([{ code_context: "" }]); // copy 적용 필요한 tobe_code를 모아둔 리스트
   const [deleteIds, setDeleteIds] = useState([]);
 
+  const [englishCopyList, setEnglishCopyList] = useState([]);
+  const canUploadTransFile = isTemplateCreated;
+
   const hasL10nUploadHistory = localizationEntries.length > 0 && localizationEntries.some(entry => !!entry.id); // 템플릿에 이미 localizationEntry 업로드 히스토리가 있는지 (있으면 번역파일 업로드 막기 용도)
   
   // non-asset states
@@ -232,6 +235,41 @@ export const useCheckTemplate = () => {
     }
   };
 
+  // 로컬라이제이션 생성
+  const handleCreateOrUpdateLocalization = async () => {
+    if (!canUploadTransFile) {
+      alert("로컬라이제이션 템플릿을 저장할 수 없어요");
+      return;
+    }
+
+    try {
+      const body = {
+        ticket_num: ticketNum,
+        ticket_url: ticketUrl,
+        localization_entries:
+          localizationEntries.map((item) => (
+            item.id 
+              ? { id: item.id, code_context: item.code_context }
+              : { code_context: item.code_context }
+          )),
+        delete_ids: deleteIds,
+      };
+      
+      // TemplateLocalizaionEntries 삽입/수정/삭제
+      await axios.put(`${BASE_URL}/update-localization-entries`, body, { headers: { "Content-Type": "application/json" } });
+      setDeleteIds([]);
+
+      // db에 저장된 localizaionEntries 가져오기
+      const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketUrl });
+      setLocalizationEntries(data.localizationEntries || []);
+
+      alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
+    } catch (err) {
+      console.error("[Error] handleCreateOrUpdateLocalization", err);
+      alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
+    }
+  };
+
   return {
     ticketNum,
     setTicketNum,
@@ -241,7 +279,6 @@ export const useCheckTemplate = () => {
     isTemplateCreated,
     localizationEntries,
     setLocalizationEntries,
-    deleteIds,
     setDeleteIds,
     checkForExistingTemplate,
     hasL10nUploadHistory,
@@ -266,5 +303,10 @@ export const useCheckTemplate = () => {
     handleNonAssetPptNoChange,
     handleNonAssetAswasChange,
     handleNonAssetTobeChange,
+    handleCreateOrUpdateLocalization,
+
+    canUploadTransFile,
+    englishCopyList,
+    setEnglishCopyList,
   };
 };

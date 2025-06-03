@@ -87,7 +87,7 @@ export const uploadTranslationDeck = async (file) => {
 
   try {
     const response = await axios.post(
-      `${BASE_URL}/translation_upload`,
+      `${BASE_URL}/upload-translation`,
       formData,
       {
         headers: {

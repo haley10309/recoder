@@ -11,7 +11,6 @@ import Guide from "@Pages/Guide/Guide";
 import "./style/global.css";
 import LeftNavBar from "@Components/Nav/LeftNavBar";
 import EditLocalizationEntries from "./Pages/EditLocalizationEntries/EditLocalizationEntries";
-import LocalizationVersion1 from "./Pages/EditLocalizationEntries/LocalizationVersion1"; // TODO:?
 import Login from "./Pages/Login/Login";
 import RequireAuth from "./Pages/RequireAuth";
 import Register from "./Pages/Register/Register";
@@ -87,14 +86,6 @@ function App() {
                 path="/guide"
                 element={
                   <Guide />
-                }
-              />
-              <Route
-                path="/localizationversion1"
-                element={
-                  <RequireAuth>
-                    <LocalizationVersion1 />
-                  </RequireAuth>
                 }
               />
             </Routes>

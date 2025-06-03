@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /translation_upload:
+ * /upload-translation:
  *   post:
  *     summary: 번역 파일 업로드 및 국가별 번역 리스트 반환
  *     tags: [Localization]
@@ -33,7 +33,7 @@
 
 /**
  * @swagger
- * /localization/english-copy-list:
+ * /extract-english-copy-list:
  *   post:
  *     summary: 업로드된 텍스트 파일에서 영어 원문만 추출
  *     tags:
@@ -72,7 +72,7 @@
 
 /**
  * @swagger
- * /localization/template:
+ * /update-localization-entries:
  *   put:
  *     summary: local_code 삽입, 수정, 삭제
  *     tags:

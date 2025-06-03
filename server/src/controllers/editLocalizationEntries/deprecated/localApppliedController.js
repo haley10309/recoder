@@ -1,6 +1,6 @@
 // 번역 기능 - 사용 안함 (리나 버전)
 
-const db = require("../../config/db");
+const db = require("../../../config/db");
 const fs = require("fs");
 
 function normalizeForComparison(str) {

@@ -28,7 +28,7 @@ export default function TransFileUpload({
     try {
       // 1. englishCopyList 받아오고 업데이트
       const res = await axios.post(
-        `${BASE_URL}/localization/english-copy-list`, 
+        `${BASE_URL}/extract-english-copy-list`, 
         formData, 
         { headers: { "Content-Type": "multipart/form-data" } },
       );
