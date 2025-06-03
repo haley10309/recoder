@@ -1,5 +1,3 @@
-// TODO: 리스트 확인 필요
-
 export const countryOptions = [
   { name: "AE", code: "ae", isEnglish: true },
   { name: "AE_AR", code: "ae_ar", isEnglish: false },

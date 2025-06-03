@@ -8,13 +8,18 @@ import { countryOptions } from "@/Components/Common/CoutryCode";
 export const useSearchTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
   const [ticketUrl, setTicketUrl] = useState("");
-  const [isEnglishCountry, setIsEnglishCountry] = useState(false);
   const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", checked: false, isApplied: null }]);
   const [countryCode, setCountryCode] = useState("");
   const [originalHtmlFile, setOriginalHtmlFile] = useState("");
 
   const [filter, setFilter] = useState("");
   const [filterTobe, setFilterTobe] = useState("");
+
+  const isEnglishCountry = countryCode === ""
+                            ? null
+                            : countryOptions.find((c) => c.name === countryCode)
+                              ? !!countryOptions.find((c) => c.name === countryCode)?.isEnglish
+                              : null
 
   // 템플릿 조회
   const handleSearchTemplate = async () => {
@@ -59,13 +64,6 @@ export const useSearchTemplate = () => {
 
   const handleCountryChange = (inputValue) => {
     setCountryCode(inputValue);
-
-    const selected = countryOptions.find((c) => c.name === inputValue);
-    if (selected && selected.isEnglish) {
-      setIsEnglishCountry(true);
-    } else {
-      setIsEnglishCountry(false);
-    }
   };
 
   const handleAsWasCodeChange = (index, value) => {

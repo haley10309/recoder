@@ -3,7 +3,16 @@ import styled from "styled-components";
 import FileUploadIcon from "@/assets/shift-fill.svg";
 import HtmlFileIcon from "@/assets/union.svg";
 
-const FileUploadSection = ({ fileName, htmlUploadStatus, handleFileChange, isEnglishCountry, txtUploadStatus, txtFileName, handleTranslationUpload }) => {
+const FileUploadSection = ({
+  fileName,
+  htmlUploadStatus,
+  handleFileChange,
+  isEnglishCountry,
+  txtUploadStatus,
+  txtFileName,
+  handleTranslationUpload,
+}) => {
+
   return (
     <>
       <ConvertSection>
@@ -33,7 +42,7 @@ const FileUploadSection = ({ fileName, htmlUploadStatus, handleFileChange, isEng
           </div>
 
           {/* 번역덱 업로드 */}
-          {!isEnglishCountry && (
+          {isEnglishCountry === false && (
             <div>
               {txtUploadStatus ? (
                 <PreviewHeader style={{ marginTop: "0.75rem" }}>

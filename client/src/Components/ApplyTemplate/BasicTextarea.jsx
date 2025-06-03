@@ -155,7 +155,7 @@ const BasicTextarea = ({
         </CodeBlock>
 
         {/* LOCALIZED TO-BE - 항상 렌더되지만 텍스트는 값이 있는 경우에만 */}
-        {!isEnglishCountry && (
+        {isEnglishCountry === false && (
           <CodeBlock>
             <Textarea
               value={localizedToBeCode || ""}
@@ -224,7 +224,7 @@ const TextBold = styled.span`
 `;
 
 const CodeBlock = styled.div`
-  width: ${({ $isEnglishCountry }) => ($isEnglishCountry ? "40%" : "25%")};
+  width: ${({ $isEnglishCountry }) => ($isEnglishCountry === false ? "25%" : "40%")};
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

@@ -45,6 +45,7 @@ const ApplyTemplate = () => {
       <SiteCode
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}
+        isEnglishCountry={isEnglishCountry}
       />
       <Gap gap={50} />
 
@@ -60,7 +61,7 @@ const ApplyTemplate = () => {
       />
       <Gap gap={50} />
 
-      <TitleLabel text="👀 AS-WAS / TO-BE / Localization 확인하기" />
+      <TitleLabel text="👀 AS-WAS / TO-BE / Localization(for 비영문국) 확인하기" />
       <Gap gap={15} />
       <WhiteBox>
         {/* <FilterSection
