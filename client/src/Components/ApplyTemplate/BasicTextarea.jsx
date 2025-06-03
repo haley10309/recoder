@@ -311,20 +311,3 @@ const CopyIcon = styled.img`
   width: 18px;
   height: 18px;
 `;
-
-const ToBeAppliedWrapper = styled.div`
-  width: 10%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const YesIcon = styled.img`
-  width: 50px;
-  height: 50px;
-`;
-
-const NoIcon = styled.img`
-  width: 50px;
-  height: 50px;
-`;

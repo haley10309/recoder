@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 import { Dropdown } from "primereact/dropdown";
-import SettingDropdown from "@/Components/ToBeApplied/SettingDropdown";
+import SettingDropdown from "@/Components/ApplyTemplate/SettingDropdown";
 import Country_code from "@/Components/Template_detail_set/Country_code";
 import sad_face from "@/assets/no_value.png";
 import { countOccurrences } from "@/utils/codeUtils";

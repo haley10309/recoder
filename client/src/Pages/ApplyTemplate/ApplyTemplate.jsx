@@ -1,14 +1,14 @@
 import { useState } from "react";
-import SearchTemplate from "@ToBeApplied/SearchTemplate";
-import FileConvert from "@ToBeApplied/FileConvert";
-import FilterSection from "@/Components/ToBeApplied/FilterSection";
-import TableSection from "@/Components/ToBeApplied/TableSection";
+import SearchTemplate from "@ApplyTemplate/SearchTemplate";
+import FileConvert from "@ApplyTemplate/FileConvert";
+import FilterSection from "@/Components/ApplyTemplate/FilterSection";
+import TableSection from "@/Components/ApplyTemplate/TableSection";
 import styled from "styled-components";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
 import { useSearchTemplate } from "@/hooks/SearchTemplate/useSearchTemplate";
 
-const ToBeApplied = () => {
+const ApplyTemplate = () => {
   const {
     ticketNum,
     setTicketNum,
@@ -122,7 +122,7 @@ const ToBeApplied = () => {
   );
 };
 
-export default ToBeApplied;
+export default ApplyTemplate;
 
 const WhiteBox = styled.div`
   display: flex;

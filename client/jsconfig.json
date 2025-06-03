@@ -9,7 +9,7 @@
       "@public/*": ["public/*"],
       "@Guide/*": ["src/Pages/Guide/*"],
       "@Qa_Page/*": ["src/Pages/Qa_Page/*"],
-      "@ToBeApplied/*": ["src/Pages/ToBeApplied/*"],
+      "@ApplyTemplate/*": ["src/Pages/ApplyTemplate/*"],
       "@EditLocalizationEntries/*": ["src/Pages/EditLocalizationEntries/*"],
     }
   },

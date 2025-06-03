@@ -4,7 +4,7 @@ import * as jwtDecodeLib from "jwt-decode";
 
 import Main from "@Pages/Main";
 import EditTemplate from "@/Pages/EditTemplate/EditTemplate";
-import ToBeApplied from "@Pages/ToBeApplied/ToBeApplied";
+import ApplyTemplate from "@Pages/ApplyTemplate/ApplyTemplate";
 import Qa_page from "@Pages/Qa_Page/Qa_page";
 import Footer from "@Components/Nav/Footer";
 import Guide from "@Pages/Guide/Guide";
@@ -71,7 +71,7 @@ function App() {
                 path="/tobe-applied"
                 element={
                   <RequireAuth>
-                    <ToBeApplied />
+                    <ApplyTemplate />
                   </RequireAuth>
                 }
               />

@@ -45,7 +45,7 @@ export const fileExecute = async ({
   }
 };
 
-// ToBeApplied - 템플릿 선택지
+// ApplyTemplate - 템플릿 선택지
 export const fetchTicketData = async (_url) => {
   let apiUrl = "";
 

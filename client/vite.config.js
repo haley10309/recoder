@@ -22,7 +22,7 @@ export default ({ mode }) => {
         { find: "@public", replacement: "/public" },
         { find: "@Guide", replacement: "/src/Pages/Guide" },
         { find: "@Qa_Page", replacement: "/src/Pages/Qa_Page" },
-        { find: "@ToBeApplied", replacement: "/src/Pages/ToBeApplied" },
+        { find: "@ApplyTemplate", replacement: "/src/Pages/ApplyTemplate" },
         { find: "@Components", replacement: "/src/Components" },
         { find: "@Pages", replacement: "/src/Pages" },
         { find: "@EditLocalizationEntries", replacement: "/src/Pages/EditLocalizationEntries" },

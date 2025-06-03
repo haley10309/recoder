@@ -5,14 +5,13 @@
 
 - 최근 작업자 7일 기준으로감사하다 하기. 로그인,,, by 다 기록해야됨
 - 쌍따옴표 있으면 주의하라고 안내, 없애기 체크박스
-// TODO: 파일 확장자 제한하기 tobeapplied 에서는 파일이 모든 파일 다 선택 가능함. 다른 페이지와는 다르게
+// TODO: 파일 확장자 제한하기 applytemplate 에서는 파일이 모든 파일 다 선택 가능함. 다른 페이지와는 다르게
 
 - [ ] edit localization entries 기능 구현 마무리
 - [ ] 2개 이상 찾아지면, 2개가 다 바뀌는건지 1개만 바뀌는건지.
 back to location 참고. 리코더에서는 1개만 바뀌는데, N개 바뀌도록 수정해야함. / 근데 2개가 다 바뀌는건지를 먼저 알아야되긴 함. -> 덴버에게 항상 문의해야됨.
 - [ ] edit localization entries 페이지에서는  비교를 선택으로.
 - [ ] 코드수정사항: TemplateSetting unique(프론트 상에서 막기)
-- [ ] Tobeapplied 기능 구현, 파악 마무리
 - [ ] localization 템플릿을 만들 때, 
 -- Zoom
 -- Optical Zoom 3x, Optical Quality Zoom 2x, Digital Zoom up to 30x
