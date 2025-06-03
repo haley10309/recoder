@@ -18,17 +18,9 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const editTemplateRoute = require("./src/routes/editTemplateRoute");
-const editLocalizationEntriesRoute = require("./src/routes/editLocalizationEntriesRoute");
-const applyTemplateRoute = require("./src/routes/applyTemplateRoute");
-const guideRoute = require("./src/routes/guideRoute");
-// const adminRoute = require("./src/routes/adminRoute");
+const routes = require("./src/routes/routes");
 
-app.use("/", editTemplateRoute);
-app.use("/", editLocalizationEntriesRoute);
-app.use("/", applyTemplateRoute);
-app.use("/", guideRoute);
-// app.use("/admin", adminRoute);
+app.use("/", routes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 console.log(`📘 Swagger 문서 👉 http://localhost:${process.env.PORT}/api-docs`);
