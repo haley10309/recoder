@@ -69,7 +69,7 @@ const ApplyTemplate = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
-      <TitleLabel text="🧾 핫픽스/로컬라이제이션 템플릿 불러오기 // TODO: 핫픽스 문구 수정하기" />
+      <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <SearchTemplate
         setTextareas={setTextareas}
