@@ -3,7 +3,7 @@ const db = require("../../config/db");
 
 exports.getTicketURLData = (req, res) => {
   const query = `
-    SELECT DISTINCT ticket_url AS name
+    SELECT ticket_url AS name
     FROM Templates
     WHERE deleted_at IS NULL
   `;

@@ -1,6 +1,8 @@
 // 템플릿 생성
 const db = require("../../config/db");
 
+// TODO: update-template이랑 합치기
+
 exports.createTemplateData = (req, res) => {
     const { ticket_num, ticket_url, code_changes } = req.body;
 
