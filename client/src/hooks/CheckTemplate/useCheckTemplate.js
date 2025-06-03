@@ -24,10 +24,8 @@ export const useCheckTemplate = () => {
   // non-asset states
   const [nonAssetCodeChanges, setNonAssetCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
   // asset states
-  const [assetCodeChanges, setAssetCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
-
-  // Template and ticket info
-  const [templateID, setTemplateID] = useState(""); // TODO: num,url로만 관리할수있으면 빼기 ? 
+  // const [assetCodeChanges, setAssetCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
+  const [assetCodeChanges, setAssetCodeChanges] = useState([]);
 
   // File upload and content
   const [originalHtmlFile, setOriginalHtmlFile] = useState("");
@@ -111,7 +109,6 @@ export const useCheckTemplate = () => {
         });
         const detailData = detailRes.data;
 
-        const templateId = detailData.templateId;
         const codeChanges = detailData.codeChanges || [];
         const localizationEntries = detailData.localizationEntries || [];
 
@@ -137,7 +134,6 @@ export const useCheckTemplate = () => {
         setAssetCodeChanges(assetCodeChanges);
         
         // 템플릿 AS-WAS/TO-BE, 로컬라이제이션 세팅
-        setTemplateID(templateId);
         setDeleteIds([]);
 
         setLocalizationEntries(
@@ -192,12 +188,43 @@ export const useCheckTemplate = () => {
         await axios.post(`${BASE_URL}/create-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
       } else {
         const formData = new FormData();
-        formData.append("template_id", templateID);
+        formData.append("ticket_num", ticketNum);
+        formData.append("ticket_url", ticketUrl);
         formData.append("code_changes", JSON.stringify(combinedCodeChanges));
         await axios.post(`${BASE_URL}/update-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
       }
       setIsTemplateCreated(true);
+      setSaveType("update");
       alert("템플릿이 성공적으로 저장되었습니다");
+
+      // assetCodeChanges, nonAssetCodeChanges 업데이트
+      const detailRes = await axios.post(`${BASE_URL}/get-template-details`, {
+        ticket_num: ticketNum,
+        ticket_url: ticketUrl,
+      });
+      const detailData = detailRes.data;
+      const codeChanges = detailData.codeChanges || [];
+
+      // (250519 기준) aswas_code 기준으로 asset인지 non-asset인지 나눈다.
+      const nonAssetCodeChanges = codeChanges
+                                    .filter((it) => !isAssetCode(it.aswas_code))
+                                    .map( it => ({
+                                      id: it.id,
+                                      ppt_no: it.ppt_no || "",
+                                      aswas_code: it.aswas_code?.trim() || "",
+                                      tobe_code: it.tobe_code?.trim() || "",
+                                    }) );
+      const assetCodeChanges = codeChanges
+                                    .filter((it) => isAssetCode(it.aswas_code))
+                                    .map( it => ({
+                                      id: it.id,
+                                      ppt_no: it.ppt_no || "",
+                                      aswas_code: it.aswas_code?.trim() || "",
+                                      tobe_code: it.tobe_code?.trim() || "",
+                                    }) );
+
+      setNonAssetCodeChanges(nonAssetCodeChanges);
+      setAssetCodeChanges(assetCodeChanges);
     } catch (err) {
       console.error(err);
       setIsTemplateCreated(false);
