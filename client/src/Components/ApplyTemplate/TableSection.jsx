@@ -10,6 +10,7 @@ const TableSection = ({
   filter,
   filterTobe,
   isEnglishCountry,
+  hasOriginalFile,
 }) => {
   return (
     <TableWrapper>
@@ -57,6 +58,7 @@ const TableSection = ({
           toBeOccurrenceCount={textarea.toBeOccurrenceCount}
           errorState={textarea.errorState}
           isEnglishCountry={isEnglishCountry}
+          hasOriginalFile={hasOriginalFile}
         />
       ))}
     </TableWrapper>

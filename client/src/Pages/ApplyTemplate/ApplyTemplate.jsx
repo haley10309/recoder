@@ -6,6 +6,7 @@ import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
 import { useSearchTemplate } from "@/hooks/ApplyTemplate/useSearchTemplate";
 import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
+import { useFileUpload } from "@/hooks/ApplyTemplate/useFileUpload";
 
 const ApplyTemplate = () => {
   const {
@@ -26,6 +27,15 @@ const ApplyTemplate = () => {
     filter,
     filterTobe,
   } = useSearchTemplate();
+
+  // HTML 파일 업로드 훅
+  const {
+    originalFile,
+    fileContent,
+    fileName,
+    htmlUploadStatus,
+    handleBackupFileUpload,
+  } = useFileUpload();
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -58,6 +68,11 @@ const ApplyTemplate = () => {
         setTextareas={setTextareas}
         countryCode={countryCode}
         isEnglishCountry={isEnglishCountry}
+        originalFile={originalFile}
+        fileContent={fileContent}
+        fileName={fileName}
+        htmlUploadStatus={htmlUploadStatus}
+        handleBackupFileUpload={handleBackupFileUpload}
       />
       <Gap gap={50} />
 
@@ -79,6 +94,7 @@ const ApplyTemplate = () => {
           filter={filter}
           filterTobe={filterTobe}
           isEnglishCountry={isEnglishCountry}
+          hasOriginalFile={!!originalFile}
         />
       </WhiteBox>
       <Gap gap={50} />

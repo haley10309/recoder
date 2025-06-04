@@ -16,16 +16,12 @@ const FileConvert = ({
   setTextareas,
   countryCode,
   isEnglishCountry,
+  originalFile,
+  fileContent,
+  fileName,
+  htmlUploadStatus,
+  handleBackupFileUpload,
 }) => {
-  // HTML 파일 업로드 훅
-  const {
-    originalFile,
-    fileContent,
-    fileName,
-    htmlUploadStatus,
-    handleBackupFileUpload,
-  } = useFileUpload();
-
   // 번역덱 업로드 훅
   const {
     currentTranslations,

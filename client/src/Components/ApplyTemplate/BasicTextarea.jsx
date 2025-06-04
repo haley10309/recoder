@@ -22,7 +22,9 @@ const BasicTextarea = ({
   toBeOccurrenceCount,
   errorState,
   isEnglishCountry,
+  hasOriginalFile,
 }) => {
+
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
 
   const transformedAsWasCode = asWasCode?.replace(
@@ -62,10 +64,18 @@ const BasicTextarea = ({
 
         <PptNo>
           <TextBold>p. {pptNo}</TextBold>
-          <CopyTextButton
-            text={"'ppt{숫자}'로 복사"}
-            value={`ppt${pptNo ?? ''}`}
-          />
+          {!!pptNo && (
+            <>
+              <CopyTextButton
+                text={"'ppt{숫자}'로 복사"}
+                value={`ppt${pptNo ?? ''}`}
+              />
+              <CopyTextButton
+                text={"'슬라이드 {숫자}'로 복사"}
+                value={`슬라이드 ${pptNo ?? ''}`}
+              />
+            </>
+          )}
         </PptNo>
 
         {/* AS-WAS */}
@@ -82,9 +92,7 @@ const BasicTextarea = ({
                 [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
               </span>
             </div>
-            {/* TODO: 변수 이 컴포넌트로 끌고올 수 있도록 */}
-            {/* {originalHtmlFile ? ( */}
-            {true ? (
+            {hasOriginalFile ? (
               <span className="ml-1 text-xs"
                 style={{
                   color: asWasOccurrenceCount === 1 ? "blue" : "red"

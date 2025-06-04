@@ -112,14 +112,18 @@ const CodeChangesEditor = ({
 
               <div style={{ fontSize: "10px" }}>CodeChange.id: {item.id ? item.id : "-"}</div>
 
-              <CopyTextButton
-                text={"'ppt{숫자}'로 복사"}
-                value={`ppt${item.ppt_no ?? ''}`}
-              />
-              <CopyTextButton
-                text={"'슬라이드 {숫자}'로 복사"}
-                value={`슬라이드 ${item.ppt_no ?? ''}`}
-              />
+              {!!item.ppt_no && (
+                <>
+                  <CopyTextButton
+                    text={"'ppt{숫자}'로 복사"}
+                    value={`ppt${item.ppt_no ?? ''}`}
+                  />
+                  <CopyTextButton
+                    text={"'슬라이드 {숫자}'로 복사"}
+                    value={`슬라이드 ${item.ppt_no ?? ''}`}
+                  />
+                </>
+              )}
             </div>
             <div className="w-[80%] flex gap-[20px] justify-between">
               <div className="as_was_div">
