@@ -41,7 +41,8 @@ const FileUploadSection = ({
               <FileDropLabel htmlFor="dropzone-file">
                 <FileDropInner>
                   <img src={FileUploadIcon} alt="Upload" />
-                  <p>{`'${countryCode}' 국가의 Backup HTML 을 업로드 해 주세요`}</p>
+                  {/* <p>{`'${countryCode}' 국가의 Backup HTML 을 업로드 해 주세요`}</p> */}
+                  <p>{`Backup HTML 을 업로드 해 주세요`}</p>
                 </FileDropInner>
                 <input id="dropzone-file" type="file" accept=".html" onChange={handleBackupFileUpload} hidden />
               </FileDropLabel>
