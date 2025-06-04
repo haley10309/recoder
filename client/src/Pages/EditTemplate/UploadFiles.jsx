@@ -106,7 +106,7 @@ export default function UploadFiles({
           onClick={() => backUpInputRef.current.click()}>
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
           <p className="mt-3 font-[500] text-[15px] text-center">원본코드.html 파일을 업로드 해 주세요</p>
-          <p className="mt-3 font-[500] text-[12px] text-center text-[#6b7280]">(*템플릿 생성은 UK 기준이므로 UK 파일 업로드. <br/> 250513 이후 변경사항 있으면 데이에게 전달)</p>
+          <p className="mt-3 font-[500] text-[12px] text-center text-[#6b7280]">*템플릿 생성은 UK 기준이므로 UK 파일 업로드</p>
           <input type="file" accept=".html" ref={backUpInputRef} onChange={handleOriginalHtmlFileChange} className="hidden" />
           {!!backUpFile && (
             <div className="mt-2 text-center text-[13px]">

@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { useFileUpload } from "@/hooks/ApplyTemplate/useFileUpload";
 import { useTranslationUpload } from "@/hooks/ApplyTemplate/useTranslationUpload";
 import { useFileExecute } from "@/hooks/ApplyTemplate/useFileExecute";
 import { useLocalizationApply } from "@/hooks/ApplyTemplate/useLocalizationApply";
