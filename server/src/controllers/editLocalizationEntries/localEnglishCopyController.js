@@ -26,10 +26,10 @@ exports.extractEnglishCopyList = (req, res) => {
 
     for (let i = 1; i < lines.length; i++) {
       const row = lines[i].split("\t");
-      const englishText = row[copyColumnIndex];
+      const englishText = row[copyColumnIndex]?.trim();
 
-      if (englishText && englishText.trim()) {
-        englishCopyList.push(englishText.trim());
+      if (englishText) {
+        englishCopyList.push(englishText);
       }
     }
 
