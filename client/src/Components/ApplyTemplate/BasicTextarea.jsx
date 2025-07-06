@@ -41,8 +41,8 @@ const BasicTextarea = ({
   const handleCopyClipBoard = async (text) => {
     try {
       await navigator.clipboard.writeText(text);
-    } catch (e) {
-      alert("failed");
+    } catch (err) {
+      alert(err?.response?.data?.message || "failed");
     }
   };
 
@@ -178,7 +178,7 @@ const BasicTextarea = ({
             />
             {errorState && (
               <ErrorMessage>
-                🚨 템플릿에 없는 번역 키가 포함되어 있습니다.
+                🚨 아직 번역되지 않은 key가 포함되어 있습니다.
               </ErrorMessage>
             )}
           </CodeBlock>
