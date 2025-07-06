@@ -1,47 +1,44 @@
 import { useState } from "react";
-import { fetchLocalizationList } from "@/apis/apis";
-// TODO: 코드 확인
+
 export function useLocalizationApply({
-  downloadedFileContent,
+  downloadedFileContent, // 국가코드, tobe로의 변환이 완료된 파일 content
   fileName,
+  textareas,
   setTextareas,
   countryCode,
-  currentTranslations,
+  translationMap,
 }) {
   const [localizedFileContent, setLocalizedFileContent] = useState("");
   const [localizedFileName, setLocalizedFileName] = useState("");
   const [isLocalizationApplied, setIsLocalizationApplied] = useState(false);
   const [localizationStatus, setLocalizationStatus] = useState("");
 
+  /**
+   * 템플릿 HTML에서 블록별로 영어 텍스트를 찾아서 국가 번역본으로 치환하는 함수
+   */
   const applyLocalizedTemplateBlocks = (
-    htmlString,
-    dictionary,
-    localizationList
+    originalTobeContext, // tobe에서 uk->sitecdoe 로 변환된 코드블록
+    _translationMap, // key: english copy, value: country copy
   ) => {
-    let result = htmlString;
-    localizationList.forEach((item) => {
-      let originalBlock = item.code_context;
-      let blockDoc = new DOMParser().parseFromString(
-        originalBlock,
-        "text/html"
-      );
-      let blockText = blockDoc.body.textContent?.trim();
+    let newTobeContext = originalTobeContext;
 
-      Object.entries(dictionary).forEach(([eng, local]) => {
-        const cleanedEng = eng.trim().replace(/\s+/g, " ");
-        const cleanedBlockText = blockText?.replace(/\s+/g, " ");
-        if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
-          const regex = new RegExp(escapeRegExp(eng), "g");
-          originalBlock = originalBlock.replace(regex, local);
-        }
-      });
+    let blockDoc = new DOMParser().parseFromString(
+      newTobeContext,
+      "text/html"
+    ); // blockDoc : 블록 안 텍스트 비교를 위해 임시로 만든 DOM.
+    let blockText = blockDoc.body.textContent?.trim();
 
-      if (result.includes(item.code_context)) {
-        result = result.replace(item.code_context, originalBlock);
+
+    Object.entries(_translationMap).forEach(([engCopy, localCopy]) => {
+      const cleanedEng = engCopy.trim().replace(/\s+/g, " ");
+      const cleanedBlockText = blockText?.replace(/\s+/g, " ");
+      if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
+        const regex = new RegExp(escapeRegExp(engCopy), "g");
+        newTobeContext = newTobeContext.replace(regex, localCopy);
       }
     });
 
-    return result;
+    return newTobeContext; // localized tobe context
   };
 
   const escapeRegExp = (string) => {
@@ -50,23 +47,18 @@ export function useLocalizationApply({
 
   const handleApplyLocalization = async (ticketNum, ticketUrl) => {
     try {
-      const localizationEntries = await fetchLocalizationList(
-        ticketNum,
-        ticketUrl
-      );
 
-      const lowerCaseCode = countryCode?.toLowerCase?.() || "";
+      const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
 
       // textareas 업데이트하는 로직
       setTextareas((prev) =>
         prev.map((textarea) => {
           const localizedToBe = applyLocalizedTemplateBlocks(
-            textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
-            currentTranslations,
-            localizationEntries
+            textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+            translationMap,
           );
 
-          const errorState = Object.keys(currentTranslations).some((key) => {
+          const errorState = Object.keys(translationMap).some((key) => {
             return localizedToBe.includes(key);
           });
 
@@ -80,25 +72,11 @@ export function useLocalizationApply({
 
       // 전체 HTML 변환
       let localizedHtml = downloadedFileContent;
-      localizationEntries.forEach((item) => {
-        let originalBlock = item.code_context;
-        let blockDoc = new DOMParser().parseFromString(
-          originalBlock,
-          "text/html"
-        );
-        let blockText = blockDoc.body.textContent?.trim();
-
-        Object.entries(currentTranslations).forEach(([eng, local]) => {
-          const cleanedEng = eng.trim().replace(/\s+/g, " ");
-          const cleanedBlockText = blockText?.replace(/\s+/g, " ");
-          if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
-            const regex = new RegExp(escapeRegExp(eng), "g");
-            originalBlock = originalBlock.replace(regex, local);
-          }
-        });
-
-        if (localizedHtml.includes(item.code_context)) {
-          localizedHtml = localizedHtml.replace(item.code_context, originalBlock);
+      
+      textareas.forEach((textarea) => {
+        const localizedTobeContext = applyLocalizedTemplateBlocks(textarea.toBeCode, translationMap)
+        if (localizedHtml.includes(textarea.toBeCode)) {
+          localizedHtml = localizedHtml.replace(textarea.toBeCode, localizedTobeContext);
         }
       });
 

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { uploadTranslationDeck } from "@/apis/apis";
-// TODO: 코드 확인
+
 export function useTranslationUpload(countryCode) {
   const [translationsByCountry, setTranslationsByCountry] = useState({});
-  const [currentTranslations, setCurrentTranslations] = useState({});
+  const [translationMap, setTranslationMap] = useState({}); // 원본 영어 카피와 국가별 번역값을 매핑
   const [validCountries, setValidCountries] = useState([]);
   const [txtUploadStatus, setTxtUploadStatus] = useState("");
   const [txtFileName, setTxtFileName] = useState("");
@@ -45,16 +45,16 @@ export function useTranslationUpload(countryCode) {
         const currentCountry = countryCode;
         const countryTranslations = translations[currentCountry] || [];
 
-        const dictionary = {};
+        const _translationMap = {};
         for (let i = 0; i < englishCopyList.length; i++) {
           const key = englishCopyList[i]?.trim();
           const value = countryTranslations[i]?.trim();
           if (value && key !== value) {
-            dictionary[key] = value;
+            _translationMap[key] = value;
           }
         }
 
-        setCurrentTranslations(dictionary);
+        setTranslationMap(_translationMap);
         setTxtUploadStatus("success");
         setTxtFileName(file.name);
       } catch (err) {
@@ -73,7 +73,7 @@ export function useTranslationUpload(countryCode) {
 
   return {
     translationsByCountry,
-    currentTranslations,
+    translationMap,
     validCountries,
     txtUploadStatus,
     txtFileName,

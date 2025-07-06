@@ -4,7 +4,6 @@ import { useSetRecoilState } from "recoil";
 
 import { isAssetCode, kind_countOccurrences } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
-import defaultAxios from "@/apis/defaultAxios";
 import { nameEnState } from "@/recoil/atoms/state";
 
 export const useCheckTemplate = () => {
@@ -93,7 +92,7 @@ export const useCheckTemplate = () => {
   ) => {
     try {
       // 1) 템플릿 존재 여부 확인
-      const response = await defaultAxios.post('/check-template-exsist', {
+      const response = await axios.post(`${BASE_URL}/check-template-exsist`, {
         ticket_num: ticketNum,
         ticket_url: ticketUrl,
       });
@@ -164,12 +163,7 @@ export const useCheckTemplate = () => {
       setIsTemplateCreated(false);
       setDeleteIds([]);
       setLocalizationEntries([{ code_context: "" }]);
-      if (error.status === 403) {
-        localStorage.removeItem('authToken');
-        setNameEnState("");
-      } else {
-        alert("템플릿 확인 중 오류가 발생했습니다.");
-      }
+      alert("템플릿 확인 중 오류가 발생했습니다.");
     }
   };
 
@@ -231,7 +225,7 @@ export const useCheckTemplate = () => {
     } catch (err) {
       console.error(err);
       setIsTemplateCreated(false);
-      alert("템플릿 저장 중 오류가 발생하였습니다");
+      alert(err?.response?.data?.message || "템플릿 저장 중 오류가 발생하였습니다");
     }
   };
 

@@ -23,7 +23,7 @@ const FileConvert = ({
 }) => {
   // 번역덱 업로드 훅
   const {
-    currentTranslations,
+    translationMap,
     txtUploadStatus,
     txtFileName,
     handleTranslationTxtUpload,
@@ -57,9 +57,10 @@ const FileConvert = ({
   } = useLocalizationApply({
     downloadedFileContent,
     fileName,
+    textareas,
     setTextareas,
     countryCode,
-    currentTranslations,
+    translationMap,
   });
 
   // 코드 변환 다운로드

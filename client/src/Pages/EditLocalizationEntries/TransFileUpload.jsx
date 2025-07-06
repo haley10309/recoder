@@ -42,6 +42,7 @@ export default function TransFileUpload({
                         .filter(({ tobe_code }) => englishCopyList.some((copyItem) => tobe_code.includes(copyItem)))
                         .map((codeChangeItem) => ({ code_context: codeChangeItem.tobe_code }));
                         // TODO: codeChangeItem의 id를 넣으면 안되고... 기존에 있던 localizationEntries의걸 넣던가 해야됨. 기존에 있는 경우와 없는 경우 모두 생각해야됨.
+        
         setLocalizationEntries(items)
       }
     } catch (error) {
@@ -50,10 +51,10 @@ export default function TransFileUpload({
     }
   };
   const handleTransFileChange = (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
-    setTransFile(f);
-    handleTransSubmit(f);
+    const file = e.target.files[0];
+    if (!file) return;
+    setTransFile(file);
+    handleTransSubmit(file);
   };
 
 
