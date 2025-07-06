@@ -33,20 +33,20 @@ const LeftNavBar = () => {
     navigate("/");
   };
 
-  useEffect(() => {
-    if (nameEn) {
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        const decoded = jwtDecodeLib.jwtDecode(token);
-        const lastLoggedInAt = decoded.last_logged_in_at;
-        if (!motivationText) {
-          const text = getMotivationText(new Date(lastLoggedInAt), nameEn);
-          setMotivationText(text);
-        }
-      }
+  // useEffect(() => {
+  //   if (nameEn) {
+  //     const token = localStorage.getItem('authToken');
+  //     if (token) {
+  //       const decoded = jwtDecodeLib.jwtDecode(token);
+  //       const lastLoggedInAt = decoded.last_logged_in_at;
+  //       if (!motivationText) {
+  //         const text = getMotivationText(new Date(lastLoggedInAt), nameEn);
+  //         setMotivationText(text);
+  //       }
+  //     }
 
-    }
-  }, [nameEn]);
+  //   }
+  // }, [nameEn]);
 
   return (
     <NavContainer>
