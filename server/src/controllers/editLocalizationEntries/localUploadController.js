@@ -1,4 +1,4 @@
-// 번역 텍스트 파일에서 국가별 번역 리스트 반환
+// 번역 텍스트 파일에서 국가별 번역 리스트 반환!
 
 const validCountryCodes = [
     "ae", "ae_ar", "africa_en", "africa_fr", "africa_pt", "al", "ar", "at", "au", "az", "ba", "bd",
@@ -11,7 +11,7 @@ const validCountryCodes = [
   ];
 
 exports.uploadTranslation = (req, res) => {
-    try {
+    try { 
       if (!req.file) {
         return res.status(400).json({ error: "No file uploaded." });
       }
