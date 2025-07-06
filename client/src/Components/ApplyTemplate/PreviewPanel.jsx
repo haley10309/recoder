@@ -14,7 +14,7 @@ const PreviewPanel = ({
 }) => {
   const getStatusText = () => {
     if (uploadStatus === "success") {
-      return "핫픽스 작업이 완료된 파일이 생성되었습니다!"; // TODO: 핫픽스 문구 삭제 후 다른 문구로 대체하기
+      return "코드변환이 완료되어 파일이 생성되었습니다!";
     } else if (uploadStatus === "fail") {
       return "파일 생성 실패";
     } else if (localizationStatus === "success") {
@@ -94,7 +94,7 @@ const PreviewHeader = styled.div`
 
 const FileName = styled.span`
   display: inline-block;
-  max-width: 14rem;
+  max-width: 50rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
