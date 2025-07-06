@@ -59,7 +59,7 @@ const CodeChangesEditor = ({
   return (
     <>
       {/* Asset */}
-      <AssetTemplate
+      {/* <AssetTemplate
         assetCodeChanges={assetCodeChanges}
         handleAssetPptNoChange={handleAssetPptNoChange}
         handleAssetAsWasChange={handleAssetAsWasChange}
@@ -67,7 +67,7 @@ const CodeChangesEditor = ({
         addAssetArea={addAssetArea} 
         removeAssetArea={removeAssetArea} 
         originalHtmlFile={originalHtmlFile} 
-      />
+      /> */}
 
       <div className="flex flex-col items-center">
         {originalHtmlFile ? (
