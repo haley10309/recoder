@@ -33,6 +33,8 @@ exports.extractEnglishCopyList = (req, res) => {
       }
     }
 
+    // console.log('englishCopyList',englishCopyList)
+
     res.json({ englishCopyList });
   } catch (error) {
     console.error("Error processing file:", error);
