@@ -78,10 +78,7 @@ export function useFileExecute({
 
     if (
       originalFile &&
-      updatedTextareas.every(
-        ({ asWasCode, toBeCode }) =>
-          asWasCode && (toBeCode !== null || toBeCode === "")
-      )
+      updatedTextareas.every(({ asWasCode, toBeCode }) => asWasCode && (toBeCode !== null || toBeCode === ""))
     ) {
       const formData = new FormData();
       formData.append("file", originalFile);
