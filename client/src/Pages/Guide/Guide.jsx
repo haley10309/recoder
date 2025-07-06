@@ -86,7 +86,7 @@ const Guide = () => {
         <li>수신자 : 김영민 혹은 안다희 검색 후 선택</li>
         <li>구분 : TCP</li>
         <li>출발지 IP 대역 : 제일기획_수원_자회사방화벽_내부대역 | 목적지 IP 대역 : 제일기획_수원_자회사방화벽_서버대역</li>
-        <li>결제자 : '김석경'팀 리더 추가 후 선택</li>
+        <li>결제자 : 팀 리더 김진우(제이스) 추가 후 선택</li>
         <img className="firewall_img_guide" src={firewall_setting1} />
       </div>
 
@@ -98,7 +98,7 @@ const Guide = () => {
         <br />
         <br />
         <img className="img_guide" src={fileUpload} />
-        <li>이후 ④ AS-WAW / TO-BE 코드가 있는 텍스트 파일, ⑤ 벋역 텍스트 파일, ⑥ 원본 코드를 업로드합니다. </li>
+        <li>이후 ④ AS-WAS / TO-BE 코드가 있는 텍스트 파일, ⑤ 번역 텍스트 파일, ⑥ 원본 코드를 업로드합니다. </li>
         <br />
         <br />
         <br />
