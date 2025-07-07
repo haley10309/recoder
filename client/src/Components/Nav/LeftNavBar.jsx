@@ -71,27 +71,27 @@ const LeftNavBar = () => {
 
       <ButtonGroup>
         <NavButton
-          $active={location.pathname === "/" || isActive("/edit-template")}
-          onClick={() => handleNavigate("/edit-template")}
+          $active={location.pathname === "/" || isActive("/templates/form")}
+          onClick={() => handleNavigate("/templates/form")}
         >
-          <IconImage src={settingIcon} alt="edit template" />
-          <NavButtonText $active={location.pathname === "/" || isActive("/edit-template")}>Edit Template</NavButtonText>
+          <IconImage src={settingIcon} alt="Manage Templates" />
+          <NavButtonText $active={location.pathname === "/" || isActive("/templates/form")}>Manage Templates</NavButtonText>
         </NavButton>
         
         <NavButton
-          $active={isActive("/edit-localization-entries")}
-          onClick={() => handleNavigate("/edit-localization-entries")}
+          $active={isActive("/localization-entries/form")}
+          onClick={() => handleNavigate("/localization-entries/form")}
         >
-          <IconImage src={localizationIcon} alt="edit localization entries" />
-          <NavButtonText $active={isActive("/edit-localization-entries")}>Edit Localization Entries</NavButtonText>
+          <IconImage src={localizationIcon} alt="Manage Localization Entries" />
+          <NavButtonText $active={isActive("/localization-entries/form")}>Manage Localization Entries</NavButtonText>
         </NavButton>
 
         <NavButton
-          $active={isActive("/apply-template")}
-          onClick={() => handleNavigate("/apply-template")}
+          $active={isActive("/templates/mapping")}
+          onClick={() => handleNavigate("/templates/mapping")}
         >
-          <IconImage src={applyIcon} alt="apply template" />
-          <NavButtonText $active={isActive("/apply-template")}>Apply Template</NavButtonText>
+          <IconImage src={applyIcon} alt="Mapping Tools" />
+          <NavButtonText $active={isActive("/templates/mapping")}>Mapping Tools</NavButtonText>
         </NavButton>
 
         <NavButton

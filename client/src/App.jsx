@@ -51,7 +51,7 @@ function App() {
                 }
               />
               <Route
-                path="/edit-template"
+                path="/templates/form"
                 element={
                   <RequireAuth>
                     <EditTemplate />
@@ -59,7 +59,7 @@ function App() {
                 }
               />
               <Route
-                path="/edit-localization-entries"
+                path="/localization-entries/form"
                 element={
                   <RequireAuth>
                     <EditLocalizationEntries />
@@ -67,7 +67,7 @@ function App() {
                 }
               />
               <Route
-                path="/apply-template"
+                path="/templates/mapping"
                 element={
                   <RequireAuth>
                     <ApplyTemplate />
