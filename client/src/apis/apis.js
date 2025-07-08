@@ -44,23 +44,13 @@ export const convertAsWasToToBeCodes = async ({
   }
 };
 
-// TemplateMapping - 템플릿 선택지
-export const fetchTicketData = async (_url) => {
-  let apiUrl = "";
-
-  if (_url === "get-ticket-number") {
-    apiUrl = `${BASE_URL}/get-ticket-number`;
-  } else if (_url === "get-ticket-url") {
-    apiUrl = `${BASE_URL}/get-ticket-url`;
-  } else {
-    throw new Error("Invalid URL parameter");
-  }
-
+// Template의 티켓번호, 티켓Url 가져오기
+export const fetchTemplates = async () => {
   try {
-    const response = await axios.get(apiUrl);
+    const response = await axios.get(`${BASE_URL}/get-templates`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error("Error fetching templates:", error);
     throw error;
   }
 };

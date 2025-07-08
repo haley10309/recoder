@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { AutoComplete } from "primereact/autocomplete";
-import { fetchTicketData } from "@/apis/apis";
 
 const divWrapperClasses = {
   dropdown: "flex flex-col gap-1 text-[12px] mr-10",
@@ -11,23 +10,8 @@ const divClasses = {
   default: "bg-white h-[42px] flex items-center px-4 font-[500] " + "border border-[#FF782F] rounded-[10px]",
 };
 
-const InputDrop = ({ _wrapperProps, _divProps, _state, _title, _value, _setValue, _url }) => {
-  const [options, setOptions] = useState([]);
+const InputDrop = ({ options, loading, _wrapperProps, _divProps, _title, _value, _setValue }) => {
   const [filteredOptions, setFilteredOptions] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await fetchTicketData(_url);
-        setOptions(data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [_url]);
 
   const searchOptions = (e) => {
     const q = e.query?.toLowerCase() || "";

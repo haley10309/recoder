@@ -134,32 +134,4 @@
  */
 
 
-/**
- * @swagger
- * /get-ticket-number:
- *   get:
- *     summary: 저장된 ticket-number 목록 조회
- *     tags: [Template]
- *     responses:
- *       200:
- *         description: ticket-number 리스트 반환 성공
- *       500:
- *         description: 서버 내부 오류
- */
-
-/**
- * @swagger
- * /get-ticket-url:
- *      get:
- *          summary: 저장된 ticket-url 목록 조회
- *          tags: [Template]
- *          responses:
- *              200:
- *                  description: ticket-url 목록 조회 성공
- *              500:
- *                  description: 서버 내부 오류
- */
-
-
-
 

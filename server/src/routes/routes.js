@@ -7,12 +7,10 @@ const upload = multer({ storage: storage });
 // const authenticateToken = require("../middleware/auth");
 
 /** 0) Common */
-const getTicketNumController = require("../controllers/common/getTicketNumController");
-const getTicketURLController = require("../controllers/common/getTicketURLController");
+const getTemplatesController = require("../controllers/common/getTemplatesController");
 const checkTemplateController = require("../controllers/common/checkTemplateController");
 const getTemplateDetailsController = require("../controllers/common/getTemplateDetailsController");
-router.get("/get-ticket-number", cors(), getTicketNumController.getTicketNumData);
-router.get("/get-ticket-url", cors(), getTicketURLController.getTicketURLData);
+router.get("/get-templates", cors(), getTemplatesController.getTemplates);
 router.post("/check-template-exsist", cors(), checkTemplateController.checkTemplateData);
 router.post("/get-template-details", cors(), getTemplateDetailsController.getTemplateDetailsData);
 
