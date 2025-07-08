@@ -16,28 +16,27 @@ router.get("/get-ticket-url", cors(), getTicketURLController.getTicketURLData);
 router.post("/check-template-exsist", cors(), checkTemplateController.checkTemplateData);
 router.post("/get-template-details", cors(), getTemplateDetailsController.getTemplateDetailsData);
 
-/** 1) Edit Template */
-const createTemplateController = require("../controllers/editTemplate/createTemplateController");
-const updateTemplateController = require("../controllers/editTemplate/updateTemplateController");
+/** 1) Manage Templates */
+const createTemplateController = require("../controllers/manageTemplates/createTemplateController");
+const updateTemplateController = require("../controllers/manageTemplates/updateTemplateController");
 router.post("/create-template", upload.single('file'), cors(), createTemplateController.createTemplateData);
 router.post("/update-template", multer().none(), cors(), updateTemplateController.updateTemplateData);
 
-/** 2) Edit Localization Entries */
-const localEnglishCopyController = require("../controllers/editLocalizationEntries/localEnglishCopyController"); 
-const localizationController = require("../controllers/editLocalizationEntries/localTemplateController");
+/** 2) Manage Localization Entries */
+const localEnglishCopyController = require("../controllers/manageLocalizationEntries/localEnglishCopyController"); 
+const localizationController = require("../controllers/manageLocalizationEntries/localTemplateController");
 router.post("/extract-english-copy-list", upload.single('file'), cors(), localEnglishCopyController.extractEnglishCopyList);
 router.put("/update-localization-entries",cors(), localizationController.updateLocalizationEntries);
 
-/** 3) Apply Template */
-const processFileController = require("../controllers/applyTemplate/processFileController");
+/** 3) Template Mapping */
+const processFileController = require("../controllers/templateMapping/processFileController");
 router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), processFileController.convertAsWasToToBeCodes);
-const localUploadController = require("../controllers/editLocalizationEntries/localUploadController");
+const localUploadController = require("../controllers/templateMapping/localUploadController");
 router.post("/upload-translation", upload.single('file'), cors(), localUploadController.uploadTranslation);
-
 
 /** 4) Guide */
 const guideUploadController = require("../controllers/guide/guideUploadController");
-router.post("/guide-upload", upload.single("txtfile"), cors(), guideUploadController.guideUploadData);
+router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadController.guideUploadData);
 
 /** 5) Admin */
 // const loginController = require("../controllers/admin/login");
@@ -47,6 +46,6 @@ router.post("/guide-upload", upload.single("txtfile"), cors(), guideUploadContro
 
 /** (Deprecated) */
 // const guideUploadControllerV2 = require("../controllers/guide/guideUploadControllerV2");
-// router.post("/guide-upload", upload.single("txtfile"), cors(), guideUploadControllerV2.guideUploadData);
+// router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadControllerV2.guideUploadData);
 
 module.exports = router;

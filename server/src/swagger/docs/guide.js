@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /guide-upload:
+ * /upload-guide:
  *   post:
  *     summary: PPT 가이드에서 추출한 텍스트 파일 업로드 후, PPTNos / AsWasCode / TobeCode로 데이터 처리
  *     tags:

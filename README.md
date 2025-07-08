@@ -4,33 +4,27 @@ Re-coder는 txt 가이드 파일에서 데이터를 추출하고 템플릿을 �
 **✅주의: 반드시 상신하신 목적으로만 사용부탁드립니다. 사용상 부주의로 민감/주요자료가 유출되지 않도록 주의바랍니다. **
 
 ## ⚙️ 기능
-**edit-template 페이지**
+**Manage Template**
 
-- 사용자가 업로드한 txt 파일에서 템플릿을 생성
-- 추출된 데이터를 기반으로 템플릿을 설정하고 저장
+- TBW
 
-**apply-template 페이지**
+**Manage Localization Entries**
 
-- 템플릿 호출
-- 입력 파일기반 템플릿 반영
-- 반영된 파일 다운로드
+- TBW
 
-**qa-check 페이지**
+**Template Mapping**
 
-- 템플릿 호출
-- 입력 파일 기반 템플릿 반영 여부 출력
+- TBW
 
+**QA**
 
-**edit-localization-entries 페이지**
+- TBW
 
-- 정형화된 엑셀 파일 txt 파일로 업로드
-- 각 나라의 rc01 파일을 html 확장자로 업로드 + 사이트 코드 선택 => 실행 => 다운로드
-
-**guide 페이지**
-- 시스템을 사용하는 방법이 기재되어 있음
+**Guide**
+- Re-coder 사용방법
 
 ## 🔗 링크모음
-- [Client(Recoder 사이트)](http://121.252.183.22:8088/)
+- [Re-coder 사이트](http://121.252.183.22:8088/)
 - [Swagger(API Docs)](http://121.252.183.22:8088/api-docs/)
 
 ## 📁 폴더 구조
@@ -153,9 +147,7 @@ docker exec -it rawcode_database mysql -u root -p
 ## 📄 라이센스
 이 프로젝트는 PTKOREA 라이센스를 따릅니다.
 
-문의사항이 있으시면 언제든지 연락주세요!
-
-- 제작: PTKOREA D2-DSG-T6 (Digital Strategy)
+- 제작: PTKOREA D2-DSG-T10 (Digital Strategy Group)
 - 책임자: Jayce (김진우)
 - 프로젝트 매니저: Mia(김영민), Day(안다희)
 - 프로그램 개발자: Amber(이다혜) , Haley(유하영), Lina(한지윤), Frida(배채은), Julie(이재영)
