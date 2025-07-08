@@ -4,12 +4,12 @@ import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import TransFileUpload from "./TransFileUpload";
 import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
-import UploadFiles from "../EditTemplate/UploadFiles";
+import UploadFiles from "../ManageTemplates/UploadFiles";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import LocalizationEntriesEditor from "./LocalizationEntriesEditor";
 
-const EditLocalizationEntries = () => {
+const ManageLocalizationEntries = () => {
   const {
       ticketNum,
       setTicketNum,
@@ -118,4 +118,4 @@ const EditLocalizationEntries = () => {
   );
 };
 
-export default EditLocalizationEntries;
+export default ManageLocalizationEntries;

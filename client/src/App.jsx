@@ -3,14 +3,14 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import * as jwtDecodeLib from "jwt-decode";
 
 import Main from "@Pages/Main";
-import EditTemplate from "@/Pages/EditTemplate/EditTemplate";
-import ApplyTemplate from "@Pages/ApplyTemplate/ApplyTemplate";
+import ManageTemplates from "@/Pages/ManageTemplates/ManageTemplates";
+import TemplateMapping from "@/Pages/TemplateMapping/TemplateMapping";
 import Qa_page from "@Pages/Qa_Page/Qa_page";
 import Footer from "@Components/Nav/Footer";
 import Guide from "@Pages/Guide/Guide";
 import "./style/global.css";
 import LeftNavBar from "@Components/Nav/LeftNavBar";
-import EditLocalizationEntries from "./Pages/EditLocalizationEntries/EditLocalizationEntries";
+import ManageLocalizationEntries from "./Pages/ManageLocalizationEntries/ManageLocalizationEntries";
 import Login from "./Pages/Login/Login";
 import RequireAuth from "./Pages/RequireAuth";
 import Register from "./Pages/Register/Register";
@@ -54,7 +54,7 @@ function App() {
                 path="/templates/form"
                 element={
                   <RequireAuth>
-                    <EditTemplate />
+                    <ManageTemplates />
                   </RequireAuth>
                 }
               />
@@ -62,7 +62,7 @@ function App() {
                 path="/localization-entries/form"
                 element={
                   <RequireAuth>
-                    <EditLocalizationEntries />
+                    <ManageLocalizationEntries />
                   </RequireAuth>
                 }
               />
@@ -70,7 +70,7 @@ function App() {
                 path="/templates/mapping"
                 element={
                   <RequireAuth>
-                    <ApplyTemplate />
+                    <TemplateMapping />
                   </RequireAuth>
                 }
               />

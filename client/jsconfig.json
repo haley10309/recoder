@@ -5,12 +5,12 @@
       "@/*": ["src/*"],
       "@Components/*": ["src/Components/*"],
       "@Pages/*": ["src/Pages/*"],
-      "@EditTemplate/*": ["src/Pages/EditTemplate/*"],
+      "@ManageTemplates/*": ["src/Pages/ManageTemplates/*"],
       "@public/*": ["public/*"],
       "@Guide/*": ["src/Pages/Guide/*"],
       "@Qa_Page/*": ["src/Pages/Qa_Page/*"],
-      "@ApplyTemplate/*": ["src/Pages/ApplyTemplate/*"],
-      "@EditLocalizationEntries/*": ["src/Pages/EditLocalizationEntries/*"],
+      "@TemplateMapping/*": ["src/Pages/TemplateMapping/*"],
+      "@ManageLocalizationEntries/*": ["src/Pages/ManageLocalizationEntries/*"],
     }
   },
   "include": ["src"]

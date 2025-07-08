@@ -1,4 +1,4 @@
-import BasicTextarea from "@/Components/ApplyTemplate/BasicTextarea";
+import BasicTextarea from "@/Components/TemplateMapping/BasicTextarea";
 import styled from "styled-components";
 
 const TableSection = ({

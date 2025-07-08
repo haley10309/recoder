@@ -1,7 +1,7 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 
-import AssetTemplate from "@/Pages/EditTemplate/AssetTemplate";
+import AssetTemplate from "@/Pages/ManageTemplates/AssetTemplate";
 import CopyTextButton from "../Common/CopyTextButton";
 import Gap from "../Common/Gap";
 

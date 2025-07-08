@@ -1,14 +1,14 @@
-import SiteCode from "@/Pages/ApplyTemplate/SiteCode";
-import FileConvert from "@ApplyTemplate/FileConvert";
-import TableSection from "@/Components/ApplyTemplate/TableSection";
+import SiteCode from "@/Pages/TemplateMapping/SiteCode";
+import FileConvert from "@/Pages/TemplateMapping/FileConvert";
+import TableSection from "@/Components/TemplateMapping/TableSection";
 import styled from "styled-components";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
-import { useSearchTemplate } from "@/hooks/ApplyTemplate/useSearchTemplate";
+import { useSearchTemplate } from "@/hooks/TemplateMapping/useSearchTemplate";
 import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
-import { useFileUpload } from "@/hooks/ApplyTemplate/useFileUpload";
+import { useFileUpload } from "@/hooks/TemplateMapping/useFileUpload";
 
-const ApplyTemplate = () => {
+const TemplateMapping = () => {
   const {
     countryCode,
     ticketNum,
@@ -102,7 +102,7 @@ const ApplyTemplate = () => {
   );
 };
 
-export default ApplyTemplate;
+export default TemplateMapping;
 
 const WhiteBox = styled.div`
   display: flex;

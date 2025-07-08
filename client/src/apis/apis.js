@@ -44,7 +44,7 @@ export const convertAsWasToToBeCodes = async ({
   }
 };
 
-// ApplyTemplate - 템플릿 선택지
+// TemplateMapping - 템플릿 선택지
 export const fetchTicketData = async (_url) => {
   let apiUrl = "";
 

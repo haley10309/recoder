@@ -1,13 +1,13 @@
 import React from "react";
 import CheckTemplate from "../../Components/CheckTemplate/CheckTemplate";
 import UploadFiles from "./UploadFiles";
-import "@EditTemplate/EditTemplate.scss";
+import "@/Pages/ManageTemplates/ManageTemplates.scss";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 
-const EditTemplate = () => {
+const ManageTemplates = () => {
   const {
       ticketNum,
       setTicketNum,
@@ -85,4 +85,4 @@ const EditTemplate = () => {
   );
 };
 
-export default EditTemplate;
+export default ManageTemplates;

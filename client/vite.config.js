@@ -18,16 +18,15 @@ export default ({ mode }) => {
     resolve: {
       alias: [
         { find: "@", replacement: "/src" },
-        { find: "@EditTemplate", replacement: "/src/Pages/EditTemplate" },
         { find: "@public", replacement: "/public" },
-        { find: "@Guide", replacement: "/src/Pages/Guide" },
-        { find: "@Qa_Page", replacement: "/src/Pages/Qa_Page" },
-        { find: "@ApplyTemplate", replacement: "/src/Pages/ApplyTemplate" },
-        { find: "@Components", replacement: "/src/Components" },
         { find: "@Pages", replacement: "/src/Pages" },
-        { find: "@EditLocalizationEntries", replacement: "/src/Pages/EditLocalizationEntries" },
+        { find: "@Components", replacement: "/src/Components" },
+        { find: "@ManageTemplates", replacement: "/src/Pages/ManageTemplates" },
+        { find: "@ManageLocalizationEntries", replacement: "/src/Pages/ManageLocalizationEntries" },
+        { find: "@TemplateMapping", replacement: "/src/Pages/TemplateMapping" },
+        { find: "@Qa_Page", replacement: "/src/Pages/Qa_Page" },
+        { find: "@Guide", replacement: "/src/Pages/Guide" },
       ],
-      
     },
   })
 }

@@ -91,7 +91,7 @@ const LeftNavBar = () => {
           onClick={() => handleNavigate("/templates/mapping")}
         >
           <IconImage src={applyIcon} alt="Mapping Tools" />
-          <NavButtonText $active={isActive("/templates/mapping")}>Mapping Tools</NavButtonText>
+          <NavButtonText $active={isActive("/templates/mapping")}>Template Mapping & Localization</NavButtonText>
         </NavButton>
 
         <NavButton

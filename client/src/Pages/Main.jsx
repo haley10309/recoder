@@ -1,4 +1,4 @@
-import EditTemplate from "./EditTemplate/EditTemplate";
+import EditTemplate from "./ManageTemplates/ManageTemplates";
 
 const Main = () => {
     return (
