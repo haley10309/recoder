@@ -27,7 +27,7 @@ export default function UploadFiles({
     const formData = new FormData();
     formData.append("txtfile", file);
     try {
-      const res = await axios.post(`${BASE_URL}/guide-upload`, formData, {
+      const res = await axios.post(`${BASE_URL}/upload-guide`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const { pptNos = [], asWasCodes = [], toBeCodes = [] } = res.data;
