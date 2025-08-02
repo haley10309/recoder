@@ -90,8 +90,16 @@ const LeftNavBar = () => {
           $active={isActive("/templates/mapping")}
           onClick={() => handleNavigate("/templates/mapping")}
         >
-          <IconImage src={applyIcon} alt="Mapping Tools" />
-          <NavButtonText $active={isActive("/templates/mapping")}>Template Mapping & Localization</NavButtonText>
+          <IconImage src={applyIcon} alt="Template Mapping Sitecode" />
+          <NavButtonText $active={isActive("/templates/mapping")}>Template Mapping Sitecode</NavButtonText>
+        </NavButton>
+
+        <NavButton
+          $active={isActive("/templates/localization")}
+          onClick={() => handleNavigate("/templates/localization")}
+        >
+          <IconImage src={applyIcon} alt="Template Localization" />
+          <NavButtonText $active={isActive("/templates/localization")}>Template Localization</NavButtonText>
         </NavButton>
 
         <NavButton

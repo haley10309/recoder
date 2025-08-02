@@ -16,6 +16,7 @@ import RequireAuth from "./Pages/RequireAuth";
 import Register from "./Pages/Register/Register";
 import { useSetRecoilState } from "recoil";
 import { nameEnState } from "./recoil/atoms/state";
+import TemplateLocalization from "./Pages/TemplateLocalization/TemplateLocalization";
 
 function App() {
   const setNameEn = useSetRecoilState(nameEnState);
@@ -71,6 +72,14 @@ function App() {
                 element={
                   <RequireAuth>
                     <TemplateMapping />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/templates/localization"
+                element={
+                  <RequireAuth>
+                    <TemplateLocalization />
                   </RequireAuth>
                 }
               />
