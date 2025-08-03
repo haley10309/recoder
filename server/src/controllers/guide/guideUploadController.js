@@ -31,7 +31,7 @@ exports.guideUploadData = async (req, res) => {
     if (asWasMatch) {
       let asWasText = asWasMatch[1].trim();
       // asWasEntries = asWasText.split(/\n\s*\n\s*\n/).map(s => s.trim()).filter(Boolean);
-      asWasEntries = asWasText.split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/) .map(s => s.trim()).filter(Boolean);
+      asWasEntries = asWasText.split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/).map(s => s.trim()).filter(Boolean);
     }
 
     // TO-BE 처리
@@ -64,7 +64,6 @@ exports.guideUploadData = async (req, res) => {
   res.json({
     pptNos,
     asWasCodes,
-    toBeCodes
+    toBeCodes,
   });
-
 };
