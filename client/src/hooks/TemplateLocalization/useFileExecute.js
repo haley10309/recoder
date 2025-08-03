@@ -90,6 +90,8 @@ export function useFileExecute({
           toBeCode: textarea.toBeCode,
         }));
       formData.append("codeChanges", JSON.stringify(codeChanges));
+      formData.append("ticket_url", String(ticketUrl));
+      formData.append("countryCode", String(countryCode));
 
       try {
         const result = await convertAsWasToToBeCodes({
@@ -100,8 +102,6 @@ export function useFileExecute({
           formData,
           updatedTextareas,
           updateTextareasWithResults: setTextareas,
-          ticketUrl,
-          countryCode,
         });
 
         if (result) {

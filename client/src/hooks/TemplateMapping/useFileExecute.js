@@ -46,7 +46,7 @@ export function useFileExecute({
         ...textarea,
         pptNo: textarea.pptNo,
         changed: isFound && actualChanged,
-        isApplied: isFound ? (actualChanged ? "yes" : "no") : "no",
+        isApplied: isFound ? (actualChanged ? "yes" : "sameAsBefore") : "no",
         matchedPart,
         asWasOccurrenceCount,
         toBeOccurrenceCount,
@@ -90,6 +90,8 @@ export function useFileExecute({
           toBeCode: textarea.toBeCode,
         }));
       formData.append("codeChanges", JSON.stringify(codeChanges));
+      formData.append("ticket_url", String(ticketUrl));
+      formData.append("countryCode", String(countryCode));
 
       try {
         const result = await convertAsWasToToBeCodes({
@@ -100,8 +102,6 @@ export function useFileExecute({
           formData,
           updatedTextareas,
           updateTextareasWithResults: setTextareas,
-          ticketUrl,
-          countryCode,
         });
 
         if (result) {

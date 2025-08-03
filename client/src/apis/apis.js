@@ -10,14 +10,9 @@ export const convertAsWasToToBeCodes = async ({
   formData,
   updatedTextareas,
   updateTextareasWithResults,
-  ticketUrl,
-  countryCode,
 }) => {
   try {
     setIsProcessing(true);
-
-    formData.append("ticket_url", String(ticketUrl));
-    formData.append("countryCode", String(countryCode));
 
     const response = await axios.post(`${BASE_URL}/convert-aswas-to-tobe-codes`, formData, {
       headers: {
