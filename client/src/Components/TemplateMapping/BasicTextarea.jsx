@@ -49,6 +49,24 @@ const BasicTextarea = ({
   const isLocalizedChanged =
     localizedToBeCode && localizedToBeCode !== toBeCode;
 
+  const getColor_toBe = () => {
+    if (errorState) return "#ffa600";
+    if (isApplied === "yes") {
+      if (asWasOccurrenceCount === 1) return "blue";
+      else return "orange";
+    }
+    if (isApplied === "no") return "red";
+    if (isApplied === "sameAsBefore") return "rgb(0, 0, 0)";
+    return "#d1d5db";
+  };
+  const getColor_localizedToBe = () => {
+    if (errorState) return "#ffa600";
+    if (isLocalizedChanged) return "green";
+    return "#d1d5db";
+  };
+  const color_toBe = getColor_toBe();
+  const color_localizedToBe = getColor_localizedToBe();
+
   return (
     <Container>
       <div style={{ fontSize: "12px", paddingLeft: "15px", paddingTop: "10px" }}>{indexText}</div>
@@ -95,7 +113,11 @@ const BasicTextarea = ({
             {hasOriginalFile ? (
               <span className="ml-1 text-xs"
                 style={{
-                  color: asWasOccurrenceCount === 1 ? "blue" : "red"
+                  color: asWasOccurrenceCount === 1 
+                          ? "blue" 
+                          : asWasOccurrenceCount === 0
+                            ? "red"
+                            : "orange"
                 }}>
                   {`${asWasOccurrenceCount}회`}
               </span>
@@ -146,12 +168,25 @@ const BasicTextarea = ({
             onChange={(e) => setToBeCode(e.target.value)}
             placeholder="TO-BE code를 입력하세요."
             $isApplied={isApplied}
+            $borderColor={color_toBe}
           />
           
           <div className="flex font-bold">
             <div className="text-xs">
               <span className="ml-1 text-[#4b5563;]">
-                [TO-BE]
+                [TO-BE]{' '}
+                <span className={`ml-1`} style={{ color: color_toBe }}>
+                  {isApplied === 'sameAsBefore' 
+                    ? "AS-WAS와 똑같아, 변경이 없습니다." 
+                    : isApplied === 'yes' 
+                      ? asWasOccurrenceCount === 1 
+                        ? "AS-WAS와 다르고, 변경이 적용됩니다." 
+                        : "AS-WAS와 다르고, 변경이 적용되나, 코드 출현 횟수가 2회 이상이라 첫번째만 적용돼요. 확인이 필요해요." 
+                      : isApplied === 'no'
+                        ? "원본코드에서 AS-WAS를 찾지 못해, 변경이 적용되지 않습니다."
+                        : ""
+                  }
+                </span>
               </span>
             </div>
           </div>
@@ -171,6 +206,7 @@ const BasicTextarea = ({
               placeholder="Localization을 적용하세요."
               $isLocalizedChanged={isLocalizedChanged}
               $errorState={errorState}
+              $color={color_localizedToBe}
             />
             <CopyTextButton
               text={"코드 복사"}
@@ -244,18 +280,11 @@ const Textarea = styled.textarea`
   background-color: #d9d9d9;
   resize: none;
   padding: 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-
-  border: ${({ $errorState, $isApplied, $isLocalizedChanged }) => {
-    if ($errorState) return "2px solid #ffa600";
-    if ($isApplied === "yes") return "2px solid blue";
-    if ($isApplied === "no") return "2px solid red";
-    if ($isLocalizedChanged) return "2px solid green";
-    return "1px solid #d1d5db";
-  }};
-
   overflow: hidden;
+  
+  border-radius: 8px;
+  border-width: 2px;
+  border-color: ${({ $borderColor }) => $borderColor};
 
   &:hover,
   &:focus {
