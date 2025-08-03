@@ -56,7 +56,7 @@ const BasicTextarea = ({
       else return "orange";
     }
     if (isApplied === "no") return "red";
-    if (isApplied === "sameAsBefore") return "rgb(0, 0, 0)";
+    if (isApplied === "sameAsBefore") return "rgb(156, 156, 156)";
     return "#d1d5db";
   };
   const getColor_localizedToBe = () => {
