@@ -119,9 +119,45 @@ function replaceCode(originalCode, asWasCode, toBeCode) {
     return { newCode, changed: false, matchedPart };
   }
 }
+
+function extractEnglishCopyList(copyDeckFile) {
+  const fileContent = copyDeckFile.buffer.toString("utf-8");
+  const lines = fileContent.split(/\r?\n/);
+
+  if (lines.length < 2) {
+    return {
+      errorMsg: "File does not contain enough data.",
+      statusCode: 400,
+    }
+  }
+
+  const headerRow = lines[0].split("\t");
+  const copyColumnIndex = headerRow.findIndex((col) => col.trim().toUpperCase() === "COPY");
+
+  if (copyColumnIndex === -1) {
+    return {
+      errorMsg: `"COPY" column not found in header.`,
+      statusCode: 400,
+    }
+  }
+
+  const englishCopyList = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const row = lines[i].split("\t");
+    const englishText = row[copyColumnIndex]?.trim();
+
+    if (englishText) {
+      englishCopyList.push(englishText);
+    }
+  }
+
+  return { englishCopyList };
+}
   
 module.exports = {
   normalizeCode,
   findMatchedPart,
-  replaceCode
+  replaceCode,
+  extractEnglishCopyList,
 } 
