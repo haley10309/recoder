@@ -41,7 +41,7 @@ const FileUploadSection = ({
               <FileDropLabel htmlFor="dropzone-file">
                 <FileDropInner>
                   <img src={FileUploadIcon} alt="Upload" />
-                  <p className="mt-3 font-[500] text-[15px] text-center">{`${countryCode ? `국가코드가 '${countryCode}'로 변환된 코드.html 을 업로드 해 주세요` : '국가코드를 선택해주세요'} `}</p>
+                  <p className="mt-3 font-[500] text-[15px] text-center">{`${countryCode ? `국가코드가 '${countryCode}'로 변환된 코드.html 을 업로드 해 주세요` : '위에서 먼저 국가코드를 선택한 후 파일을 업로드 해주세요'} `}</p>
                 </FileDropInner>
                 <input id="dropzone-file" type="file" accept=".html" onChange={handleBackupFileUpload} hidden  />
               </FileDropLabel>
