@@ -17,8 +17,10 @@ router.post("/get-template-details", cors(), getTemplateDetailsController.getTem
 /** 1) Manage Templates */
 const createTemplateController = require("../controllers/manageTemplates/createTemplateController");
 const updateTemplateController = require("../controllers/manageTemplates/updateTemplateController");
+const guideUploadController = require("../controllers/guide/guideUploadController");
 router.post("/create-template", upload.single('file'), cors(), createTemplateController.createTemplateData);
 router.post("/update-template", multer().none(), cors(), updateTemplateController.updateTemplateData);
+router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadController.guideUploadData);
 
 /** 2) Manage Localization Entries */
 const localEnglishCopyController = require("../controllers/manageLocalizationEntries/localEnglishCopyController"); 
@@ -32,18 +34,14 @@ router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), proce
 const localUploadController = require("../controllers/templateMapping/localUploadController");
 router.post("/upload-translation", upload.single('file'), cors(), localUploadController.uploadTranslation);
 
-/** 4) Guide */
-const guideUploadController = require("../controllers/guide/guideUploadController");
-router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadController.guideUploadData);
+/** (Deprecated) */
+// const guideUploadControllerV2 = require("../controllers/guide/guideUploadControllerV2");
+// router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadControllerV2.guideUploadData);
 
-/** 5) Admin */
+/** Admin */
 // const loginController = require("../controllers/admin/login");
 // const registerController = require("../controllers/admin/register");
 // router.post("/admin/login", cors(), loginController.login);
 // router.post("/admin/register", cors(), registerController.register);
-
-/** (Deprecated) */
-// const guideUploadControllerV2 = require("../controllers/guide/guideUploadControllerV2");
-// router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadControllerV2.guideUploadData);
 
 module.exports = router;
