@@ -57,8 +57,12 @@ export const useSearchTemplate = () => {
       setTextareas(newTextareas);
       alert("성공적으로 템플릿을 불러왔습니다.");
     } catch (error) {
-      console.error("❌❌ Error fetching code pairs:", error);
-      alert("서버 요청에 실패했습니다. 콘솔을 확인해주세요.");
+      if (error.status === 404) {
+        alert("존재하지 않는 템플릿입니다.");
+        return;
+      }
+      console.error("🚨 Error fetching search template:", error);
+      alert(`서버 요청에 실패했습니다. 콘솔을 확인해주세요. (${error.status})`);
     }
   };
 

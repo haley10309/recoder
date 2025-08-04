@@ -17,7 +17,8 @@ exports.getTemplateDetailsData = (req, res) => {
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ message: "Template not found" });
+      console.error("Error fetching template ID: results=0", err);
+      return res.status(404).json({ error: "Template not found" });
     }
 
     const templateId = results[0].id;
