@@ -39,6 +39,7 @@ function findMatchedPart(asWasCode, normalizedOriginal, normalizedAsWas) {
     }
   }
 
+  // 뒤에서부터 일치하는 부분 찾기
   for (let i = 1; i <= normalizedAsWas.length; i++) {
     const subNormalized = normalizedAsWas.slice(-i);
     const subIndex = normalizedOriginal.indexOf(subNormalized);
@@ -61,7 +62,7 @@ function findMatchedPart(asWasCode, normalizedOriginal, normalizedAsWas) {
   return matchedParts;
 }
   
-  // 코드 변경
+// 코드 변경
 function replaceCode(originalCode, asWasCode, toBeCode) {
   if (asWasCode.startsWith("//") || asWasCode.startsWith("*") || asWasCode.startsWith("[")) {
     let newCode = originalCode.replace(asWasCode, toBeCode);
