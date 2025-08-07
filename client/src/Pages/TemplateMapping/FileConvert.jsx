@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useFileExecute } from "@/hooks/TemplateMapping/useFileExecute";
 import { useLocalizationApply } from "@/hooks/TemplateMapping/useLocalizationApply";
@@ -24,6 +24,7 @@ const FileConvert = ({
   txtFileName,
   handleTranslationTxtUpload,
 }) => {
+  const [needToSaveTemplate, setNeedToSaveTemplate] = useState(false);
 
   // 코드 실행 훅
   const {
@@ -51,6 +52,7 @@ const FileConvert = ({
     localizationStatus,
     handleApplyLocalization,
   } = useLocalizationApply({
+    ticketNum,
     downloadedFileContent,
     fileName,
     textareas,
@@ -81,6 +83,8 @@ const FileConvert = ({
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+
+      setNeedToSaveTemplate(true);
     } else {
       alert("변환된 파일이 없습니다. 먼저 코드 변환을 진행해주세요.");
     }
@@ -108,10 +112,20 @@ const FileConvert = ({
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+
+      setNeedToSaveTemplate(true);
     } else {
       alert("로컬라이제이션 적용을 먼저 진행해주세요.");
     }
   };
+
+  useEffect(() => {
+    if (needToSaveTemplate) {
+      setTimeout(() => {
+        setNeedToSaveTemplate(false);
+      }, 5000);
+    }
+  }, [needToSaveTemplate]);
 
   return (
     <>
@@ -149,6 +163,10 @@ const FileConvert = ({
           />
         </FileConvertBottonBox>
       )}
+
+      <div style={{ width: "100%", textAlign: "end", fontSize: "13px", fontWeight: "bold", color: needToSaveTemplate ? "#fa5780" : "white" }}>
+          {needToSaveTemplate ? "*템플릿을 저장해주세요 (이 메세지는 5초 뒤 사라집니다.)" : "-"}
+      </div>
     </>
   );
 };

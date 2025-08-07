@@ -124,6 +124,11 @@ export const useSearchTemplate = () => {
       alert("삭제할 templateByCountryId가 없어요");
       return;
     }
+
+    const confirmDelete = confirm("정말 삭제할까요?");
+    if (!confirmDelete) {
+      return;
+    }
     
     try {
       const { data } = await axios.delete(`${BASE_URL}/templates-by-country`, {

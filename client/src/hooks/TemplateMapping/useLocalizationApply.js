@@ -1,3 +1,4 @@
+import { formatDateToKST } from "@/utils/codeUtils";
 import { useState } from "react";
 
 export function useLocalizationApply({
@@ -7,6 +8,7 @@ export function useLocalizationApply({
   setTextareas,
   countryCode,
   translationMap,
+  ticketNum,
 }) {
   const [localizedFileContent, setLocalizedFileContent] = useState("");
   const [localizedFileName, setLocalizedFileName] = useState("");
@@ -80,8 +82,10 @@ export function useLocalizationApply({
         }
       });
 
+      const formattedDate = formatDateToKST();
+
       setLocalizedFileContent(localizedHtml);
-      setLocalizedFileName(`localized_${fileName}`);
+      setLocalizedFileName(`${ticketNum}_${countryCode.toUpperCase()}_localized_tobe_${formattedDate}`);
       setIsLocalizationApplied(true);
       setLocalizationStatus("success");
     } catch (error) {

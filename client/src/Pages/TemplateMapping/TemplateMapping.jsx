@@ -5,10 +5,10 @@ import styled from "styled-components";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
 import { useSearchTemplate } from "@/hooks/TemplateMapping/useSearchTemplate";
-import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useFileUpload } from "@/hooks/TemplateMapping/useFileUpload";
 import AddIcon from "@mui/icons-material/Add";
 import { useTranslationUpload } from "@/hooks/TemplateMapping/useTranslationUpload";
+import CheckTemplate from "@/Components/TemplateMapping/CheckTemplate";
 
 const TemplateMapping = () => {
   const {
@@ -59,6 +59,7 @@ const TemplateMapping = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
+      <Gap gap={15} />
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplate
@@ -66,31 +67,15 @@ const TemplateMapping = () => {
         ticketUrl={ticketUrl}
         setTicketNum={setTicketNum}
         setTicketUrl={setTicketUrl}
-        // onClick={() => handleSearchTemplate()}
-      />
-      <Gap gap={50} />
-
-      <TitleLabel text="🗺️ 국가코드 선택" />
-      <Gap gap={15} />
-      <SiteCode
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}
         handleSearchCountryTemplate={handleSearchCountryTemplate}
         isEnglishCountry={isEnglishCountry}
-        isDisabled={!ticketNum || !ticketUrl}
+        templateId={templateId}
+        templateByCountryId={templateByCountryId}
+        handleDeleteCountryTemplate={handleDeleteCountryTemplate}
       />
       <Gap gap={50} />
-
-      <div style={{ marginBottom: 50 }}>
-        <div>templateId: {templateId}</div>
-        <div>templateByCountryId: {templateByCountryId}</div>
-      </div>
-
-      {!!(templateByCountryId && countryCode) ? (
-        <button type="button" className="remove_button" onClick={handleDeleteCountryTemplate}>
-          {`${countryCode} 국가 템플릿 삭제`}
-        </button>
-      ) : null}
   
 
       <TitleLabel text="📤 파일 업로드" />
@@ -140,7 +125,6 @@ const TemplateMapping = () => {
         />
       </WhiteBox>
       <Gap gap={50} />
-      
 
       <div className="flex gap-[15px] save_button_div">
         <button onClick={addTextArea} className="plus-button rounded-[10px]">
