@@ -94,13 +94,13 @@ const LeftNavBar = () => {
           <NavButtonText $active={isActive("/templates/mapping")}>Template Mapping Sitecode</NavButtonText>
         </NavButton>
 
-        <NavButton
+        {/* <NavButton
           $active={isActive("/templates/localization")}
           onClick={() => handleNavigate("/templates/localization")}
         >
           <IconImage src={applyIcon} alt="Template Localization" />
           <NavButtonText $active={isActive("/templates/localization")}>Template Localization</NavButtonText>
-        </NavButton>
+        </NavButton> */}
 
         <NavButton
           $active={isActive("/qa-check")}
