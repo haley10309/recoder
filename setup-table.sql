@@ -31,6 +31,40 @@ CREATE TABLE TemplateCodeChanges (
         ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
+CREATE TABLE TemplatesByCountry (
+    id INT NOT NULL AUTO_INCREMENT,
+    country_code text NOT NULL,
+    template_id int NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT fk_templates_by_country_to_templates 
+        FOREIGN KEY (`template_id`) 
+        REFERENCES `Templates` (`id`) 
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE TemplateCodeChangesByCountry (
+    id int NOT NULL AUTO_INCREMENT,
+    template_by_country_id int NOT NULL,
+    ppt_no varchar(255) NOT NULL,
+    aswas_code text NOT NULL,
+    tobe_code text NOT NULL,
+    localized_tobe_code text NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT fk_template_codechanges_by_country_to_templates_by_country
+        FOREIGN KEY (`template_by_country_id`) 
+        REFERENCES `TemplatesByCountry` (`id`) 
+        ON DELETE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci
+  COMMENT = 'TemplateCodeChanges 테이블을 기반으로, 국가별 AS-IS / TO-BE / 번역(Localized) 코드 변경 정보를 저장하는 테이블';
+
 CREATE TABLE TemplateLocalizationEntries (
     id int NOT NULL AUTO_INCREMENT,
     code_context text NOT NULL,
