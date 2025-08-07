@@ -6,11 +6,15 @@ const TableSection = ({
   countryCode,
   handleAsWasCodeChange,
   handleToBeCodeChange,
+  handleLocalizedToBeCodeChange,
   handleCheckedChange,
   filter,
   filterTobe,
   isEnglishCountry,
   hasOriginalFile,
+  handleNonAssetPptNoChange,
+  removeNonAssetTextArea,
+  copyList,
 }) => {
   return (
     <TableWrapper>
@@ -26,14 +30,14 @@ const TableSection = ({
           TO-BE Code
         </HeaderCell>
         {isEnglishCountry === false && (
-          <HeaderCell width="28%">Localization</HeaderCell>
+          <HeaderCell width="28%">Localized TO-BE Code</HeaderCell>
         )}
       </TableHeader>
 
       {filteredTextareas.map((textarea, index) => (
         <BasicTextarea
           key={index}
-          indexText={`${index + 1} of ${filteredTextareas.length}`}
+          indexText={`${index + 1} of ${filteredTextareas.length} / id: ${textarea.id ? textarea.id : "DB 저장 전"}`}
           pptNo={textarea.pptNo} // ✅ 바로 사용
           asWasCode={textarea.asWasCode.replace(
             /\/uk\//g,
@@ -44,8 +48,9 @@ const TableSection = ({
           setToBeCode={(value) => handleToBeCodeChange(index, value)}
           localizedToBeCode={textarea.localizedToBeCode}
           setLocalizedToBeCode={(value) =>
-            handleToBeCodeChange(index, value, { isLocalized: true })
+            handleLocalizedToBeCodeChange(index, value)
           }
+          handleNonAssetPptNoChange={(value) => handleNonAssetPptNoChange(index, value)}
           changed={{ index, changed: textarea.changed }}
           isApplied={textarea.isApplied}
           onCheckedChange={() => handleCheckedChange(index)}
@@ -59,6 +64,8 @@ const TableSection = ({
           errorState={textarea.errorState}
           isEnglishCountry={isEnglishCountry}
           hasOriginalFile={hasOriginalFile}
+          removeNonAssetTextArea={() => removeNonAssetTextArea(index)}
+          copyList={copyList}
         />
       ))}
     </TableWrapper>

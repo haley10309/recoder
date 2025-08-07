@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Copy from "@/assets/copy.png";
 import CopyTextButton from "../Common/CopyTextButton";
+import TransBox from "./TransBox";
 
 const BasicTextarea = ({
   indexText,
@@ -23,10 +24,11 @@ const BasicTextarea = ({
   errorState,
   isEnglishCountry,
   hasOriginalFile,
+  handleNonAssetPptNoChange,
+  removeNonAssetTextArea,
+  copyList,
 }) => {
-
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
-
   const transformedAsWasCode = asWasCode?.replace(
     /\/uk\//g,
     `/${countryCode}/`
@@ -61,8 +63,8 @@ const BasicTextarea = ({
   };
   const getColor_localizedToBe = () => {
     if (errorState) return "#ffa600";
-    if (isLocalizedChanged) return "green";
-    return "#d1d5db";
+    if (isLocalizedChanged) return "blue";
+    return "rgb(156, 156, 156)";
   };
   const color_toBe = getColor_toBe();
   const color_localizedToBe = getColor_localizedToBe();
@@ -81,7 +83,16 @@ const BasicTextarea = ({
         </CheckboxWrapper> */}
 
         <PptNo>
-          <TextBold>p. {pptNo}</TextBold>
+          <div className="flex items-center gap-[10px]">
+            <label className="font-[16px]">PPT NO.</label>
+            <input
+              type="text"
+              className="w-[30px] h-[30px] rounded-[5px] text-center border border-[#8B8B8B] outline-none focus:border-[#595880]"
+              value={pptNo}
+              onChange={(e) => handleNonAssetPptNoChange(e.target.value)}
+            />
+          </div>
+
           {!!pptNo && (
             <>
               <CopyTextButton
@@ -177,11 +188,11 @@ const BasicTextarea = ({
                 [TO-BE]{' '}
                 <span className={`ml-1`} style={{ color: color_toBe }}>
                   {isApplied === 'sameAsBefore' 
-                    ? "AS-WAS와 똑같아, 변경이 없습니다." 
+                    ? "AS-WAS와 TO-BE가 똑같아, 변경이 없습니다." 
                     : isApplied === 'yes' 
                       ? asWasOccurrenceCount === 1 
-                        ? "AS-WAS와 다르고, 변경이 적용됩니다." 
-                        : "AS-WAS와 다르고, 변경이 적용되나, 코드 출현 횟수가 2회 이상이라 첫번째만 적용돼요. 확인이 필요해요." 
+                        ? "변경이 적용돼요." 
+                        : "변경이 적용되나, AS-WAS의 코드 출현 횟수가 2회 이상이라 첫번째 코드만 변경이 적용돼요. 확인이 필요해요." 
                       : isApplied === 'no'
                         ? "원본코드에서 AS-WAS를 찾지 못해, 변경이 적용되지 않습니다."
                         : ""
@@ -197,17 +208,35 @@ const BasicTextarea = ({
           />
         </CodeBlock>
 
-        {/* LOCALIZED TO-BE - 항상 렌더되지만 텍스트는 값이 있는 경우에만 */}
+        {/* LOCALIZED TO-BE */}
         {isEnglishCountry === false && (
           <CodeBlock>
-            <Textarea
+            {/* <Textarea
               value={localizedToBeCode || ""}
               onChange={(e) => setLocalizedToBeCode(e.target.value)}
               placeholder="Localization을 적용하세요."
-              $isLocalizedChanged={isLocalizedChanged}
-              $errorState={errorState}
               $color={color_localizedToBe}
+            /> */}
+            <TransBox
+              codeContext={localizedToBeCode || ""}
+              highlights={copyList}
+              onChange={(newTxt) => setLocalizedToBeCode(newTxt)}
+              borderColor={color_localizedToBe}
             />
+            <div className="text-xs font-bold">
+              <span className="ml-1 text-[#4b5563;]">
+                [Localized TO-BE]{' '}
+                <span className={`ml-1`} style={{ color: color_localizedToBe }}>
+                  {localizedToBeCode 
+                    ? isLocalizedChanged
+                      ? "번역이 적용돼요."
+                      : "TO-BE와 Localized TO-BE가 똑같아, 변경이 없습니다."
+                    : ""
+                  }
+                </span>
+              </span>
+            </div>
+
             <CopyTextButton
               text={"코드 복사"}
               value={localizedToBeCode || ""}
@@ -219,6 +248,15 @@ const BasicTextarea = ({
             )}
           </CodeBlock>
         )}
+
+    
+        <button
+          type="button"
+          onClick={removeNonAssetTextArea}
+          className="px-4 mb-6 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white"
+        >
+          삭제
+        </button>
       </Wrapper>
     </Container>
   );

@@ -13,7 +13,6 @@ export default function TransBox({
 }) {
   const editableRef = useRef(null);
 
-  // TODO: 빨간색으로 감싸는 부분에서 보완할 부분은 없는지 후순위로 체크
   // 영어 원본 부분만 빨간색으로 감싸기
   const applyHighlights = () => {
     if (!editableRef.current) return;

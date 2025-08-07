@@ -63,7 +63,7 @@ const BasicTextarea = ({
         </CheckboxWrapper> */}
 
         <PptNo>
-          <TextBold>p. {pptNo}</TextBold>
+          <TextBold>PPT NO. {pptNo}</TextBold>
           {!!pptNo && (
             <>
               <CopyTextButton

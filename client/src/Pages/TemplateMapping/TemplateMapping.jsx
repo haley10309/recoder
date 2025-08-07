@@ -7,6 +7,8 @@ import Gap from "@/Components/Common/Gap";
 import { useSearchTemplate } from "@/hooks/TemplateMapping/useSearchTemplate";
 import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useFileUpload } from "@/hooks/TemplateMapping/useFileUpload";
+import AddIcon from "@mui/icons-material/Add";
+import { useTranslationUpload } from "@/hooks/TemplateMapping/useTranslationUpload";
 
 const TemplateMapping = () => {
   const {
@@ -18,14 +20,22 @@ const TemplateMapping = () => {
     isEnglishCountry,
     textareas,
     setTextareas,
-    handleSearchTemplate,
     handleCountryChange,
+    handleSearchCountryTemplate,
     handleAsWasCodeChange,
     handleToBeCodeChange,
+    handleLocalizedToBeCodeChange,
+    handleNonAssetPptNoChange,
+    removeNonAssetTextArea,
     handleCheckedChange,
     filterTextareas,
     filter,
     filterTobe,
+    templateId,
+    templateByCountryId,
+    addTextArea,
+    handleSaveTemplate,
+    handleDeleteCountryTemplate,
   } = useSearchTemplate();
 
   // HTML 파일 업로드 훅
@@ -37,6 +47,16 @@ const TemplateMapping = () => {
     handleBackupFileUpload,
   } = useFileUpload();
 
+  // 번역덱 업로드 훅
+  const {
+    translationMap,
+    txtUploadStatus,
+    txtFileName,
+    handleTranslationTxtUpload,
+  } = useTranslationUpload(countryCode);
+
+  const copyList = Object.values(translationMap);
+
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
       <TitleLabel text="📄 템플릿 불러오기" />
@@ -46,7 +66,7 @@ const TemplateMapping = () => {
         ticketUrl={ticketUrl}
         setTicketNum={setTicketNum}
         setTicketUrl={setTicketUrl}
-        onClick={() => handleSearchTemplate()}
+        // onClick={() => handleSearchTemplate()}
       />
       <Gap gap={50} />
 
@@ -55,9 +75,23 @@ const TemplateMapping = () => {
       <SiteCode
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}
+        handleSearchCountryTemplate={handleSearchCountryTemplate}
         isEnglishCountry={isEnglishCountry}
+        isDisabled={!ticketNum || !ticketUrl}
       />
       <Gap gap={50} />
+
+      <div style={{ marginBottom: 50 }}>
+        <div>templateId: {templateId}</div>
+        <div>templateByCountryId: {templateByCountryId}</div>
+      </div>
+
+      {!!(templateByCountryId && countryCode) ? (
+        <button type="button" className="remove_button" onClick={handleDeleteCountryTemplate}>
+          {`${countryCode} 국가 템플릿 삭제`}
+        </button>
+      ) : null}
+  
 
       <TitleLabel text="📤 파일 업로드" />
       <Gap gap={15} />
@@ -73,6 +107,10 @@ const TemplateMapping = () => {
         fileName={fileName}
         htmlUploadStatus={htmlUploadStatus}
         handleBackupFileUpload={handleBackupFileUpload}
+        translationMap={translationMap}
+        txtUploadStatus={txtUploadStatus}
+        txtFileName={txtFileName}
+        handleTranslationTxtUpload={handleTranslationTxtUpload}
       />
       <Gap gap={50} />
 
@@ -90,14 +128,29 @@ const TemplateMapping = () => {
           countryCode={countryCode}
           handleAsWasCodeChange={handleAsWasCodeChange}
           handleToBeCodeChange={handleToBeCodeChange}
+          handleLocalizedToBeCodeChange={handleLocalizedToBeCodeChange}
           handleCheckedChange={handleCheckedChange}
+          handleNonAssetPptNoChange={handleNonAssetPptNoChange}
+          removeNonAssetTextArea={removeNonAssetTextArea}
           filter={filter}
           filterTobe={filterTobe}
           isEnglishCountry={isEnglishCountry}
           hasOriginalFile={!!originalFile}
+          copyList={copyList}
         />
       </WhiteBox>
       <Gap gap={50} />
+      
+
+      <div className="flex gap-[15px] save_button_div">
+        <button onClick={addTextArea} className="plus-button rounded-[10px]">
+          <AddIcon />
+          <span className="ml-2">항목 추가</span>
+        </button>
+        <button type="button" className="save_button" onClick={handleSaveTemplate}>
+          {` 템플릿 저장`}
+        </button>
+      </div>
     </div>
   );
 };

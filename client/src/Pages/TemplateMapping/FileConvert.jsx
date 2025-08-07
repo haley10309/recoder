@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { useTranslationUpload } from "@/hooks/TemplateMapping/useTranslationUpload";
 import { useFileExecute } from "@/hooks/TemplateMapping/useFileExecute";
 import { useLocalizationApply } from "@/hooks/TemplateMapping/useLocalizationApply";
 
@@ -20,14 +19,11 @@ const FileConvert = ({
   fileName,
   htmlUploadStatus,
   handleBackupFileUpload,
+  translationMap,
+  txtUploadStatus,
+  txtFileName,
+  handleTranslationTxtUpload,
 }) => {
-  // 번역덱 업로드 훅
-  const {
-    translationMap,
-    txtUploadStatus,
-    txtFileName,
-    handleTranslationTxtUpload,
-  } = useTranslationUpload(countryCode);
 
   // 코드 실행 훅
   const {

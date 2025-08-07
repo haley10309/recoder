@@ -9,27 +9,45 @@ const SiteCode = ({
   countryCode,
   handleCountryChange,
   isEnglishCountry,
+  isDisabled,
+  handleSearchCountryTemplate,
 }) => {
 
   return (
-    <Wrapper>
-      <InputTitle>Site Code</InputTitle>
-      <Gap gap={5} />
-      <InputGrid>
-        <CustomDropdownInput
-          value={countryCode}
-          onChange={handleCountryChange}
-          placeholder="국가코드 선택"
-          options={countryOptions.map((c) => c.name)}
-        />
-        <div style={{ fontSize: "14px", fontWeight: "700", color: isEnglishCountry === false ? "#A68A64" : "#2A9D8F" }}>
-          {isEnglishCountry === null
-            ? ""
-            : `${countryCode} : ${isEnglishCountry ? "영문국" : "비영문국"}입니다.`
-          }
+    <>
+      {/* {isDisabled && (
+        <div style={{ color: "grey", fontSize: "12px", fontWeight: "bold", marginBottom: "10px" }}>
+          💁‍♀️템플릿을 불러와야 국가코드를 선택할 수 있어요.
         </div>
-      </InputGrid>
-    </Wrapper>
+      )} */}
+      <Wrapper style={{ pointerEvents: isDisabled ? "none" : undefined, opacity: isDisabled ? 0.5 : 1 }}>
+        <InputTitle>Site Code</InputTitle>
+        <Gap gap={5} />
+        <InputGrid>
+          <CustomDropdownInput
+            value={countryCode}
+            onChange={handleCountryChange}
+            placeholder="국가코드 선택"
+            options={countryOptions.map((c) => c.name)}
+          />
+          <div style={{ fontSize: "14px", fontWeight: "700", color: isEnglishCountry === false ? "#A68A64" : "#2A9D8F" }}>
+            {isEnglishCountry === null
+              ? ""
+              : `${countryCode} : ${isEnglishCountry ? "영문국" : "비영문국"}입니다.`
+            }
+          </div>
+        </InputGrid>
+
+        <Gap gap={20} />
+
+        <button
+          className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px]"
+          onClick={handleSearchCountryTemplate}
+        >
+          {countryCode} 국가의 템플릿 불러오기
+        </button>
+      </Wrapper>
+    </>
   );
 };
 
