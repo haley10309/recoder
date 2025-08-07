@@ -33,6 +33,11 @@ const processFileController = require("../controllers/templateMapping/processFil
 router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), processFileController.convertAsWasToToBeCodes);
 const localUploadController = require("../controllers/templateMapping/localUploadController");
 router.post("/upload-translation", upload.single('file'), cors(), localUploadController.uploadTranslation);
+const getCountryTemplateDetailsController = require("../controllers/common/getCountryTemplateDetailsController");
+router.post("/get-country-template-details", cors(), getCountryTemplateDetailsController.getCountryTemplateDetailsData);
+const templatesByCountryController = require("../controllers/common/templatesByCountryController");
+router.put("/templates-by-country", multer().none(), cors(), templatesByCountryController.putTemplatesByCountry);
+router.delete("/templates-by-country", cors(), templatesByCountryController.deleteTemplatesByCountry);
 
 /** (Deprecated) */
 // const guideUploadControllerV2 = require("../controllers/guide/guideUploadControllerV2");

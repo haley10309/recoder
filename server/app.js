@@ -10,7 +10,7 @@ const swaggerSpec = require("./src/swagger/swagger");
 app.use(
   cors({
     origin: process.env.CLIENT, // 로컬 클라이언트로 테스트 할 경우 `http://localhost:클라이언트포트`로 임시 설정 필요
-    methods: ["GET", "POST", "PUT", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
