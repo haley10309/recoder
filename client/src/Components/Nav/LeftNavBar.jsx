@@ -77,6 +77,14 @@ const LeftNavBar = () => {
           <IconImage src={settingIcon} alt="Manage Templates" />
           <NavButtonText $active={location.pathname === "/" || isActive("/templates/form")}>Manage Templates</NavButtonText>
         </NavButton>
+
+        <NavButton
+          $active={isActive("/templates/mapping")}
+          onClick={() => handleNavigate("/templates/mapping")}
+        >
+          <IconImage src={applyIcon} alt="Template Mapping Sitecode" />
+          <NavButtonText $active={isActive("/templates/mapping")}>Template Mapping Sitecode</NavButtonText>
+        </NavButton>
         
         <NavButton
           $active={isActive("/localization-entries/form")}
@@ -87,35 +95,27 @@ const LeftNavBar = () => {
         </NavButton>
 
         <NavButton
-          $active={isActive("/templates/mapping")}
-          onClick={() => handleNavigate("/templates/mapping")}
-        >
-          <IconImage src={applyIcon} alt="Template Mapping Sitecode" />
-          <NavButtonText $active={isActive("/templates/mapping")}>Template Mapping Sitecode</NavButtonText>
-        </NavButton>
-
-        {/* <NavButton
           $active={isActive("/templates/localization")}
           onClick={() => handleNavigate("/templates/localization")}
         >
           <IconImage src={applyIcon} alt="Template Localization" />
           <NavButtonText $active={isActive("/templates/localization")}>Template Localization</NavButtonText>
-        </NavButton> */}
+        </NavButton>
 
-        <NavButton
+        {/* <NavButton
           $active={isActive("/qa-check")}
           onClick={() => handleNavigate("/qa-check")}
         >
           <IconImage src={qaIcon} alt="QA" />
           <NavButtonText $active={isActive("/qa-check")}>QA</NavButtonText>
-        </NavButton>
+        </NavButton> */}
 
-        <NavButton 
+        {/* <NavButton 
           $active={isActive("/guide")}
           onClick={() => handleNavigate("/guide")}>
           <IconImage src={guideIcon} alt="guide" />
           <NavButtonText $active={isActive("/guide")}>Guide</NavButtonText>
-          </NavButton>
+        </NavButton> */}
       </ButtonGroup>
 
       {!!nameEn && (
