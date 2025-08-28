@@ -10,7 +10,7 @@ export const useSearchTemplate = () => {
   const [ticketUrl, setTicketUrl] = useState("");
   const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", checked: false, isApplied: null }]);
   const [countryCode, setCountryCode] = useState("");
-  const [originalHtmlFile, setOriginalHtmlFile] = useState("");
+  const [templateId, setTemplateId] = useState(null);
 
   const [filter, setFilter] = useState("");
   const [filterTobe, setFilterTobe] = useState("");
@@ -28,7 +28,11 @@ export const useSearchTemplate = () => {
         ticket_num: ticketNum,
         ticket_url: ticketUrl,
       });
+      const templateId = data.templateId || [];
       const codeChanges = data.codeChanges || [];
+      // const localizationEntries = data.localizationEntries || [];
+
+      setTemplateId(templateId);
 
       // (250519 기준) aswas_code 기준으로 asset인지 non-asset인지 나눈다.
       const nonAssetCodeChanges = codeChanges
@@ -125,5 +129,6 @@ export const useSearchTemplate = () => {
     filterTextareas,
     filter,
     filterTobe,
+    templateId,
   };
 };

@@ -164,9 +164,9 @@ const FileConvert = ({
         </FileConvertBottonBox>
       )}
 
-      <div style={{ width: "100%", textAlign: "end", fontSize: "13px", fontWeight: "bold", color: needToSaveTemplate ? "#fa5780" : "white" }}>
+      {/* <div style={{ width: "100%", textAlign: "end", fontSize: "13px", fontWeight: "bold", color: needToSaveTemplate ? "#fa5780" : "white" }}>
           {needToSaveTemplate ? "*템플릿을 저장해주세요 (이 메세지는 5초 뒤 사라집니다.)" : "-"}
-      </div>
+      </div> */}
     </>
   );
 };

@@ -93,7 +93,7 @@ export function useFileExecute({
       formData.append("ticket_url", String(ticketUrl));
       formData.append("countryCode", String(countryCode));
 
-      try {
+      try { 
         const result = await convertAsWasToToBeCodes({
           setUploadProgress,
           setIsProcessing,

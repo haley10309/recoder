@@ -44,7 +44,8 @@ const SiteCode = ({
           className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px]"
           onClick={handleSearchCountryTemplate}
         >
-          {countryCode} 국가의 템플릿 불러오기
+          {/* {countryCode} 국가의 템플릿 불러오기 */}
+          템플릿 불러오기
         </button>
       </Wrapper>
     </>

@@ -19,19 +19,31 @@ const TableSection = ({
   return (
     <TableWrapper>
       <TableHeader>
-        {/* <HeaderCell width={"5%"}>항목</HeaderCell> */}
-        <HeaderCell width={isEnglishCountry === false ? "13%" : "10%"}>
+        <HeaderCell width={"10%"}>
           PPT NO.
         </HeaderCell>
-        <HeaderCell width={isEnglishCountry === false ? "25%" : "45%"}>
+        <HeaderCell width={"45%"}>
           AS-WAS Code
         </HeaderCell>
-        <HeaderCell width={isEnglishCountry === false ? "27%" : "40%"}>
+        <HeaderCell width={"40%"}>
           TO-BE Code
         </HeaderCell>
-        {isEnglishCountry === false && (
-          <HeaderCell width="28%">Localized TO-BE Code</HeaderCell>
-        )}
+
+        {/* {!isEnglishCountry && (
+          <>
+            <HeaderCell width={"13%"}>
+              PPT NO.
+            </HeaderCell>
+            <HeaderCell width={"25%"}>
+              AS-WAS Code
+            </HeaderCell>
+            <HeaderCell width={"27%"}>
+              TO-BE Code
+            </HeaderCell>
+            <HeaderCell width="28%">Localized TO-BE Code</HeaderCell>
+          </>
+        )} */}
+        
       </TableHeader>
 
       {filteredTextareas.map((textarea, index) => (

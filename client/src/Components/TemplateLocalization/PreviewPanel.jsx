@@ -28,7 +28,7 @@ const PreviewPanel = ({
   return (
     <PreviewContainer>
       <PreviewCard>
-        <PreviewHeader>
+        {/* <PreviewHeader>
           <img src={HtmlFileIcon} alt="HTML icon" />
           <div id="preview-text">
             <FileName>{downloadedFileName}</FileName>
@@ -45,13 +45,13 @@ const PreviewPanel = ({
               </UploadStatus>
             )}
           </div>
-        </PreviewHeader>
+        </PreviewHeader> */}
 
-        {isExecuted && (
+        {/* {isExecuted && (
           <DownloadButton onClick={handleDownload}>
             코드 변환 다운로드
           </DownloadButton>
-        )}
+        )} */}
 
         {isLocalizationApplied && (
           <LocalizationDownloadButton onClick={handleLocalizedDownload}>

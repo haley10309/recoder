@@ -16,13 +16,14 @@ const FileConvert = ({
   countryCode,
   isEnglishCountry,
   originalFile,
-  fileContent,
+  tobeFileContent,
   fileName,
   htmlUploadStatus,
   handleBackupFileUpload,
 }) => {
   // 번역덱 업로드 훅
   const {
+    copyDeckFile,
     translationMap,
     txtUploadStatus,
     txtFileName,
@@ -40,7 +41,7 @@ const FileConvert = ({
     handleConvertByCountryCode,
   } = useFileExecute({
     originalFile,
-    fileContent,
+    fileContent: tobeFileContent,
     textareas,
     setTextareas,
     countryCode,
@@ -55,7 +56,7 @@ const FileConvert = ({
     localizationStatus,
     handleApplyLocalization,
   } = useLocalizationApply({
-    downloadedFileContent,
+    tobeFileContent,
     fileName,
     textareas,
     setTextareas,
@@ -138,7 +139,11 @@ const FileConvert = ({
             isProcessing={isProcessing}
             handleConvertByCountryCode={handleConvertByCountryCode}
             isEnglishCountry={isEnglishCountry}
-            handleApplyLocalization={() => handleApplyLocalization(ticketNum, ticketUrl)}
+            handleApplyLocalization={() => handleApplyLocalization({
+              ticketNum,
+              ticketUrl,
+              hasCopyDeckFile: !!copyDeckFile,
+            })}
           />
 
           <PreviewPanel

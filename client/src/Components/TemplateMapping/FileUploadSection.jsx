@@ -49,7 +49,7 @@ const FileUploadSection = ({
           </div>
 
           {/* 번역덱 업로드 */}
-          {isEnglishCountry === false && (
+          {/* {isEnglishCountry === false && (
             <div>
               {txtUploadStatus ? (
                 <PreviewHeader style={{ marginTop: "0.75rem" }}>
@@ -78,7 +78,7 @@ const FileUploadSection = ({
                 </FileDropLabel>
               )}
             </div>
-          )}
+          )} */}
         </ConvertContainer>
       </ConvertSection>
     </>

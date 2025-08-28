@@ -89,7 +89,7 @@ const BasicTextarea = ({
           <div className="flex font-bold">
             <div className="text-xs">
               <span className="ml-1 text-[#4b5563;]">
-                [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
+                [AS-WAS] HTML 내 AS-WAS 코드 출현 횟수:
               </span>
             </div>
             {hasOriginalFile ? (
@@ -101,7 +101,7 @@ const BasicTextarea = ({
               </span>
             ) : (
               <span className="ml-1 text-xs font-normal text-[#ff7300]">
-                (원본코드 업로드 필요)
+                (HTML 업로드 필요)
               </span>
             )}
           </div>

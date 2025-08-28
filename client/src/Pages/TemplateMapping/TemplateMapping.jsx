@@ -126,7 +126,7 @@ const TemplateMapping = () => {
       </WhiteBox>
       <Gap gap={50} />
 
-      <div className="flex gap-[15px] save_button_div">
+      {/* <div className="flex gap-[15px] save_button_div">
         <button onClick={addTextArea} className="plus-button rounded-[10px]">
           <AddIcon />
           <span className="ml-2">항목 추가</span>
@@ -134,7 +134,7 @@ const TemplateMapping = () => {
         <button type="button" className="save_button" onClick={handleSaveTemplate}>
           {` 템플릿 저장`}
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

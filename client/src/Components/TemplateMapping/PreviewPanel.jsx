@@ -53,11 +53,11 @@ const PreviewPanel = ({
           </DownloadButton>
         )}
 
-        {isLocalizationApplied && (
+        {/* {isLocalizationApplied && (
           <LocalizationDownloadButton onClick={handleLocalizedDownload}>
             로컬라이제이션 적용본 다운로드
           </LocalizationDownloadButton>
-        )}
+        )} */}
       </PreviewCard>
     </PreviewContainer>
   );

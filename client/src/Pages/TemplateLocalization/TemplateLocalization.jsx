@@ -1,12 +1,12 @@
-import SiteCode from "@/Pages/TemplateLocalization/SiteCode";
 import FileConvert from "@/Pages/TemplateLocalization/FileConvert";
 import TableSection from "@/Components/TemplateLocalization/TableSection";
 import styled from "styled-components";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
 import { useSearchTemplate } from "@/hooks/TemplateLocalization/useSearchTemplate";
-import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useFileUpload } from "@/hooks/TemplateLocalization/useFileUpload";
+import { useTranslationUpload } from "@/hooks/TemplateLocalization/useTranslationUpload";
+import CheckTemplate from "@/Components/TemplateLocalization/CheckTemplate";
 
 const TemplateLocalization = () => {
   const {
@@ -26,27 +26,48 @@ const TemplateLocalization = () => {
     filterTextareas,
     filter,
     filterTobe,
+    templateId,
+    handleDeleteCountryTemplate,
+    templateByCountryId,
   } = useSearchTemplate();
 
   // HTML 파일 업로드 훅
   const {
     originalFile,
-    fileContent,
+    fileContent: tobeFileContent,
     fileName,
     htmlUploadStatus,
     handleBackupFileUpload,
   } = useFileUpload();
+  
+    // 번역덱 업로드 훅
+    const {
+      translationMap,
+      txtUploadStatus,
+      txtFileName,
+      handleTranslationTxtUpload,
+    } = useTranslationUpload(countryCode);
+
+  const copyList = Object.values(translationMap);
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
       <TitleLabel text="🗺️ 국가코드 선택" />
       <Gap gap={15} />
-      <SiteCode
+      <CheckTemplate
+        ticketNum={ticketNum}
+        ticketUrl={ticketUrl}
+        setTicketNum={setTicketNum}
+        setTicketUrl={setTicketUrl}
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}
+        handleSearchCountryTemplate={handleSearchTemplate}
         isEnglishCountry={isEnglishCountry}
+        templateId={templateId}
+        templateByCountryId={templateByCountryId}
+        handleDeleteCountryTemplate={handleDeleteCountryTemplate}
       />
-      <Gap gap={50} />
+      <Gap gap={25} />
 
       {isEnglishCountry ? (
         <>
@@ -65,7 +86,7 @@ const TemplateLocalization = () => {
             countryCode={countryCode}
             isEnglishCountry={isEnglishCountry}
             originalFile={originalFile}
-            fileContent={fileContent}
+            tobeFileContent={tobeFileContent}
             fileName={fileName}
             htmlUploadStatus={htmlUploadStatus}
             handleBackupFileUpload={handleBackupFileUpload}

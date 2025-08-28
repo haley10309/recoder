@@ -77,15 +77,20 @@ export const useSearchTemplate = () => {
         return;
       }
 
-      const { data } = await axios.post(`${BASE_URL}/get-country-template-details`, {
+      // const { data } = await axios.post(`${BASE_URL}/get-country-template-details`, {
+      //   ticket_num: ticketNum,
+      //   ticket_url: ticketUrl,
+      //   country_code: countryCode,
+      // });
+      const { data } = await axios.post(`${BASE_URL}/get-template-details`, {
         ticket_num: ticketNum,
         ticket_url: ticketUrl,
-        country_code: countryCode,
       });
       const codeChanges = data.codeChanges || [];
+      const localizationEntries = data.localizationEntries || [];
       
       if (data.templateId) setTemplateId(data.templateId);
-      if (data.templateByCountryId) setTemplateByCountryId(data.templateByCountryId);
+      // if (data.templateByCountryId) setTemplateByCountryId(data.templateByCountryId);
 
       const nonAssetCodeChanges = codeChanges
                                     .filter((it) => !isAssetCode(it.aswas_code))
@@ -94,7 +99,8 @@ export const useSearchTemplate = () => {
                                       ppt_no: it.ppt_no || "",
                                       aswas_code: it.aswas_code?.trim() || "",
                                       tobe_code: it.tobe_code?.trim() || "",
-                                      localized_tobe_code: it.localized_tobe_code?.trim() || "",
+                                      // localized_tobe_code: it.localized_tobe_code?.trim() || "",
+                                      localized_tobe_code: "",
                                     }) );
 
       const newTextareas = nonAssetCodeChanges.map((pair) => ({
@@ -102,7 +108,8 @@ export const useSearchTemplate = () => {
         pptNo: pair.ppt_no,
         asWasCode: pair.aswas_code,
         toBeCode: pair.tobe_code,
-        localizedToBeCode: pair.localized_tobe_code,
+        // localizedToBeCode: pair.localized_tobe_code,
+        localizedToBeCode: "",
         checked: true,
       }));
       setTextareas(newTextareas);

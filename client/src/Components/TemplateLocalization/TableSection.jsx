@@ -26,7 +26,7 @@ const TableSection = ({
           TO-BE Code
         </HeaderCell>
         {isEnglishCountry === false && (
-          <HeaderCell width="28%">Localization</HeaderCell>
+          <HeaderCell width="28%">Localized TO-BE</HeaderCell>
         )}
       </TableHeader>
 

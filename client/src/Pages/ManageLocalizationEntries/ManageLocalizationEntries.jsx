@@ -4,7 +4,7 @@ import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import TransFileUpload from "./TransFileUpload";
 import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
-import UploadFiles from "../ManageTemplates/UploadFiles";
+import UploadFiles from "./UploadFiles";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import LocalizationEntriesEditor from "./LocalizationEntriesEditor";
@@ -62,14 +62,12 @@ const ManageLocalizationEntries = () => {
       <TitleLabel text="📤 파일 업로드(선택)" />
       <Gap gap={15} />
       <UploadFiles
-        isUploadOnlyOriginHtmlFile={true}
         setOriginalHtmlFile={setOriginalHtmlFile} 
-        setAssetCodeChanges={setAssetCodeChanges}
-        setNonAssetCodeChanges={setNonAssetCodeChanges}
       />
       <Gap gap={50} />
-      
-      <TitleLabel text="✅ AS-WAS / TO-BE 템플릿 (코드 출현 횟수 확인용)" />
+    
+      {/** TODO: TOBE코드 기준으로 비교해서 출현횟수 확인하기 */}
+      {/* <TitleLabel text="✅ AS-WAS / TO-BE 템플릿 (코드 출현 횟수 확인용)" />
       <Gap gap={15} />
       <CodeChangesEditor
         checkOnlyInvalidCount={true}
@@ -90,7 +88,7 @@ const ManageLocalizationEntries = () => {
         handleNonAssetAswasChange={handleNonAssetAswasChange}
         handleNonAssetTobeChange={handleNonAssetTobeChange}
       />
-      <Gap gap={50} />
+      <Gap gap={50} /> */}
 
       <TitleLabel text="📤 번역 파일 업로드" />
       <Gap gap={15} />

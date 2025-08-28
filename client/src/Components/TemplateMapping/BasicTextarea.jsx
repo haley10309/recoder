@@ -209,14 +209,8 @@ const BasicTextarea = ({
         </CodeBlock>
 
         {/* LOCALIZED TO-BE */}
-        {isEnglishCountry === false && (
+        {/* {isEnglishCountry === false && (
           <CodeBlock>
-            {/* <Textarea
-              value={localizedToBeCode || ""}
-              onChange={(e) => setLocalizedToBeCode(e.target.value)}
-              placeholder="Localization을 적용하세요."
-              $color={color_localizedToBe}
-            /> */}
             <TransBox
               codeContext={localizedToBeCode || ""}
               highlights={copyList}
@@ -247,16 +241,16 @@ const BasicTextarea = ({
               </ErrorMessage>
             )}
           </CodeBlock>
-        )}
+        )} */}
 
     
-        <button
+        {/* <button
           type="button"
           onClick={removeNonAssetTextArea}
           className="px-4 mb-6 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white"
         >
           삭제
-        </button>
+        </button> */}
       </Wrapper>
     </Container>
   );
@@ -306,7 +300,7 @@ const TextBold = styled.span`
 `;
 
 const CodeBlock = styled.div`
-  width: ${({ $isEnglishCountry }) => ($isEnglishCountry === false ? "25%" : "40%")};
+  width: 42%;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

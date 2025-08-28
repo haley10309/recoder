@@ -19,7 +19,7 @@ const FileConvertButtons = ({
         {isProcessing ? "코드 변환 중.." : `/uk/ -> /${countryCode.toLowerCase()}/ 변환`}
       </ConvertButton>
 
-      {isEnglishCountry === false && (
+      {/* {isEnglishCountry === false && (
         <ConvertButton
           $bgColor="black"
           onClick={handleApplyLocalization}
@@ -28,7 +28,7 @@ const FileConvertButtons = ({
         >
           로컬라이제이션 적용
         </ConvertButton>
-      )}
+      )} */}
     </ButtonBox>
   );
 };
