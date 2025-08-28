@@ -28,8 +28,7 @@ export function useLocalizationApply({
       newTobeContext,
       "text/html"
     ); // blockDoc : 블록 안 텍스트 비교를 위해 임시로 만든 DOM.
-    let blockText = blockDoc.body.textContent?.trim();
-
+    let blockText = blockDoc.documentElement.textContent?.trim();
 
     Object.entries(_translationMap).forEach(([engCopy, localCopy]) => {
       const cleanedEng = engCopy.trim().replace(/\s+/g, " ");
@@ -53,29 +52,28 @@ export function useLocalizationApply({
       const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
 
       // textareas 업데이트하는 로직
-      setTextareas((prev) =>
-        prev.map((textarea) => {
-          const localizedToBe = applyLocalizedTemplateBlocks(
-            textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
-            translationMap,
-          );
+      const updatedTextareas = textareas.map((textarea) => {
+        const localizedToBe = applyLocalizedTemplateBlocks(
+          textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+          translationMap,
+        );
+        
+        const errorState = Object.keys(translationMap).some((key) => {
+          return localizedToBe.includes(key);
+        });
 
-          const errorState = Object.keys(translationMap).some((key) => {
-            return localizedToBe.includes(key);
-          });
-
-          return {
-            ...textarea,
-            localizedToBeCode: localizedToBe,
-            errorState,
-          };
-        })
-      );
+        return {
+          ...textarea,
+          localizedToBeCode: localizedToBe,
+          errorState,
+        };
+      });
+      setTextareas(updatedTextareas);
 
       // 전체 HTML 변환
       let localizedHtml = downloadedFileContent;
       
-      textareas.forEach((textarea) => {
+      updatedTextareas.forEach((textarea) => {
         const localizedTobeContext = applyLocalizedTemplateBlocks(textarea.toBeCode, translationMap)
         if (localizedHtml.includes(textarea.toBeCode)) {
           localizedHtml = localizedHtml.replace(textarea.toBeCode, localizedTobeContext);
