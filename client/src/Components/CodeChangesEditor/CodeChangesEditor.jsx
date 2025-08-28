@@ -32,7 +32,7 @@ const CodeChangesEditor = ({
           <>
             {checkHasInvalidAsWasCount() ? (
               <div style={{ color: "#ff0019", fontSize: "15px", fontWeight: "bold", textAlign: "center" }}>
-                ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. <br/> Edit Template 페이지에서 템플릿을 확인해주세요.
+                ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. <br/> Manage Templates 페이지에서 템플릿을 확인해주세요.
               </div>
             ) : (
               <div style={{ color: "#00c93c", fontSize: "15px", fontWeight: "bold", textAlign: "center" }}>
