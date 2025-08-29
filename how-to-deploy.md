@@ -10,17 +10,14 @@
 > git pull origin main
 > git log # 최신 커밋 한번더 확인
 
-> cd server
-or
-> cd client
-
-> docker ps # 지금 실행 중인 이미지 확인
-
-> docker compose down # 컨테이너 멈추고 삭제 (무중단 배포 아님)
-or
+*서버배포
+> cd server # 저장소 루트디렉토리에서 실행
 > docker rm -f raw_auto_server
-> docker rm -f raw_auto_client
+> docker compose up -d --build # 컨테이너 빌드 -> 재배포
 
+*클라배포
+> cd client # 저장소 루트디렉토리에서 실행
+> docker rm -f raw_auto_client
 > docker compose up -d --build # 컨테이너 빌드 -> 재배포
 ```
 
