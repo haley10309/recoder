@@ -47,6 +47,17 @@ const CheckTemplate = ({
     fetch();
   }, []);
 
+  // prefix 겹치는 경우, 오히려 꼬일 수 있음
+  // useEffect(() => {
+  //   if (ticketNum) {
+  //     console.log("changed ticketNum", filteredTemplatesData)
+  //     if (filteredTemplatesData.length === 1) {
+  //       const option = filteredTemplatesData[0];
+  //       setTicketUrl(option.ticket_url);
+  //     }
+  //   }
+  // }, [ticketNum]);
+
   return (
     <div className="flex items-center bg-[#F9F9F9] rounded-[8px] p-6 min-h-[150px] justify-between shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
       <div className="flex">

@@ -89,10 +89,11 @@ const BasicTextarea = ({
           <div className="flex font-bold">
             <div className="text-xs">
               <span className="ml-1 text-[#4b5563;]">
-                [AS-WAS] HTML 내 AS-WAS 코드 출현 횟수:
+                [AS-WAS]
+                {/* [AS-WAS] HTML 내 AS-WAS 코드 출현 횟수: */}
               </span>
             </div>
-            {hasOriginalFile ? (
+            {/* {hasOriginalFile ? (
               <span className="ml-1 text-xs"
                 style={{
                   color: asWasOccurrenceCount === 1 ? "blue" : "red"
@@ -103,7 +104,7 @@ const BasicTextarea = ({
               <span className="ml-1 text-xs font-normal text-[#ff7300]">
                 (HTML 업로드 필요)
               </span>
-            )}
+            )} */}
           </div>
           
           <CopyTextButton
@@ -145,7 +146,7 @@ const BasicTextarea = ({
             value={toBeCode}
             onChange={(e) => setToBeCode(e.target.value)}
             placeholder="TO-BE code를 입력하세요."
-            $isApplied={isApplied}
+            // $isApplied={isApplied}
           />
           
           <div className="flex font-bold">
