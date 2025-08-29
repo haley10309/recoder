@@ -66,14 +66,14 @@ export function useLocalizationApply({
         if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
           const regex = new RegExp(escapeRegExp(eng), "g");
           originalBlock = originalBlock.replace(regex, local);
-        } else {
         }
       });
 
       
       const code_context__converted_to_country_code = item.code_context.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`);
       if (newTobeContext.includes(code_context__converted_to_country_code)) {
-        newTobeContext = newTobeContext.replace(code_context__converted_to_country_code, originalBlock);
+        const originalBlock_convertedByCountryCode = originalBlock.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`);
+        newTobeContext = newTobeContext.replace(code_context__converted_to_country_code, originalBlock_convertedByCountryCode);
       }
     });
 
