@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import * as jwtDecodeLib from "jwt-decode";
 
 import Main from "@Pages/Main";
-import ManageTemplates from "@/Pages/ManageTemplates/ManageTemplates";
+import CodeTemplatesScreen from "@/Pages/CodeTemplates/CodeTemplatesScreen";
 import TemplateMapping from "@/Pages/TemplateMapping/TemplateMapping";
 import Qa_page from "@Pages/Qa_Page/Qa_page";
 import Footer from "@Components/Nav/Footer";
@@ -52,23 +52,15 @@ function App() {
                 }
               />
               <Route
-                path="/templates/form"
+                path="/code-templates"
                 element={
                   <RequireAuth>
-                    <ManageTemplates />
+                    <CodeTemplatesScreen />
                   </RequireAuth>
                 }
               />
               <Route
-                path="/localization-entries/form"
-                element={
-                  <RequireAuth>
-                    <ManageLocalizationEntries />
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/templates/mapping"
+                path="/code-templates/apply"
                 element={
                   <RequireAuth>
                     <TemplateMapping />
@@ -76,7 +68,15 @@ function App() {
                 }
               />
               <Route
-                path="/templates/localization"
+                path="/translation-templates"
+                element={
+                  <RequireAuth>
+                    <ManageLocalizationEntries />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/translation-templates/apply"
                 element={
                   <RequireAuth>
                     <TemplateLocalization />

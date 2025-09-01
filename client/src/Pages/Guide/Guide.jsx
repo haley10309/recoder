@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "@Guide/Guide.scss"; // Import CSS for styling
+import "@/Pages/Guide/Guide.scss"; // Import CSS for styling
 import guide_kv from "@/assets/guide/guide_kv.png";
 import apply_template_1 from "@/assets/guide/apply_template_6.png";
 import apply_template_2 from "@/assets/guide/apply_template_7.png";

@@ -71,35 +71,35 @@ const LeftNavBar = () => {
 
       <ButtonGroup>
         <NavButton
-          $active={location.pathname === "/" || isActive("/templates/form")}
-          onClick={() => handleNavigate("/templates/form")}
+          $active={location.pathname === "/" || isActive("/code-templates")}
+          onClick={() => handleNavigate("/code-templates")}
         >
           <IconImage src={settingIcon} alt="As-Was/To-Be Code Templates" />
-          <NavButtonText $active={location.pathname === "/" || isActive("/templates/form")}>As-Was/To-Be Code Templates</NavButtonText>
+          <NavButtonText $active={location.pathname === "/" || isActive("/code-templates")}>As-Was/To-Be Code Templates</NavButtonText>
         </NavButton>
 
         <NavButton
-          $active={isActive("/templates/mapping")}
-          onClick={() => handleNavigate("/templates/mapping")}
+          $active={isActive("/code-templates/apply")}
+          onClick={() => handleNavigate("/code-templates/apply")}
         >
           <IconImage src={applyIcon} alt="Apply Code Templates" />
-          <NavButtonText $active={isActive("/templates/mapping")}>Apply Code Templates</NavButtonText>
+          <NavButtonText $active={isActive("/code-templates/apply")}>Apply Code Templates</NavButtonText>
         </NavButton>
         
         <NavButton
-          $active={isActive("/localization-entries/form")}
-          onClick={() => handleNavigate("/localization-entries/form")}
+          $active={isActive("/translation-templates")}
+          onClick={() => handleNavigate("/translation-templates")}
         >
           <IconImage src={localizationIcon} alt="Translation Block Templates" />
-          <NavButtonText $active={isActive("/localization-entries/form")}>Translation Block Templates</NavButtonText>
+          <NavButtonText $active={isActive("/translation-templates")}>Translation Block Templates</NavButtonText>
         </NavButton>
 
         <NavButton
-          $active={isActive("/templates/localization")}
-          onClick={() => handleNavigate("/templates/localization")}
+          $active={isActive("/translation-templates/apply")}
+          onClick={() => handleNavigate("/translation-templates/apply")}
         >
           <IconImage src={applyIcon} alt="Apply Translation Templates" />
-          <NavButtonText $active={isActive("/templates/localization")}>Apply Translation Templates</NavButtonText>
+          <NavButtonText $active={isActive("/translation-templates/apply")}>Apply Translation Templates</NavButtonText>
         </NavButton>
 
         {/* <NavButton

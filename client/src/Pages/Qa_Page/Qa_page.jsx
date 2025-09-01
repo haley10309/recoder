@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "@Qa_Page/Qa_page.scss";
+import "@/Pages/Qa_Page/Qa_Page.scss"; // Import CSS for styling
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";

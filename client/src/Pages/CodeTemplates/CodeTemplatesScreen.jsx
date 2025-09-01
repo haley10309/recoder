@@ -1,14 +1,14 @@
 import React from "react";
 import CheckTemplate from "../../Components/CheckTemplate/CheckTemplate";
 import UploadFiles from "./UploadFiles";
-import "@/Pages/ManageTemplates/ManageTemplates.scss";
+import "@/Pages/CodeTemplates/CodeTemplates.scss";
 import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
-const ManageTemplates = () => {
+const CodeTemplatesScreen = () => {
   const {
       ticketNum,
       setTicketNum,
@@ -91,4 +91,4 @@ const ManageTemplates = () => {
   );
 };
 
-export default ManageTemplates;
+export default CodeTemplatesScreen;

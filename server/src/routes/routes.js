@@ -14,9 +14,9 @@ router.get("/get-templates", cors(), getTemplatesController.getTemplates);
 router.post("/check-template-exsist", cors(), checkTemplateController.checkTemplateData);
 router.post("/get-template-details", cors(), getTemplateDetailsController.getTemplateDetailsData);
 
-/** 1) Manage Templates */
-const createTemplateController = require("../controllers/manageTemplates/createTemplateController");
-const updateTemplateController = require("../controllers/manageTemplates/updateTemplateController");
+/** 1) Code Templates */
+const createTemplateController = require("../controllers/codeTemplates/createTemplateController");
+const updateTemplateController = require("../controllers/codeTemplates/updateTemplateController");
 const guideUploadController = require("../controllers/guide/guideUploadController");
 router.post("/create-template", upload.single('file'), cors(), createTemplateController.createTemplateData);
 router.post("/update-template", multer().none(), cors(), updateTemplateController.updateTemplateData);
