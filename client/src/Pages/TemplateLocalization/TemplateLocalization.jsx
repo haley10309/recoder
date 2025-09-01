@@ -7,6 +7,7 @@ import { useSearchTemplate } from "@/hooks/TemplateLocalization/useSearchTemplat
 import { useFileUpload } from "@/hooks/TemplateLocalization/useFileUpload";
 import { useTranslationUpload } from "@/hooks/TemplateLocalization/useTranslationUpload";
 import CheckTemplate from "@/Components/TemplateLocalization/CheckTemplate";
+import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
 const TemplateLocalization = () => {
   const {
@@ -52,6 +53,11 @@ const TemplateLocalization = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
+      <Gap gap={15} />
+      
+      <PageDescriptionText text={"국가별 To-Be HTML에 Translation Template + 카피덱을 적용해 번역 반영"} />
+      <Gap gap={50} />
+
       <TitleLabel text="🗺️ 국가코드 선택" />
       <Gap gap={15} />
       <CheckTemplate

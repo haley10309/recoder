@@ -9,6 +9,7 @@ import { useFileUpload } from "@/hooks/TemplateMapping/useFileUpload";
 import AddIcon from "@mui/icons-material/Add";
 import { useTranslationUpload } from "@/hooks/TemplateMapping/useTranslationUpload";
 import CheckTemplate from "@/Components/TemplateMapping/CheckTemplate";
+import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
 const TemplateMapping = () => {
   const {
@@ -60,6 +61,10 @@ const TemplateMapping = () => {
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
       <Gap gap={15} />
+
+      <PageDescriptionText text={"Code Template 기반으로 국가별 실제 as-was → to-be 코드 매핑 적용"} />
+      <Gap gap={50} />
+
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplate

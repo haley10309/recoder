@@ -74,32 +74,32 @@ const LeftNavBar = () => {
           $active={location.pathname === "/" || isActive("/templates/form")}
           onClick={() => handleNavigate("/templates/form")}
         >
-          <IconImage src={settingIcon} alt="Manage Templates" />
-          <NavButtonText $active={location.pathname === "/" || isActive("/templates/form")}>Manage Templates</NavButtonText>
+          <IconImage src={settingIcon} alt="As-Was/To-Be Code Templates" />
+          <NavButtonText $active={location.pathname === "/" || isActive("/templates/form")}>As-Was/To-Be Code Templates</NavButtonText>
         </NavButton>
 
         <NavButton
           $active={isActive("/templates/mapping")}
           onClick={() => handleNavigate("/templates/mapping")}
         >
-          <IconImage src={applyIcon} alt="Template Mapping Sitecode" />
-          <NavButtonText $active={isActive("/templates/mapping")}>Template Mapping Sitecode</NavButtonText>
+          <IconImage src={applyIcon} alt="Apply Code Templates" />
+          <NavButtonText $active={isActive("/templates/mapping")}>Apply Code Templates</NavButtonText>
         </NavButton>
         
         <NavButton
           $active={isActive("/localization-entries/form")}
           onClick={() => handleNavigate("/localization-entries/form")}
         >
-          <IconImage src={localizationIcon} alt="Manage Localization Entries" />
-          <NavButtonText $active={isActive("/localization-entries/form")}>Manage Localization Entries</NavButtonText>
+          <IconImage src={localizationIcon} alt="Translation Block Templates" />
+          <NavButtonText $active={isActive("/localization-entries/form")}>Translation Block Templates</NavButtonText>
         </NavButton>
 
         <NavButton
           $active={isActive("/templates/localization")}
           onClick={() => handleNavigate("/templates/localization")}
         >
-          <IconImage src={applyIcon} alt="Template Localization" />
-          <NavButtonText $active={isActive("/templates/localization")}>Template Localization</NavButtonText>
+          <IconImage src={applyIcon} alt="Apply Translation Templates" />
+          <NavButtonText $active={isActive("/templates/localization")}>Apply Translation Templates</NavButtonText>
         </NavButton>
 
         {/* <NavButton

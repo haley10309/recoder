@@ -6,6 +6,7 @@ import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
 import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
+import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
 const ManageTemplates = () => {
   const {
@@ -38,6 +39,11 @@ const ManageTemplates = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
+      <Gap gap={15} />
+
+      <PageDescriptionText text={"As-Was, To-Be 코드 템플릿 관리"} />
+      <Gap gap={50} />
+
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplate

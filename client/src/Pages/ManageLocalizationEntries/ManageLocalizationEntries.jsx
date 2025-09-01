@@ -8,6 +8,7 @@ import UploadFiles from "./UploadFiles";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import LocalizationEntriesEditor from "./LocalizationEntriesEditor";
+import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
 const ManageLocalizationEntries = () => {
   const {
@@ -48,6 +49,11 @@ const ManageLocalizationEntries = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
+      <Gap gap={15} />
+
+      <PageDescriptionText text={"번역 적용할 code block 템플릿 관리"} />
+      <Gap gap={50} />
+
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplate
