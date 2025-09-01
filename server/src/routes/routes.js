@@ -28,10 +28,10 @@ const localizationController = require("../controllers/manageLocalizationEntries
 router.post("/extract-english-copy-list", upload.single('file'), cors(), localEnglishCopyController.extractEnglishCopyList);
 router.put("/update-localization-entries",cors(), localizationController.updateLocalizationEntries);
 
-/** 3) Template Mapping */
-const processFileController = require("../controllers/templateMapping/processFileController");
+/** 3) Apply Code Templates */
+const processFileController = require("../controllers/applyCodeTemplates/processFileController");
 router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), processFileController.convertAsWasToToBeCodes);
-const localUploadController = require("../controllers/templateMapping/localUploadController");
+const localUploadController = require("../controllers/applyCodeTemplates/localUploadController");
 router.post("/upload-translation", upload.single('file'), cors(), localUploadController.uploadTranslation);
 const getCountryTemplateDetailsController = require("../controllers/common/getCountryTemplateDetailsController");
 router.post("/get-country-template-details", cors(), getCountryTemplateDetailsController.getCountryTemplateDetailsData);

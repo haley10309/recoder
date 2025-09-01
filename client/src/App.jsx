@@ -4,7 +4,7 @@ import * as jwtDecodeLib from "jwt-decode";
 
 import Main from "@Pages/Main";
 import CodeTemplatesScreen from "@/Pages/CodeTemplates/CodeTemplatesScreen";
-import TemplateMapping from "@/Pages/TemplateMapping/TemplateMapping";
+import ApplyCodeTemplatesScreen from "@/Pages/ApplyCodeTeamplates/ApplyCodeTemplatesScreen";
 import Qa_page from "@Pages/Qa_Page/Qa_page";
 import Footer from "@Components/Nav/Footer";
 import Guide from "@Pages/Guide/Guide";
@@ -63,7 +63,7 @@ function App() {
                 path="/code-templates/apply"
                 element={
                   <RequireAuth>
-                    <TemplateMapping />
+                    <ApplyCodeTemplatesScreen />
                   </RequireAuth>
                 }
               />

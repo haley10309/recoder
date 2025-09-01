@@ -205,7 +205,7 @@ export const useSearchTemplate = () => {
 
       alert("템플릿을 성공적으로 저장했어요");
     } catch (err) {
-      console.error('Template Mapping - handleSaveTemplate', err);
+      console.error('Apply Code Templates - handleSaveTemplate', err);
       alert(err.response.data.error || "템플릿 저장 중 오류가 발생하였습니다");
     }
   };

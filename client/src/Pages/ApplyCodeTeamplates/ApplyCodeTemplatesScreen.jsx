@@ -1,17 +1,17 @@
-import SiteCode from "@/Pages/TemplateMapping/SiteCode";
-import FileConvert from "@/Pages/TemplateMapping/FileConvert";
-import TableSection from "@/Components/TemplateMapping/TableSection";
+import SiteCode from "@/Pages/ApplyCodeTeamplates/SiteCode";
+import FileConvert from "@/Pages/ApplyCodeTeamplates/FileConvert";
+import TableSection from "@/Components/ApplyCodeTemplates/TableSection";
 import styled from "styled-components";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
-import { useSearchTemplate } from "@/hooks/TemplateMapping/useSearchTemplate";
-import { useFileUpload } from "@/hooks/TemplateMapping/useFileUpload";
+import { useSearchTemplate } from "@/hooks/ApplyCodeTemplates/useSearchTemplate";
+import { useFileUpload } from "@/hooks/ApplyCodeTemplates/useFileUpload";
 import AddIcon from "@mui/icons-material/Add";
-import { useTranslationUpload } from "@/hooks/TemplateMapping/useTranslationUpload";
-import CheckTemplate from "@/Components/TemplateMapping/CheckTemplate";
+import { useTranslationUpload } from "@/hooks/ApplyCodeTemplates/useTranslationUpload";
+import CheckTemplate from "@/Components/ApplyCodeTemplates/CheckTemplate";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
-const TemplateMapping = () => {
+const ApplyCodeTemplatesScreen = () => {
   const {
     countryCode,
     ticketNum,
@@ -144,7 +144,7 @@ const TemplateMapping = () => {
   );
 };
 
-export default TemplateMapping;
+export default ApplyCodeTemplatesScreen;
 
 const WhiteBox = styled.div`
   display: flex;
