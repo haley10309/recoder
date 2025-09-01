@@ -46,40 +46,43 @@ const TableSection = ({
         
       </TableHeader>
 
-      {filteredTextareas.map((textarea, index) => (
-        <BasicTextarea
-          key={index}
-          indexText={`${index + 1} of ${filteredTextareas.length} / id: ${textarea.id ? textarea.id : "DB 저장 전"}`}
-          pptNo={textarea.pptNo} // ✅ 바로 사용
-          asWasCode={textarea.asWasCode.replace(
-            /\/uk\//g,
-            `/${countryCode}/`
-          )}
-          setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-          toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${countryCode}/`)}
-          setToBeCode={(value) => handleToBeCodeChange(index, value)}
-          localizedToBeCode={textarea.localizedToBeCode}
-          setLocalizedToBeCode={(value) =>
-            handleLocalizedToBeCodeChange(index, value)
-          }
-          handleNonAssetPptNoChange={(value) => handleNonAssetPptNoChange(index, value)}
-          changed={{ index, changed: textarea.changed }}
-          isApplied={textarea.isApplied}
-          onCheckedChange={() => handleCheckedChange(index)}
-          checked={textarea.checked}
-          filter={filter}
-          filterTobe={filterTobe}
-          countryCode={countryCode}
-          matchedPart={textarea.matchedPart}
-          asWasOccurrenceCount={textarea.asWasOccurrenceCount}
-          toBeOccurrenceCount={textarea.toBeOccurrenceCount}
-          errorState={textarea.errorState}
-          isEnglishCountry={isEnglishCountry}
-          hasOriginalFile={hasOriginalFile}
-          removeNonAssetTextArea={() => removeNonAssetTextArea(index)}
-          copyList={copyList}
-        />
-      ))}
+      {filteredTextareas.map((textarea, index) => {
+        const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
+        return (
+          <BasicTextarea
+            key={index}
+            indexText={`${index + 1} of ${filteredTextareas.length} / id: ${textarea.id ? textarea.id : "DB 저장 전"}`}
+            pptNo={textarea.pptNo} // ✅ 바로 사용
+            asWasCode={textarea.asWasCode.replace(
+              /\/uk\//g,
+              `/${lowerCaseCountryCode}/`
+            )}
+            setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
+            toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`)}
+            setToBeCode={(value) => handleToBeCodeChange(index, value)}
+            localizedToBeCode={textarea.localizedToBeCode}
+            setLocalizedToBeCode={(value) =>
+              handleLocalizedToBeCodeChange(index, value)
+            }
+            handleNonAssetPptNoChange={(value) => handleNonAssetPptNoChange(index, value)}
+            changed={{ index, changed: textarea.changed }}
+            isApplied={textarea.isApplied}
+            onCheckedChange={() => handleCheckedChange(index)}
+            checked={textarea.checked}
+            filter={filter}
+            filterTobe={filterTobe}
+            countryCode={countryCode}
+            matchedPart={textarea.matchedPart}
+            asWasOccurrenceCount={textarea.asWasOccurrenceCount}
+            toBeOccurrenceCount={textarea.toBeOccurrenceCount}
+            errorState={textarea.errorState}
+            isEnglishCountry={isEnglishCountry}
+            hasOriginalFile={hasOriginalFile}
+            removeNonAssetTextArea={() => removeNonAssetTextArea(index)}
+            copyList={copyList}
+          />
+        );
+      })}
     </TableWrapper>
   );
 };

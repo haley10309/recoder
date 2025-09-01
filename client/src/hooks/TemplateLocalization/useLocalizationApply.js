@@ -69,7 +69,6 @@ export function useLocalizationApply({
         }
       });
 
-      
       const code_context__converted_to_country_code = item.code_context.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`);
       if (newTobeContext.includes(code_context__converted_to_country_code)) {
         const originalBlock_convertedByCountryCode = originalBlock.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`);

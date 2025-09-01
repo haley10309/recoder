@@ -12,6 +12,8 @@ const TableSection = ({
   isEnglishCountry,
   hasOriginalFile,
 }) => {
+  const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
+
   return (
     <TableWrapper>
       <TableHeader>
@@ -37,10 +39,10 @@ const TableSection = ({
           pptNo={textarea.pptNo} // ✅ 바로 사용
           asWasCode={textarea.asWasCode.replace(
             /\/uk\//g,
-            `/${countryCode}/`
+            `/${lowerCaseCountryCode}/`
           )}
           setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-          toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${countryCode}/`)}
+          toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`)}
           setToBeCode={(value) => handleToBeCodeChange(index, value)}
           localizedToBeCode={textarea.localizedToBeCode}
           setLocalizedToBeCode={(value) =>

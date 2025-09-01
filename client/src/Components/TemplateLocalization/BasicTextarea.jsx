@@ -27,9 +27,10 @@ const BasicTextarea = ({
 
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
 
+  const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
   const transformedAsWasCode = asWasCode?.replace(
     /\/uk\//g,
-    `/${countryCode}/`
+    `/${lowerCaseCountryCode}/`
   );
 
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
