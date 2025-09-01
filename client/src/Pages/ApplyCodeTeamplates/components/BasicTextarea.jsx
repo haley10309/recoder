@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+
 import Copy from "@/assets/copy.png";
-import CopyTextButton from "../Common/CopyTextButton";
-import TransBox from "./TransBox";
+import CopyTextButton from "@/Components/Common/CopyTextButton";
 
 const BasicTextarea = ({
   indexText,
@@ -208,50 +208,6 @@ const BasicTextarea = ({
             value={toBeCode}
           />
         </CodeBlock>
-
-        {/* LOCALIZED TO-BE */}
-        {/* {isEnglishCountry === false && (
-          <CodeBlock>
-            <TransBox
-              codeContext={localizedToBeCode || ""}
-              highlights={copyList}
-              onChange={(newTxt) => setLocalizedToBeCode(newTxt)}
-              borderColor={color_localizedToBe}
-            />
-            <div className="text-xs font-bold">
-              <span className="ml-1 text-[#4b5563;]">
-                [Localized TO-BE]{' '}
-                <span className={`ml-1`} style={{ color: color_localizedToBe }}>
-                  {localizedToBeCode 
-                    ? isLocalizedChanged
-                      ? "번역이 적용돼요."
-                      : "TO-BE와 Localized TO-BE가 똑같아, 변경이 없습니다."
-                    : ""
-                  }
-                </span>
-              </span>
-            </div>
-
-            <CopyTextButton
-              text={"코드 복사"}
-              value={localizedToBeCode || ""}
-            />
-            {errorState && (
-              <ErrorMessage>
-                🚨 아직 번역되지 않은 key가 포함되어 있습니다.
-              </ErrorMessage>
-            )}
-          </CodeBlock>
-        )} */}
-
-    
-        {/* <button
-          type="button"
-          onClick={removeNonAssetTextArea}
-          className="px-4 mb-6 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white"
-        >
-          삭제
-        </button> */}
       </Wrapper>
     </Container>
   );

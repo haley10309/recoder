@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import InputDrop from "../Common/InputDrop";
 import { fetchTemplates } from "@/apis/apis";
-import SiteCode from "@/Pages/ApplyCodeTeamplates/SiteCode";
+import SiteCode from "@/Pages/ApplyCodeTeamplates/components/SiteCode";
 import Gap from "../Common/Gap";
 
 const CheckTemplate = ({

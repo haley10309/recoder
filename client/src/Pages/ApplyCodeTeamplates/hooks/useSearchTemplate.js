@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 import { isAssetCode } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
+
 import { countryOptions } from "@/Components/Common/CoutryCode";
 
 export const useSearchTemplate = () => {

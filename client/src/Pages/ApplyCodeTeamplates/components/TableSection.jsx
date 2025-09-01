@@ -1,5 +1,6 @@
-import BasicTextarea from "@/Components/ApplyCodeTemplates/BasicTextarea";
 import styled from "styled-components";
+
+import BasicTextarea from "./BasicTextarea";
 
 const TableSection = ({
   filteredTextareas,

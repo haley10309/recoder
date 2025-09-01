@@ -1,15 +1,17 @@
-import SiteCode from "@/Pages/ApplyCodeTeamplates/SiteCode";
-import FileConvert from "@/Pages/ApplyCodeTeamplates/FileConvert";
-import TableSection from "@/Components/ApplyCodeTemplates/TableSection";
+import React from "react";
 import styled from "styled-components";
-import TitleLabel from "@/Components/Common/TitleLabel";
+
 import Gap from "@/Components/Common/Gap";
-import { useSearchTemplate } from "@/hooks/ApplyCodeTemplates/useSearchTemplate";
-import { useFileUpload } from "@/hooks/ApplyCodeTemplates/useFileUpload";
-import AddIcon from "@mui/icons-material/Add";
-import { useTranslationUpload } from "@/hooks/ApplyCodeTemplates/useTranslationUpload";
-import CheckTemplate from "@/Components/ApplyCodeTemplates/CheckTemplate";
+import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
+
+import { useSearchTemplate } from "./hooks/useSearchTemplate";
+import { useFileUpload } from "./hooks/useFileUpload";
+import { useTranslationUpload } from "./hooks/useTranslationUpload";
+
+import CheckTemplate from "./components/CheckTemplate";
+import FileConvert from "./components/FileConvert";
+import TableSection from "./components/TableSection";
 
 const ApplyCodeTemplatesScreen = () => {
   const {
@@ -130,16 +132,6 @@ const ApplyCodeTemplatesScreen = () => {
         />
       </WhiteBox>
       <Gap gap={50} />
-
-      {/* <div className="flex gap-[15px] save_button_div">
-        <button onClick={addTextArea} className="plus-button rounded-[10px]">
-          <AddIcon />
-          <span className="ml-2">항목 추가</span>
-        </button>
-        <button type="button" className="save_button" onClick={handleSaveTemplate}>
-          {` 템플릿 저장`}
-        </button>
-      </div> */}
     </div>
   );
 };
