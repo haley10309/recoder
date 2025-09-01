@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '@/utils/routePath';
 
-const Register = () => {
+const RegisterScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -76,4 +76,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterScreen;

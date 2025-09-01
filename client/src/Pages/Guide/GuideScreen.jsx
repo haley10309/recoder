@@ -28,7 +28,7 @@ import createTemplate from "@/assets/guide/create-template.png";
 import fileUpload from "@/assets/guide/file-upload.png";
 import codeCheck from "@/assets/guide/code-check.png";
 
-const Guide = () => {
+const GuideScreen = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => {
@@ -155,4 +155,4 @@ const Guide = () => {
   );
 };
 
-export default Guide;
+export default GuideScreen;

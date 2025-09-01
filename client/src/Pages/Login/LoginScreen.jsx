@@ -6,7 +6,7 @@ import * as jwtDecodeLib from "jwt-decode";
 import { nameEnState } from '@/recoil/atoms/state';
 import defaultAxios from '@/apis/defaultAxios';
 
-const Login = () => {
+const LoginScreen = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -88,4 +88,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginScreen;

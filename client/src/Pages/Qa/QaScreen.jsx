@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "@/Pages/Qa_Page/Qa_Page.scss"; // Import CSS for styling
+import "@/Pages/Qa/Qa.scss"; // Import CSS for styling
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
@@ -12,7 +12,7 @@ import { BASE_URL } from "@/utils/routePath";
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 
 
-const Qa_page = () => {
+const QaScreen = () => {
   return (
     <div>준비중이에요.</div>
   );
@@ -340,4 +340,4 @@ const Qa_page = () => {
 //   );
 };
 
-export default Qa_page;
+export default QaScreen;

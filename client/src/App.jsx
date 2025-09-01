@@ -2,21 +2,21 @@ import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import * as jwtDecodeLib from "jwt-decode";
 
-import Main from "@Pages/Main";
+import MainScreen from "@/Pages/MainScreen";
 import CodeTemplatesScreen from "@/Pages/CodeTemplates/CodeTemplatesScreen";
 import ApplyCodeTemplatesScreen from "@/Pages/ApplyCodeTeamplates/ApplyCodeTemplatesScreen";
-import Qa_page from "@Pages/Qa_Page/Qa_page";
+import QaScreen from "@/Pages/Qa/QaScreen";
 import Footer from "@Components/Nav/Footer";
-import Guide from "@Pages/Guide/Guide";
+import GuideScreen from "@/Pages/Guide/GuideScreen";
 import "./style/global.css";
 import LeftNavBar from "@Components/Nav/LeftNavBar";
 import TranslationTemplatesScreen from "./Pages/TranslationTemplates/TranslationTemplatesScreen";
-import Login from "./Pages/Login/Login";
+import LoginScreen from "./Pages/Login/LoginScreen";
 import RequireAuth from "./Pages/RequireAuth";
-import Register from "./Pages/Register/Register";
+import RegisterScreen from "./Pages/Register/RegisterScreen";
 import { useSetRecoilState } from "recoil";
 import { nameEnState } from "./recoil/atoms/state";
-import TemplateLocalization from "./Pages/ApplyTranslationTemplates/ApplyTranslationTemplatesScreen";
+import ApplyTranslationTemplatesScreen from "./Pages/ApplyTranslationTemplates/ApplyTranslationTemplatesScreen";
 
 function App() {
   const setNameEn = useSetRecoilState(nameEnState);
@@ -41,13 +41,13 @@ function App() {
           </div>
           <div className="w-[82%]">
             <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<LoginScreen />} />
+              <Route path="/register" element={<RegisterScreen />} />
               <Route
                 path="/"
                 element={
                   <RequireAuth>
-                    <Main />
+                    <MainScreen />
                   </RequireAuth>
                 }
               />
@@ -79,7 +79,7 @@ function App() {
                 path="/translation-templates/apply"
                 element={
                   <RequireAuth>
-                    <TemplateLocalization />
+                    <ApplyTranslationTemplatesScreen />
                   </RequireAuth>
                 }
               />
@@ -87,14 +87,14 @@ function App() {
                 path="/qa-check"
                 element={
                   <RequireAuth>
-                    <Qa_page />
+                    <QaScreen />
                   </RequireAuth>
                 }
               />
               <Route
                 path="/guide"
                 element={
-                  <Guide />
+                  <GuideScreen />
                 }
               />
             </Routes>

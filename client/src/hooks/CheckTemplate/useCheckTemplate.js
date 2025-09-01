@@ -249,7 +249,7 @@ export const useCheckTemplate = () => {
         delete_ids: deleteIds,
       };
       
-      // TemplateLocalizaionEntries 삽입/수정/삭제
+      // LocalizationEntries 삽입/수정/삭제
       await axios.put(`${BASE_URL}/update-localization-entries`, body, { headers: { "Content-Type": "application/json" } });
       setDeleteIds([]);
 

@@ -1,5 +1,3 @@
-// TemplateLocalizaionEntries 삽입/수정/삭제
-
 const db = require("../../config/db");
 
 exports.updateLocalizationEntries = (req, res) => {
