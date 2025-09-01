@@ -6,7 +6,7 @@
 // import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 // import ErrorIcon from "@mui/icons-material/Error";
 // import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-// import ShowDetail from "@/Pages/ManageLocalizationEntries/ShowDetail";
+// import ShowDetail from "@/Pages/TranslationTemplates/ShowDetail";
 // import styled from "styled-components";
 // // TODO: 코드확인필요
 // const LocalizationVersion1 = () => {

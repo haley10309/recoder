@@ -10,7 +10,7 @@ import TitleLabel from "@/Components/Common/TitleLabel";
 import LocalizationEntriesEditor from "./LocalizationEntriesEditor";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
-const ManageLocalizationEntries = () => {
+const TranslationTemplatesScreen = () => {
   const {
       ticketNum,
       setTicketNum,
@@ -122,4 +122,4 @@ const ManageLocalizationEntries = () => {
   );
 };
 
-export default ManageLocalizationEntries;
+export default TranslationTemplatesScreen;

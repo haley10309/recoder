@@ -10,7 +10,7 @@ import Footer from "@Components/Nav/Footer";
 import Guide from "@Pages/Guide/Guide";
 import "./style/global.css";
 import LeftNavBar from "@Components/Nav/LeftNavBar";
-import ManageLocalizationEntries from "./Pages/ManageLocalizationEntries/ManageLocalizationEntries";
+import TranslationTemplatesScreen from "./Pages/TranslationTemplates/TranslationTemplatesScreen";
 import Login from "./Pages/Login/Login";
 import RequireAuth from "./Pages/RequireAuth";
 import Register from "./Pages/Register/Register";
@@ -71,7 +71,7 @@ function App() {
                 path="/translation-templates"
                 element={
                   <RequireAuth>
-                    <ManageLocalizationEntries />
+                    <TranslationTemplatesScreen />
                   </RequireAuth>
                 }
               />

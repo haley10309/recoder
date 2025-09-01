@@ -8,7 +8,7 @@ Re-coder는 txt 가이드 파일에서 데이터를 추출하고 템플릿을 �
 
 - TBW
 
-**Manage Localization Entries**
+**Translation Templates**
 
 - TBW
 

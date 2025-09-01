@@ -22,13 +22,7 @@ router.post("/create-template", upload.single('file'), cors(), createTemplateCon
 router.post("/update-template", multer().none(), cors(), updateTemplateController.updateTemplateData);
 router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadController.guideUploadData);
 
-/** 2) Manage Localization Entries */
-const localEnglishCopyController = require("../controllers/manageLocalizationEntries/localEnglishCopyController"); 
-const localizationController = require("../controllers/manageLocalizationEntries/localTemplateController");
-router.post("/extract-english-copy-list", upload.single('file'), cors(), localEnglishCopyController.extractEnglishCopyList);
-router.put("/update-localization-entries",cors(), localizationController.updateLocalizationEntries);
-
-/** 3) Apply Code Templates */
+/** 2) Apply Code Templates */
 const processFileController = require("../controllers/applyCodeTemplates/processFileController");
 router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), processFileController.convertAsWasToToBeCodes);
 const localUploadController = require("../controllers/applyCodeTemplates/localUploadController");
@@ -38,6 +32,12 @@ router.post("/get-country-template-details", cors(), getCountryTemplateDetailsCo
 const templatesByCountryController = require("../controllers/common/templatesByCountryController");
 router.put("/templates-by-country", multer().none(), cors(), templatesByCountryController.putTemplatesByCountry);
 router.delete("/templates-by-country", cors(), templatesByCountryController.deleteTemplatesByCountry);
+
+/** 3) Translation Templates */
+const localEnglishCopyController = require("../controllers/translationTemplates/localEnglishCopyController"); 
+const localizationController = require("../controllers/translationTemplates/localTemplateController");
+router.post("/extract-english-copy-list", upload.single('file'), cors(), localEnglishCopyController.extractEnglishCopyList);
+router.put("/update-localization-entries",cors(), localizationController.updateLocalizationEntries);
 
 /** (Deprecated) */
 // const guideUploadControllerV2 = require("../controllers/guide/guideUploadControllerV2");
