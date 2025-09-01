@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import axios from "axios";
+
 import { BASE_URL } from "@/utils/routePath";
-import arrowIcon from "@/assets/shift-fill.svg";
 import { isAssetCode } from "@/utils/codeUtils";
+import arrowIcon from "@/assets/shift-fill.svg";
 
 export default function UploadFiles({ 
   isUploadOnlyOriginHtmlFile,

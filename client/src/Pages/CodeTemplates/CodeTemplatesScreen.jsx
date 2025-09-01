@@ -1,12 +1,16 @@
 import React from "react";
-import CheckTemplate from "../../Components/CheckTemplate/CheckTemplate";
-import UploadFiles from "./UploadFiles";
-import "@/Pages/CodeTemplates/CodeTemplates.scss";
-import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
+
 import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
+
+import { useCheckTemplate } from "./hooks/useCheckTemplate";
+
+import CheckTemplate from "./components/CheckTemplate";
+import UploadFiles from "./components/UploadFiles";
+
+import "./CodeTemplates.scss";
 
 const CodeTemplatesScreen = () => {
   const {

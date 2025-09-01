@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import Rodal from "rodal";
-import "@/Pages/CodeTemplates/CodeTemplates.scss";
-import "rodal/lib/rodal.css";
 import AddIcon from "@mui/icons-material/Add";
+
 import { countOccurrences as countOccurrencesUtil } from "@/utils/codeUtils";
+
+import "rodal/lib/rodal.css";
+import "../CodeTemplates.scss";
+import "./AssetTemplate.scss";
 
 const AssetTemplate = ({
   content,
