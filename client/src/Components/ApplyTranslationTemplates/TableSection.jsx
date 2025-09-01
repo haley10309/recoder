@@ -1,4 +1,4 @@
-import BasicTextarea from "@/Components/TemplateLocalization/BasicTextarea";
+import BasicTextarea from "@/Components/ApplyTranslationTemplates/BasicTextarea";
 import styled from "styled-components";
 
 const TableSection = ({

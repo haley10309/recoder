@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { useTranslationUpload } from "@/hooks/TemplateLocalization/useTranslationUpload";
-import { useFileExecute } from "@/hooks/TemplateLocalization/useFileExecute";
-import { useLocalizationApply } from "@/hooks/TemplateLocalization/useLocalizationApply";
+import { useTranslationUpload } from "@/hooks/ApplyTranslationTemplates/useTranslationUpload";
+import { useFileExecute } from "@/hooks/ApplyTranslationTemplates/useFileExecute";
+import { useLocalizationApply } from "@/hooks/ApplyTranslationTemplates/useLocalizationApply";
 
-import FileUploadSection from "@/Components/TemplateLocalization/FileUploadSection";
-import FileConvertButtons from "@/Components/TemplateLocalization/FileConvertButtons";
-import PreviewPanel from "@/Components/TemplateLocalization/PreviewPanel";
+import FileUploadSection from "@/Components/ApplyTranslationTemplates/FileUploadSection";
+import FileConvertButtons from "@/Components/ApplyTranslationTemplates/FileConvertButtons";
+import PreviewPanel from "@/Components/ApplyTranslationTemplates/PreviewPanel";
 
 const FileConvert = ({
   ticketNum,

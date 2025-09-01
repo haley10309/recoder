@@ -1,15 +1,15 @@
-import FileConvert from "@/Pages/TemplateLocalization/FileConvert";
-import TableSection from "@/Components/TemplateLocalization/TableSection";
+import FileConvert from "@/Pages/ApplyTranslationTemplates/FileConvert";
+import TableSection from "@/Components/ApplyTranslationTemplates/TableSection";
 import styled from "styled-components";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
-import { useSearchTemplate } from "@/hooks/TemplateLocalization/useSearchTemplate";
-import { useFileUpload } from "@/hooks/TemplateLocalization/useFileUpload";
-import { useTranslationUpload } from "@/hooks/TemplateLocalization/useTranslationUpload";
-import CheckTemplate from "@/Components/TemplateLocalization/CheckTemplate";
+import { useSearchTemplate } from "@/hooks/ApplyTranslationTemplates/useSearchTemplate";
+import { useFileUpload } from "@/hooks/ApplyTranslationTemplates/useFileUpload";
+import { useTranslationUpload } from "@/hooks/ApplyTranslationTemplates/useTranslationUpload";
+import CheckTemplate from "@/Components/ApplyTranslationTemplates/CheckTemplate";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
-const TemplateLocalization = () => {
+const ApplyTranslationTemplatesScreen = () => {
   const {
     countryCode,
     ticketNum,
@@ -128,7 +128,7 @@ const TemplateLocalization = () => {
   );
 };
 
-export default TemplateLocalization;
+export default ApplyTranslationTemplatesScreen;
 
 const WhiteBox = styled.div`
   display: flex;
