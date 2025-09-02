@@ -1,13 +1,17 @@
-import FileConvert from "@/Pages/ApplyTranslationTemplates/FileConvert";
-import TableSection from "@/Components/ApplyTranslationTemplates/TableSection";
+import React from "react";
 import styled from "styled-components";
+
+import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
-import { useSearchTemplate } from "@/hooks/ApplyTranslationTemplates/useSearchTemplate";
-import { useFileUpload } from "@/hooks/ApplyTranslationTemplates/useFileUpload";
-import { useTranslationUpload } from "@/hooks/ApplyTranslationTemplates/useTranslationUpload";
-import CheckTemplate from "@/Components/ApplyTranslationTemplates/CheckTemplate";
-import PageDescriptionText from "@/Components/Common/PageDescriptionText";
+
+import { useSearchTemplate } from "./hooks/useSearchTemplate";
+import { useFileUpload } from "./hooks/useFileUpload";
+import { useTranslationUpload } from "./hooks/useTranslationUpload";
+
+import FileConvert from "./components/FileConvert";
+import CheckTemplate from "./components/CheckTemplate";
+import TableSection from "./components/TableSection";
 
 const ApplyTranslationTemplatesScreen = () => {
   const {
