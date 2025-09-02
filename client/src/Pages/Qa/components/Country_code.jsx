@@ -1,8 +1,9 @@
 import React from "react";
-import "@Components/Template_detail_set/Country_code.scss";
-import CheckIcon from "@mui/icons-material/Check";
+
 import { Dropdown } from "primereact/dropdown";
 import { twMerge } from "tailwind-merge";
+
+import "./Country_code.scss";
 
 const divWrapperClasses = {
   dropdown:

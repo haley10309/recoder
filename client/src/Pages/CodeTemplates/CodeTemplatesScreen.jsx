@@ -1,12 +1,12 @@
 import React from "react";
 
-import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
 import { useCheckTemplate } from "./hooks/useCheckTemplate";
 
+import CodeChangesEditor from "./components/CodeChangesEditor";
 import CheckTemplate from "./components/CheckTemplate";
 import UploadFiles from "./components/UploadFiles";
 

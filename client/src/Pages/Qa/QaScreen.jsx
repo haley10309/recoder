@@ -1,15 +1,19 @@
 import React, { useState } from "react";
-import "@/Pages/Qa/Qa.scss"; // Import CSS for styling
 import axios from "axios";
+
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import { Dropdown } from "primereact/dropdown";
-import Country_code from "@/Components/Template_detail_set/Country_code";
+
 import sad_face from "@/assets/no_value.png";
 import { countOccurrences } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
-import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
+
+import Country_code from "./components/Country_code";
+
+import "./Qa.scss"; // Import CSS for styling
 
 
 const QaScreen = () => {
