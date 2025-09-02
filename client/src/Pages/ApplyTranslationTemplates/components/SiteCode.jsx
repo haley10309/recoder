@@ -2,8 +2,9 @@ import React from "react";
 import styled from "styled-components";
 
 import CustomDropdownInput from "@/Components/Common/CustomDropdownInput";
-import { countryOptions } from "@/Components/Common/CoutryCode";
 import Gap from "@/Components/Common/Gap";
+
+import { countryOptions } from "@/utils/countryOptions";
 
 const SiteCode = ({
   countryCode,

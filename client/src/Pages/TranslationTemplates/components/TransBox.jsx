@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import "@Components/Common/TransBox.scss";
-import CopyTextButton from "./CopyTextButton";
-import Gap from "./Gap";
+
+import CopyTextButton from "@/Components/Common/CopyTextButton";
+import Gap from "@/Components/Common/Gap";
+
+import "./TransBox.scss";
 
 export default function TransBox({ 
   itemId,

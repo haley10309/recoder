@@ -1,7 +1,7 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 
-import TransBox from "@/Components/Common/TransBox";
+import TransBox from "./TransBox";
 
 const LocalizationEntriesEditor = ({
   saveType,
