@@ -1,14 +1,14 @@
 import React from "react";
 
-import CheckTemplate from "@/Components/CheckTemplate/CheckTemplate";
-import { useCheckTemplate } from "@/hooks/CheckTemplate/useCheckTemplate";
-import TransFileUpload from "./TransFileUpload";
-import CodeChangesEditor from "@/Components/CodeChangesEditor/CodeChangesEditor";
-import UploadFiles from "./UploadFiles";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
-import LocalizationEntriesEditor from "./LocalizationEntriesEditor";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
+
+import { useCheckTemplate } from "./hooks/useCheckTemplate";
+import UploadFiles from "./components/UploadFiles";
+import TransFileUpload from "./components/TransFileUpload";
+import LocalizationEntriesEditor from "./components/LocalizationEntriesEditor";
+import CheckTemplate from "./components/CheckTemplate";
 
 const TranslationTemplatesScreen = () => {
   const {
@@ -71,30 +71,6 @@ const TranslationTemplatesScreen = () => {
         setOriginalHtmlFile={setOriginalHtmlFile} 
       />
       <Gap gap={50} />
-    
-      {/** TODO: TOBE코드 기준으로 비교해서 출현횟수 확인하기 */}
-      {/* <TitleLabel text="✅ AS-WAS / TO-BE 템플릿 (코드 출현 횟수 확인용)" />
-      <Gap gap={15} />
-      <CodeChangesEditor
-        checkOnlyInvalidCount={true}
-        saveType={saveType}
-        addAssetArea={addAssetArea}
-        removeAssetArea={removeAssetArea}
-        addNonAssetTextArea={addNonAssetTextArea}
-        removeNonAssetTextArea={removeNonAssetTextArea}
-        originalHtmlFile={originalHtmlFile}
-        countOccurrences={countOccurrences}
-        handleAssetPptNoChange={handleAssetPptNoChange}
-        handleAssetAsWasChange={handleAssetAsWasChange}
-        handleAssetToBeChange={handleAssetToBeChange}
-        handleSaveTemplate={handleSaveTemplate}
-        checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
-        nonAssetCodeChanges={nonAssetCodeChanges}
-        handleNonAssetPptNoChange={handleNonAssetPptNoChange}
-        handleNonAssetAswasChange={handleNonAssetAswasChange}
-        handleNonAssetTobeChange={handleNonAssetTobeChange}
-      />
-      <Gap gap={50} /> */}
 
       <TitleLabel text="📤 번역 파일 업로드" />
       <Gap gap={15} />
