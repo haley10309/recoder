@@ -34,8 +34,6 @@ const FileConvert = ({
   // 코드 실행 훅
   const {
     isProcessing,
-    isExecuted,
-    uploadProgress,
     uploadStatus,
     downloadedFileContent,
     downloadedFileName,
@@ -135,7 +133,6 @@ const FileConvert = ({
       {!!fileName && (
         <FileConvertBottonBox>
           <FileConvertButtons
-            countryCode={countryCode}
             fileName={fileName}
             isProcessing={isProcessing}
             handleConvertByCountryCode={handleConvertByCountryCode}
@@ -148,13 +145,9 @@ const FileConvert = ({
           />
 
           <PreviewPanel
-            downloadedFileName={downloadedFileName}
-            uploadProgress={uploadProgress}
             uploadStatus={uploadStatus}
             localizationStatus={localizationStatus}
-            isExecuted={isExecuted}
             isLocalizationApplied={isLocalizationApplied}
-            handleDownload={handleDownload}
             handleLocalizedDownload={handleLocalizedDownload}
           />
         </FileConvertBottonBox>

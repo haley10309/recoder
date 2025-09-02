@@ -5,47 +5,30 @@ import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
 import { useCheckTemplate } from "./hooks/useCheckTemplate";
-import UploadFiles from "./components/UploadFiles";
-import TransFileUpload from "./components/TransFileUpload";
+
 import LocalizationEntriesEditor from "./components/LocalizationEntriesEditor";
+import TransFileUpload from "./components/TransFileUpload";
 import CheckTemplate from "./components/CheckTemplate";
 
 const TranslationTemplatesScreen = () => {
   const {
-      ticketNum,
-      setTicketNum,
-      ticketUrl,
-      setTicketUrl,
-      saveType,
-      isTemplateCreated,
-      localizationEntries,
-      setLocalizationEntries,
-      setDeleteIds,
-      originalHtmlFile,
-      setOriginalHtmlFile,
-      addNonAssetTextArea,
-      removeNonAssetTextArea,
-      addAssetArea,
-      removeAssetArea,
-      handleAssetAsWasChange,
-      handleAssetToBeChange,
-      handleAssetPptNoChange,
-      countOccurrences,
-      handleSaveTemplate,
-      checkHasInvalidAsWasCount,
-      nonAssetCodeChanges,
-      setNonAssetCodeChanges,
-      setAssetCodeChanges,
-      handleNonAssetPptNoChange,
-      handleNonAssetAswasChange,
-      handleNonAssetTobeChange,
-      checkForExistingTemplate,
-      hasL10nUploadHistory,
-      handleCreateOrUpdateLocalization,
-      canUploadTransFile,
-      englishCopyList,
-      setEnglishCopyList,
-    } = useCheckTemplate();
+    ticketNum,
+    setTicketNum,
+    ticketUrl,
+    setTicketUrl,
+    saveType,
+    isTemplateCreated,
+    localizationEntries,
+    setLocalizationEntries,
+    setDeleteIds,
+    nonAssetCodeChanges,
+    checkForExistingTemplate,
+    hasL10nUploadHistory,
+    handleCreateOrUpdateLocalization,
+    canUploadTransFile,
+    englishCopyList,
+    setEnglishCopyList,
+  } = useCheckTemplate();
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -62,13 +45,6 @@ const TranslationTemplatesScreen = () => {
         setTicketNum={setTicketNum}
         setTicketUrl={setTicketUrl}
         onClick={() => checkForExistingTemplate("edit-localization-entries")}
-      />
-      <Gap gap={50} />
-
-      <TitleLabel text="📤 파일 업로드(선택)" />
-      <Gap gap={15} />
-      <UploadFiles
-        setOriginalHtmlFile={setOriginalHtmlFile} 
       />
       <Gap gap={50} />
 

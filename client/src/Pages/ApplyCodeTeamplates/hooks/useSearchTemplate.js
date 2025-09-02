@@ -152,7 +152,6 @@ export const useSearchTemplate = () => {
     handleNonAssetPptNoChange,
     filterTextareas,
     filter,
-    filterTobe,
     templateId,
     // handleLocalizedToBeCodeChange,
     // removeNonAssetTextArea,

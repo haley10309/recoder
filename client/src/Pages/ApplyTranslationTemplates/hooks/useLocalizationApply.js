@@ -1,5 +1,6 @@
-import { fetchLocalizationList } from "@/apis/apis";
 import { useState } from "react";
+
+import { fetchLocalizationList } from "@/apis/apis";
 
 export function useLocalizationApply({
   tobeFileContent,
@@ -13,33 +14,6 @@ export function useLocalizationApply({
   const [localizedFileName, setLocalizedFileName] = useState("");
   const [isLocalizationApplied, setIsLocalizationApplied] = useState(false);
   const [localizationStatus, setLocalizationStatus] = useState("");
-
-  /**
-   * 템플릿 HTML에서 블록별로 영어 텍스트를 찾아서 국가 번역본으로 치환하는 함수
-   */
-  // const applyLocalizedTemplateBlocks = (
-  //   originalTobeContext, // tobe에서 uk->sitecdoe 로 변환된 코드블록
-  //   _translationMap, // key: english copy, value: country copy
-  // ) => {
-  //   let newTobeContext = originalTobeContext;
-  //   let blockDoc = new DOMParser().parseFromString(
-  //     newTobeContext,
-  //     "text/html"
-  //   ); // blockDoc : 블록 안 텍스트 비교를 위해 임시로 만든 DOM.
-  //   let blockText = blockDoc.documentElement.textContent?.trim();
-
-
-  //   Object.entries(_translationMap).forEach(([engCopy, localCopy]) => {
-  //     const cleanedEng = engCopy.trim().replace(/\s+/g, " ");
-  //     const cleanedBlockText = blockText?.replace(/\s+/g, " ");
-  //     if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
-  //       const regex = new RegExp(escapeRegExp(engCopy), "g");
-  //       newTobeContext = newTobeContext.replace(regex, localCopy);
-  //     }
-  //   });
-
-  //   return newTobeContext; // localized tobe context
-  // };
 
   /**
    * LocalizationEntry에서 블록별로 영어 텍스트를 찾아서 각 국가 번역본으로 치환하는 함수

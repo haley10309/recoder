@@ -7,7 +7,6 @@ import Gap from "@/Components/Common/Gap";
 
 import { useSearchTemplate } from "./hooks/useSearchTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
-import { useTranslationUpload } from "./hooks/useTranslationUpload";
 
 import FileConvert from "./components/FileConvert";
 import CheckTemplate from "./components/CheckTemplate";
@@ -45,16 +44,6 @@ const ApplyTranslationTemplatesScreen = () => {
     handleBackupFileUpload,
   } = useFileUpload();
   
-    // 번역덱 업로드 훅
-    const {
-      translationMap,
-      txtUploadStatus,
-      txtFileName,
-      handleTranslationTxtUpload,
-    } = useTranslationUpload(countryCode);
-
-  const copyList = Object.values(translationMap);
-
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
       <Gap gap={15} />

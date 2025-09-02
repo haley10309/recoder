@@ -29,7 +29,6 @@ const ApplyCodeTemplatesScreen = () => {
     handleNonAssetPptNoChange,
     filterTextareas,
     filter,
-    filterTobe,
     templateId,
   } = useSearchTemplate();
 
