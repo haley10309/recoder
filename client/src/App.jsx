@@ -1,22 +1,24 @@
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import * as jwtDecodeLib from "jwt-decode";
+import { useSetRecoilState } from "recoil";
+
+import LeftNavBar from "@Components/Nav/LeftNavBar";
+import Footer from "@Components/Nav/Footer";
+import RequireAuth from "@/Components/Common/RequireAuth";
 
 import MainScreen from "@/Pages/MainScreen";
 import CodeTemplatesScreen from "@/Pages/CodeTemplates/CodeTemplatesScreen";
 import ApplyCodeTemplatesScreen from "@/Pages/ApplyCodeTeamplates/ApplyCodeTemplatesScreen";
+import TranslationTemplatesScreen from "@/Pages/TranslationTemplates/TranslationTemplatesScreen";
+import ApplyTranslationTemplatesScreen from "@/Pages/ApplyTranslationTemplates/ApplyTranslationTemplatesScreen";
 import QaScreen from "@/Pages/Qa/QaScreen";
-import Footer from "@Components/Nav/Footer";
 import GuideScreen from "@/Pages/Guide/GuideScreen";
+import LoginScreen from "@/Pages/Login/LoginScreen";
+import RegisterScreen from "@/Pages/Register/RegisterScreen";
+
+import { nameEnState } from "@/recoil/atoms/state";
 import "./style/global.css";
-import LeftNavBar from "@Components/Nav/LeftNavBar";
-import TranslationTemplatesScreen from "./Pages/TranslationTemplates/TranslationTemplatesScreen";
-import LoginScreen from "./Pages/Login/LoginScreen";
-import RequireAuth from "./Pages/RequireAuth";
-import RegisterScreen from "./Pages/Register/RegisterScreen";
-import { useSetRecoilState } from "recoil";
-import { nameEnState } from "./recoil/atoms/state";
-import ApplyTranslationTemplatesScreen from "./Pages/ApplyTranslationTemplates/ApplyTranslationTemplatesScreen";
 
 function App() {
   const setNameEn = useSetRecoilState(nameEnState);
