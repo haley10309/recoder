@@ -6,22 +6,15 @@ const PreviewPanel = ({
   downloadedFileName,
   uploadProgress,
   uploadStatus,
-  localizationStatus,
   isExecuted,
-  isLocalizationApplied,
   handleDownload,
-  handleLocalizedDownload,
 }) => {
   const getStatusText = () => {
     if (uploadStatus === "success") {
       return "코드변환이 완료되어 파일이 생성되었습니다!";
     } else if (uploadStatus === "fail") {
       return "파일 생성 실패";
-    } else if (localizationStatus === "success") {
-      return "로컬라이제이션 완료!";
-    } else if (localizationStatus === "fail") {
-      return "로컬라이제이션 실패";
-    }
+    } 
     return null;
   };
 
@@ -35,11 +28,9 @@ const PreviewPanel = ({
             <ProgressBar>
               <ProgressFill $progress={uploadProgress} />
             </ProgressBar>
-            {(uploadStatus || localizationStatus) && (
+            {uploadStatus && (
               <UploadStatus
-                $success={
-                  uploadStatus === "success" || localizationStatus === "success"
-                }
+                $success={uploadStatus === "success"}
               >
                 {getStatusText()}
               </UploadStatus>
@@ -52,12 +43,6 @@ const PreviewPanel = ({
             코드 변환 다운로드
           </DownloadButton>
         )}
-
-        {/* {isLocalizationApplied && (
-          <LocalizationDownloadButton onClick={handleLocalizedDownload}>
-            로컬라이제이션 적용본 다운로드
-          </LocalizationDownloadButton>
-        )} */}
       </PreviewCard>
     </PreviewContainer>
   );

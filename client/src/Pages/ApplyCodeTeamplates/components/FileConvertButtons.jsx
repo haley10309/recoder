@@ -6,8 +6,6 @@ const FileConvertButtons = ({
   fileName,
   isProcessing,
   handleConvertByCountryCode,
-  isEnglishCountry,
-  handleApplyLocalization,
 }) => {
   return (
     <ButtonBox>
@@ -18,17 +16,6 @@ const FileConvertButtons = ({
       >
         {isProcessing ? "코드 변환 중.." : `/uk/ -> /${countryCode.toLowerCase()}/ 변환`}
       </ConvertButton>
-
-      {/* {isEnglishCountry === false && (
-        <ConvertButton
-          $bgColor="black"
-          onClick={handleApplyLocalization}
-          disabled={!fileName}
-          $active={!!fileName}
-        >
-          로컬라이제이션 적용
-        </ConvertButton>
-      )} */}
     </ButtonBox>
   );
 };

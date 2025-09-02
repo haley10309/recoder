@@ -7,10 +7,6 @@ const FileUploadSection = ({
   fileName,
   htmlUploadStatus,
   handleBackupFileUpload,
-  isEnglishCountry,
-  txtUploadStatus,
-  txtFileName,
-  handleTranslationTxtUpload,
   countryCode,
 }) => {
 
@@ -47,38 +43,6 @@ const FileUploadSection = ({
               </FileDropLabel>
             )}
           </div>
-
-          {/* 번역덱 업로드 */}
-          {/* {isEnglishCountry === false && (
-            <div>
-              {txtUploadStatus ? (
-                <PreviewHeader style={{ marginTop: "0.75rem" }}>
-                  <img src={HtmlFileIcon} alt="TXT Icon" />
-                  <div id="preview-text">
-                    <span>{txtFileName}</span>
-                    <ProgressBar>
-                      <ProgressFill $progress={100} />
-                    </ProgressBar>
-                    <UploadStatus $success={txtUploadStatus === "success"}>
-                      {
-                        txtUploadStatus === "success"
-                          ? "✅ 번역덱 TXT 업로드 성공!"
-                          : "❌ 번역덱 TXT 업로드 실패"
-                      }
-                    </UploadStatus>
-                  </div>
-                </PreviewHeader>
-              ) : (
-                <FileDropLabel htmlFor="dropzone-txt">
-                  <FileDropInner>
-                    <img src={FileUploadIcon} alt="Upload" />
-                    <p>번역덱 TXT 파일을 업로드 해주세요.</p>
-                  </FileDropInner>
-                  <input id="dropzone-txt" type="file" accept=".txt" onChange={handleTranslationTxtUpload} hidden />
-                </FileDropLabel>
-              )}
-            </div>
-          )} */}
         </ConvertContainer>
       </ConvertSection>
     </>

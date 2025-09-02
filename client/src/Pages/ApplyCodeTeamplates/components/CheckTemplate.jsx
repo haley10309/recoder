@@ -16,8 +16,6 @@ const CheckTemplate = ({
   handleSearchCountryTemplate,
   isEnglishCountry,
   templateId,
-  templateByCountryId,
-  handleDeleteCountryTemplate,
 }) => {
   const [loading, setLoading] = useState(true);
   const [templatesData, setTemplatesData] = useState([]);

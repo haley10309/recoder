@@ -12,23 +12,16 @@ const BasicTextarea = ({
   toBeCode,
   setToBeCode,
   localizedToBeCode,
-  setLocalizedToBeCode,
   isApplied,
-  checked,
-  onCheckedChange,
   filter,
   countryCode,
   matchedPart,
   asWasOccurrenceCount,
-  toBeOccurrenceCount,
   errorState,
   isEnglishCountry,
   hasOriginalFile,
   handleNonAssetPptNoChange,
-  removeNonAssetTextArea,
-  copyList,
 }) => {
-  const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
   const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
   const transformedAsWasCode = asWasCode?.replace(
     /\/uk\//g,

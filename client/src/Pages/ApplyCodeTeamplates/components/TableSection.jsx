@@ -7,15 +7,10 @@ const TableSection = ({
   countryCode,
   handleAsWasCodeChange,
   handleToBeCodeChange,
-  handleLocalizedToBeCodeChange,
-  handleCheckedChange,
   filter,
-  filterTobe,
   isEnglishCountry,
   hasOriginalFile,
   handleNonAssetPptNoChange,
-  removeNonAssetTextArea,
-  copyList,
 }) => {
   return (
     <TableWrapper>
@@ -29,22 +24,6 @@ const TableSection = ({
         <HeaderCell width={"40%"}>
           TO-BE Code
         </HeaderCell>
-
-        {/* {!isEnglishCountry && (
-          <>
-            <HeaderCell width={"13%"}>
-              PPT NO.
-            </HeaderCell>
-            <HeaderCell width={"25%"}>
-              AS-WAS Code
-            </HeaderCell>
-            <HeaderCell width={"27%"}>
-              TO-BE Code
-            </HeaderCell>
-            <HeaderCell width="28%">Localized TO-BE Code</HeaderCell>
-          </>
-        )} */}
-        
       </TableHeader>
 
       {filteredTextareas.map((textarea, index) => {
@@ -62,25 +41,15 @@ const TableSection = ({
             toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`)}
             setToBeCode={(value) => handleToBeCodeChange(index, value)}
             localizedToBeCode={textarea.localizedToBeCode}
-            setLocalizedToBeCode={(value) =>
-              handleLocalizedToBeCodeChange(index, value)
-            }
-            handleNonAssetPptNoChange={(value) => handleNonAssetPptNoChange(index, value)}
-            changed={{ index, changed: textarea.changed }}
             isApplied={textarea.isApplied}
-            onCheckedChange={() => handleCheckedChange(index)}
-            checked={textarea.checked}
             filter={filter}
-            filterTobe={filterTobe}
             countryCode={countryCode}
             matchedPart={textarea.matchedPart}
             asWasOccurrenceCount={textarea.asWasOccurrenceCount}
-            toBeOccurrenceCount={textarea.toBeOccurrenceCount}
             errorState={textarea.errorState}
             isEnglishCountry={isEnglishCountry}
             hasOriginalFile={hasOriginalFile}
-            removeNonAssetTextArea={() => removeNonAssetTextArea(index)}
-            copyList={copyList}
+            handleNonAssetPptNoChange={(value) => handleNonAssetPptNoChange(index, value)}
           />
         );
       })}
