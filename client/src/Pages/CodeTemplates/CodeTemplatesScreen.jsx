@@ -23,18 +23,12 @@ const CodeTemplatesScreen = () => {
       setOriginalHtmlFile,
       addNonAssetTextArea,
       removeNonAssetTextArea,
-      addAssetArea,
-      removeAssetArea,
-      handleAssetAsWasChange,
-      handleAssetToBeChange,
-      handleAssetPptNoChange,
       countOccurrences,
       handleSaveTemplate,
       checkHasInvalidAsWasCount,
-      assetCodeChanges,
       nonAssetCodeChanges,
-      setNonAssetCodeChanges,
       setAssetCodeChanges,
+      setNonAssetCodeChanges,
       handleNonAssetPptNoChange,
       handleNonAssetAswasChange,
       handleNonAssetTobeChange,
@@ -74,22 +68,22 @@ const CodeTemplatesScreen = () => {
       <CodeChangesEditor
         checkOnlyInvalidCount={false}
         saveType={saveType}
-        assetCodeChanges={assetCodeChanges}
-        addAssetArea={addAssetArea}
-        removeAssetArea={removeAssetArea}
         addNonAssetTextArea={addNonAssetTextArea}
         removeNonAssetTextArea={removeNonAssetTextArea}
         originalHtmlFile={originalHtmlFile}
         countOccurrences={countOccurrences}
-        handleAssetPptNoChange={handleAssetPptNoChange}
-        handleAssetAsWasChange={handleAssetAsWasChange}
-        handleAssetToBeChange={handleAssetToBeChange}
         handleSaveTemplate={handleSaveTemplate}
         checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
         nonAssetCodeChanges={nonAssetCodeChanges}
         handleNonAssetPptNoChange={handleNonAssetPptNoChange}
         handleNonAssetAswasChange={handleNonAssetAswasChange}
         handleNonAssetTobeChange={handleNonAssetTobeChange}
+        // assetCodeChanges={assetCodeChanges}
+        // addAssetArea={addAssetArea}
+        // removeAssetArea={removeAssetArea}
+        // handleAssetPptNoChange={handleAssetPptNoChange}
+        // handleAssetAsWasChange={handleAssetAsWasChange}
+        // handleAssetToBeChange={handleAssetToBeChange}
       />
     </div>
   );
