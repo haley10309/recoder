@@ -84,9 +84,9 @@ const CheckTemplate = ({
       <SiteCode
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}
-        handleSearchCountryTemplate={handleSearchCountryTemplate}
         isEnglishCountry={isEnglishCountry}
         isDisabled={!ticketNum || !ticketUrl}
+        handleGetTemplate={handleSearchCountryTemplate}
       />
 
       <Gap gap={30} />

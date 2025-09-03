@@ -10,10 +10,12 @@ const SiteCode = ({
   countryCode,
   handleCountryChange,
   isEnglishCountry,
+  isDisabled,
+  handleGetTemplate,
 }) => {
 
   return (
-    <Wrapper>
+    <Wrapper style={{ pointerEvents: isDisabled ? "none" : undefined, opacity: isDisabled ? 0.5 : 1 }}>
       <InputTitle>Site Code</InputTitle>
       <Gap gap={5} />
       <InputGrid>
@@ -30,6 +32,15 @@ const SiteCode = ({
           }
         </div>
       </InputGrid>
+
+      <Gap gap={20} />
+
+      <button
+        className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px]"
+        onClick={handleGetTemplate}
+      >
+        템플릿 불러오기
+      </button>
     </Wrapper>
   );
 };
