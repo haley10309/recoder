@@ -9,12 +9,13 @@ export default function TransFileUpload({
   hasL10nUploadHistory,
   nonAssetCodeChanges,
   setEnglishCopyList,
+  localizationEntries,
   setLocalizationEntries,
 }) {
   const transInputRef = useRef(null);
   const [transFile, setTransFile] = useState(null);
 
-  const canUploadTransFile = isTemplateCreated && !hasL10nUploadHistory;
+  const canUploadTransFile = isTemplateCreated;
 
   function formatFileSize(size) {
     if (size < 1024) return `${size} B`;
@@ -35,15 +36,17 @@ export default function TransFileUpload({
       const englishCopyList = res.data.englishCopyList;
       setEnglishCopyList(englishCopyList);
 
-      // 2. localizationEntries 업데이트
-      if (englishCopyList.length > 0) {
-        // 이미 존재하는 nonAssetCodeChanges에서 번역이 필요한 item만 뽑아내기
-        const items = nonAssetCodeChanges
-                        .filter(({ tobe_code }) => englishCopyList.some((copyItem) => tobe_code.includes(copyItem)))
-                        .map((codeChangeItem) => ({ code_context: codeChangeItem.tobe_code }));
-                        // TODO: codeChangeItem의 id를 넣으면 안되고... 기존에 있던 localizationEntries의걸 넣던가 해야됨. 기존에 있는 경우와 없는 경우 모두 생각해야됨.
-        
-        setLocalizationEntries(items)
+      if (localizationEntries.length === 0) {
+        // 2. localizationEntries 업데이트 (localizationEntries 없을 때만)
+        if (englishCopyList.length > 0) {
+          // 이미 존재하는 nonAssetCodeChanges에서 번역이 필요한 item만 뽑아내기
+          const items = nonAssetCodeChanges
+                          .filter(({ tobe_code }) => englishCopyList.some((copyItem) => tobe_code.includes(copyItem)))
+                          .map((codeChangeItem) => ({ code_context: codeChangeItem.tobe_code }));
+                          // TODO: codeChangeItem의 id를 넣으면 안되고... 기존에 있던 localizationEntries의걸 넣던가 해야됨. 기존에 있는 경우와 없는 경우 모두 생각해야됨.
+          
+          setLocalizationEntries(items)
+        }
       }
     } catch (error) {
       console.error("Error uploading translation file:", error);
@@ -64,7 +67,7 @@ export default function TransFileUpload({
       {!isTemplateCreated ? (
         <p className="font-bold text-[#ff0019] text-[14px] mb-[15px]">⚠️ 템플릿을 불러와야 번역 파일을 업로드할 수 있어요.</p>
       ) : hasL10nUploadHistory ? (
-        <p className="font-bold text-[#ff0019] text-[14px] mb-[15px]">⚠️ 이미 업로드된 LocalizationEntries가 있어요. 아래 단계에서 이어서 작업하거나, 새로 작업하고 싶다면 기존 LocalizationEntries를 모두 삭제해야 번역 파일을 업로드할 수 있어요.</p>
+        <p className="font-bold text-[#ff8112] text-[14px] mb-[15px]">⚠️ 이미 업로드된 LocalizationEntries가 있어요. 번역 파일을 업로드해도 localizationEntries의 변화는 없어요.</p>
       ) : (
         <p className="font-bold text-[#00c93c] text-[14px] mb-[15px]">✅ 번역 파일을 업로드할 수 있어요!</p>
       )}

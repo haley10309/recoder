@@ -55,6 +55,7 @@ const TranslationTemplatesScreen = () => {
         hasL10nUploadHistory={hasL10nUploadHistory}
         nonAssetCodeChanges={nonAssetCodeChanges}
         setEnglishCopyList={setEnglishCopyList}
+        localizationEntries={localizationEntries}
         setLocalizationEntries={setLocalizationEntries}
       />
       <Gap gap={50} />
