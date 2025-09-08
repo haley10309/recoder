@@ -14,30 +14,30 @@ router.get("/get-templates", cors(), getTemplatesController.getTemplates);
 router.post("/check-template-exsist", cors(), checkTemplateController.checkTemplateData);
 router.post("/get-template-details", cors(), getTemplateDetailsController.getTemplateDetailsData);
 
-/** 1) Manage Templates */
-const createTemplateController = require("../controllers/manageTemplates/createTemplateController");
-const updateTemplateController = require("../controllers/manageTemplates/updateTemplateController");
+/** 1) Code Templates */
+const createTemplateController = require("../controllers/codeTemplates/createTemplateController");
+const updateTemplateController = require("../controllers/codeTemplates/updateTemplateController");
 const guideUploadController = require("../controllers/guide/guideUploadController");
 router.post("/create-template", upload.single('file'), cors(), createTemplateController.createTemplateData);
 router.post("/update-template", multer().none(), cors(), updateTemplateController.updateTemplateData);
 router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadController.guideUploadData);
 
-/** 2) Manage Localization Entries */
-const localEnglishCopyController = require("../controllers/manageLocalizationEntries/localEnglishCopyController"); 
-const localizationController = require("../controllers/manageLocalizationEntries/localTemplateController");
-router.post("/extract-english-copy-list", upload.single('file'), cors(), localEnglishCopyController.extractEnglishCopyList);
-router.put("/update-localization-entries",cors(), localizationController.updateLocalizationEntries);
-
-/** 3) Template Mapping */
-const processFileController = require("../controllers/templateMapping/processFileController");
+/** 2) Apply Code Templates */
+const processFileController = require("../controllers/applyCodeTemplates/processFileController");
 router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), processFileController.convertAsWasToToBeCodes);
-const localUploadController = require("../controllers/templateMapping/localUploadController");
+const localUploadController = require("../controllers/applyCodeTemplates/localUploadController");
 router.post("/upload-translation", upload.single('file'), cors(), localUploadController.uploadTranslation);
 const getCountryTemplateDetailsController = require("../controllers/common/getCountryTemplateDetailsController");
 router.post("/get-country-template-details", cors(), getCountryTemplateDetailsController.getCountryTemplateDetailsData);
 const templatesByCountryController = require("../controllers/common/templatesByCountryController");
 router.put("/templates-by-country", multer().none(), cors(), templatesByCountryController.putTemplatesByCountry);
 router.delete("/templates-by-country", cors(), templatesByCountryController.deleteTemplatesByCountry);
+
+/** 3) Translation Templates */
+const localEnglishCopyController = require("../controllers/translationTemplates/localEnglishCopyController"); 
+const localizationController = require("../controllers/translationTemplates/localTemplateController");
+router.post("/extract-english-copy-list", upload.single('file'), cors(), localEnglishCopyController.extractEnglishCopyList);
+router.put("/update-localization-entries",cors(), localizationController.updateLocalizationEntries);
 
 /** (Deprecated) */
 // const guideUploadControllerV2 = require("../controllers/guide/guideUploadControllerV2");

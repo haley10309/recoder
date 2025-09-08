@@ -5,12 +5,7 @@
       "@/*": ["src/*"],
       "@Components/*": ["src/Components/*"],
       "@Pages/*": ["src/Pages/*"],
-      "@ManageTemplates/*": ["src/Pages/ManageTemplates/*"],
       "@public/*": ["public/*"],
-      "@Guide/*": ["src/Pages/Guide/*"],
-      "@Qa_Page/*": ["src/Pages/Qa_Page/*"],
-      "@TemplateMapping/*": ["src/Pages/TemplateMapping/*"],
-      "@ManageLocalizationEntries/*": ["src/Pages/ManageLocalizationEntries/*"],
     }
   },
   "include": ["src"]

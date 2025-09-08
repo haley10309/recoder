@@ -4,15 +4,19 @@ Re-coder는 txt 가이드 파일에서 데이터를 추출하고 템플릿을 �
 **✅주의: 반드시 상신하신 목적으로만 사용부탁드립니다. 사용상 부주의로 민감/주요자료가 유출되지 않도록 주의바랍니다. **
 
 ## ⚙️ 기능
-**Manage Template**
+**Code Templates**
 
 - TBW
 
-**Manage Localization Entries**
+**Apply Code Templates**
 
 - TBW
 
-**Template Mapping**
+**Translation Templates**
+
+- TBW
+
+**Apply Translation Templates**
 
 - TBW
 

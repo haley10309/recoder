@@ -1,22 +1,24 @@
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import * as jwtDecodeLib from "jwt-decode";
-
-import Main from "@Pages/Main";
-import ManageTemplates from "@/Pages/ManageTemplates/ManageTemplates";
-import TemplateMapping from "@/Pages/TemplateMapping/TemplateMapping";
-import Qa_page from "@Pages/Qa_Page/Qa_page";
-import Footer from "@Components/Nav/Footer";
-import Guide from "@Pages/Guide/Guide";
-import "./style/global.css";
-import LeftNavBar from "@Components/Nav/LeftNavBar";
-import ManageLocalizationEntries from "./Pages/ManageLocalizationEntries/ManageLocalizationEntries";
-import Login from "./Pages/Login/Login";
-import RequireAuth from "./Pages/RequireAuth";
-import Register from "./Pages/Register/Register";
 import { useSetRecoilState } from "recoil";
-import { nameEnState } from "./recoil/atoms/state";
-import TemplateLocalization from "./Pages/TemplateLocalization/TemplateLocalization";
+
+import LeftNavBar from "@Components/Nav/LeftNavBar";
+import Footer from "@Components/Nav/Footer";
+import RequireAuth from "@/Components/Common/RequireAuth";
+
+import MainScreen from "@/Pages/MainScreen";
+import CodeTemplatesScreen from "@/Pages/CodeTemplates/CodeTemplatesScreen";
+import ApplyCodeTemplatesScreen from "@/Pages/ApplyCodeTeamplates/ApplyCodeTemplatesScreen";
+import TranslationTemplatesScreen from "@/Pages/TranslationTemplates/TranslationTemplatesScreen";
+import ApplyTranslationTemplatesScreen from "@/Pages/ApplyTranslationTemplates/ApplyTranslationTemplatesScreen";
+import QaScreen from "@/Pages/Qa/QaScreen";
+import GuideScreen from "@/Pages/Guide/GuideScreen";
+import LoginScreen from "@/Pages/Login/LoginScreen";
+import RegisterScreen from "@/Pages/Register/RegisterScreen";
+
+import { nameEnState } from "@/recoil/atoms/state";
+import "./style/global.css";
 
 function App() {
   const setNameEn = useSetRecoilState(nameEnState);
@@ -41,45 +43,45 @@ function App() {
           </div>
           <div className="w-[82%]">
             <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<LoginScreen />} />
+              <Route path="/register" element={<RegisterScreen />} />
               <Route
                 path="/"
                 element={
                   <RequireAuth>
-                    <Main />
+                    <MainScreen />
                   </RequireAuth>
                 }
               />
               <Route
-                path="/templates/form"
+                path="/code-templates"
                 element={
                   <RequireAuth>
-                    <ManageTemplates />
+                    <CodeTemplatesScreen />
                   </RequireAuth>
                 }
               />
               <Route
-                path="/localization-entries/form"
+                path="/code-templates/apply"
                 element={
                   <RequireAuth>
-                    <ManageLocalizationEntries />
+                    <ApplyCodeTemplatesScreen />
                   </RequireAuth>
                 }
               />
               <Route
-                path="/templates/mapping"
+                path="/translation-templates"
                 element={
                   <RequireAuth>
-                    <TemplateMapping />
+                    <TranslationTemplatesScreen />
                   </RequireAuth>
                 }
               />
               <Route
-                path="/templates/localization"
+                path="/translation-templates/apply"
                 element={
                   <RequireAuth>
-                    <TemplateLocalization />
+                    <ApplyTranslationTemplatesScreen />
                   </RequireAuth>
                 }
               />
@@ -87,14 +89,14 @@ function App() {
                 path="/qa-check"
                 element={
                   <RequireAuth>
-                    <Qa_page />
+                    <QaScreen />
                   </RequireAuth>
                 }
               />
               <Route
                 path="/guide"
                 element={
-                  <Guide />
+                  <GuideScreen />
                 }
               />
             </Routes>

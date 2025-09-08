@@ -1,0 +1,68 @@
+const db = require("../../config/db");
+
+exports.updateLocalizationEntries = (req, res) => {
+  const { ticket_num, ticket_url, localization_entries = [], delete_ids = [] } = req.body; // localization_entries, delete_ids 기본값 []로 안전하게 설정
+
+  if (!ticket_num || !ticket_url) {
+    return res.status(400).json({ success: false, message: "ticket_num and ticket_url are required." });
+  }
+
+  const findTemplateQuery = `
+    SELECT id
+    FROM Templates
+    WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL
+  `;
+
+  db.query(findTemplateQuery, [ticket_num, ticket_url], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(404).json({ success: false, message: "No such template." });
+    }
+
+    const templateId = results[0].id;
+    const insertItems = localization_entries.filter(item => !item.id);
+    const updateItems = localization_entries.filter(item => !!item.id);
+
+    const insertValues = insertItems.map(item => [item.code_context, templateId]);
+    const insertQuery = `INSERT INTO TemplateLocalizationEntries (code_context, template_id) VALUES ?`;
+    const updateQuery = `UPDATE TemplateLocalizationEntries SET code_context = ? WHERE id = ?`;
+    const deleteQuery = `UPDATE TemplateLocalizationEntries SET deleted_at = NOW() WHERE id = ?`;
+
+    const insertPromise = insertItems.length > 0
+      ? new Promise((resolve, reject) => {
+          db.query(insertQuery, [insertValues], (err) => {
+            if (err) return reject(err);
+            resolve();
+          });
+        })
+      : Promise.resolve(0);
+    const updatePromises = updateItems.map(item => {
+      return new Promise((resolve, reject) => {
+        db.query(updateQuery, [item.code_context, item.id], err => {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
+    });
+    const deletePromises = delete_ids.map(deleteId => {
+      return new Promise((resolve, reject) => {
+        db.query(deleteQuery, [deleteId], (err) => {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
+    });
+
+    Promise.all([
+      insertPromise,
+      ...updatePromises,
+      ...deletePromises,
+    ])
+      .then(() => {
+        res.json();
+      })
+      .catch(err => {
+        console.error("Error processing localization:", err);
+        res.status(500).json({ success: false, message: "DB error while processing localization." });
+      });
+  });
+};

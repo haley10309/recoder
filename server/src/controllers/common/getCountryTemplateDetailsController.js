@@ -30,7 +30,7 @@ exports.getCountryTemplateDetailsData = async (req, res) => {
   if (templatesByCountry.length === 0) {
     // 국가별 템플릿 아직 없으면, templateCodeChanges 반환
     const [templateCodeChanges] = await db.execute(
-      // TemplateCodeChanges의 id는 Template Mapping 페이지에서 필요없음
+      // TemplateCodeChanges의 id는 Apply Code Templates 페이지에서 필요없음
       `SELECT ppt_no, aswas_code, tobe_code FROM TemplateCodeChanges WHERE template_id = ? AND deleted_at IS NULL`,
       [templateId]
     );
