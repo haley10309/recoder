@@ -15,6 +15,31 @@ export function useLocalizationApply({
   const [isLocalizationApplied, setIsLocalizationApplied] = useState(false);
   const [localizationStatus, setLocalizationStatus] = useState("");
 
+  function getTextWithAttributes(node) {
+    let texts = [];
+
+    // 1. 현재 노드의 텍스트
+    if (node.textContent?.trim()) {
+      texts.push(node.textContent.trim());
+    }
+
+    // 2. 현재 노드의 속성값들
+    if (node.attributes) {
+      for (let attr of node.attributes) {
+        if (attr.value?.trim()) {
+          texts.push(attr.value.trim());
+        }
+      }
+    }
+
+    // 3. 자식 노드 재귀 처리
+    for (let child of node.children || []) {
+      texts.push(getTextWithAttributes(child));
+    }
+
+    return texts.join("\n");
+  }
+
   /**
    * LocalizationEntry에서 블록별로 영어 텍스트를 찾아서 각 국가 번역본으로 치환하는 함수
    */
@@ -32,7 +57,8 @@ export function useLocalizationApply({
         originalBlock,
         "text/html"
       );
-      let blockText = blockDoc.documentElement.textContent?.trim();
+      // let blockText = blockDoc.documentElement.textContent?.trim(); // textContent만
+      let blockText = getTextWithAttributes(blockDoc.documentElement); // textContent+속성값까지
 
       Object.entries(_translationMap).forEach(([eng, local]) => {
         const cleanedEng = eng.trim().replace(/\s+/g, " ");
