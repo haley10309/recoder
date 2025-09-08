@@ -90,8 +90,8 @@ const LeftNavBar = () => {
           $active={isActive("/translation-templates")}
           onClick={() => handleNavigate("/translation-templates")}
         >
-          <IconImage src={localizationIcon} alt="Translation Block Templates" />
-          <NavButtonText $active={isActive("/translation-templates")}>Translation Block Templates</NavButtonText>
+          <IconImage src={localizationIcon} alt="Translation Templates" />
+          <NavButtonText $active={isActive("/translation-templates")}>Translation Templates</NavButtonText>
         </NavButton>
 
         <NavButton
