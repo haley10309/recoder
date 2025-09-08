@@ -117,21 +117,20 @@ function replaceCode(originalCode, asWasCode, toBeCode) {
   }
 
   // 8. 조건부 개행 처리
-  let prefixNewline = "\n"; // 기본 추가
+  let prefixNewline = "\n"; // prefix 일단 기본으로 줄바꿈 추가
   for (let i = realStartIndex - 1; i >= 0; i--) {
     if (originalCode[i] === "\n") {
-      prefixNewline = ""; // 줄바꿈 이미 있음
+      prefixNewline = ""; // 줄바꿈 이미 있으므로, 줄바꿈 필요없음
       break;
     }
     if (originalCode[i] !== " " && originalCode[i] !== "\t") {
-      // 다른 문자가 나오면 줄바꿈 필요 → prefixNewline 그대로
-      prefixNewline = "";
+      prefixNewline = ""; // 다른 문자가 나오면, 줄바꿈 필요없음
       break;
     }
-    // 공백/탭이면 그냥 계속 올라감
+    // 공백/탭이면 무시하고 for문 계속 돌아감
   }
 
-  let suffixNewline = "\n"; // 기본 추가
+  let suffixNewline = "\n"; // suffix는 기본으로 줄바꿈 추가
 
   let newCode = originalCode.slice(0, realStartIndex) + prefixNewline + toBeCode + suffixNewline + originalCode.slice(sliceEndIndex);
 
