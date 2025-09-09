@@ -1,3 +1,5 @@
+// async/await 사용하여 쿼리 사용 예제 (추후 API 추가 시 사용) 
+
 const initDB = require("../../config/initDB");
 
 exports.getCountryTemplateDetailsData = async (req, res) => {
