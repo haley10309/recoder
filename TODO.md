@@ -22,7 +22,7 @@
 - [ ] 2개 이상 찾아지면, 2개가 다 바뀌는건지 1개만 바뀌는건지.
 back to location 참고. 리코더에서는 1개만 바뀌는데, N개 바뀌도록 수정해야함. / 근데 2개가 다 바뀌는건지를 먼저 알아야되긴 함. -> 덴버에게 항상 문의해야됨.
 - [ ] edit localization entries 페이지에서는  비교를 선택으로.
-- [ ] 코드수정사항: TemplateSetting unique(프론트 상에서 막기)
+- [ ] 코드수정사항: Templates unique(프론트 상에서 막기)
 - [ ] localization 템플릿을 만들 때, 
 -- Zoom
 -- Optical Zoom 3x, Optical Quality Zoom 2x, Digital Zoom up to 30x

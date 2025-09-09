@@ -17,8 +17,6 @@ const CheckTemplate = ({
   handleSearchCountryTemplate,
   isEnglishCountry,
   templateId,
-  templateByCountryId,
-  handleDeleteCountryTemplate,
 }) => {
   const [loading, setLoading] = useState(true);
   const [templatesData, setTemplatesData] = useState([]);
@@ -92,17 +90,10 @@ const CheckTemplate = ({
       <Gap gap={30} />
 
       <div>
-        {/* <div style={{ fontSize: "12px", color: "grey" }}>templateId: {templateId} / templateByCountryId: {templateByCountryId}</div> */}
         <div style={{ fontSize: "12px", color: "grey" }}>templateId: {templateId}</div>
       </div>
 
       <Gap gap={30} />
-
-      {!!(templateByCountryId && countryCode) ? (
-        <button type="button" className="remove_button" onClick={handleDeleteCountryTemplate}>
-          {`${countryCode} 국가 템플릿 삭제`}
-        </button>
-      ) : null}
     </>
   );
 };

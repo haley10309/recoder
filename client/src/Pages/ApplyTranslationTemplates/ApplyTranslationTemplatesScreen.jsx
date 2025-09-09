@@ -31,8 +31,6 @@ const ApplyTranslationTemplatesScreen = () => {
     filter,
     filterTobe,
     templateId,
-    handleDeleteCountryTemplate,
-    templateByCountryId,
   } = useSearchTemplate();
 
   // HTML 파일 업로드 훅
@@ -63,8 +61,6 @@ const ApplyTranslationTemplatesScreen = () => {
         handleSearchCountryTemplate={handleSearchTemplate}
         isEnglishCountry={isEnglishCountry}
         templateId={templateId}
-        templateByCountryId={templateByCountryId}
-        handleDeleteCountryTemplate={handleDeleteCountryTemplate}
       />
       <Gap gap={25} />
 
