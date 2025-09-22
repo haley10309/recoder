@@ -255,7 +255,7 @@ const Textarea = styled.textarea`
     if ($errorState) return "2px solid #ffa600";
     if ($isApplied === "yes") return "2px solid blue";
     if ($isApplied === "no") return "2px solid red";
-    if ($isLocalizedChanged) return "2px solid green";
+    if ($isLocalizedChanged) return "4px solid green";
     return "1px solid #d1d5db";
   }};
 
