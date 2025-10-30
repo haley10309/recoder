@@ -4,7 +4,7 @@ import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
-import { useCheckTemplate } from "./hooks/useCheckTemplate";
+import { useTranslationTemplate } from "./hooks/useTranslationTemplate";
 
 import LocalizationEntriesEditor from "./components/LocalizationEntriesEditor";
 import TransFileUpload from "./components/TransFileUpload";
@@ -28,7 +28,7 @@ const TranslationTemplatesScreen = () => {
     canUploadTransFile,
     englishCopyList,
     setEnglishCopyList,
-  } = useCheckTemplate();
+  } = useTranslationTemplate();
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">

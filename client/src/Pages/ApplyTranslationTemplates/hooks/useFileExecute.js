@@ -62,6 +62,7 @@ export function useFileExecute({
     setTextareas(updatedTextareas);
   };
 
+  // 코드 출현 횟수 확인하기
   const handleConvertByCountryCode = async () => {
     const lowerCaseCode = countryCode?.toLowerCase?.() || "";
 
