@@ -6,7 +6,7 @@ import { nameEnState } from "@/recoil/atoms/state";
 import { isAssetCode } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
 
-export const useCheckTemplate = () => {
+export const useTranslationTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
   const [ticketUrl, setTicketUrl] = useState("");
 
