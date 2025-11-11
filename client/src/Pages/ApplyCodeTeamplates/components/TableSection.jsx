@@ -40,12 +40,12 @@ const TableSection = ({
             setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
             toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`)}
             setToBeCode={(value) => handleToBeCodeChange(index, value)}
-            localizedToBeCode={textarea.localizedToBeCode}
             isApplied={textarea.isApplied}
             filter={filter}
             countryCode={countryCode}
             matchedPart={textarea.matchedPart}
             asWasOccurrenceCount={textarea.asWasOccurrenceCount}
+            toBeOccurrenceCount={textarea.toBeOccurrenceCount}
             errorState={textarea.errorState}
             isEnglishCountry={isEnglishCountry}
             hasOriginalFile={hasOriginalFile}

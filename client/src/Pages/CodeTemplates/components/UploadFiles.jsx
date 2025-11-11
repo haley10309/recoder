@@ -57,7 +57,7 @@ export default function UploadFiles({
         }
       });
 
-      setAssetCodeChanges(assetCodeChanges);
+      // setAssetCodeChanges(assetCodeChanges);
       setNonAssetCodeChanges(nonAssetCodeChanges);
     } catch (error) {
       console.error("Error uploading PPT file:", error);

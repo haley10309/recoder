@@ -3,21 +3,18 @@ import styled from "styled-components";
 
 const FileConvertButtons = ({
   fileName,
-  isProcessing,
-  handleConvertByCountryCode,
   isEnglishCountry,
   handleApplyLocalization,
 }) => {
   return (
     <ButtonBox>
-      <ConvertButton
+      {/* <ConvertButton
         onClick={handleConvertByCountryCode}
         disabled={isProcessing || !fileName}
         $active={!!fileName && !isProcessing}
       >
-        {/* {isProcessing ? "코드 변환 중.." : `/uk/ -> /${countryCode.toLowerCase()}/ 변환`} */}
         {"코드 출현 횟수 확인하기"}
-      </ConvertButton>
+      </ConvertButton> */}
 
       {isEnglishCountry === false && (
         <ConvertButton

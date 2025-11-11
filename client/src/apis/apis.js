@@ -3,13 +3,9 @@ import { BASE_URL } from "@/utils/routePath";
 
 // 실행
 export const convertAsWasToToBeCodes = async ({
-  setUploadProgress,
-  setIsProcessing,
-  handleChangeResults,
-  setChangeResults,
   formData,
-  updatedTextareas,
-  updateTextareasWithResults,
+  setIsProcessing,
+  setUploadProgress,
 }) => {
   try {
     setIsProcessing(true);
@@ -27,11 +23,7 @@ export const convertAsWasToToBeCodes = async ({
 
     const { changeResults, filename, fileContent } = response.data;
 
-    setChangeResults?.(changeResults);
-    updateTextareasWithResults?.(updatedTextareas, changeResults);
-    handleChangeResults?.(changeResults);
-
-    return { fileContent, filename };
+    return { fileContent, filename, changeResults };
   } catch (error) {
     console.error("Error processing file", error);
   } finally {

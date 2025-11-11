@@ -21,13 +21,12 @@ const TranslationTemplatesScreen = () => {
     localizationEntries,
     setLocalizationEntries,
     setDeleteIds,
-    nonAssetCodeChanges,
     checkForExistingTemplate,
-    hasL10nUploadHistory,
     handleCreateOrUpdateLocalization,
     canUploadTransFile,
     englishCopyList,
-    setEnglishCopyList,
+    handleTransSubmit,
+    handleDeleteLocalizationEntry,
   } = useTranslationTemplate();
 
   return (
@@ -52,11 +51,7 @@ const TranslationTemplatesScreen = () => {
       <Gap gap={15} />
       <TransFileUpload
         isTemplateCreated={isTemplateCreated}
-        hasL10nUploadHistory={hasL10nUploadHistory}
-        nonAssetCodeChanges={nonAssetCodeChanges}
-        setEnglishCopyList={setEnglishCopyList}
-        localizationEntries={localizationEntries}
-        setLocalizationEntries={setLocalizationEntries}
+        handleTransSubmit={handleTransSubmit}
       />
       <Gap gap={50} />
 
@@ -65,11 +60,12 @@ const TranslationTemplatesScreen = () => {
       <LocalizationEntriesEditor
         saveType={saveType}
         canUploadTransFile={canUploadTransFile}
-        englishCopyList={englishCopyList}
+        highlights={englishCopyList}
         localizationEntries={localizationEntries}
         setLocalizationEntries={setLocalizationEntries}
         handleCreateOrUpdateLocalization={handleCreateOrUpdateLocalization}
         setDeleteIds={setDeleteIds}
+        handleDeleteLocalizationEntry={handleDeleteLocalizationEntry}
       />
     </div>
   );

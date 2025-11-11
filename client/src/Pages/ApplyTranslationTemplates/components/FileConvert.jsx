@@ -33,18 +33,14 @@ const FileConvert = ({
 
   // 코드 실행 훅
   const {
-    isProcessing,
-    uploadStatus,
-    downloadedFileContent,
-    downloadedFileName,
-    handleConvertByCountryCode,
+    // uploadStatus,
   } = useFileExecute({
-    originalFile,
-    fileContent: tobeFileContent,
-    textareas,
-    setTextareas,
-    countryCode,
-    ticketUrl,
+    // originalFile,
+    // fileContent: tobeFileContent,
+    // textareas,
+    // setTextareas,
+    // countryCode,
+    // ticketUrl,
   });
 
   // 로컬라이제이션 적용 훅
@@ -64,31 +60,31 @@ const FileConvert = ({
   });
 
   // 코드 변환 다운로드
-  const handleDownload = () => {
-    const hasUnapplied = textareas.some(
-      (textarea) => textarea.isApplied === "no"
-    );
+  // const handleDownload = () => {
+  //   const hasUnapplied = textareas.some(
+  //     (textarea) => textarea.isApplied === "no"
+  //   );
 
-    if (hasUnapplied) {
-      const proceed = window.confirm(
-        "🚫 변환이 적용되지 않은 항목이 있습니다.\n그래도 다운로드 하시겠습니까?"
-      );
-      if (!proceed) return;
-    }
+  //   if (hasUnapplied) {
+  //     const proceed = window.confirm(
+  //       "🚫 변환이 적용되지 않은 항목이 있습니다.\n그래도 다운로드 하시겠습니까?"
+  //     );
+  //     if (!proceed) return;
+  //   }
 
-    if (downloadedFileContent) {
-      const blob = new Blob([downloadedFileContent], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = downloadedFileName || "downloaded_file.html";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } else {
-      alert("변환된 파일이 없습니다. 먼저 코드 변환을 진행해주세요.");
-    }
-  };
+  //   if (downloadedFileContent) {
+  //     const blob = new Blob([downloadedFileContent], { type: "text/html" });
+  //     const url = URL.createObjectURL(blob);
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     a.download = downloadedFileName || "downloaded_file.html";
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     document.body.removeChild(a);
+  //   } else {
+  //     alert("변환된 파일이 없습니다. 먼저 코드 변환을 진행해주세요.");
+  //   }
+  // };
 
   // 로컬라이제이션 다운로드
   const handleLocalizedDownload = () => {
@@ -134,8 +130,6 @@ const FileConvert = ({
         <FileConvertBottonBox>
           <FileConvertButtons
             fileName={fileName}
-            isProcessing={isProcessing}
-            handleConvertByCountryCode={handleConvertByCountryCode}
             isEnglishCountry={isEnglishCountry}
             handleApplyLocalization={() => handleApplyLocalization({
               ticketNum,
@@ -145,7 +139,7 @@ const FileConvert = ({
           />
 
           <PreviewPanel
-            uploadStatus={uploadStatus}
+            // uploadStatus={uploadStatus}
             localizationStatus={localizationStatus}
             isLocalizationApplied={isLocalizationApplied}
             handleLocalizedDownload={handleLocalizedDownload}

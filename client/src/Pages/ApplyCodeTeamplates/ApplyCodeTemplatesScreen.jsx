@@ -15,7 +15,7 @@ import TableSection from "./components/TableSection";
 const ApplyCodeTemplatesScreen = () => {
   const {
     countryCode,
-    ticketNum,
+    ticketNum, 
     setTicketNum,
     ticketUrl,
     setTicketUrl,

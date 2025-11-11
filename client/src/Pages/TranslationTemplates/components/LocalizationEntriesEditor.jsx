@@ -6,7 +6,7 @@ import TransBox from "./TransBox";
 const LocalizationEntriesEditor = ({
   saveType,
   canUploadTransFile,
-  englishCopyList,
+  highlights,
   localizationEntries,
   setLocalizationEntries,
   handleCreateOrUpdateLocalization,
@@ -22,7 +22,7 @@ const LocalizationEntriesEditor = ({
             indexText={`${idx + 1} of ${localizationEntries.length}`}
             itemId={item.id}
             codeContext={item.code_context}
-            highlights={englishCopyList}
+            highlights={highlights}
             onChange={(newTxt) => {
               setLocalizationEntries((prev) => {
                 const a = [...prev];
@@ -30,17 +30,14 @@ const LocalizationEntriesEditor = ({
                 return a;
               });
             }}
-            onDelete={() => {
-              if (item.id) setDeleteIds((prev) => [...prev, item.id]);
-              setLocalizationEntries((prev) => prev.filter((_, i) => i !== idx));
-            }}
+            onDelete={() => handleDeleteLocalizationEntry(item.id, idx)}
           />
         ))}
       </div>
       <div className="flex gap-[15px] save_button_div mt-[50px]">
         <button
           className="plus-button rounded-[10px]"
-          onClick={() => setLocalizationEntries((prev) => [...prev, { code_context: "" }])}
+          onClick={ () => setLocalizationEntries((prev) => [...prev, { code_context: "" }])}
         >
           <AddIcon />
           <span className="ml-2">항목 추가</span>

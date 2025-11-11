@@ -2,17 +2,19 @@ import React from "react";
 import styled from "styled-components";
 
 const PreviewPanel = ({
-  uploadStatus,
+  // uploadStatus,
   localizationStatus,
   isLocalizationApplied,
   handleLocalizedDownload,
 }) => {
   const getStatusText = () => {
-    if (uploadStatus === "success") {
-      return "코드변환이 완료되어 파일이 생성되었습니다!";
-    } else if (uploadStatus === "fail") {
-      return "파일 생성 실패";
-    } else if (localizationStatus === "success") {
+    // if (uploadStatus === "success") {
+    //   return "코드변환이 완료되어 파일이 생성되었습니다!";
+    // } else if (uploadStatus === "fail") {
+    //   return "파일 생성 실패";
+    // }
+    
+    if (localizationStatus === "success") {
       return "로컬라이제이션 완료!";
     } else if (localizationStatus === "fail") {
       return "로컬라이제이션 실패";
@@ -22,6 +24,7 @@ const PreviewPanel = ({
 
   return (
     <PreviewContainer>
+      <div style={{marginRight: 20}}>{getStatusText()}</div>
       <PreviewCard>
         {isLocalizationApplied && (
           <LocalizationDownloadButton onClick={handleLocalizedDownload}>

@@ -19,8 +19,7 @@ export function useFileExecute({
 
   const handleChangeResults = (changeResults) => {
     const updatedTextareas = textareas.map((textarea, index) => {
-      const { changed, matchedPart, updatedToBe } =
-        changeResults.find((result) => result.pairIndex === index) || {};
+      const { changed, matchedPart } = changeResults.find((result) => result.pairIndex === index) || {};
 
       const lowerCaseCode = countryCode?.toLowerCase?.() || "";
 
@@ -33,7 +32,10 @@ export function useFileExecute({
       );
       const toBeOccurrenceCount = countOccurrences(
         downloadedFileContent,
-        updatedToBe || textarea.toBeCode
+        textarea.toBeCode.replace(
+          /\/uk\//g,
+          `/${lowerCaseCode}/`
+        )
       );
 
       const normalizedAsWas = normalizePath(textarea.asWasCode);
@@ -45,9 +47,7 @@ export function useFileExecute({
       return {
         ...textarea,
         pptNo: textarea.pptNo,
-        changed: isFound && actualChanged,
         isApplied: isFound ? (actualChanged ? "yes" : "sameAsBefore") : "no",
-        matchedPart,
         asWasOccurrenceCount,
         toBeOccurrenceCount,
         asWasCode: textarea.asWasCode.replace(
@@ -55,6 +55,8 @@ export function useFileExecute({
           `/${lowerCaseCode}/`
         ),
         toBeCode: textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
+        changed: isFound && actualChanged,
+        matchedPart,
       };
     });
 
@@ -95,20 +97,19 @@ export function useFileExecute({
 
       try {
         const result = await convertAsWasToToBeCodes({
-          setUploadProgress,
-          setIsProcessing,
-          handleChangeResults,
-          setChangeResults: () => {},
           formData,
-          updatedTextareas,
-          updateTextareasWithResults: setTextareas,
+          setIsProcessing,
+          setUploadProgress,
         });
 
         if (result) {
-          const { fileContent, filename } = result;
+          const { fileContent, filename, changeResults } = result;
           setDownloadedFileContent(fileContent);
           setDownloadedFileName(filename);
           setUploadStatus("success");
+
+          setTextareas(updatedTextareas);
+          handleChangeResults(changeResults);
         } else {
           setUploadStatus("fail");
         }

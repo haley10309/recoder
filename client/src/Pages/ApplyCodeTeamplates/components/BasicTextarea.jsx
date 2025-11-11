@@ -11,12 +11,12 @@ const BasicTextarea = ({
   setAsWasCode,
   toBeCode,
   setToBeCode,
-  localizedToBeCode,
   isApplied,
   filter,
   countryCode,
   matchedPart,
   asWasOccurrenceCount,
+  toBeOccurrenceCount,
   errorState,
   isEnglishCountry,
   hasOriginalFile,
@@ -42,9 +42,6 @@ const BasicTextarea = ({
     }
   };
 
-  const isLocalizedChanged =
-    localizedToBeCode && localizedToBeCode !== toBeCode;
-
   const getColor_toBe = () => {
     if (errorState) return "#ffa600";
     if (isApplied === "yes") {
@@ -55,13 +52,7 @@ const BasicTextarea = ({
     if (isApplied === "sameAsBefore") return "rgb(156, 156, 156)";
     return "#d1d5db";
   };
-  const getColor_localizedToBe = () => {
-    if (errorState) return "#ffa600";
-    if (isLocalizedChanged) return "blue";
-    return "rgb(156, 156, 156)";
-  };
   const color_toBe = getColor_toBe();
-  const color_localizedToBe = getColor_localizedToBe();
 
   return (
     <Container>
@@ -179,6 +170,10 @@ const BasicTextarea = ({
           <div className="flex font-bold">
             <div className="text-xs">
               <span className="ml-1 text-[#4b5563;]">
+                {`[TO-BE] 변환코드 내 TO-BE 코드 출현 횟수: ${toBeOccurrenceCount}회`}
+              </span>
+              <br/>
+              <span className="ml-1 text-[#4b5563;]">
                 [TO-BE]{' '}
                 <span className={`ml-1`} style={{ color: color_toBe }}>
                   {isApplied === 'sameAsBefore' 
@@ -192,6 +187,7 @@ const BasicTextarea = ({
                         : ""
                   }
                 </span>
+                
               </span>
             </div>
           </div>
@@ -265,7 +261,7 @@ const Textarea = styled.textarea`
   overflow: hidden;
   
   border-radius: 8px;
-  border-width: 2px;
+  border-width: 3px;
   border-color: ${({ $borderColor }) => $borderColor};
 
   &:hover,

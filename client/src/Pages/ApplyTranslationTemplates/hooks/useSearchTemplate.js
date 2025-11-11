@@ -30,7 +30,7 @@ export const useSearchTemplate = () => {
       });
       const templateId = data.templateId || [];
       const codeChanges = data.codeChanges || [];
-      // const localizationEntries = data.localizationEntries || [];
+      // const localizationEntries = data.localizationEntries || []; // 사용x
 
       setTemplateId(templateId);
 
@@ -43,20 +43,11 @@ export const useSearchTemplate = () => {
                                       aswas_code: it.aswas_code?.trim() || "",
                                       tobe_code: it.tobe_code?.trim() || "",
                                     }) );
-      // const assetCodeChanges = codeChanges
-      //                               .filter((it) => isAssetCode(it.aswas_code))
-      //                               .map( it => ({
-      //                                 id: it.id,
-      //                                 ppt_no: it.ppt_no || "",
-      //                                 aswas_code: it.aswas_code?.trim() || "",
-      //                                 tobe_code: it.tobe_code?.trim() || "",
-      //                               }) );
-
       const newTextareas = nonAssetCodeChanges.map((pair) => ({
         asWasCode: pair.aswas_code,
         toBeCode: pair.tobe_code,
         pptNo: pair.ppt_no,
-        checked: true,
+        checked: true, // 체크박스 기능 사용x
       }));
       setTextareas(newTextareas);
       alert("성공적으로 템플릿을 불러왔습니다.");

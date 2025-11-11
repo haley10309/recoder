@@ -103,7 +103,7 @@ export const useCheckTemplate = () => {
         const detailData = detailRes.data;
 
         const codeChanges = detailData.codeChanges || [];
-        const localizationEntries = detailData.localizationEntries || [];
+        // const localizationEntries = detailData.localizationEntries || [];
 
         // (250519 기준) aswas_code 기준으로 asset인지 non-asset인지 나눈다.
         const nonAssetCodeChanges = codeChanges
@@ -114,17 +114,17 @@ export const useCheckTemplate = () => {
                                         aswas_code: it.aswas_code?.trim() || "",
                                         tobe_code: it.tobe_code?.trim() || "",
                                       }) );
-        const assetCodeChanges = codeChanges
-                                      .filter((it) => isAssetCode(it.aswas_code))
-                                      .map( it => ({
-                                        id: it.id,
-                                        ppt_no: it.ppt_no || "",
-                                        aswas_code: it.aswas_code?.trim() || "",
-                                        tobe_code: it.tobe_code?.trim() || "",
-                                      }) );
+        // const assetCodeChanges = codeChanges
+        //                               .filter((it) => isAssetCode(it.aswas_code))
+        //                               .map( it => ({
+        //                                 id: it.id,
+        //                                 ppt_no: it.ppt_no || "",
+        //                                 aswas_code: it.aswas_code?.trim() || "",
+        //                                 tobe_code: it.tobe_code?.trim() || "",
+        //                               }) );
 
         setNonAssetCodeChanges(nonAssetCodeChanges);
-        setAssetCodeChanges(assetCodeChanges);
+        // setAssetCodeChanges(assetCodeChanges);
       } else {
         setSaveType("create");
         
@@ -184,17 +184,17 @@ export const useCheckTemplate = () => {
                                       aswas_code: it.aswas_code?.trim() || "",
                                       tobe_code: it.tobe_code?.trim() || "",
                                     }) );
-      const assetCodeChanges = codeChanges
-                                    .filter((it) => isAssetCode(it.aswas_code))
-                                    .map( it => ({
-                                      id: it.id,
-                                      ppt_no: it.ppt_no || "",
-                                      aswas_code: it.aswas_code?.trim() || "",
-                                      tobe_code: it.tobe_code?.trim() || "",
-                                    }) );
+      // const assetCodeChanges = codeChanges
+      //                               .filter((it) => isAssetCode(it.aswas_code))
+      //                               .map( it => ({
+      //                                 id: it.id,
+      //                                 ppt_no: it.ppt_no || "",
+      //                                 aswas_code: it.aswas_code?.trim() || "",
+      //                                 tobe_code: it.tobe_code?.trim() || "",
+      //                               }) );
 
       setNonAssetCodeChanges(nonAssetCodeChanges);
-      setAssetCodeChanges(assetCodeChanges);
+      // setAssetCodeChanges(assetCodeChanges);
     } catch (err) {
       console.error(err);
       alert(err?.response?.data?.message || "템플릿 저장 중 오류가 발생하였습니다");
