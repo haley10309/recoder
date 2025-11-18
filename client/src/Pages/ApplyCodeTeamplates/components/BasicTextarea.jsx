@@ -169,10 +169,10 @@ const BasicTextarea = ({
           
           <div className="flex font-bold">
             <div className="text-xs">
-              <span className="ml-1 text-[#4b5563;]">
+              {/* <span className="ml-1 text-[#4b5563;]">
                 {`[TO-BE] 변환코드 내 TO-BE 코드 출현 횟수: ${toBeOccurrenceCount}회`}
               </span>
-              <br/>
+              <br/> */}
               <span className="ml-1 text-[#4b5563;]">
                 [TO-BE]{' '}
                 <span className={`ml-1`} style={{ color: color_toBe }}>

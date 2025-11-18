@@ -1,3 +1,4 @@
+import { kind_countOccurrences } from "@/utils/codeUtils";
 import { useState } from "react";
 
 export function useFileUpload() {
@@ -52,19 +53,23 @@ export function useFileUpload() {
     reader.readAsText(selectedFile);
   };
 
+  const countOccurrences = (code) => kind_countOccurrences(fileContent, code);
+
   return {
     originalFile,
     fileContent,
     fileName,
     htmlUploadStatus,
-    uploadStatus,
-    uploadProgress,
     handleBackupFileUpload,
-    setOriginalFile,
-    setFileContent,
-    setFileName,
-    setUploadStatus,
-    setHtmlUploadStatus,
-    setUploadProgress,
+    countOccurrences,
+
+    // uploadStatus,
+    // uploadProgress,
+    // setOriginalFile,
+    // setFileContent,
+    // setFileName,
+    // setUploadStatus,
+    // setHtmlUploadStatus,
+    // setUploadProgress,
   };
 }

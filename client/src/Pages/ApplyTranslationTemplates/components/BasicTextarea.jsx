@@ -25,6 +25,7 @@ const BasicTextarea = ({
   errorState,
   isEnglishCountry,
   hasOriginalFile,
+  countOccurrencesResult_tobe,
 }) => {
 
   const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
@@ -155,7 +156,13 @@ const BasicTextarea = ({
           <div className="flex font-bold">
             <div className="text-xs">
               <span className="ml-1 text-[#4b5563;]">
-                [TO-BE]
+                [TO-BE] TOBE HTML 내 TO-BE 코드 출현 횟수:{" "}
+                <span className="ml-1 text-xs"
+                  style={{
+                    color: countOccurrencesResult_tobe === 1 ? "blue" : "red"
+                  }}>
+                    {`${countOccurrencesResult_tobe}회`}
+                </span>
               </span>
             </div>
           </div>

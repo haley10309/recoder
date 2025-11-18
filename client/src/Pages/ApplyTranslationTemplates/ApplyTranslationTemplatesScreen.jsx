@@ -40,6 +40,7 @@ const ApplyTranslationTemplatesScreen = () => {
     fileName,
     htmlUploadStatus,
     handleBackupFileUpload,
+    countOccurrences,
   } = useFileUpload();
   
   return (
@@ -107,6 +108,7 @@ const ApplyTranslationTemplatesScreen = () => {
               filterTobe={filterTobe}
               isEnglishCountry={isEnglishCountry}
               hasOriginalFile={!!originalFile}
+              countOccurrences={countOccurrences}
             />
           </WhiteBox>
           <Gap gap={50} />

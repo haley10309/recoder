@@ -13,9 +13,8 @@ const TableSection = ({
   filterTobe,
   isEnglishCountry,
   hasOriginalFile,
+  countOccurrences,
 }) => {
-  const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
-
   return (
     <TableWrapper>
       <TableHeader>
@@ -34,37 +33,39 @@ const TableSection = ({
         )}
       </TableHeader>
 
-      {filteredTextareas.map((textarea, index) => (
-        <BasicTextarea
-          key={index}
-          indexText={`${index + 1} of ${filteredTextareas.length}`}
-          pptNo={textarea.pptNo} // ✅ 바로 사용
-          asWasCode={textarea.asWasCode.replace(
-            /\/uk\//g,
-            `/${lowerCaseCountryCode}/`
-          )}
-          setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-          toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`)}
-          setToBeCode={(value) => handleToBeCodeChange(index, value)}
-          localizedToBeCode={textarea.localizedToBeCode}
-          setLocalizedToBeCode={(value) =>
-            handleToBeCodeChange(index, value, { isLocalized: true })
-          }
-          changed={{ index, changed: textarea.changed }}
-          isApplied={textarea.isApplied}
-          onCheckedChange={() => handleCheckedChange(index)}
-          checked={textarea.checked}
-          filter={filter}
-          filterTobe={filterTobe}
-          countryCode={countryCode}
-          matchedPart={textarea.matchedPart}
-          asWasOccurrenceCount={textarea.asWasOccurrenceCount}
-          toBeOccurrenceCount={textarea.toBeOccurrenceCount}
-          errorState={textarea.errorState}
-          isEnglishCountry={isEnglishCountry}
-          hasOriginalFile={hasOriginalFile}
-        />
-      ))}
+      {filteredTextareas.map((textarea, index) => {
+        const asWasCode = textarea.asWasCode;
+        const toBeCode = textarea.toBeCode;
+        return (
+          <BasicTextarea
+            key={index}
+            indexText={`${index + 1} of ${filteredTextareas.length}`}
+            pptNo={textarea.pptNo} // ✅ 바로 사용
+            asWasCode={asWasCode}
+            setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
+            toBeCode={toBeCode}
+            setToBeCode={(value) => handleToBeCodeChange(index, value)}
+            localizedToBeCode={textarea.localizedToBeCode}
+            setLocalizedToBeCode={(value) =>
+              handleToBeCodeChange(index, value, { isLocalized: true })
+            }
+            changed={{ index, changed: textarea.changed }}
+            isApplied={textarea.isApplied}
+            onCheckedChange={() => handleCheckedChange(index)}
+            checked={textarea.checked}
+            filter={filter}
+            filterTobe={filterTobe}
+            countryCode={countryCode}
+            matchedPart={textarea.matchedPart}
+            asWasOccurrenceCount={textarea.asWasOccurrenceCount}
+            toBeOccurrenceCount={textarea.toBeOccurrenceCount}
+            errorState={textarea.errorState}
+            isEnglishCountry={isEnglishCountry}
+            hasOriginalFile={hasOriginalFile}
+            countOccurrencesResult_tobe={countOccurrences(toBeCode)}
+          />
+        );
+      })}
     </TableWrapper>
   );
 };

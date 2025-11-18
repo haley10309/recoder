@@ -43,9 +43,11 @@ export const useSearchTemplate = () => {
                                       aswas_code: it.aswas_code?.trim() || "",
                                       tobe_code: it.tobe_code?.trim() || "",
                                     }) );
+                                    
+      const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
       const newTextareas = nonAssetCodeChanges.map((pair) => ({
-        asWasCode: pair.aswas_code,
-        toBeCode: pair.tobe_code,
+        asWasCode: pair.aswas_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+        toBeCode: pair.tobe_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
         pptNo: pair.ppt_no,
         checked: true, // 체크박스 기능 사용x
       }));
