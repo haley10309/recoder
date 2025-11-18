@@ -6,7 +6,6 @@ import FileConvertButtons from "./FileConvertButtons";
 import PreviewPanel from "./PreviewPanel";
 
 import { useTranslationUpload } from "../hooks/useTranslationUpload";
-import { useFileExecute } from "../hooks/useFileExecute";
 import { useLocalizationApply } from "../hooks/useLocalizationApply";
 
 const FileConvert = ({
@@ -30,18 +29,6 @@ const FileConvert = ({
     txtFileName,
     handleTranslationTxtUpload,
   } = useTranslationUpload(countryCode);
-
-  // 코드 실행 훅
-  const {
-    // uploadStatus,
-  } = useFileExecute({
-    // originalFile,
-    // fileContent: tobeFileContent,
-    // textareas,
-    // setTextareas,
-    // countryCode,
-    // ticketUrl,
-  });
 
   // 로컬라이제이션 적용 훅
   const {
