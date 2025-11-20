@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -40,6 +40,8 @@ const ApplyTranslationTemplatesScreen = () => {
     handleBackupFileUpload,
     countOccurrences,
   } = useFileUpload();
+
+  const [englishCopyList, setEnglishCopyList] = useState([]);
   
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -84,10 +86,11 @@ const ApplyTranslationTemplatesScreen = () => {
             fileName={fileName}
             htmlUploadStatus={htmlUploadStatus}
             handleBackupFileUpload={handleBackupFileUpload}
+            setEnglishCopyList={setEnglishCopyList}
           />
           <Gap gap={50} />
 
-          <TitleLabel text="👀 AS-WAS / TO-BE / Localization(for 비영문국) 확인하기" />
+          <TitleLabel text="👀 TO-BE / Localization TO-BE(for 비영문국) 확인하기" />
           <Gap gap={15} />
           <WhiteBox>
             <TableSection
@@ -98,6 +101,7 @@ const ApplyTranslationTemplatesScreen = () => {
               isEnglishCountry={isEnglishCountry}
               hasOriginalFile={!!originalFile}
               countOccurrences={countOccurrences}
+              englishCopyList={englishCopyList}
             />
           </WhiteBox>
 

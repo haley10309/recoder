@@ -11,6 +11,7 @@ const TableSection = ({
   isEnglishCountry,
   hasOriginalFile,
   countOccurrences,
+  englishCopyList,
 }) => {
   return (
     <TableWrapper>
@@ -43,6 +44,7 @@ const TableSection = ({
           isEnglishCountry={isEnglishCountry}
           hasOriginalFile={hasOriginalFile}
           countOccurrencesResult_tobe={countOccurrences(textarea.toBeCode)}
+          highlights={englishCopyList}
         />
       ))}
     </TableWrapper>

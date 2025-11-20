@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import Copy from "@/assets/copy.png";
-
 import CopyTextButton from "@/Components/Common/CopyTextButton";
+import TransBox from "./TransBox";
 
 const BasicTextarea = ({
   indexText,
   localizationEntryId,
-  toBeCode,
+  toBeCode = "",
   setToBeCode,
-  localizedToBeCode,
+  localizedToBeCode = "",
   setLocalizedToBeCode,
   matchedPart,
   errorState,
   isEnglishCountry,
   countOccurrencesResult_tobe,
+  highlights = [], 
 }) => {
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
 
@@ -70,11 +70,26 @@ const BasicTextarea = ({
           )} */}
 
         {/* TO-BE */}
-        <CodeBlock $isEnglishCountry={isEnglishCountry}>
-          <Textarea
+        <CodeBlock>
+          {/* <Textarea
             value={toBeCode}
-            onChange={(e) => setToBeCode(e.target.value)}
+            onChange={(e) => handleChangeToBeCode(e.target.value)}
             placeholder="TO-BE code를 입력하세요."
+          />
+          <div className="h-[180px] bg-[#e4e4e4] rounded-[5px] text-[16px] font-[500] whitespace-pre-wrap break-all outline-none border border-[#ccc] focus:border-[#595880] translate-scroll">
+            <div
+              ref={toBeCodeRef}
+              contentEditable
+              suppressContentEditableWarning
+              // onBlur={handleToBeCodeBlur}
+            />
+          </div>
+          <button onClick={handleApplyHighlight}>Apply Highlight</button> */}
+
+          <TransBox
+            codeContext={toBeCode}
+            highlights={highlights}
+            onChange={(val) => setToBeCode(val)}
           />
           
           <div className="flex font-bold">
@@ -100,7 +115,7 @@ const BasicTextarea = ({
         {/* LOCALIZED TO-BE - 항상 렌더되지만 텍스트는 값이 있는 경우에만 */}
         <CodeBlock>
           <Textarea
-            value={localizedToBeCode || ""}
+            value={localizedToBeCode ?? ""}
             onChange={(e) => setLocalizedToBeCode(e.target.value)}
             placeholder="Localization을 적용하세요."
             $isLocalizedChanged={isLocalizedChanged}
@@ -122,8 +137,6 @@ const BasicTextarea = ({
 };
 
 export default BasicTextarea;
-
-
 
 const Container = styled.div`
   margin-bottom: 1rem;
@@ -153,7 +166,7 @@ const TextBold = styled.span`
 `;
 
 const CodeBlock = styled.div`
-  width: ${({ $isEnglishCountry }) => ($isEnglishCountry === false ? "25%" : "40%")};
+  width: 42%;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

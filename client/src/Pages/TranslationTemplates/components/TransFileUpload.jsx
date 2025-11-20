@@ -9,7 +9,8 @@ export default function TransFileUpload({
   const transInputRef = useRef(null);
   const [transFile, setTransFile] = useState(null);
 
-  const canUploadTransFile = isTemplateCreated;
+  // const canUploadTransFile = isTemplateCreated;
+  const canUploadTransFile = true;
 
   function formatFileSize(size) {
     if (size < 1024) return `${size} B`;
@@ -22,7 +23,6 @@ export default function TransFileUpload({
     setTransFile(file);
     handleTransSubmit(file);
   };
-
 
   return (
     

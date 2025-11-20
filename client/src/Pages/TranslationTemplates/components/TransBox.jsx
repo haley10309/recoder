@@ -9,27 +9,33 @@ export default function TransBox({
   itemId,
   indexText,
   codeContext: initialCodeContext, 
-  highlights = [], 
+  highlights = [],
   onChange, 
   onDelete,
 }) {
   const editableRef = useRef(null);
 
+  // HTML 특수문자 이스케이프
+  const escapeHtml = (str) => {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  };
+
   // 영어 원본 부분만 빨간색으로 감싸기
   const applyHighlights = () => {
     if (!editableRef.current) return;
     let html = escapeHtml(initialCodeContext);
-    highlights.forEach((substr) => {
-      const safe = escapeHtml(substr);
-      html = html.split(safe).join(`<span class="text-red-500">${safe}</span>`);
+    highlights.forEach((highlight) => {
+      if (!highlight) return;
+      const escapedHighlight = escapeHtml(highlight);
+      html = html.split(escapedHighlight).join(`<span class="text-red-500">${escapedHighlight}</span>`);
     });
     editableRef.current.innerHTML = html;
   };
 
   // 편집 후 onChange 호출
   const handleBlur = () => {
-    const newText = editableRef.current.innerText;
-    onChange?.(newText);
+    const val = editableRef.current.innerText;
+    onChange?.(val);
   };
 
   // 초기 텍스트 반영 & 하이라이트
@@ -75,9 +81,4 @@ export default function TransBox({
       </div>
     </>
   );
-}
-
-// HTML 특수문자 이스케이프
-function escapeHtml(str) {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
