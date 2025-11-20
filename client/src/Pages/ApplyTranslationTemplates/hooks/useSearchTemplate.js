@@ -1,7 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
 
-import { isAssetCode, kind_countOccurrences } from "@/utils/codeUtils";
 import { countryOptions } from "@/utils/countryOptions";
 import { BASE_URL } from "@/utils/routePath";
 
@@ -12,14 +11,11 @@ export const useSearchTemplate = () => {
   const [countryCode, setCountryCode] = useState("");
   const [templateId, setTemplateId] = useState(null);
 
-  const [filter, setFilter] = useState("");
-  const [filterTobe, setFilterTobe] = useState("");
-
   const isEnglishCountry = countryCode === ""
                             ? null
                             : countryOptions.find((c) => c.name === countryCode)
                               ? !!countryOptions.find((c) => c.name === countryCode)?.isEnglish
-                              : null
+                              : null;
 
   // 템플릿 조회
   const handleSearchTemplate = async () => {
@@ -29,28 +25,31 @@ export const useSearchTemplate = () => {
         ticket_url: ticketUrl,
       });
       const templateId = data.templateId || [];
-      const codeChanges = data.codeChanges || [];
-      // const localizationEntries = data.localizationEntries || []; // 사용x
-
       setTemplateId(templateId);
 
-      // (250519 기준) aswas_code 기준으로 asset인지 non-asset인지 나눈다.
-      const nonAssetCodeChanges = codeChanges
-                                    .filter((it) => !isAssetCode(it.aswas_code))
-                                    .map( it => ({
-                                      id: it.id,
-                                      ppt_no: it.ppt_no || "",
-                                      aswas_code: it.aswas_code?.trim() || "",
-                                      tobe_code: it.tobe_code?.trim() || "",
-                                    }) );
-                                    
+      const localizationEntries = data.localizationEntries || [];
       const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
-      const newTextareas = nonAssetCodeChanges.map((pair) => ({
-        asWasCode: pair.aswas_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
-        toBeCode: pair.tobe_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
-        pptNo: pair.ppt_no,
-        checked: true, // 체크박스 기능 사용x
+      const newTextareas = localizationEntries.map((entry) => ({
+        localizationEntryId: entry.id,
+        toBeCode: entry.code_context.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
       }));
+
+      // (250519 기준) aswas_code 기준으로 asset인지 non-asset인지 나눈다.
+      // const nonAssetCodeChanges = codeChanges
+      //                               .filter((it) => !isAssetCode(it.aswas_code))
+      //                               .map( it => ({
+      //                                 id: it.id,
+      //                                 ppt_no: it.ppt_no || "",
+      //                                 aswas_code: it.aswas_code?.trim() || "",
+      //                                 tobe_code: it.tobe_code?.trim() || "",
+      //                               }) );
+      // const newTextareas = nonAssetCodeChanges.map((pair) => ({
+      //   asWasCode: pair.aswas_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+      //   toBeCode: pair.tobe_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+      //   pptNo: pair.ppt_no,
+      //   checked: true, // 체크박스 기능 사용x
+      // }));
+
       setTextareas(newTextareas);
       alert("성공적으로 템플릿을 불러왔습니다.");
     } catch (error) {
@@ -63,13 +62,6 @@ export const useSearchTemplate = () => {
     setCountryCode(inputValue);
   };
 
-  const handleAsWasCodeChange = (index, value) => {
-    const newTextareas = textareas.map((textarea, i) =>
-      i === index ? { ...textarea, asWasCode: value } : textarea
-    );
-    setTextareas(newTextareas);
-  };
-
   const handleToBeCodeChange = (index, value) => {
     const newTextareas = textareas.map((textarea, i) =>
       i === index ? { ...textarea, toBeCode: value } : textarea
@@ -77,32 +69,19 @@ export const useSearchTemplate = () => {
     setTextareas(newTextareas);
   };
 
-  const handleCheckedChange = (index) => {
-    const newTextareas = [...textareas];
-    newTextareas[index] = {
-      ...newTextareas[index],
-      checked: !newTextareas[index].checked,
-    };
+  const handleLocalizedToBeCodeChange = (index, value) => {
+    const newTextareas = textareas.map((textarea, i) =>
+      i === index ? { ...textarea, localizedToBeCode: value } : textarea
+    );
     setTextareas(newTextareas);
   };
 
-  const filterTextareas = () => {
-    let filtered = textareas.slice(0);
-
-    if (filter === "checked") {
-      filtered = filtered.filter((textarea) => textarea.checked);
-    } else if (filter === "unchecked") {
-      filtered = filtered.filter((textarea) => !textarea.checked);
-    }
-
-    if (filterTobe === "yes") {
-      // TODO: isApplied는 또 뭐임
-      filtered = filtered.filter((textarea) => textarea.isApplied === "yes");
-    } else if (filterTobe === "no") {
-      filtered = filtered.filter((textarea) => textarea.isApplied === "no");
-    }
-
-    return filtered;
+  const handleAddTextarea = () => {
+    const newTextareas = [
+      ...textareas,
+      { toBeCode: "", localizedToBeCode: "" }
+    ]
+    setTextareas(newTextareas);
   };
   
   return {
@@ -116,12 +95,9 @@ export const useSearchTemplate = () => {
     setTextareas,
     handleSearchTemplate,
     handleCountryChange,
-    handleAsWasCodeChange,
     handleToBeCodeChange,
-    handleCheckedChange,
-    filterTextareas,
-    filter,
-    filterTobe,
+    handleLocalizedToBeCodeChange,
     templateId,
+    handleAddTextarea,
   };
 };

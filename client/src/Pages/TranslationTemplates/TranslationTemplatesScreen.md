@@ -28,3 +28,15 @@ const localizationEntries = [
   }
 ]
 ```
+
+### 3) 로컬라이제이션 템플릿
+- `englishCopyList`에 해당하는 문자열이 코드블럭 내에 있으면, 빨간색 글씨로 하이라이팅.
+- 코드블럭 최초 렌더링 및 onChange 발동 시 하이라이팅 맞게 세팅됨
+```
+<TransBox
+  ...
+  codeContext={item.code_context}
+  highlights={highlights}
+  ...
+/>
+```

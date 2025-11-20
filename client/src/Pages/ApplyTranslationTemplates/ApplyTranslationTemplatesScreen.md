@@ -1,21 +1,18 @@
 ### 1) 템플릿 불러오기
 
 - 템플릿 검색해서 aswas, tobe 코드 불러옴
-- `/get-template-details` : 해당 템플릿 DB의 codeChanges 그대로 불러옴. 데이터 가공x
-- 프론트 코드 내 `nonAssetCodeChanges(codeChanges)` state에 그대로 넣음
+- `/get-template-details` : 해당 템플릿 DB의 localizationEntries 그대로 불러옴. 데이터 가공x
+- 프론트 코드 내 `textareas` state에 code_context를 국가코드 변환하여 넣음
 ```
-const nonAssetCodeChanges = [
-  { 
-    id: 1,
-    ppt_no: 1,
-    aswas_code: "<div id="reviewId"></div>",
-    tobe_code: "<div id="reviewId">See Reviews</div>",
-  }
-]
+const newTextareas = localizationEntries.map((entry) => ({
+  localizationEntryId: entry.id,
+  toBeCode: entry.code_context.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+}));
 const textareas = [
-  pptNo: nonAssetCodeChangeItem.ppt_no,
-  asWasCode: nonAssetCodeChangeItem.aswas_code,
-  toBeCode: nonAssetCodeChangeItem.tobe_code,
+  { 
+    localizationEntryId: 1,
+    toBeCode: "<div id="reviewId">See Reviews</div>", // 국가코드 있으면 변환도 함
+  }
 ]
 ```
 
@@ -49,18 +46,26 @@ translationMap = {
 
 ### 현재까지의 Textareas
 ```
-asWasCode={textarea.asWasCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`)}
-toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`)}
+toBeCode={textarea.toBeCode}
 localizedToBeCode={textarea.localizedToBeCode}
 ```
 
-### 코드 출현 횟수 확인하기
-사실은 국가코드 변환
-
-- Textareas 국가코드 변환하여 Set
-- `/convert-aswas-to-tobe-codes` : 
-이걸 변환해서 뭘 하는거지?
-
-
 ### 로컬라이제이션 적용
+// TODO: 실제 translation key 적용 여부 등의 번역 기능 구현
+// TODO: 번역 기능 업데이트 (localizationEntry에 있으면, 그리고 그게 코드출현횟수 기능에 감지가 되면, 코드가 변환이 되도록!)
 
+- `/get-template-details`: `localizationEntries` 불러옴
+```
+const localizationEntries = [
+  {
+    "id": 241,
+    "code_context": "<span class=\"common-cta-encased__text\">Where to buy</span>\r\n                \t\t   </div>\r\n                            <a href=\"https://www.samsung.com/uk/smartphones/galaxy-s25/reviews/\" class=\"common-cta-underline common-cta-underline--black\" data-omni-type=\"microsite_contentinter\" data-omni=\"galaxy-s25:features:key-vis^img:link-page:reviews\" ga-ca=\"content click\" ga-ac=\"feature\" ga-la=\"galaxy-s25:features:key-vis^img:link-page:reviews\">\r\n                            <span class=\"common-cta-underline__text\">See Reviews</span>\r\n                        </a>\r\n                    </div>\r\n                </div>\r\n                <figure class=\"features-kv__image\">"
+  },
+  ...
+]
+```
+
+applyLocalizedTemplateBlocks
+
+// TODO: matchedPart 중요하면 붙이기
+// TODO: localized가 비어있으면 서버에 날릴 때 무시하기

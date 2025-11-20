@@ -20,6 +20,7 @@ const FileConvert = ({
   fileName,
   htmlUploadStatus,
   handleBackupFileUpload,
+  setEnglishCopyList,
 }) => {
   // 번역덱 업로드 훅
   const {
@@ -28,7 +29,7 @@ const FileConvert = ({
     txtUploadStatus,
     txtFileName,
     handleTranslationTxtUpload,
-  } = useTranslationUpload(countryCode);
+  } = useTranslationUpload({ countryCode, setEnglishCopyList });
 
   // 로컬라이제이션 적용 훅
   const {

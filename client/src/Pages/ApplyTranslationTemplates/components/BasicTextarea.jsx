@@ -1,41 +1,22 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import Copy from "@/assets/copy.png";
-
 import CopyTextButton from "@/Components/Common/CopyTextButton";
+import TransBox from "./TransBox";
 
 const BasicTextarea = ({
   indexText,
-  pptNo,
-  asWasCode,
-  setAsWasCode,
-  toBeCode,
+  localizationEntryId,
+  toBeCode = "",
   setToBeCode,
-  localizedToBeCode,
+  localizedToBeCode = "",
   setLocalizedToBeCode,
-  isApplied,
-  checked,
-  onCheckedChange,
-  filter,
-  countryCode,
   matchedPart,
-  asWasOccurrenceCount,
-  toBeOccurrenceCount,
   errorState,
   isEnglishCountry,
-  hasOriginalFile,
   countOccurrencesResult_tobe,
+  highlights = [], 
 }) => {
-
-  const isCheckboxDisabled = filter === "checked" || filter === "unchecked";
-
-  const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
-  const transformedAsWasCode = asWasCode?.replace(
-    /\/uk\//g,
-    `/${lowerCaseCountryCode}/`
-  );
-
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
 
   const handleToggleMatchedPart = () => {
@@ -57,66 +38,11 @@ const BasicTextarea = ({
     <Container>
       <div style={{ fontSize: "12px", paddingLeft: "15px", paddingTop: "10px" }}>{indexText}</div>
       <Wrapper>
-        {/* <CheckboxWrapper>
-          <Checkbox
-            type="checkbox"
-            checked={checked}
-            onChange={onCheckedChange}
-            disabled={isCheckboxDisabled}
-          />
-        </CheckboxWrapper> */}
+        <IdBox>
+          <TextBold>id. {localizationEntryId}</TextBold>
+        </IdBox>
 
-        <PptNo>
-          <TextBold>PPT NO. {pptNo}</TextBold>
-          {!!pptNo && (
-            <>
-              <CopyTextButton
-                text={"'ppt{숫자}'로 복사"}
-                value={`ppt${pptNo ?? ''}`}
-              />
-              <CopyTextButton
-                text={"'슬라이드 {숫자}'로 복사"}
-                value={`슬라이드 ${pptNo ?? ''}`}
-              />
-            </>
-          )}
-        </PptNo>
-
-        {/* AS-WAS */}
-        <CodeBlock $isEnglishCountry={isEnglishCountry}>
-          <Textarea
-            value={transformedAsWasCode}
-            onChange={(e) => setAsWasCode(e.target.value)}
-            placeholder="AS-WAS code를 입력하세요."
-          />
-
-          <div className="flex font-bold">
-            <div className="text-xs">
-              <span className="ml-1 text-[#4b5563;]">
-                [AS-WAS]
-                {/* [AS-WAS] HTML 내 AS-WAS 코드 출현 횟수: */}
-              </span>
-            </div>
-            {/* {hasOriginalFile ? (
-              <span className="ml-1 text-xs"
-                style={{
-                  color: asWasOccurrenceCount === 1 ? "blue" : "red"
-                }}>
-                  {`${asWasOccurrenceCount}회`}
-              </span>
-            ) : (
-              <span className="ml-1 text-xs font-normal text-[#ff7300]">
-                (HTML 업로드 필요)
-              </span>
-            )} */}
-          </div>
-          
-          <CopyTextButton
-            text={"코드 복사"}
-            value={transformedAsWasCode}
-          />
-
-          {matchedPart && (
+          {/* {matchedPart && (
             <MatchedPartWrapper>
               <ToggleButton onClick={handleToggleMatchedPart}>
                 {isMatchedPartVisible ? "코드 숨기기" : "일치하는 코드 보기"}
@@ -141,22 +67,35 @@ const BasicTextarea = ({
                 </MatchedPartContainer>
               )}
             </MatchedPartWrapper>
-          )}
-        </CodeBlock>
+          )} */}
 
         {/* TO-BE */}
-        <CodeBlock $isEnglishCountry={isEnglishCountry}>
-          <Textarea
+        <CodeBlock>
+          {/* <Textarea
             value={toBeCode}
-            onChange={(e) => setToBeCode(e.target.value)}
+            onChange={(e) => handleChangeToBeCode(e.target.value)}
             placeholder="TO-BE code를 입력하세요."
-            // $isApplied={isApplied}
+          />
+          <div className="h-[180px] bg-[#e4e4e4] rounded-[5px] text-[16px] font-[500] whitespace-pre-wrap break-all outline-none border border-[#ccc] focus:border-[#595880] translate-scroll">
+            <div
+              ref={toBeCodeRef}
+              contentEditable
+              suppressContentEditableWarning
+              // onBlur={handleToBeCodeBlur}
+            />
+          </div>
+          <button onClick={handleApplyHighlight}>Apply Highlight</button> */}
+
+          <TransBox
+            codeContext={toBeCode}
+            highlights={highlights}
+            onChange={(val) => setToBeCode(val)}
           />
           
           <div className="flex font-bold">
             <div className="text-xs">
               <span className="ml-1 text-[#4b5563;]">
-                [TO-BE] TOBE HTML 내 TO-BE 코드 출현 횟수:{" "}
+                [TO-BE] HTML 내 TO-BE 코드 출현 횟수:{" "}
                 <span className="ml-1 text-xs"
                   style={{
                     color: countOccurrencesResult_tobe === 1 ? "blue" : "red"
@@ -174,34 +113,30 @@ const BasicTextarea = ({
         </CodeBlock>
 
         {/* LOCALIZED TO-BE - 항상 렌더되지만 텍스트는 값이 있는 경우에만 */}
-        {isEnglishCountry === false && (
-          <CodeBlock>
-            <Textarea
-              value={localizedToBeCode || ""}
-              onChange={(e) => setLocalizedToBeCode(e.target.value)}
-              placeholder="Localization을 적용하세요."
-              $isLocalizedChanged={isLocalizedChanged}
-              $errorState={errorState}
-            />
-            <CopyTextButton
-              text={"코드 복사"}
-              value={localizedToBeCode || ""}
-            />
-            {errorState && (
-              <ErrorMessage>
-                🚨 아직 번역되지 않은 key가 포함되어 있습니다.
-              </ErrorMessage>
-            )}
-          </CodeBlock>
-        )}
+        <CodeBlock>
+          <Textarea
+            value={localizedToBeCode ?? ""}
+            onChange={(e) => setLocalizedToBeCode(e.target.value)}
+            placeholder="Localization을 적용하세요."
+            $isLocalizedChanged={isLocalizedChanged}
+            $errorState={errorState}
+          />
+          <CopyTextButton
+            text={"코드 복사"}
+            value={localizedToBeCode || ""}
+          />
+          {errorState && (
+            <ErrorMessage>
+              🚨 아직 번역되지 않은 key가 포함되어 있습니다.
+            </ErrorMessage>
+          )}
+        </CodeBlock>
       </Wrapper>
     </Container>
   );
 };
 
 export default BasicTextarea;
-
-
 
 const Container = styled.div`
   margin-bottom: 1rem;
@@ -216,19 +151,7 @@ const Wrapper = styled.div`
   gap: 1rem;
 `;
 
-const CheckboxWrapper = styled.div`
-  width: 5%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Checkbox = styled.input`
-  width: 24px;
-  height: 24px;
-`;
-
-const PptNo = styled.div`
+const IdBox = styled.div`
   width: 10%;
   display: flex;
   flex-direction: column;
@@ -243,7 +166,7 @@ const TextBold = styled.span`
 `;
 
 const CodeBlock = styled.div`
-  width: ${({ $isEnglishCountry }) => ($isEnglishCountry === false ? "25%" : "40%")};
+  width: 42%;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

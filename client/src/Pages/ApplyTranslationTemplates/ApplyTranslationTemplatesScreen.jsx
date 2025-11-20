@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import AddIcon from "@mui/icons-material/Add";
 
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 import TitleLabel from "@/Components/Common/TitleLabel";
@@ -24,13 +25,10 @@ const ApplyTranslationTemplatesScreen = () => {
     setTextareas,
     handleSearchTemplate,
     handleCountryChange,
-    handleAsWasCodeChange,
     handleToBeCodeChange,
-    handleCheckedChange,
-    filterTextareas,
-    filter,
-    filterTobe,
+    handleLocalizedToBeCodeChange,
     templateId,
+    handleAddTextarea,
   } = useSearchTemplate();
 
   // HTML 파일 업로드 훅
@@ -42,6 +40,8 @@ const ApplyTranslationTemplatesScreen = () => {
     handleBackupFileUpload,
     countOccurrences,
   } = useFileUpload();
+
+  const [englishCopyList, setEnglishCopyList] = useState([]);
   
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -86,31 +86,32 @@ const ApplyTranslationTemplatesScreen = () => {
             fileName={fileName}
             htmlUploadStatus={htmlUploadStatus}
             handleBackupFileUpload={handleBackupFileUpload}
+            setEnglishCopyList={setEnglishCopyList}
           />
           <Gap gap={50} />
 
-          <TitleLabel text="👀 AS-WAS / TO-BE / Localization(for 비영문국) 확인하기" />
+          <TitleLabel text="👀 TO-BE / Localization TO-BE(for 비영문국) 확인하기" />
           <Gap gap={15} />
           <WhiteBox>
-            {/* <FilterSection
-              filter={filter}
-              setFilter={setFilter}
-              filterTobe={filterTobe}
-              setFilterTobe={setFilterTobe}
-            /> */}
             <TableSection
-              filteredTextareas={filterTextareas()}
+              textareas={textareas}
               countryCode={countryCode}
-              handleAsWasCodeChange={handleAsWasCodeChange}
               handleToBeCodeChange={handleToBeCodeChange}
-              handleCheckedChange={handleCheckedChange}
-              filter={filter}
-              filterTobe={filterTobe}
+              handleLocalizedToBeCodeChange={handleLocalizedToBeCodeChange}
               isEnglishCountry={isEnglishCountry}
               hasOriginalFile={!!originalFile}
               countOccurrences={countOccurrences}
+              englishCopyList={englishCopyList}
             />
           </WhiteBox>
+
+          <div className="flex gap-[15px] save_button_div">
+            <button onClick={handleAddTextarea} className="plus-button rounded-[10px]">
+              <AddIcon />
+              <span className="ml-2">항목 추가</span>
+            </button>
+          </div>
+
           <Gap gap={50} />
         </>
       )}

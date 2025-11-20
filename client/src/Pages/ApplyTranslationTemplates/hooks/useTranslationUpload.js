@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { uploadTranslationDeck } from "@/apis/apis";
 
-export function useTranslationUpload(countryCode) {
+export function useTranslationUpload({ countryCode, setEnglishCopyList }) {
   const [translationsByCountry, setTranslationsByCountry] = useState({});
   const [translationMap, setTranslationMap] = useState({}); // 원본 영어 카피와 국가별 번역값을 매핑
   const [validCountries, setValidCountries] = useState([]);
@@ -61,6 +61,7 @@ export function useTranslationUpload(countryCode) {
         setTranslationMap(_translationMap);
         setTxtUploadStatus("success");
         setTxtFileName(file.name);
+        setEnglishCopyList(englishCopyList);
       } catch (err) {
         console.error(err);
         setTxtUploadStatus("fail");
