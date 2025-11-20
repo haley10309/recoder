@@ -100,7 +100,7 @@ export function useLocalizationApply({
       // textareas 업데이트 (tobe -> 번역 -> localized tobe)
       const updatedTextareas = textareas.map((textarea) => {
         const localizedToBe = applyLocalizedTemplateBlocks(
-          textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+          textarea.toBeCode,
           translationMap,
           localizationEntries
         );
@@ -119,7 +119,7 @@ export function useLocalizationApply({
 
       // 전체 HTML 변환
       let localizedHtml = tobeFileContent;
-      
+
       updatedTextareas.forEach((textarea) => {
         const localizedTobeContext = applyLocalizedTemplateBlocks(
           textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
