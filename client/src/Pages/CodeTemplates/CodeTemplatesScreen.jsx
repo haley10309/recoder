@@ -4,7 +4,9 @@ import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
+import { useFetchTemplate } from "./hooks/useFetchTemplate";
 import { useCheckTemplate } from "./hooks/useCheckTemplate";
+import { useFileUpload } from "./hooks/useFileUpload";
 
 import CodeChangesEditor from "./components/CodeChangesEditor";
 import CheckTemplate from "./components/CheckTemplate";
@@ -14,26 +16,38 @@ import "./CodeTemplates.scss";
 
 const CodeTemplatesScreen = () => {
   const {
-      ticketNum,
-      setTicketNum,
-      ticketUrl,
-      setTicketUrl,
-      saveType,
-      originalHtmlFile,
-      setOriginalHtmlFile,
-      addNonAssetTextArea,
-      removeNonAssetTextArea,
-      countOccurrences,
-      handleSaveTemplate,
-      checkHasInvalidAsWasCount,
-      nonAssetCodeChanges,
-      setAssetCodeChanges,
-      setNonAssetCodeChanges,
-      handleNonAssetPptNoChange,
-      handleNonAssetAswasChange,
-      handleNonAssetTobeChange,
-      checkForExistingTemplate,
+    ticketNum,
+    setTicketNum,
+    ticketUrl,
+    setTicketUrl,
+    saveType,
+    originalHtmlFile,
+    setOriginalHtmlFile,
+    addNonAssetTextArea,
+    removeNonAssetTextArea,
+    countOccurrences,
+    handleSaveTemplate,
+    checkHasInvalidAsWasCount,
+    nonAssetCodeChanges,
+    setNonAssetCodeChanges,
+    handleNonAssetPptNoChange,
+    handleNonAssetAswasChange,
+    handleNonAssetTobeChange,
+    checkForExistingTemplate,
   } = useCheckTemplate();
+
+  const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
+  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
+
+  const {
+    pptFile,
+    backUpFile,
+    handlePptFileChange,
+    handleBackUpHtmlFileChange,
+  } = useFileUpload({ setNonAssetCodeChanges, setOriginalHtmlFile });
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -45,10 +59,13 @@ const CodeTemplatesScreen = () => {
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplate
+        loading={loading}
+        ticketNumOptions={ticketNumOptions}
+        ticketUrlOptions={ticketUrlOptions}
         ticketNum={ticketNum}
         ticketUrl={ticketUrl}
-        setTicketNum={setTicketNum}
-        setTicketUrl={setTicketUrl}
+        handleTicketNumChange={setTicketNum}
+        handleTicketUrlChange={setTicketUrl}
         onClick={() => checkForExistingTemplate("edit-template")}
       />
       <Gap gap={50} />
@@ -56,10 +73,10 @@ const CodeTemplatesScreen = () => {
       <TitleLabel text="📤 파일 업로드" />
       <Gap gap={15} />
       <UploadFiles
-        isUploadOnlyOriginHtmlFile={false}
-        setOriginalHtmlFile={setOriginalHtmlFile} 
-        setAssetCodeChanges={setAssetCodeChanges}
-        setNonAssetCodeChanges={setNonAssetCodeChanges}
+        pptFile={pptFile}
+        backUpFile={backUpFile}
+        handlePptFileChange={handlePptFileChange}
+        handleBackUpHtmlFileChange={handleBackUpHtmlFileChange}
       />
       <Gap gap={50} />
 

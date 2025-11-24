@@ -19,15 +19,15 @@ const TableSection = ({
         <HeaderCell width={isEnglishCountry === false ? "13%" : "10%"}>
           LocalizationEntry Id
         </HeaderCell>
-        <HeaderCell width={isEnglishCountry === false ? "27%" : "40%"}>
+        <HeaderCell width={"40%"}>
           TO-BE Code
         </HeaderCell>
-        <HeaderCell width="28%">Localized TO-BE</HeaderCell>
+        <HeaderCell width={"40%"}>Localized TO-BE</HeaderCell>
       </TableHeader>
 
       {textareas.map((textarea, index) => (
         <BasicTextarea
-          key={index}
+          key={`apply-translation-${index}`}
           indexText={`${index + 1} of ${textareas.length}`}
           localizationEntryId={textarea.localizationEntryId}
           toBeCode={textarea.toBeCode}
@@ -41,7 +41,6 @@ const TableSection = ({
           asWasOccurrenceCount={textarea.asWasOccurrenceCount}
           toBeOccurrenceCount={textarea.toBeOccurrenceCount}
           errorState={textarea.errorState}
-          isEnglishCountry={isEnglishCountry}
           hasOriginalFile={hasOriginalFile}
           countOccurrencesResult_tobe={countOccurrences(textarea.toBeCode)}
           highlights={englishCopyList}

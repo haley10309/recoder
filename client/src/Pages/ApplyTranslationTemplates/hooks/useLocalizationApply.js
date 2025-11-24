@@ -104,10 +104,7 @@ export function useLocalizationApply({
           translationMap,
           localizationEntries
         );
-
-        const errorState = Object.keys(translationMap).some((key) => {
-          return localizedToBe.includes(key);
-        });
+        const errorState = Object.keys(translationMap).some((key) => localizedToBe.includes(key));
 
         return {
           ...textarea,
