@@ -11,6 +11,9 @@ import { useFileUpload } from "./hooks/useFileUpload";
 import CheckTemplate from "./components/CheckTemplate";
 import FileConvert from "./components/FileConvert";
 import TableSection from "./components/TableSection";
+import { useFetchTemplate } from "./hooks/useFetchTemplate";
+import FileUploadSection from "./components/FileUploadSection";
+import { useFileExecute } from "./hooks/useFileExecute";
 
 const ApplyCodeTemplatesScreen = () => {
   const {
@@ -40,6 +43,30 @@ const ApplyCodeTemplatesScreen = () => {
     htmlUploadStatus,
     handleBackupFileUpload,
   } = useFileUpload();
+  
+  const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
+  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
+
+  // 코드 실행 훅
+  const {
+    isProcessing,
+    isExecuted,
+    uploadProgress,
+    uploadStatus,
+    downloadedFileName,
+    handleConvertByCountryCode,
+    handleDownload,
+  } = useFileExecute({
+    originalFile,
+    fileContent,
+    textareas,
+    setTextareas,
+    countryCode,
+    ticketUrl,
+  });
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -51,10 +78,13 @@ const ApplyCodeTemplatesScreen = () => {
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplate
+        loading={loading}
+        ticketNumOptions={ticketNumOptions}
+        ticketUrlOptions={ticketUrlOptions}
         ticketNum={ticketNum}
         ticketUrl={ticketUrl}
-        setTicketNum={setTicketNum}
-        setTicketUrl={setTicketUrl}
+        handleTicketNumChange={setTicketNum}
+        handleTicketUrlChange={setTicketUrl}
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}
         handleSearchCountryTemplate={handleSearchCountryTemplate}
@@ -62,20 +92,25 @@ const ApplyCodeTemplatesScreen = () => {
         templateId={templateId}
       />
       <Gap gap={50} />
-  
 
       <TitleLabel text="📤 파일 업로드" />
       <Gap gap={15} />
-      <FileConvert
-        ticketUrl={ticketUrl}
-        textareas={textareas}
-        setTextareas={setTextareas}
-        countryCode={countryCode}
-        originalFile={originalFile}
-        fileContent={fileContent}
+      <FileUploadSection
         fileName={fileName}
         htmlUploadStatus={htmlUploadStatus}
         handleBackupFileUpload={handleBackupFileUpload}
+        countryCode={countryCode}
+      />
+      <FileConvert
+        countryCode={countryCode}
+        fileName={fileName}
+        isProcessing={isProcessing}
+        isExecuted={isExecuted}
+        uploadProgress={uploadProgress}
+        uploadStatus={uploadStatus}
+        downloadedFileName={downloadedFileName}
+        handleConvertByCountryCode={handleConvertByCountryCode}
+        handleDownload={handleDownload}
       />
       <Gap gap={50} />
 

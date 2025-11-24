@@ -12,15 +12,14 @@ const BasicTextarea = ({
   toBeCode,
   setToBeCode,
   isApplied,
-  filter,
   countryCode,
   matchedPart,
   asWasOccurrenceCount,
-  toBeOccurrenceCount,
   errorState,
   isEnglishCountry,
   hasOriginalFile,
   handleNonAssetPptNoChange,
+  // toBeOccurrenceCount,
 }) => {
   const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
   const transformedAsWasCode = asWasCode?.replace(
@@ -58,15 +57,6 @@ const BasicTextarea = ({
     <Container>
       <div style={{ fontSize: "12px", paddingLeft: "15px", paddingTop: "10px" }}>{indexText}</div>
       <Wrapper>
-        {/* <CheckboxWrapper>
-          <Checkbox
-            type="checkbox"
-            checked={checked}
-            onChange={onCheckedChange}
-            disabled={isCheckboxDisabled}
-          />
-        </CheckboxWrapper> */}
-
         <PptNo>
           <div className="flex items-center gap-[10px]">
             <label className="font-[16px]">PPT NO.</label>
@@ -219,18 +209,6 @@ const Wrapper = styled.div`
   gap: 1rem;
 `;
 
-const CheckboxWrapper = styled.div`
-  width: 5%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Checkbox = styled.input`
-  width: 24px;
-  height: 24px;
-`;
-
 const PptNo = styled.div`
   width: 10%;
   display: flex;
@@ -239,10 +217,6 @@ const PptNo = styled.div`
   align-items: center;
   font-size: 14px;
   color: #111827;
-`;
-
-const TextBold = styled.span`
-  font-weight: bold;
 `;
 
 const CodeBlock = styled.div`
@@ -285,11 +259,6 @@ const Textarea = styled.textarea`
     background: #e5e7eb;
     border-radius: 10px;
   }
-`;
-
-const ErrorMessage = styled.div`
-  font-size: 12px;
-  color: #ffa600;
 `;
 
 const MatchedPartWrapper = styled.div``;

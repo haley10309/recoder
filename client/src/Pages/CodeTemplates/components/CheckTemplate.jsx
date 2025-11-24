@@ -10,7 +10,6 @@ const CheckTemplate = ({
   handleTicketUrlChange,
   onClick,
 }) => {
-
   return (
     <div className="flex items-center bg-[#F9F9F9] rounded-[8px] p-6 min-h-[150px] justify-between shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
       <div className="flex">
