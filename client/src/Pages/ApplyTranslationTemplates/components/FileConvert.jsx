@@ -20,6 +20,7 @@ const FileConvert = ({
   fileName,
   htmlUploadStatus,
   handleBackupFileUpload,
+  englishCopyList,
   setEnglishCopyList,
 }) => {
   // 번역덱 업로드 훅
@@ -113,6 +114,10 @@ const FileConvert = ({
         countryCode={countryCode}
         handleTranslationTxtUpload={handleTranslationTxtUpload}
       />
+      
+      {/* {englishCopyList.map((item, index) => (
+        <p key={`english-${index}`}>{index + 1}. {item}</p>
+      ))} */}
 
       {!!fileName && (
         <FileConvertBottonBox>

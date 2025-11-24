@@ -4,7 +4,7 @@ import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 
-import { useFetchTemplate } from "./hooks/useFetchTemplate";
+import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 import { useCheckTemplate } from "./hooks/useCheckTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
 
