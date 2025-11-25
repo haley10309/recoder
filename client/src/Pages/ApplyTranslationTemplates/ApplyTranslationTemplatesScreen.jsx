@@ -9,7 +9,7 @@ import CheckTemplate from "@/Components/Common/CheckTemplate";
 import FileConvert from "./components/FileConvert";
 import TableSection from "./components/TableSection";
 import FileUploadSection from "./components/FileUploadSection";
-import SiteCode from "./components/SiteCode";
+import SiteCode from "@/Components/Common/SiteCode";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 import { useSearchTemplate } from "./hooks/useSearchTemplate";

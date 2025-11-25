@@ -56,7 +56,7 @@ const TranslationTemplatesScreen = () => {
       />
       <Gap gap={50} />
 
-      <TitleLabel text="📤 번역 파일 업로드" />
+      <TitleLabel text="📤 파일 업로드" />
       <Gap gap={15} />
       <TransFileUpload
         transFile={transFile}
