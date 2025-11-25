@@ -1,18 +1,24 @@
 import { useState } from "react";
 import axios from "axios";
 
+import { useFetchTemplate } from "@/hooks/useFetchTemplate";
+
 import { isAssetCode, kind_countOccurrences } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
 
-export const useCheckTemplate = () => {
+export const useTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
   const [ticketUrl, setTicketUrl] = useState("");
+  
+  const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
+  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
 
   const [saveType, setSaveType] = useState(""); // 'create' | 'update'
   const [codeChanges, setCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
-
-  // File upload and content
-  const [originalHtmlFile, setOriginalHtmlFile] = useState("");
+  const [backupHtmlContent, setBackupHtmlContent] = useState("");
 
   // handlers
   const addTextArea = () => {
@@ -37,7 +43,7 @@ export const useCheckTemplate = () => {
     setCodeChanges(arr);
   };
 
-  const countOccurrences = (asWasCode) => kind_countOccurrences(originalHtmlFile, asWasCode);
+  const countOccurrences = (asWasCode) => kind_countOccurrences(backupHtmlContent, asWasCode);
 
   const checkHasInvalidAsWasCount = () => {
     return codeChanges.some(item => countOccurrences(item.aswas_code) !== 1);
@@ -46,7 +52,7 @@ export const useCheckTemplate = () => {
   /**
    * @param path 'edit-template' | 'edit-localization-entries' // 페이지 종류에 따라 템플릿 불러오기에 따른 안내문구가 다름
    */
-  const checkForExistingTemplate = async (path) => {
+  const checkAndGetTemplateIfExist = async (path) => {
     try {
       // 1) 템플릿 존재 여부 확인
       const response = await axios.post(`${BASE_URL}/check-template-exsist`, {
@@ -141,17 +147,18 @@ export const useCheckTemplate = () => {
   };
 
   const handleGetTemplate = () => {
-    checkForExistingTemplate("edit-template");
+    checkAndGetTemplateIfExist("edit-template");
   };
 
   return {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
     ticketNum,
-    setTicketNum,
     ticketUrl,
+    setTicketNum,
     setTicketUrl,
     saveType,
-    originalHtmlFile,
-    setOriginalHtmlFile,
     addTextArea,
     removeTextArea,
     countOccurrences,
@@ -163,5 +170,6 @@ export const useCheckTemplate = () => {
     handleAswasChange,
     handleTobeChange,
     handleGetTemplate,
+    setBackupHtmlContent,
   };
 };

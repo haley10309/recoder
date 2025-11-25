@@ -6,7 +6,7 @@ import HtmlFileIcon from "@/assets/union.svg";
 const FileUploadSection = ({
   fileName,
   htmlUploadStatus,
-  handleBackupFileUpload,
+  handleBackupHtmlFileUpload,
   countryCode,
 }) => {
 
@@ -39,7 +39,7 @@ const FileUploadSection = ({
                   <img src={FileUploadIcon} alt="Upload" />
                   <p className="mt-3 font-[500] text-[15px] text-center">{`${countryCode ? `'${countryCode}' 국가의 원본코드.html 을 업로드 해 주세요` : '원본코드.html 을 업로드 해 주세요'} `}</p>
                 </FileDropInner>
-                <input id="dropzone-file" type="file" accept=".html" onChange={handleBackupFileUpload} hidden  />
+                <input id="dropzone-file" type="file" accept=".html" onChange={handleBackupHtmlFileUpload} hidden  />
               </FileDropLabel>
             )}
           </div>

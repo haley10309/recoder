@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
+import { useFetchTemplate } from "@/hooks/useFetchTemplate";
+
 import { countryOptions } from "@/utils/countryOptions";
 import { isAssetCode } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
@@ -8,6 +10,13 @@ import { BASE_URL } from "@/utils/routePath";
 export const useSearchTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
   const [ticketUrl, setTicketUrl] = useState("");
+  
+  const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
+  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
+
   const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", localizedToBeCode: "", checked: false, isApplied: null }]);
   const [countryCode, setCountryCode] = useState("");
   const [templateId, setTemplateId] = useState(null);
@@ -95,6 +104,9 @@ export const useSearchTemplate = () => {
   };
 
   return {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
     countryCode,
     ticketNum,
     setTicketNum,

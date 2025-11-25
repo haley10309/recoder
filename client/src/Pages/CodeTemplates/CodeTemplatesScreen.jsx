@@ -5,8 +5,7 @@ import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 import CheckTemplate from "@/Components/Common/CheckTemplate";
 
-import { useFetchTemplate } from "@/hooks/useFetchTemplate";
-import { useCheckTemplate } from "./hooks/useCheckTemplate";
+import { useTemplate } from "./hooks/useTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
 
 import CodeChangesEditor from "./components/CodeChangesEditor";
@@ -16,13 +15,14 @@ import "./CodeTemplates.scss";
 
 const CodeTemplatesScreen = () => {
   const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
     ticketNum,
-    setTicketNum,
     ticketUrl,
+    setTicketNum,
     setTicketUrl,
     saveType,
-    originalHtmlFile,
-    setOriginalHtmlFile,
     addTextArea,
     removeTextArea,
     countOccurrences,
@@ -34,20 +34,18 @@ const CodeTemplatesScreen = () => {
     handleAswasChange,
     handleTobeChange,
     handleGetTemplate,
-  } = useCheckTemplate();
+    setBackupHtmlContent,
+  } = useTemplate();
 
   const {
-    loading,
-    ticketNumOptions,
-    ticketUrlOptions,
-  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
-
-  const {
-    pptFile,
-    backUpFile,
-    handlePptFileChange,
+    pptTxtFile,
+    backupHtmlFile,
+    handlePptTxtFileChange,
     handleBackUpHtmlFileChange,
-  } = useFileUpload({ setCodeChanges, setOriginalHtmlFile });
+  } = useFileUpload({
+    setCodeChanges,
+    setBackupHtmlContent,
+  });
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -73,9 +71,9 @@ const CodeTemplatesScreen = () => {
       <TitleLabel text="📤 파일 업로드" />
       <Gap gap={15} />
       <UploadFiles
-        pptFile={pptFile}
-        backUpFile={backUpFile}
-        handlePptFileChange={handlePptFileChange}
+        pptTxtFile={pptTxtFile}
+        backupHtmlFile={backupHtmlFile}
+        handlePptTxtFileChange={handlePptTxtFileChange}
         handleBackUpHtmlFileChange={handleBackUpHtmlFileChange}
       />
       <Gap gap={50} />
@@ -86,7 +84,7 @@ const CodeTemplatesScreen = () => {
         saveType={saveType}
         addTextArea={addTextArea}
         removeTextArea={removeTextArea}
-        originalHtmlFile={originalHtmlFile}
+        backupHtmlFile={backupHtmlFile}
         countOccurrences={countOccurrences}
         handleSaveTemplate={handleSaveTemplate}
         checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}

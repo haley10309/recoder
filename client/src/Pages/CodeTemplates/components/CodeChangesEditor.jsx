@@ -8,7 +8,7 @@ const CodeChangesEditor = ({
   saveType,
   addTextArea,
   removeTextArea,
-  originalHtmlFile,
+  backupHtmlFile,
   countOccurrences,
   handleSaveTemplate,
   checkHasInvalidAsWasCount,
@@ -20,7 +20,7 @@ const CodeChangesEditor = ({
   return (
     <>
       <div className="flex flex-col items-center">
-        {originalHtmlFile ? (
+        {backupHtmlFile ? (
           <>
             {checkHasInvalidAsWasCount() ? (
               <div style={{ color: "#ff0019", fontSize: "15px", fontWeight: "bold" }}>
@@ -89,7 +89,7 @@ const CodeChangesEditor = ({
                       [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
                     </span>
                   </div>
-                  {originalHtmlFile ? (
+                  {backupHtmlFile ? (
                     <span className="ml-1 text-xs"
                       style={{
                         color: countOccurrences(item.aswas_code) === 1 ? "blue" : "red"

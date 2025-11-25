@@ -1,14 +1,14 @@
 import { useState } from "react";
 
 export function useFileUpload() {
-  const [originalFile, setOriginalFile] = useState(null);
-  const [fileContent, setFileContent] = useState("");
-  const [fileName, setFileName] = useState("");
+  const [backupHtmlFile, setOriginalFile] = useState(null);
+  const [backupHtmlContent, setBackupHtmlContent] = useState("");
+
   const [htmlUploadStatus, setHtmlUploadStatus] = useState("");
   const [uploadStatus, setUploadStatus] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const handleBackupFileUpload = (e) => {
+  const handleBackupHtmlFileUpload = (e) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) {
       setHtmlUploadStatus("fail");
@@ -33,10 +33,8 @@ export function useFileUpload() {
 
     // 파일 읽기 완료
     reader.onload = () => {
-      const content = reader.result;
-      setFileContent(content);
+      setBackupHtmlContent(reader.result.content);
       setHtmlUploadStatus("success");
-      setFileName(selectedFile.name);
       setOriginalFile(selectedFile);
       setUploadStatus("");
       setUploadProgress(100); // 완료 시 100%
@@ -53,18 +51,9 @@ export function useFileUpload() {
   };
 
   return {
-    originalFile,
-    fileContent,
-    fileName,
+    backupHtmlFile,
+    backupHtmlContent,
     htmlUploadStatus,
-    uploadStatus,
-    uploadProgress,
-    handleBackupFileUpload,
-    setOriginalFile,
-    setFileContent,
-    setFileName,
-    setUploadStatus,
-    setHtmlUploadStatus,
-    setUploadProgress,
+    handleBackupHtmlFileUpload,
   };
 }

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+
 import { convertAsWasToToBeCodes } from "@/apis/apis";
+
 import { countOccurrences } from "@/utils/codeUtils";
 
 export function useFileExecute({
-  originalFile,
-  fileContent,
+  backupHtmlFile,
+  backupHtmlContent,
   textareas,
   setTextareas,
   countryCode,
@@ -28,7 +30,7 @@ export function useFileExecute({
         code?.replace(new RegExp(`/${lowerCaseCode}/`, "g"), "/uk/")?.trim();
 
       const asWasOccurrenceCount = countOccurrences(
-        fileContent,
+        backupHtmlContent,
         textarea.asWasCode
       );
       const toBeOccurrenceCount = countOccurrences(
@@ -80,11 +82,11 @@ export function useFileExecute({
     setUploadProgress(0);
 
     if (
-      originalFile &&
+      backupHtmlFile &&
       updatedTextareas.every(({ asWasCode, toBeCode }) => asWasCode && (toBeCode !== null || toBeCode === ""))
     ) {
       const formData = new FormData();
-      formData.append("file", originalFile);
+      formData.append("file", backupHtmlFile);
 
       const codeChanges = updatedTextareas
         .filter((textarea) => textarea.changed)

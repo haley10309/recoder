@@ -5,18 +5,20 @@ import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 import CheckTemplate from "@/Components/Common/CheckTemplate";
+import SiteCode from "@/Components/Common/SiteCode";
 import FileConvert from "./components/FileConvert";
 import TableSection from "./components/TableSection";
 import FileUploadSection from "./components/FileUploadSection";
-import SiteCode from "@/Components/Common/SiteCode";
 
-import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 import { useSearchTemplate } from "./hooks/useSearchTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
 import { useFileExecute } from "./hooks/useFileExecute";
 
 const ApplyCodeTemplatesScreen = () => {
   const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
     countryCode,
     ticketNum, 
     setTicketNum,
@@ -35,19 +37,12 @@ const ApplyCodeTemplatesScreen = () => {
 
   // HTML 파일 업로드 훅
   const {
-    originalFile,
-    fileContent,
-    fileName,
+    backupHtmlFile,
+    backupHtmlContent,
     htmlUploadStatus,
-    handleBackupFileUpload,
+    handleBackupHtmlFileUpload,
   } = useFileUpload();
   
-  const {
-    loading,
-    ticketNumOptions,
-    ticketUrlOptions,
-  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
-
   // 코드 실행 훅
   const {
     isProcessing,
@@ -58,8 +53,8 @@ const ApplyCodeTemplatesScreen = () => {
     handleConvertByCountryCode,
     handleDownload,
   } = useFileExecute({
-    originalFile,
-    fileContent,
+    backupHtmlFile,
+    backupHtmlContent,
     textareas,
     setTextareas,
     countryCode,
@@ -104,14 +99,14 @@ const ApplyCodeTemplatesScreen = () => {
       <TitleLabel text="📤 파일 업로드" />
       <Gap gap={15} />
       <FileUploadSection
-        fileName={fileName}
+        fileName={backupHtmlFile?.name ?? ""}
         htmlUploadStatus={htmlUploadStatus}
-        handleBackupFileUpload={handleBackupFileUpload}
+        handleBackupHtmlFileUpload={handleBackupHtmlFileUpload}
         countryCode={countryCode}
       />
       <FileConvert
         countryCode={countryCode}
-        fileName={fileName}
+        fileName={backupHtmlFile?.name ?? ""}
         isProcessing={isProcessing}
         isExecuted={isExecuted}
         uploadProgress={uploadProgress}
@@ -128,10 +123,9 @@ const ApplyCodeTemplatesScreen = () => {
         <TableSection
           textareas={textareas}
           countryCode={countryCode}
+          hasBackupHtmlFile={!!backupHtmlFile}
           handleAsWasCodeChange={handleAsWasCodeChange}
           handleToBeCodeChange={handleToBeCodeChange}
-          isEnglishCountry={isEnglishCountry}
-          hasOriginalFile={!!originalFile}
           handlePptNoChange={handlePptNoChange}
         />
       </WhiteBox>

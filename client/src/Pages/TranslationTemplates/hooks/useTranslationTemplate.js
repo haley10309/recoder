@@ -22,7 +22,7 @@ export const useTranslationTemplate = () => {
   /**
    * @param path 'edit-template' | 'edit-localization-entries' // 페이지 종류에 따라 템플릿 불러오기에 따른 안내문구가 다름
    */
-  const checkForExistingTemplate = async (
+  const checkAndGetTemplateIfExist = async (
     path
   ) => {
     try {
@@ -170,7 +170,7 @@ export const useTranslationTemplate = () => {
   };
 
   const handleGetTemplate = () => {
-    checkForExistingTemplate("edit-localization-entries");
+    checkAndGetTemplateIfExist("edit-localization-entries");
   };
 
   return {

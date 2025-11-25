@@ -1,18 +1,18 @@
 import { useState } from "react";
 import axios from "axios";
 
-import { BASE_URL } from "@/utils/routePath";
 import { isAssetCode } from "@/utils/codeUtils";
+import { BASE_URL } from "@/utils/routePath";
 
-export const useFileUpload = ({ 
+export const useFileUpload = ({
   setCodeChanges,
-  setOriginalHtmlFile,
- }) => {
-  const [pptFile, setPptFile] = useState(null);
-  const [backUpFile, setBackUpFile] = useState(null); // TODO: backup, original 중 용어 통일하기 (일단 backup)
+  setBackupHtmlContent,
+}) => {
+  const [pptTxtFile, setPptTxtFile] = useState(null);
+  const [backupHtmlFile, setBackupHtmlFile] = useState(null);
 
   // PPT.txt 업로드 처리
-  const handlePptSubmit = async (file) => {
+  const _handlePptTxtFileSubmit = async (file) => {
     const formData = new FormData();
     formData.append("txtfile", file);
     try {
@@ -46,27 +46,27 @@ export const useFileUpload = ({
     }
   };
   
-  const handlePptFileChange = (e) => {
+  const handlePptTxtFileChange = (e) => {
     const f = e.target.files[0];
     if (!f) return;
-    setPptFile(f);
-    handlePptSubmit(f);
+    setPptTxtFile(f);
+    _handlePptTxtFileSubmit(f);
   };
 
   // 원본코드.html 파일 처리
   const handleBackUpHtmlFileChange = (e) => {
     const f = e.target.files[0];
     if (!f) return;
-    setBackUpFile(f);
+    setBackupHtmlFile(f);
     const reader = new FileReader();
-    reader.onload = (ev) => setOriginalHtmlFile(ev.target.result);
+    reader.onload = (ev) => setBackupHtmlContent(ev.target.result);
     reader.readAsText(f);
   };
-  
+
   return {
-    pptFile,
-    backUpFile,
-    handlePptFileChange,
+    pptTxtFile,
+    backupHtmlFile,
+    handlePptTxtFileChange,
     handleBackUpHtmlFileChange,
-  }
-}
+  };
+};

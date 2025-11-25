@@ -4,9 +4,9 @@ import arrowIcon from "@/assets/shift-fill.svg";
 import { formatFileSize } from "@/utils/codeUtils";
 
 export default function UploadFiles({ 
-  pptFile,
-  handlePptFileChange,
-  backUpFile,
+  pptTxtFile,
+  handlePptTxtFileChange,
+  backupHtmlFile,
   handleBackUpHtmlFileChange,
  }) {
   const pptInputRef = useRef(null);
@@ -21,11 +21,11 @@ export default function UploadFiles({
         <div className="flex flex-col justify-center items-center w-[330px] h-[160px] border-2 border-dashed border-gray-300 rounded-[10px] cursor-pointer" onClick={() => pptInputRef.current.click()}>
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
           <p className="mt-3 text-[#32383E] font-[500] text-[15px] text-center">PPT.txt 파일을 업로드 해 주세요</p>
-          <input type="file" accept=".txt" ref={pptInputRef} onChange={handlePptFileChange} className="hidden" />
-          {!!pptFile && (
+          <input type="file" accept=".txt" ref={pptInputRef} onChange={handlePptTxtFileChange} className="hidden" />
+          {!!pptTxtFile && (
             <div className="mt-2 text-center text-[13px]">
-              <p className="text-black">{pptFile.name}</p>
-              <p className="text-black">{formatFileSize(pptFile.size)}</p>
+              <p className="text-black">{pptTxtFile.name}</p>
+              <p className="text-black">{formatFileSize(pptTxtFile.size)}</p>
             </div>
           )}
         </div>
@@ -38,10 +38,10 @@ export default function UploadFiles({
           <p className="mt-3 font-[500] text-[15px] text-center">원본코드.html 파일을 업로드 해 주세요</p>
           <p className="mt-3 font-[500] text-[12px] text-center text-[#6b7280]">*템플릿 생성은 UK 기준이므로 UK 파일 업로드</p>
           <input type="file" accept=".html" ref={backUpInputRef} onChange={handleBackUpHtmlFileChange} className="hidden" />
-          {!!backUpFile && (
+          {!!backupHtmlFile && (
             <div className="mt-2 text-center text-[13px]">
-              <p>{backUpFile.name}</p>
-              <p>{formatFileSize(backUpFile.size)}</p>
+              <p>{backupHtmlFile.name}</p>
+              <p>{formatFileSize(backupHtmlFile.size)}</p>
             </div>
           )}
         </div>

@@ -28,12 +28,12 @@ const TranslationTemplatesScreen = () => {
     handleGetTemplate,
     transFile,
   } = useTranslationTemplate();
-    
-    const {
-      loading,
-      ticketNumOptions,
-      ticketUrlOptions,
-    } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
+
+  const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
+  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">

@@ -16,8 +16,7 @@ const BasicTextarea = ({
   matchedPart,
   asWasOccurrenceCount,
   errorState,
-  isEnglishCountry,
-  hasOriginalFile,
+  hasBackupHtmlFile,
   handlePptNoChange,
   // toBeOccurrenceCount,
 }) => {
@@ -83,7 +82,7 @@ const BasicTextarea = ({
         </PptNo>
 
         {/* AS-WAS */}
-        <CodeBlock $isEnglishCountry={isEnglishCountry}>
+        <CodeBlock>
           <Textarea
             value={transformedAsWasCode}
             onChange={(e) => setAsWasCode(e.target.value)}
@@ -96,7 +95,7 @@ const BasicTextarea = ({
                 [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
               </span>
             </div>
-            {hasOriginalFile ? (
+            {hasBackupHtmlFile ? (
               <span className="ml-1 text-xs"
                 style={{
                   color: asWasOccurrenceCount === 1 
@@ -148,7 +147,7 @@ const BasicTextarea = ({
         </CodeBlock>
 
         {/* TO-BE */}
-        <CodeBlock $isEnglishCountry={isEnglishCountry}>
+        <CodeBlock>
           <Textarea
             value={toBeCode}
             onChange={(e) => setToBeCode(e.target.value)}

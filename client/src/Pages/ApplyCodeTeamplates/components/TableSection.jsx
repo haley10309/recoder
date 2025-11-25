@@ -5,10 +5,9 @@ import BasicTextarea from "./BasicTextarea";
 const TableSection = ({
   textareas,
   countryCode,
+  hasBackupHtmlFile,
   handleAsWasCodeChange,
   handleToBeCodeChange,
-  isEnglishCountry,
-  hasOriginalFile,
   handlePptNoChange,
 }) => {
   return (
@@ -45,8 +44,7 @@ const TableSection = ({
             asWasOccurrenceCount={textarea.asWasOccurrenceCount}
             toBeOccurrenceCount={textarea.toBeOccurrenceCount}
             errorState={textarea.errorState}
-            isEnglishCountry={isEnglishCountry}
-            hasOriginalFile={hasOriginalFile}
+            hasBackupHtmlFile={hasBackupHtmlFile}
             handlePptNoChange={(value) => handlePptNoChange(index, value)}
           />
         );
