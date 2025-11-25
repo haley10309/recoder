@@ -62,9 +62,6 @@ const TranslationTemplatesScreen = () => {
         transFile={transFile}
         handleTransFileChange={handleTransFileChange}
       />
-      {/* {englishCopyList.map((item, index) => (
-        <p key={`english-${index}`}>{index + 1}. {item}</p>
-      ))} */}
       <Gap gap={50} />
 
       <TitleLabel text={`🌐 로컬라이제이션 템플릿`} />

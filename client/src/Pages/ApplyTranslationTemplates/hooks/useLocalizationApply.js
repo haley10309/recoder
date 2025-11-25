@@ -138,12 +138,40 @@ export function useLocalizationApply({
       setLocalizationStatus("fail");
     }
   };
+  
+  // 로컬라이제이션 다운로드
+  const handleLocalizedDownload = () => {
+    const hasUnapplied = textareas.some(
+      (textarea) => textarea.isApplied === "no"
+    );
 
+    if (hasUnapplied) {
+      const proceed = window.confirm(
+        "🚫 변환이 적용되지 않은 항목이 있습니다.\n그래도 다운로드 하시겠습니까?"
+      );
+      if (!proceed) return;
+    }
+
+    if (localizedFileContent) {
+      const blob = new Blob([localizedFileContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = localizedFileName || "localized_file.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      alert("로컬라이제이션 적용을 먼저 진행해주세요.");
+    }
+  };
+  
   return {
     localizedFileContent,
     localizedFileName,
     isLocalizationApplied,
     localizationStatus,
     handleApplyLocalization,
+    handleLocalizedDownload,
   };
 }

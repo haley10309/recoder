@@ -6,15 +6,20 @@ import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
 
+import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 import { useSearchTemplate } from "./hooks/useSearchTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
-import { useFetchTemplate } from "@/hooks/useFetchTemplate";
+import { useLocalizationApply } from "./hooks/useLocalizationApply";
+import { useTranslationUpload } from "./hooks/useTranslationUpload";
 
 import FileConvert from "./components/FileConvert";
 import CheckTemplate from "./components/CheckTemplate";
 import TableSection from "./components/TableSection";
+import FileUploadSection from "./components/FileUploadSection";
 
 const ApplyTranslationTemplatesScreen = () => {
+  const [englishCopyList, setEnglishCopyList] = useState([]);
+
   const {
     countryCode,
     ticketNum,
@@ -41,14 +46,37 @@ const ApplyTranslationTemplatesScreen = () => {
     handleBackupFileUpload,
     countOccurrences,
   } = useFileUpload();
-    
-    const {
-      loading,
-      ticketNumOptions,
-      ticketUrlOptions,
-    } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
+  
+  const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
+  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
 
-  const [englishCopyList, setEnglishCopyList] = useState([]);
+  
+  // 번역덱 업로드 훅
+  const {
+    translationMap,
+    txtUploadStatus,
+    txtFileName,
+    handleTranslationTxtUpload,
+    copyDeckFile,
+  } = useTranslationUpload({ countryCode, setEnglishCopyList });
+
+  // 로컬라이제이션 적용 훅
+  const {
+    localizationStatus,
+    handleApplyLocalization,
+    handleLocalizedDownload,
+    isLocalizationApplied,
+  } = useLocalizationApply({
+    tobeFileContent,
+    fileName,
+    textareas,
+    setTextareas,
+    countryCode,
+    translationMap,
+  });
   
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -84,20 +112,25 @@ const ApplyTranslationTemplatesScreen = () => {
         <>
           <TitleLabel text="📤 파일 업로드" />
           <Gap gap={15} />
-          <FileConvert
-            ticketNum={ticketNum}
-            ticketUrl={ticketUrl}
-            textareas={textareas}
-            setTextareas={setTextareas}
-            countryCode={countryCode}
-            isEnglishCountry={isEnglishCountry}
-            originalFile={originalFile}
-            tobeFileContent={tobeFileContent}
+          <FileUploadSection
             fileName={fileName}
             htmlUploadStatus={htmlUploadStatus}
             handleBackupFileUpload={handleBackupFileUpload}
-            englishCopyList={englishCopyList}
-            setEnglishCopyList={setEnglishCopyList}
+            txtUploadStatus={txtUploadStatus}
+            txtFileName={txtFileName}
+            countryCode={countryCode}
+            handleTranslationTxtUpload={handleTranslationTxtUpload}
+          />
+          <FileConvert
+            ticketNum={ticketNum}
+            ticketUrl={ticketUrl}
+            isEnglishCountry={isEnglishCountry}
+            fileName={fileName}
+            handleApplyLocalization={handleApplyLocalization}
+            handleLocalizedDownload={handleLocalizedDownload}
+            localizationStatus={localizationStatus}
+            isLocalizationApplied={isLocalizationApplied}
+            copyDeckFile={copyDeckFile}
           />
           <Gap gap={50} />
 

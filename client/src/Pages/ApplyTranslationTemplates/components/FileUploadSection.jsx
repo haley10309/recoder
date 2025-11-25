@@ -8,7 +8,6 @@ const FileUploadSection = ({
   fileName,
   htmlUploadStatus,
   handleBackupFileUpload,
-  isEnglishCountry,
   txtUploadStatus,
   txtFileName,
   handleTranslationTxtUpload,
@@ -16,71 +15,69 @@ const FileUploadSection = ({
 }) => {
 
   return (
-    <>
-      <ConvertSection>
-        <ConvertContainer>
-          {/* HTML 업로드 */}
-          <div>
-            {htmlUploadStatus ? (
-              <PreviewHeader style={{ marginTop: "0.75rem" }}>
-                <img src={HtmlFileIcon} alt="HTML Icon" />
-                <div id="preview-text">
-                  <span>{fileName}</span>
-                  <ProgressBar>
-                    <ProgressFill $progress={100} />
-                  </ProgressBar>
-                  <UploadStatus $success={htmlUploadStatus === "success"}>
-                    {
-                      htmlUploadStatus === "success"
-                        ? "✅ HTML 파일 업로드 성공!"
-                        : "❌ HTML 파일 업로드 실패"
-                    }
-                  </UploadStatus>
-                </div>
-              </PreviewHeader>
-            ) : (
-              <FileDropLabel htmlFor="dropzone-file">
-                <FileDropInner>
-                  <img src={FileUploadIcon} alt="Upload" />
-                  <p className="mt-3 font-[500] text-[15px] text-center">{`${countryCode ? `'${countryCode}' 국가의 tobe 코드.html 을 업로드 해 주세요` : '위에서 먼저 국가코드를 선택한 후 파일을 업로드 해주세요'} `}</p>
-                </FileDropInner>
-                <input id="dropzone-file" type="file" accept=".html" onChange={handleBackupFileUpload} hidden  />
-              </FileDropLabel>
-            )}
-          </div>
+    <ConvertSection>
+      <ConvertContainer>
+        {/* HTML 업로드 */}
+        <div>
+          {htmlUploadStatus ? (
+            <PreviewHeader style={{ marginTop: "0.75rem" }}>
+              <img src={HtmlFileIcon} alt="HTML Icon" />
+              <div id="preview-text">
+                <span>{fileName}</span>
+                <ProgressBar>
+                  <ProgressFill $progress={100} />
+                </ProgressBar>
+                <UploadStatus $success={htmlUploadStatus === "success"}>
+                  {
+                    htmlUploadStatus === "success"
+                      ? "✅ HTML 파일 업로드 성공!"
+                      : "❌ HTML 파일 업로드 실패"
+                  }
+                </UploadStatus>
+              </div>
+            </PreviewHeader>
+          ) : (
+            <FileDropLabel htmlFor="dropzone-file">
+              <FileDropInner>
+                <img src={FileUploadIcon} alt="Upload" />
+                <p className="mt-3 font-[500] text-[15px] text-center">{`${countryCode ? `'${countryCode}' 국가의 tobe 코드.html 을 업로드 해 주세요` : '위에서 먼저 국가코드를 선택한 후 파일을 업로드 해주세요'} `}</p>
+              </FileDropInner>
+              <input id="dropzone-file" type="file" accept=".html" onChange={handleBackupFileUpload} hidden  />
+            </FileDropLabel>
+          )}
+        </div>
 
-          {/* 번역덱 업로드 */}
-          <div>
-            {txtUploadStatus ? (
-              <PreviewHeader style={{ marginTop: "0.75rem" }}>
-                <img src={HtmlFileIcon} alt="TXT Icon" />
-                <div id="preview-text">
-                  <span>{txtFileName}</span>
-                  <ProgressBar>
-                    <ProgressFill $progress={100} />
-                  </ProgressBar>
-                  <UploadStatus $success={txtUploadStatus === "success"}>
-                    {
-                      txtUploadStatus === "success"
-                        ? "✅ 번역덱 TXT 업로드 성공!"
-                        : "❌ 번역덱 TXT 업로드 실패"
-                    }
-                  </UploadStatus>
-                </div>
-              </PreviewHeader>
-            ) : (
-              <FileDropLabel htmlFor="dropzone-txt">
-                <FileDropInner>
-                  <img src={FileUploadIcon} alt="Upload" />
-                  <p>번역덱 TXT 파일을 업로드 해주세요.</p>
-                </FileDropInner>
-                <input id="dropzone-txt" type="file" accept=".txt" onChange={handleTranslationTxtUpload} hidden />
-              </FileDropLabel>
-            )}
-          </div>
-        </ConvertContainer>
-      </ConvertSection>
-    </>
+        {/* 번역덱 업로드 */}
+        <div>
+          {txtUploadStatus ? (
+            <PreviewHeader style={{ marginTop: "0.75rem" }}>
+              <img src={HtmlFileIcon} alt="TXT Icon" />
+              <div id="preview-text">
+                <span>{txtFileName}</span>
+                <ProgressBar>
+                  <ProgressFill $progress={100} />
+                </ProgressBar>
+                <UploadStatus $success={txtUploadStatus === "success"}>
+                  {
+                    txtUploadStatus === "success"
+                      ? "✅ 번역덱 TXT 업로드 성공!"
+                      : "❌ 번역덱 TXT 업로드 실패"
+                  }
+                </UploadStatus>
+              </div>
+            </PreviewHeader>
+          ) : (
+            <FileDropLabel htmlFor="dropzone-txt">
+              <FileDropInner>
+                <img src={FileUploadIcon} alt="Upload" />
+                <p>번역덱 TXT 파일을 업로드 해주세요.</p>
+              </FileDropInner>
+              <input id="dropzone-txt" type="file" accept=".txt" onChange={handleTranslationTxtUpload} hidden />
+            </FileDropLabel>
+          )}
+        </div>
+      </ConvertContainer>
+    </ConvertSection>
   );
 };
 
