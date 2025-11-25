@@ -4,16 +4,16 @@ import styled from "styled-components";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
-
-import { useSearchTemplate } from "./hooks/useSearchTemplate";
-import { useFileUpload } from "./hooks/useFileUpload";
-
-import CheckTemplate from "./components/CheckTemplate";
+import CheckTemplate from "@/Components/Common/CheckTemplate";
 import FileConvert from "./components/FileConvert";
 import TableSection from "./components/TableSection";
 import FileUploadSection from "./components/FileUploadSection";
-import { useFileExecute } from "./hooks/useFileExecute";
+import SiteCode from "./components/SiteCode";
+
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
+import { useSearchTemplate } from "./hooks/useSearchTemplate";
+import { useFileUpload } from "./hooks/useFileUpload";
+import { useFileExecute } from "./hooks/useFileExecute";
 
 const ApplyCodeTemplatesScreen = () => {
   const {
@@ -26,7 +26,7 @@ const ApplyCodeTemplatesScreen = () => {
     textareas,
     setTextareas,
     handleCountryChange,
-    handleSearchCountryTemplate,
+    handleGetTemplate,
     handleAsWasCodeChange,
     handleToBeCodeChange,
     handleNonAssetPptNoChange,
@@ -85,11 +85,21 @@ const ApplyCodeTemplatesScreen = () => {
         ticketUrl={ticketUrl}
         handleTicketNumChange={setTicketNum}
         handleTicketUrlChange={setTicketUrl}
+        handleGetTemplate={handleGetTemplate}
+      />
+      <Gap gap={30} />
+      <div>
+        <div style={{ fontSize: "12px", color: "grey" }}>templateId: {templateId}</div>
+      </div>
+      <Gap gap={50} />
+
+      <TitleLabel text="🌐 국가코드 선택" />
+      <Gap gap={15} />
+      <SiteCode
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}
-        handleSearchCountryTemplate={handleSearchCountryTemplate}
         isEnglishCountry={isEnglishCountry}
-        templateId={templateId}
+        isDisabled={!ticketNum || !ticketUrl}
       />
       <Gap gap={50} />
 
@@ -114,7 +124,7 @@ const ApplyCodeTemplatesScreen = () => {
       />
       <Gap gap={50} />
 
-      <TitleLabel text="👀 AS-WAS / TO-BE / Localization(for 비영문국) 확인하기" />
+      <TitleLabel text="✅ AS-WAS / TO-BE 확인하기" />
       <Gap gap={15} />
       <WhiteBox>
         <TableSection

@@ -21,7 +21,7 @@ export const useSearchTemplate = () => {
                               ? !!countryOptions.find((c) => c.name === countryCode)?.isEnglish
                               : null;
 
-  const handleSearchCountryTemplate = async () => {
+  const handleGetTemplate = async () => {
     try {
       if (!ticketNum) {
         alert("Jira 티켓 번호를 입력해주세요.")
@@ -146,7 +146,7 @@ export const useSearchTemplate = () => {
     textareas,
     setTextareas,
     handleCountryChange,
-    handleSearchCountryTemplate,
+    handleGetTemplate,
     handleAsWasCodeChange,
     handleToBeCodeChange,
     handleNonAssetPptNoChange,

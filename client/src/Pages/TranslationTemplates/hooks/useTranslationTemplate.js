@@ -181,6 +181,10 @@ export const useTranslationTemplate = () => {
     handleTransSubmit(file);
   };
 
+  const handleGetTemplate = () => {
+    checkForExistingTemplate("edit-localization-entries");
+  };
+
   return {
     ticketNum,
     setTicketNum,
@@ -189,12 +193,12 @@ export const useTranslationTemplate = () => {
     saveType,
     localizationEntries,
     setLocalizationEntries,
-    checkForExistingTemplate,
     handleCreateOrUpdateLocalization,
     canUploadTransFile,
     englishCopyList,
     handleDeleteLocalizationEntry,
     handleTransFileChange,
     transFile,
+    handleGetTemplate,
   };
 };

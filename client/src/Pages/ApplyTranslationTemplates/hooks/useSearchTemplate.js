@@ -18,7 +18,7 @@ export const useSearchTemplate = () => {
                               : null;
 
   // 템플릿 조회
-  const handleSearchTemplate = async () => {
+  const handleGetTemplate = async () => {
     try {
       const { data } = await axios.post(`${BASE_URL}/get-template-details`, {
         ticket_num: ticketNum,
@@ -93,7 +93,7 @@ export const useSearchTemplate = () => {
     isEnglishCountry,
     textareas,
     setTextareas,
-    handleSearchTemplate,
+    handleGetTemplate,
     handleCountryChange,
     handleToBeCodeChange,
     handleLocalizedToBeCodeChange,

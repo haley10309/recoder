@@ -11,7 +11,6 @@ const SiteCode = ({
   handleCountryChange,
   isEnglishCountry,
   isDisabled,
-  handleGetTemplate,
 }) => {
 
   return (
@@ -32,15 +31,6 @@ const SiteCode = ({
           }
         </div>
       </InputGrid>
-
-      <Gap gap={20} />
-
-      <button
-        className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px]"
-        onClick={handleGetTemplate}
-      >
-        템플릿 불러오기
-      </button>
     </Wrapper>
   );
 };

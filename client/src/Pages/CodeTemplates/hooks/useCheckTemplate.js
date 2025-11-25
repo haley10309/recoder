@@ -132,7 +132,7 @@ export const useCheckTemplate = () => {
           alert("새로운 템플릿을 추가할 수 있습니다.");
         }
         if (path === 'edit-localization-entries') {
-          alert("Edit Template 페이지에서 먼저 템플릿을 생성해주세요.");
+          alert("Code Template 페이지에서 먼저 템플릿을 생성해주세요.");
         }
       }
     } catch (error) {
@@ -201,6 +201,10 @@ export const useCheckTemplate = () => {
     }
   };
 
+  const handleGetTemplate = () => {
+    checkForExistingTemplate("edit-template");
+  };
+
   return {
     ticketNum,
     setTicketNum,
@@ -219,7 +223,7 @@ export const useCheckTemplate = () => {
     handleNonAssetPptNoChange,
     handleNonAssetAswasChange,
     handleNonAssetTobeChange,
-    checkForExistingTemplate,
+    handleGetTemplate,
 
     // addAssetArea,
     // removeAssetArea,

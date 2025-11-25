@@ -3,13 +3,13 @@ import React from "react";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
+import CheckTemplate from "@/Components/Common/CheckTemplate";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 import { useCheckTemplate } from "./hooks/useCheckTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
 
 import CodeChangesEditor from "./components/CodeChangesEditor";
-import CheckTemplate from "./components/CheckTemplate";
 import UploadFiles from "./components/UploadFiles";
 
 import "./CodeTemplates.scss";
@@ -33,7 +33,7 @@ const CodeTemplatesScreen = () => {
     handleNonAssetPptNoChange,
     handleNonAssetAswasChange,
     handleNonAssetTobeChange,
-    checkForExistingTemplate,
+    handleGetTemplate,
   } = useCheckTemplate();
 
   const {
@@ -66,7 +66,7 @@ const CodeTemplatesScreen = () => {
         ticketUrl={ticketUrl}
         handleTicketNumChange={setTicketNum}
         handleTicketUrlChange={setTicketUrl}
-        onClick={() => checkForExistingTemplate("edit-template")}
+        handleGetTemplate={handleGetTemplate}
       />
       <Gap gap={50} />
 

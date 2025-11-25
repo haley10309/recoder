@@ -5,17 +5,17 @@ import AddIcon from "@mui/icons-material/Add";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import Gap from "@/Components/Common/Gap";
+import CheckTemplate from "@/Components/Common/CheckTemplate";
+import FileConvert from "./components/FileConvert";
+import TableSection from "./components/TableSection";
+import FileUploadSection from "./components/FileUploadSection";
+import SiteCode from "./components/SiteCode";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 import { useSearchTemplate } from "./hooks/useSearchTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
 import { useLocalizationApply } from "./hooks/useLocalizationApply";
 import { useTranslationUpload } from "./hooks/useTranslationUpload";
-
-import FileConvert from "./components/FileConvert";
-import CheckTemplate from "./components/CheckTemplate";
-import TableSection from "./components/TableSection";
-import FileUploadSection from "./components/FileUploadSection";
 
 const ApplyTranslationTemplatesScreen = () => {
   const [englishCopyList, setEnglishCopyList] = useState([]);
@@ -29,7 +29,7 @@ const ApplyTranslationTemplatesScreen = () => {
     isEnglishCountry,
     textareas,
     setTextareas,
-    handleSearchTemplate,
+    handleGetTemplate,
     handleCountryChange,
     handleToBeCodeChange,
     handleLocalizedToBeCodeChange,
@@ -85,7 +85,7 @@ const ApplyTranslationTemplatesScreen = () => {
       <PageDescriptionText text={"국가별 To-Be HTML에 Translation Template + 카피덱을 적용해 번역 반영"} />
       <Gap gap={50} />
 
-      <TitleLabel text="🗺️ 국가코드 선택" />
+      <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplate
         loading={loading}
@@ -95,13 +95,25 @@ const ApplyTranslationTemplatesScreen = () => {
         ticketUrl={ticketUrl}
         handleTicketNumChange={setTicketNum}
         handleTicketUrlChange={setTicketUrl}
+        handleGetTemplate={handleGetTemplate}
+      />
+      <Gap gap={30} />
+      <div>
+        <div style={{ fontSize: "12px", color: "grey" }}>templateId: {templateId}</div>
+      </div>
+      <Gap gap={50} />
+
+      <TitleLabel text="🌐 국가코드 선택" />
+      <Gap gap={15} />
+      <SiteCode
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}
-        handleSearchCountryTemplate={handleSearchTemplate}
         isEnglishCountry={isEnglishCountry}
-        templateId={templateId}
+        isDisabled={!ticketNum || !ticketUrl}
       />
-      <Gap gap={25} />
+      <Gap gap={50} />
+      
+
 
       {isEnglishCountry ? (
         <>
@@ -134,7 +146,7 @@ const ApplyTranslationTemplatesScreen = () => {
           />
           <Gap gap={50} />
 
-          <TitleLabel text="👀 TO-BE / Localization TO-BE(for 비영문국) 확인하기" />
+          <TitleLabel text="✅ TO-BE / Localization TO-BE(for 비영문국) 확인하기" />
           <Gap gap={15} />
           <WhiteBox>
             <TableSection

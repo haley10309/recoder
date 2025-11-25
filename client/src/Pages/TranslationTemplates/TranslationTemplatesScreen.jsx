@@ -3,13 +3,13 @@ import React from "react";
 import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 import PageDescriptionText from "@/Components/Common/PageDescriptionText";
-
-import { useTranslationTemplate } from "./hooks/useTranslationTemplate";
-import { useFetchTemplate } from "@/hooks/useFetchTemplate";
+import CheckTemplate from "@/Components/Common/CheckTemplate";
 
 import LocalizationEntriesEditor from "./components/LocalizationEntriesEditor";
 import TransFileUpload from "./components/TransFileUpload";
-import CheckTemplate from "./components/CheckTemplate";
+
+import { useFetchTemplate } from "@/hooks/useFetchTemplate";
+import { useTranslationTemplate } from "./hooks/useTranslationTemplate";
 
 const TranslationTemplatesScreen = () => {
   const {
@@ -20,12 +20,12 @@ const TranslationTemplatesScreen = () => {
     saveType,
     localizationEntries,
     setLocalizationEntries,
-    checkForExistingTemplate,
     handleCreateOrUpdateLocalization,
     canUploadTransFile,
     englishCopyList,
     handleDeleteLocalizationEntry,
     handleTransFileChange,
+    handleGetTemplate,
     transFile,
   } = useTranslationTemplate();
     
@@ -52,7 +52,7 @@ const TranslationTemplatesScreen = () => {
         ticketUrl={ticketUrl}
         handleTicketNumChange={setTicketNum}
         handleTicketUrlChange={setTicketUrl}
-        onClick={() => checkForExistingTemplate("edit-localization-entries")}
+        handleGetTemplate={handleGetTemplate}
       />
       <Gap gap={50} />
 
@@ -64,7 +64,7 @@ const TranslationTemplatesScreen = () => {
       />
       <Gap gap={50} />
 
-      <TitleLabel text={`🌐 로컬라이제이션 템플릿`} />
+      <TitleLabel text={`✅ 로컬라이제이션 템플릿`} />
       <Gap gap={15} />
       <LocalizationEntriesEditor
         saveType={saveType}
