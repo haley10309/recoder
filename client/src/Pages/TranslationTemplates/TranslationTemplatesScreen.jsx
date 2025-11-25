@@ -18,16 +18,15 @@ const TranslationTemplatesScreen = () => {
     ticketUrl,
     setTicketUrl,
     saveType,
-    isTemplateCreated,
     localizationEntries,
     setLocalizationEntries,
-    setDeleteIds,
     checkForExistingTemplate,
     handleCreateOrUpdateLocalization,
     canUploadTransFile,
     englishCopyList,
-    handleTransSubmit,
     handleDeleteLocalizationEntry,
+    handleTransFileChange,
+    transFile,
   } = useTranslationTemplate();
     
     const {
@@ -60,10 +59,9 @@ const TranslationTemplatesScreen = () => {
       <TitleLabel text="📤 번역 파일 업로드" />
       <Gap gap={15} />
       <TransFileUpload
-        isTemplateCreated={isTemplateCreated}
-        handleTransSubmit={handleTransSubmit}
+        transFile={transFile}
+        handleTransFileChange={handleTransFileChange}
       />
-      
       {/* {englishCopyList.map((item, index) => (
         <p key={`english-${index}`}>{index + 1}. {item}</p>
       ))} */}
@@ -78,7 +76,6 @@ const TranslationTemplatesScreen = () => {
         localizationEntries={localizationEntries}
         setLocalizationEntries={setLocalizationEntries}
         handleCreateOrUpdateLocalization={handleCreateOrUpdateLocalization}
-        setDeleteIds={setDeleteIds}
         handleDeleteLocalizationEntry={handleDeleteLocalizationEntry}
       />
     </div>

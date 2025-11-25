@@ -25,6 +25,8 @@ export const useTranslationTemplate = () => {
   
   // non-asset states
   const [nonAssetCodeChanges, setNonAssetCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
+  
+  const [transFile, setTransFile] = useState(null);
 
   /**
    * @param path 'edit-template' | 'edit-localization-entries' // 페이지 종류에 따라 템플릿 불러오기에 따른 안내문구가 다름
@@ -171,21 +173,28 @@ export const useTranslationTemplate = () => {
     setLocalizationEntries((prev) => prev.filter((_, i) => i !== index));
   };
 
+
+  const handleTransFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setTransFile(file);
+    handleTransSubmit(file);
+  };
+
   return {
     ticketNum,
     setTicketNum,
     ticketUrl,
     setTicketUrl,
     saveType,
-    isTemplateCreated,
     localizationEntries,
     setLocalizationEntries,
-    setDeleteIds,
     checkForExistingTemplate,
     handleCreateOrUpdateLocalization,
     canUploadTransFile,
     englishCopyList,
-    handleTransSubmit,
     handleDeleteLocalizationEntry,
+    handleTransFileChange,
+    transFile,
   };
 };

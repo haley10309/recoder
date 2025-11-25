@@ -10,10 +10,8 @@ const LocalizationEntriesEditor = ({
   localizationEntries,
   setLocalizationEntries,
   handleCreateOrUpdateLocalization,
-  setDeleteIds,
 }) => {
   return (
-    // TODO: 빨간색 표시 몇개인지도 알려주기?
     <>
       <div className="flex flex-col">
         {localizationEntries.map((item, idx) => (
