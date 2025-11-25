@@ -1,12 +1,20 @@
 import { useState } from "react";
 import axios from "axios";
 
+import { useFetchTemplate } from "@/hooks/useFetchTemplate";
+
 import { isAssetCode } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
 
-export const useTranslationTemplate = () => {
+export const useTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
   const [ticketUrl, setTicketUrl] = useState("");
+
+  const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
+  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
 
   // Save flags
   const [saveType, setSaveType] = useState(""); // 'create' | 'update'
@@ -15,7 +23,6 @@ export const useTranslationTemplate = () => {
   const [deleteIds, setDeleteIds] = useState([]);
   const [englishCopyList, setEnglishCopyList] = useState([]);
   const [codeChanges, setCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
-  const [transFile, setTransFile] = useState(null);
 
   const canUploadTransFile = isTemplateCreated;
 
@@ -89,37 +96,6 @@ export const useTranslationTemplate = () => {
       alert("템플릿 확인 중 오류가 발생했습니다.");
     }
   };
-  
-  const handleTransSubmit = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      // 1. englishCopyList 받아오고 업데이트
-      const res = await axios.post(
-        `${BASE_URL}/extract-english-copy-list`, 
-        formData, 
-        { headers: { "Content-Type": "multipart/form-data" } },
-      );
-      const englishCopyList = res.data.englishCopyList;
-      setEnglishCopyList(englishCopyList);
-
-      if (localizationEntries.length === 0) {
-        // 2. localizationEntries 업데이트 (localizationEntries 없을 때만)
-        if (englishCopyList.length > 0) {
-          // 이미 존재하는 codeChanges에서 번역이 필요한 item만 뽑아내기
-          const items = codeChanges
-                          .filter(({ tobe_code }) => englishCopyList.some((copyItem) => tobe_code.includes(copyItem)))
-                          .map(({ tobe_code }) => ({ code_context: tobe_code }));
-                          // TODO: codeChangeItem의 id를 넣으면 안되고... 기존에 있던 localizationEntries의걸 넣던가 해야됨. 기존에 있는 경우와 없는 경우 모두 생각해야됨.
-          
-          setLocalizationEntries(items)
-        }
-      }
-    } catch (error) {
-      console.error("Error uploading translation file:", error);
-      alert("번역 업로드에 실패했습니다.");
-    }
-  };
 
   // 로컬라이제이션 생성
   const handleCreateOrUpdateLocalization = async () => {
@@ -161,22 +137,17 @@ export const useTranslationTemplate = () => {
     setLocalizationEntries((prev) => prev.filter((_, i) => i !== index));
   };
 
-
-  const handleTransFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setTransFile(file);
-    handleTransSubmit(file);
-  };
-
   const handleGetTemplate = () => {
     checkAndGetTemplateIfExist("edit-localization-entries");
   };
 
   return {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
     ticketNum,
-    setTicketNum,
     ticketUrl,
+    setTicketNum,
     setTicketUrl,
     saveType,
     localizationEntries,
@@ -184,9 +155,9 @@ export const useTranslationTemplate = () => {
     handleCreateOrUpdateLocalization,
     canUploadTransFile,
     englishCopyList,
+    setEnglishCopyList,
     handleDeleteLocalizationEntry,
-    handleTransFileChange,
-    transFile,
     handleGetTemplate,
+    codeChanges,
   };
 };

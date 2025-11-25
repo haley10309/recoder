@@ -5,29 +5,21 @@ import FileConvertButtons from "./FileConvertButtons";
 import PreviewPanel from "./PreviewPanel";
 
 const FileConvert = ({
-  ticketNum,
-  ticketUrl,
   isEnglishCountry,
-  fileName,
+  tobeHtmlFileName,
   handleApplyLocalization,
   handleLocalizedDownload,
   localizationStatus,
   isLocalizationApplied,
-  copyDeckFile,
 }) => {
-
-  if (!fileName) return null;
+  if (!tobeHtmlFileName) return null;
 
   return (
     <FileConvertBottonBox>
       <FileConvertButtons
-        fileName={fileName}
+        tobeHtmlFileName={tobeHtmlFileName}
         isEnglishCountry={isEnglishCountry}
-        handleApplyLocalization={() => handleApplyLocalization({
-          ticketNum,
-          ticketUrl,
-          hasCopyDeckFile: !!copyDeckFile,
-        })}
+        handleApplyLocalization={handleApplyLocalization}
       />
       <PreviewPanel
         localizationStatus={localizationStatus}

@@ -1,16 +1,16 @@
 import { useRef } from "react";
 
 import arrowIcon from "@/assets/shift-fill.svg";
+
 import { formatFileSize } from "@/utils/codeUtils";
 
 export default function TransFileUpload({ 
-  transFile,
-  handleTransFileChange,
+  translationDeckTxtFile,
+  handleTranslationDeckTxtFileChange,
 }) {
   const transInputRef = useRef(null);
 
   return (
-    
     <div className="w-full ">
       <div className={`flex justify-center gap-[40px] bg-[#f9f9f9] rounded-[8px] py-[30px] shadow-[0_2px_5px_rgba(0,0,0,0.1)]`}>
         <div 
@@ -20,11 +20,11 @@ export default function TransFileUpload({
         >
           <img src={arrowIcon} alt="upload arrow" className="w-8 h-8 text-gray-500" />
           <p className="mt-3 font-[500] text-[15px]">번역.txt 파일을 업로드 해 주세요</p>
-          <input type="file" accept=".txt" ref={transInputRef} onChange={handleTransFileChange} className="hidden" />
-          {!!transFile && (
+          <input type="file" accept=".txt" ref={transInputRef} onChange={handleTranslationDeckTxtFileChange} className="hidden" />
+          {!!translationDeckTxtFile && (
             <div className="mt-2 text-center text-[13px]">
-              <p>{transFile.name}</p>
-              <p>{formatFileSize(transFile.size)}</p>
+              <p>{translationDeckTxtFile.name}</p>
+              <p>{formatFileSize(translationDeckTxtFile.size)}</p>
             </div>
           )}
         </div>

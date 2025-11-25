@@ -7,7 +7,7 @@ import { countryOptions } from "@/utils/countryOptions";
 import { isAssetCode } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
 
-export const useSearchTemplate = () => {
+export const useTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
   const [ticketUrl, setTicketUrl] = useState("");
   

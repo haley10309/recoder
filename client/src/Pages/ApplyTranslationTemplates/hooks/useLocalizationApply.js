@@ -3,14 +3,14 @@ import { useState } from "react";
 import { fetchLocalizationList } from "@/apis/apis";
 
 export function useLocalizationApply({
-  tobeFileContent,
-  fileName,
+  tobeHtmlContent,
+  tobeHtmlFileName,
   textareas,
   setTextareas,
   countryCode,
   translationMap,
 }) {
-  const [localizedFileContent, setLocalizedFileContent] = useState("");
+  const [localizedHtmlContent, setLocalizedHtmlContent] = useState("");
   const [localizedFileName, setLocalizedFileName] = useState("");
   const [isLocalizationApplied, setIsLocalizationApplied] = useState(false);
   const [localizationStatus, setLocalizationStatus] = useState("");
@@ -83,9 +83,9 @@ export function useLocalizationApply({
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   };
 
-  const handleApplyLocalization = async ({ ticketNum, ticketUrl, hasCopyDeckFile }) => {
+  const handleApplyLocalization = async ({ ticketNum, ticketUrl, hasTranslationDeckTxtFile }) => {
     try {
-      if (!hasCopyDeckFile) {
+      if (!hasTranslationDeckTxtFile) {
         alert("번역덱 TXT 파일을 업로드 해야 로컬라이제이션을 적용할 수 있어요.");
         return;
       }
@@ -115,7 +115,7 @@ export function useLocalizationApply({
       setTextareas(updatedTextareas);
 
       // 전체 HTML 변환
-      let localizedHtml = tobeFileContent;
+      let localizedHtmlContent = tobeHtmlContent;
 
       updatedTextareas.forEach((textarea) => {
         const localizedTobeContext = applyLocalizedTemplateBlocks(
@@ -124,13 +124,13 @@ export function useLocalizationApply({
           localizationEntries
         );
 
-        if (localizedHtml.includes(textarea.toBeCode)) {
-          localizedHtml = localizedHtml.replace(textarea.toBeCode, localizedTobeContext);
+        if (localizedHtmlContent.includes(textarea.toBeCode)) {
+          localizedHtmlContent = localizedHtmlContent.replace(textarea.toBeCode, localizedTobeContext);
         }
       });
 
-      setLocalizedFileContent(localizedHtml);
-      setLocalizedFileName(`localized_${fileName}`);
+      setLocalizedHtmlContent(localizedHtmlContent);
+      setLocalizedFileName(`localized_${tobeHtmlFileName}`);
       setIsLocalizationApplied(true);
       setLocalizationStatus("success");
     } catch (error) {
@@ -152,8 +152,8 @@ export function useLocalizationApply({
       if (!proceed) return;
     }
 
-    if (localizedFileContent) {
-      const blob = new Blob([localizedFileContent], { type: "text/html" });
+    if (localizedHtmlContent) {
+      const blob = new Blob([localizedHtmlContent], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -167,8 +167,6 @@ export function useLocalizationApply({
   };
   
   return {
-    localizedFileContent,
-    localizedFileName,
     isLocalizationApplied,
     localizationStatus,
     handleApplyLocalization,

@@ -5,7 +5,7 @@ import FileUploadIcon from "@/assets/shift-fill.svg";
 import HtmlFileIcon from "@/assets/union.svg";
 
 const FileUploadSection = ({
-  fileName,
+  tobeHtmlFileName,
   htmlUploadStatus,
   handleBackupFileUpload,
   txtUploadStatus,
@@ -23,7 +23,7 @@ const FileUploadSection = ({
             <PreviewHeader style={{ marginTop: "0.75rem" }}>
               <img src={HtmlFileIcon} alt="HTML Icon" />
               <div id="preview-text">
-                <span>{fileName}</span>
+                <span>{tobeHtmlFileName}</span>
                 <ProgressBar>
                   <ProgressFill $progress={100} />
                 </ProgressBar>

@@ -33,7 +33,8 @@ export function useFileUpload() {
 
     // 파일 읽기 완료
     reader.onload = () => {
-      setBackupHtmlContent(reader.result.content);
+      const content = reader.result;
+      setBackupHtmlContent(content);
       setHtmlUploadStatus("success");
       setOriginalFile(selectedFile);
       setUploadStatus("");

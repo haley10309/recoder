@@ -16,6 +16,7 @@ const codeChanges = [
 ### 2) 번역파일 업로드
 - `/extract-english-copy-list` : 번역파일 내 COPY열에 있는 텍스트 배열 반환하여, 프론트 코드 내 `englishCopyList` state에 그대로 넣음
 - 1에서 불러온 `localizationEntries`의 배열길이가 0이고 `englishCopyList`의 배열길이가 1 이상이면, `codeChanges`에서, englishCopyList에 해당하는 tobe_code가 있는 항목만 필터링하여 그대로 `localizationEntries`에 넣음
+- // TODO: localizationEntries 배열길이가 0이냐 아니냐에 따라서 프로세스가 나뉜다는걸 UI로 명확하게 표시 필요
 
 ```
 const englishCopyList = [

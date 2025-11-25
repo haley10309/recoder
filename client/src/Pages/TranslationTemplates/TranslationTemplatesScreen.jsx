@@ -8,11 +8,14 @@ import CheckTemplate from "@/Components/Common/CheckTemplate";
 import LocalizationEntriesEditor from "./components/LocalizationEntriesEditor";
 import TransFileUpload from "./components/TransFileUpload";
 
-import { useFetchTemplate } from "@/hooks/useFetchTemplate";
-import { useTranslationTemplate } from "./hooks/useTranslationTemplate";
+import { useTemplate } from "./hooks/useTemplate";
+import { useFileUpload } from "./hooks/useFileUpload";
 
 const TranslationTemplatesScreen = () => {
   const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
     ticketNum,
     setTicketNum,
     ticketUrl,
@@ -23,17 +26,21 @@ const TranslationTemplatesScreen = () => {
     handleCreateOrUpdateLocalization,
     canUploadTransFile,
     englishCopyList,
+    setEnglishCopyList,
     handleDeleteLocalizationEntry,
-    handleTransFileChange,
     handleGetTemplate,
-    transFile,
-  } = useTranslationTemplate();
+    codeChanges,
+  } = useTemplate();
 
   const {
-    loading,
-    ticketNumOptions,
-    ticketUrlOptions,
-  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
+    translationDeckTxtFile,
+    handleTranslationDeckTxtFileChange,
+  } = useFileUpload({
+    codeChanges,
+    setEnglishCopyList,
+    localizationEntries,
+    setLocalizationEntries,
+  });
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -59,8 +66,8 @@ const TranslationTemplatesScreen = () => {
       <TitleLabel text="📤 파일 업로드" />
       <Gap gap={15} />
       <TransFileUpload
-        transFile={transFile}
-        handleTransFileChange={handleTransFileChange}
+        translationDeckTxtFile={translationDeckTxtFile}
+        handleTranslationDeckTxtFileChange={handleTranslationDeckTxtFileChange}
       />
       <Gap gap={50} />
 

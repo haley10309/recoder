@@ -10,7 +10,7 @@ import FileConvert from "./components/FileConvert";
 import TableSection from "./components/TableSection";
 import FileUploadSection from "./components/FileUploadSection";
 
-import { useSearchTemplate } from "./hooks/useSearchTemplate";
+import { useTemplate } from "./hooks/useTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
 import { useFileExecute } from "./hooks/useFileExecute";
 
@@ -33,7 +33,7 @@ const ApplyCodeTemplatesScreen = () => {
     handleToBeCodeChange,
     handlePptNoChange,
     templateId,
-  } = useSearchTemplate();
+  } = useTemplate();
 
   // HTML 파일 업로드 훅
   const {

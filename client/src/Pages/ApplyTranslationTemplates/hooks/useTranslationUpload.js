@@ -9,7 +9,7 @@ export function useTranslationUpload({ countryCode, setEnglishCopyList }) {
   const [txtUploadStatus, setTxtUploadStatus] = useState("");
   const [txtFileName, setTxtFileName] = useState("");
   const [txtUploadProgress, setTxtUploadProgress] = useState(0);
-  const [copyDeckFile, setCopyDeckFile] = useState(null);
+  const [translationDeckTxtFile, setTranslationDeckTxtFile] = useState(null);
 
   const handleTranslationTxtUpload = async (e) => {
     const file = e.target.files[0];
@@ -38,7 +38,7 @@ export function useTranslationUpload({ countryCode, setEnglishCopyList }) {
       setTxtUploadProgress(100);
 
       try {
-        setCopyDeckFile(file);
+        setTranslationDeckTxtFile(file);
 
         const { translations, englishCopyList, validCountries } =
           await uploadTranslationDeck(file);
@@ -83,6 +83,6 @@ export function useTranslationUpload({ countryCode, setEnglishCopyList }) {
     txtUploadStatus,
     txtFileName,
     handleTranslationTxtUpload,
-    copyDeckFile,
+    translationDeckTxtFile,
   };
 }

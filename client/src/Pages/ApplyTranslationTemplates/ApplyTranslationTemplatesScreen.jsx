@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -11,16 +11,16 @@ import TableSection from "./components/TableSection";
 import FileUploadSection from "./components/FileUploadSection";
 import SiteCode from "@/Components/Common/SiteCode";
 
-import { useFetchTemplate } from "@/hooks/useFetchTemplate";
-import { useSearchTemplate } from "./hooks/useSearchTemplate";
+import { useTemplate } from "./hooks/useTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
 import { useLocalizationApply } from "./hooks/useLocalizationApply";
 import { useTranslationUpload } from "./hooks/useTranslationUpload";
 
 const ApplyTranslationTemplatesScreen = () => {
-  const [englishCopyList, setEnglishCopyList] = useState([]);
-
   const {
+    loading,
+    ticketNumOptions,
+    ticketUrlOptions,
     countryCode,
     ticketNum,
     setTicketNum,
@@ -35,24 +35,19 @@ const ApplyTranslationTemplatesScreen = () => {
     handleLocalizedToBeCodeChange,
     templateId,
     handleAddTextarea,
-  } = useSearchTemplate();
+    englishCopyList,
+    setEnglishCopyList,
+  } = useTemplate();
 
   // HTML 파일 업로드 훅
   const {
-    originalFile,
-    fileContent: tobeFileContent,
-    fileName,
+    tobeHtmlFile,
+    tobeHtmlContent,
+    tobeHtmlFileName,
     htmlUploadStatus,
     handleBackupFileUpload,
     countOccurrences,
   } = useFileUpload();
-  
-  const {
-    loading,
-    ticketNumOptions,
-    ticketUrlOptions,
-  } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
-
   
   // 번역덱 업로드 훅
   const {
@@ -60,18 +55,18 @@ const ApplyTranslationTemplatesScreen = () => {
     txtUploadStatus,
     txtFileName,
     handleTranslationTxtUpload,
-    copyDeckFile,
+    translationDeckTxtFile,
   } = useTranslationUpload({ countryCode, setEnglishCopyList });
 
   // 로컬라이제이션 적용 훅
   const {
+    isLocalizationApplied,
     localizationStatus,
     handleApplyLocalization,
     handleLocalizedDownload,
-    isLocalizationApplied,
   } = useLocalizationApply({
-    tobeFileContent,
-    fileName,
+    tobeHtmlContent,
+    tobeHtmlFileName,
     textareas,
     setTextareas,
     countryCode,
@@ -113,8 +108,6 @@ const ApplyTranslationTemplatesScreen = () => {
       />
       <Gap gap={50} />
       
-
-
       {isEnglishCountry ? (
         <>
           <TitleLabel text="영문국은 번역 대상이 아닙니다" style={{ textAlign: "center" }} />
@@ -125,7 +118,7 @@ const ApplyTranslationTemplatesScreen = () => {
           <TitleLabel text="📤 파일 업로드" />
           <Gap gap={15} />
           <FileUploadSection
-            fileName={fileName}
+            tobeHtmlFileName={tobeHtmlFileName}
             htmlUploadStatus={htmlUploadStatus}
             handleBackupFileUpload={handleBackupFileUpload}
             txtUploadStatus={txtUploadStatus}
@@ -134,15 +127,16 @@ const ApplyTranslationTemplatesScreen = () => {
             handleTranslationTxtUpload={handleTranslationTxtUpload}
           />
           <FileConvert
-            ticketNum={ticketNum}
-            ticketUrl={ticketUrl}
             isEnglishCountry={isEnglishCountry}
-            fileName={fileName}
-            handleApplyLocalization={handleApplyLocalization}
+            tobeHtmlFileName={tobeHtmlFileName}
+            handleApplyLocalization={() => handleApplyLocalization({
+              ticketNum,
+              ticketUrl,
+              hasTranslationDeckTxtFile: !!translationDeckTxtFile,
+            })}
             handleLocalizedDownload={handleLocalizedDownload}
             localizationStatus={localizationStatus}
             isLocalizationApplied={isLocalizationApplied}
-            copyDeckFile={copyDeckFile}
           />
           <Gap gap={50} />
 
@@ -155,7 +149,7 @@ const ApplyTranslationTemplatesScreen = () => {
               handleToBeCodeChange={handleToBeCodeChange}
               handleLocalizedToBeCodeChange={handleLocalizedToBeCodeChange}
               isEnglishCountry={isEnglishCountry}
-              hasOriginalFile={!!originalFile}
+              hasTobeHtmlFile={!!tobeHtmlFile}
               countOccurrences={countOccurrences}
               englishCopyList={englishCopyList}
             />

@@ -2,26 +2,18 @@ import React from "react";
 import styled from "styled-components";
 
 const FileConvertButtons = ({
-  fileName,
+  tobeHtmlFileName,
   isEnglishCountry,
   handleApplyLocalization,
 }) => {
   return (
     <ButtonBox>
-      {/* <ConvertButton
-        onClick={handleConvertByCountryCode}
-        disabled={isProcessing || !fileName}
-        $active={!!fileName && !isProcessing}
-      >
-        {"코드 출현 횟수 확인하기"}
-      </ConvertButton> */}
-
       {isEnglishCountry === false && (
         <ConvertButton
           $bgColor="black"
           onClick={handleApplyLocalization}
-          disabled={!fileName}
-          $active={!!fileName}
+          disabled={!tobeHtmlFileName}
+          $active={!!tobeHtmlFileName}
         >
           로컬라이제이션 적용
         </ConvertButton>

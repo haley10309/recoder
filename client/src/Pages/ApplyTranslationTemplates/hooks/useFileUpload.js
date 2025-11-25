@@ -1,10 +1,10 @@
-import { kind_countOccurrences } from "@/utils/codeUtils";
 import { useState } from "react";
 
+import { kind_countOccurrences } from "@/utils/codeUtils";
+
 export function useFileUpload() {
-  const [originalFile, setOriginalFile] = useState(null);
-  const [fileContent, setFileContent] = useState("");
-  const [fileName, setFileName] = useState("");
+  const [tobeHtmlFile, setTobeHtmlFile] = useState(null);
+  const [tobeHtmlContent, setTobeHtmlContent] = useState("");
   const [htmlUploadStatus, setHtmlUploadStatus] = useState("");
   const [uploadStatus, setUploadStatus] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -34,11 +34,10 @@ export function useFileUpload() {
 
     // 파일 읽기 완료
     reader.onload = () => {
-      const content = reader.result;
-      setFileContent(content);
+      setTobeHtmlFile(selectedFile);
+      const content = reader.result
+      setTobeHtmlContent(content);
       setHtmlUploadStatus("success");
-      setFileName(selectedFile.name);
-      setOriginalFile(selectedFile);
       setUploadStatus("");
       setUploadProgress(100); // 완료 시 100%
     };
@@ -53,23 +52,14 @@ export function useFileUpload() {
     reader.readAsText(selectedFile);
   };
 
-  const countOccurrences = (code) => kind_countOccurrences(fileContent, code);
+  const countOccurrences = (code) => kind_countOccurrences(tobeHtmlContent, code);
 
   return {
-    originalFile,
-    fileContent,
-    fileName,
+    tobeHtmlFile,
+    tobeHtmlFileName: tobeHtmlFile?.name ?? "",
+    tobeHtmlContent,
     htmlUploadStatus,
     handleBackupFileUpload,
     countOccurrences,
-
-    // uploadStatus,
-    // uploadProgress,
-    // setOriginalFile,
-    // setFileContent,
-    // setFileName,
-    // setUploadStatus,
-    // setHtmlUploadStatus,
-    // setUploadProgress,
   };
 }

@@ -9,7 +9,7 @@ const TableSection = ({
   handleToBeCodeChange,
   handleLocalizedToBeCodeChange,
   isEnglishCountry,
-  hasOriginalFile,
+  hasTobeHtmlFile,
   countOccurrences,
   englishCopyList,
 }) => {
@@ -41,7 +41,7 @@ const TableSection = ({
           asWasOccurrenceCount={textarea.asWasOccurrenceCount}
           toBeOccurrenceCount={textarea.toBeOccurrenceCount}
           errorState={textarea.errorState}
-          hasOriginalFile={hasOriginalFile}
+          hasTobeHtmlFile={hasTobeHtmlFile}
           countOccurrencesResult_tobe={countOccurrences(textarea.toBeCode)}
           highlights={englishCopyList}
         />

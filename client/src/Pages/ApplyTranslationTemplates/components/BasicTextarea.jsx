@@ -11,10 +11,10 @@ const BasicTextarea = ({
   setToBeCode,
   localizedToBeCode = "",
   setLocalizedToBeCode,
-  matchedPart,
   errorState,
   countOccurrencesResult_tobe,
   highlights = [], 
+  hasTobeHtmlFile, 
 }) => {
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
 
