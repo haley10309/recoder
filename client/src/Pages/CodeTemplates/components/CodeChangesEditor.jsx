@@ -5,63 +5,20 @@ import Gap from "@/Components/Common/Gap";
 import CopyTextButton from "@/Components/Common/CopyTextButton";
 
 const CodeChangesEditor = ({
-  checkOnlyInvalidCount,
   saveType,
-  addNonAssetTextArea,
-  removeNonAssetTextArea,
+  addTextArea,
+  removeTextArea,
   originalHtmlFile,
   countOccurrences,
   handleSaveTemplate,
   checkHasInvalidAsWasCount,
-  nonAssetCodeChanges,
-  handleNonAssetPptNoChange,
-  handleNonAssetAswasChange,
-  handleNonAssetTobeChange,
+  codeChanges,
+  handlePptNoChange,
+  handleAswasChange,
+  handleTobeChange,
 }) => {
-  if (checkOnlyInvalidCount) {
-    return (
-      <div className="flex flex-col items-center">
-        {originalHtmlFile ? (
-          <>
-            {checkHasInvalidAsWasCount() ? (
-              <div style={{ color: "#ff0019", fontSize: "15px", fontWeight: "bold", textAlign: "center" }}>
-                ⚠️원본코드 내 AS-WAS 코드 출현 횟수가 1이 아닌 항목이 있습니다. <br/> As-Was/To-Be Code Templates 페이지에서 템플릿을 확인해주세요.
-              </div>
-            ) : (
-              <div style={{ color: "#00c93c", fontSize: "15px", fontWeight: "bold", textAlign: "center" }}>
-                ✅모든 항목의 '원본코드 내 AS-WAS 코드 출현 횟수'가 1이에요. 템플릿으로 사용해도 좋아요.
-              </div>
-            )}
-            <div style={{ color: "#858585", fontSize: "12px" }}>
-                (non-asset 기준. asset은 포함시키지 않았음)
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col">
-            <Gap gap={40} />
-            <div style={{ color: "grey", fontSize: "15px", fontWeight: "bold" }}>
-              💁‍♀️원본코드를 업로드해야 '원본코드 내 AS-WAS 코드 출현 횟수'를 확인할 수 있어요.
-            </div>
-            <Gap gap={40} />
-          </div>
-        )}
-      </div>
-    );
-  }
-
   return (
     <>
-      {/* Asset */}
-      {/* <AssetTemplate
-        assetCodeChanges={assetCodeChanges}
-        handleAssetPptNoChange={handleAssetPptNoChange}
-        handleAssetAsWasChange={handleAssetAsWasChange}
-        handleAssetToBeChange={handleAssetToBeChange}
-        addAssetArea={addAssetArea} 
-        removeAssetArea={removeAssetArea} 
-        originalHtmlFile={originalHtmlFile} 
-      /> */}
-
       <div className="flex flex-col items-center">
         {originalHtmlFile ? (
           <>
@@ -86,10 +43,9 @@ const CodeChangesEditor = ({
       </div>
       <Gap gap={30} />
 
-      {/* Non-Asset */}
-      {nonAssetCodeChanges.map((item, idx) => (
-        <div key={`non-asset-code-change-${idx}`} >
-          <div style={{ fontSize: "12px" }}>{`${idx + 1} of ${nonAssetCodeChanges.length}`}</div>
+      {codeChanges.map((item, idx) => (
+        <div key={`code-change-${idx}`} >
+          <div style={{ fontSize: "12px" }}>{`${idx + 1} of ${codeChanges.length}`}</div>
 
           <div index={idx} className="as_was_to_be_div">
             <div className="flex flex-col justify-center items-center gap-[10px]">
@@ -99,7 +55,7 @@ const CodeChangesEditor = ({
                   type="text"
                   className="w-[30px] h-[30px] rounded-[5px] text-center border border-[#8B8B8B] outline-none focus:border-[#595880]"
                   value={item.ppt_no}
-                  onChange={(e) => handleNonAssetPptNoChange(idx, e.target.value)}
+                  onChange={(e) => handlePptNoChange(idx, e.target.value)}
                 />
               </div>
 
@@ -125,7 +81,7 @@ const CodeChangesEditor = ({
                   className="code-textarea"
                   placeholder="AS-WAS 코드를 입력해 주세요."
                   value={item.aswas_code}
-                  onChange={(e) => handleNonAssetAswasChange(idx, e.target.value)}
+                  onChange={(e) => handleAswasChange(idx, e.target.value)}
                 />
                 <div className="flex font-bold">
                   <div className="text-xs">
@@ -159,7 +115,7 @@ const CodeChangesEditor = ({
                   className="code-textarea"
                   placeholder="TO-BE 코드를 입력해 주세요."
                   value={item.tobe_code}
-                  onChange={(e) => handleNonAssetTobeChange(idx, e.target.value)}
+                  onChange={(e) => handleTobeChange(idx, e.target.value)}
                 />
 
                 <div className="text-xs">
@@ -175,7 +131,7 @@ const CodeChangesEditor = ({
             </div>
             <button
               type="button"
-              onClick={() => removeNonAssetTextArea(idx)}
+              onClick={() => removeTextArea(idx)}
               className="px-4 mb-6 transition-colors duration-300 border border-gray-300 rounded cursor-pointer hover:bg-red-500 hover:text-white"
             >
               삭제
@@ -185,7 +141,7 @@ const CodeChangesEditor = ({
       ))}
 
       <div className="flex gap-[15px] save_button_div">
-        <button onClick={addNonAssetTextArea} className="plus-button rounded-[10px]">
+        <button onClick={addTextArea} className="plus-button rounded-[10px]">
           <AddIcon />
           <span className="ml-2">항목 추가</span>
         </button>

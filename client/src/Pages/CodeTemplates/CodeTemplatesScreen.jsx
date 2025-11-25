@@ -23,16 +23,16 @@ const CodeTemplatesScreen = () => {
     saveType,
     originalHtmlFile,
     setOriginalHtmlFile,
-    addNonAssetTextArea,
-    removeNonAssetTextArea,
+    addTextArea,
+    removeTextArea,
     countOccurrences,
     handleSaveTemplate,
     checkHasInvalidAsWasCount,
-    nonAssetCodeChanges,
-    setNonAssetCodeChanges,
-    handleNonAssetPptNoChange,
-    handleNonAssetAswasChange,
-    handleNonAssetTobeChange,
+    codeChanges,
+    setCodeChanges,
+    handlePptNoChange,
+    handleAswasChange,
+    handleTobeChange,
     handleGetTemplate,
   } = useCheckTemplate();
 
@@ -47,7 +47,7 @@ const CodeTemplatesScreen = () => {
     backUpFile,
     handlePptFileChange,
     handleBackUpHtmlFileChange,
-  } = useFileUpload({ setNonAssetCodeChanges, setOriginalHtmlFile });
+  } = useFileUpload({ setCodeChanges, setOriginalHtmlFile });
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -83,24 +83,17 @@ const CodeTemplatesScreen = () => {
       <TitleLabel text="✅ AS-WAS / TO-BE 템플릿" />
       <Gap gap={15} />
       <CodeChangesEditor
-        checkOnlyInvalidCount={false}
         saveType={saveType}
-        addNonAssetTextArea={addNonAssetTextArea}
-        removeNonAssetTextArea={removeNonAssetTextArea}
+        addTextArea={addTextArea}
+        removeTextArea={removeTextArea}
         originalHtmlFile={originalHtmlFile}
         countOccurrences={countOccurrences}
         handleSaveTemplate={handleSaveTemplate}
         checkHasInvalidAsWasCount={checkHasInvalidAsWasCount}
-        nonAssetCodeChanges={nonAssetCodeChanges}
-        handleNonAssetPptNoChange={handleNonAssetPptNoChange}
-        handleNonAssetAswasChange={handleNonAssetAswasChange}
-        handleNonAssetTobeChange={handleNonAssetTobeChange}
-        // assetCodeChanges={assetCodeChanges}
-        // addAssetArea={addAssetArea}
-        // removeAssetArea={removeAssetArea}
-        // handleAssetPptNoChange={handleAssetPptNoChange}
-        // handleAssetAsWasChange={handleAssetAsWasChange}
-        // handleAssetToBeChange={handleAssetToBeChange}
+        codeChanges={codeChanges}
+        handlePptNoChange={handlePptNoChange}
+        handleAswasChange={handleAswasChange}
+        handleTobeChange={handleTobeChange}
       />
     </div>
   );

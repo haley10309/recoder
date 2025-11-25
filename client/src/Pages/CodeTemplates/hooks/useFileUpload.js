@@ -5,7 +5,7 @@ import { BASE_URL } from "@/utils/routePath";
 import { isAssetCode } from "@/utils/codeUtils";
 
 export const useFileUpload = ({ 
-  setNonAssetCodeChanges,
+  setCodeChanges,
   setOriginalHtmlFile,
  }) => {
   const [pptFile, setPptFile] = useState(null);
@@ -24,29 +24,22 @@ export const useFileUpload = ({
         throw new Error("Invalid data format from server");
       }
 
-      const assetCodeChanges = [];
-      const nonAssetCodeChanges = [];
+      const codeChanges = [];
 
       pptNos.forEach((pptNo, idx) => {
         const aswasCode = asWasCodes[idx] || "";
         const tobeCode = toBeCodes[idx] || "";
-        if (isAssetCode(aswasCode)) { // (250519 기준) aswasCode가 asset인지 아닌지로 판단.
-          assetCodeChanges.push({
+        if (!isAssetCode(aswasCode)) { // (250519 기준) aswasCode가 asset인지 아닌지로 판단.
+          codeChanges.push({
             ppt_no: pptNo,
             aswas_code: aswasCode,
             tobe_code: tobeCode,
           });
         } else {
-          nonAssetCodeChanges.push({
-            ppt_no: pptNo,
-            aswas_code: aswasCode,
-            tobe_code: tobeCode,
-          });
         }
       });
 
-      // setAssetCodeChanges(assetCodeChanges);
-      setNonAssetCodeChanges(nonAssetCodeChanges);
+      setCodeChanges(codeChanges);
     } catch (error) {
       console.error("Error uploading PPT file:", error);
       alert("PPT 업로드에 실패했습니다.");

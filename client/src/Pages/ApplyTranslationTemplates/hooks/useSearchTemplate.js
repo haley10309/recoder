@@ -34,22 +34,6 @@ export const useSearchTemplate = () => {
         toBeCode: entry.code_context.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
       }));
 
-      // (250519 기준) aswas_code 기준으로 asset인지 non-asset인지 나눈다.
-      // const nonAssetCodeChanges = codeChanges
-      //                               .filter((it) => !isAssetCode(it.aswas_code))
-      //                               .map( it => ({
-      //                                 id: it.id,
-      //                                 ppt_no: it.ppt_no || "",
-      //                                 aswas_code: it.aswas_code?.trim() || "",
-      //                                 tobe_code: it.tobe_code?.trim() || "",
-      //                               }) );
-      // const newTextareas = nonAssetCodeChanges.map((pair) => ({
-      //   asWasCode: pair.aswas_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
-      //   toBeCode: pair.tobe_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
-      //   pptNo: pair.ppt_no,
-      //   checked: true, // 체크박스 기능 사용x
-      // }));
-
       setTextareas(newTextareas);
       alert("성공적으로 템플릿을 불러왔습니다.");
     } catch (error) {

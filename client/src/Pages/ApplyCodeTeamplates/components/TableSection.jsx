@@ -3,14 +3,13 @@ import styled from "styled-components";
 import BasicTextarea from "./BasicTextarea";
 
 const TableSection = ({
-  filteredTextareas,
+  textareas,
   countryCode,
   handleAsWasCodeChange,
   handleToBeCodeChange,
-  filter,
   isEnglishCountry,
   hasOriginalFile,
-  handleNonAssetPptNoChange,
+  handlePptNoChange,
 }) => {
   return (
     <TableWrapper>
@@ -26,12 +25,12 @@ const TableSection = ({
         </HeaderCell>
       </TableHeader>
 
-      {filteredTextareas.map((textarea, index) => {
+      {textareas.map((textarea, index) => {
         const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
         return (
           <BasicTextarea
             key={index}
-            indexText={`${index + 1} of ${filteredTextareas.length} / id: ${textarea.id ? textarea.id : "DB 저장 전"}`}
+            indexText={`${index + 1} of ${textareas.length} / id: ${textarea.id ? textarea.id : "DB 저장 전"}`}
             pptNo={textarea.pptNo} // ✅ 바로 사용
             asWasCode={textarea.asWasCode.replace(
               /\/uk\//g,
@@ -48,7 +47,7 @@ const TableSection = ({
             errorState={textarea.errorState}
             isEnglishCountry={isEnglishCountry}
             hasOriginalFile={hasOriginalFile}
-            handleNonAssetPptNoChange={(value) => handleNonAssetPptNoChange(index, value)}
+            handlePptNoChange={(value) => handlePptNoChange(index, value)}
           />
         );
       })}

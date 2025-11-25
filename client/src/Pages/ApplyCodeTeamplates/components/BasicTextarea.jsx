@@ -18,7 +18,7 @@ const BasicTextarea = ({
   errorState,
   isEnglishCountry,
   hasOriginalFile,
-  handleNonAssetPptNoChange,
+  handlePptNoChange,
   // toBeOccurrenceCount,
 }) => {
   const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
@@ -64,7 +64,7 @@ const BasicTextarea = ({
               type="text"
               className="w-[30px] h-[30px] rounded-[5px] text-center border border-[#8B8B8B] outline-none focus:border-[#595880]"
               value={pptNo}
-              onChange={(e) => handleNonAssetPptNoChange(e.target.value)}
+              onChange={(e) => handlePptNoChange(e.target.value)}
             />
           </div>
 

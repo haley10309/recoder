@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useSetRecoilState } from "recoil";
 import axios from "axios";
 
-import { nameEnState } from "@/recoil/atoms/state";
 import { isAssetCode } from "@/utils/codeUtils";
 import { BASE_URL } from "@/utils/routePath";
 
@@ -10,23 +8,16 @@ export const useTranslationTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
   const [ticketUrl, setTicketUrl] = useState("");
 
-  const setNameEnState = useSetRecoilState(nameEnState);
-
   // Save flags
   const [saveType, setSaveType] = useState(""); // 'create' | 'update'
   const [isTemplateCreated, setIsTemplateCreated] = useState(false); // 템플릿이 이미 만들어져 있으면 true로
   const [localizationEntries, setLocalizationEntries] = useState([{ code_context: "" }]); // copy 적용 필요한 tobe_code를 모아둔 리스트
   const [deleteIds, setDeleteIds] = useState([]);
-
   const [englishCopyList, setEnglishCopyList] = useState([]);
-  const canUploadTransFile = isTemplateCreated;
-
-  // const hasL10nUploadHistory = localizationEntries.length > 0 && localizationEntries.some(entry => !!entry.id); // 템플릿에 이미 localizationEntry 업로드 히스토리가 있는지 (있으면 번역파일 업로드 막기 용도)
-  
-  // non-asset states
-  const [nonAssetCodeChanges, setNonAssetCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
-  
+  const [codeChanges, setCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
   const [transFile, setTransFile] = useState(null);
+
+  const canUploadTransFile = isTemplateCreated;
 
   /**
    * @param path 'edit-template' | 'edit-localization-entries' // 페이지 종류에 따라 템플릿 불러오기에 따른 안내문구가 다름
@@ -55,11 +46,7 @@ export const useTranslationTemplate = () => {
         });
         const detailData = detailRes.data;
 
-        const codeChanges = detailData.codeChanges || [];
-        const localizationEntries = detailData.localizationEntries || [];
-
-        // (250519 기준) aswas_code 기준으로 asset인지 non-asset인지 나눈다.
-        const nonAssetCodeChanges = codeChanges
+        const codeChanges = (detailData.codeChanges ?? [])
                                       .filter((it) => !isAssetCode(it.aswas_code))
                                       .map( it => ({
                                         id: it.id,
@@ -67,8 +54,9 @@ export const useTranslationTemplate = () => {
                                         aswas_code: it.aswas_code?.trim() || "",
                                         tobe_code: it.tobe_code?.trim() || "",
                                       }) );
+        const localizationEntries = detailData.localizationEntries || [];
 
-        setNonAssetCodeChanges(nonAssetCodeChanges);
+        setCodeChanges(codeChanges);
         
         // 템플릿 AS-WAS/TO-BE, 로컬라이제이션 세팅
         setDeleteIds([]);
@@ -118,8 +106,8 @@ export const useTranslationTemplate = () => {
       if (localizationEntries.length === 0) {
         // 2. localizationEntries 업데이트 (localizationEntries 없을 때만)
         if (englishCopyList.length > 0) {
-          // 이미 존재하는 nonAssetCodeChanges에서 번역이 필요한 item만 뽑아내기
-          const items = nonAssetCodeChanges
+          // 이미 존재하는 codeChanges에서 번역이 필요한 item만 뽑아내기
+          const items = codeChanges
                           .filter(({ tobe_code }) => englishCopyList.some((copyItem) => tobe_code.includes(copyItem)))
                           .map(({ tobe_code }) => ({ code_context: tobe_code }));
                           // TODO: codeChangeItem의 id를 넣으면 안되고... 기존에 있던 localizationEntries의걸 넣던가 해야됨. 기존에 있는 경우와 없는 경우 모두 생각해야됨.

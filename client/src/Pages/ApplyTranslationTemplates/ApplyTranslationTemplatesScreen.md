@@ -17,7 +17,7 @@ const textareas = [
 ```
 
 ### 백업코드 업로드
-- 업로드한 To-Be 백업코드파일 `fileContent`에 저장해둠 
+- 업로드한 To-Be 백업코드파일 `fileContent`에 저장해둠
 
 ### 번역덱 업로드
 - `/upload-translation` : `englishCopyList`, `translations` 반환

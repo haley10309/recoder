@@ -29,9 +29,7 @@ const ApplyCodeTemplatesScreen = () => {
     handleGetTemplate,
     handleAsWasCodeChange,
     handleToBeCodeChange,
-    handleNonAssetPptNoChange,
-    filterTextareas,
-    filter,
+    handlePptNoChange,
     templateId,
   } = useSearchTemplate();
 
@@ -128,14 +126,13 @@ const ApplyCodeTemplatesScreen = () => {
       <Gap gap={15} />
       <WhiteBox>
         <TableSection
-          filteredTextareas={filterTextareas()}
+          textareas={textareas}
           countryCode={countryCode}
           handleAsWasCodeChange={handleAsWasCodeChange}
           handleToBeCodeChange={handleToBeCodeChange}
-          filter={filter}
           isEnglishCountry={isEnglishCountry}
           hasOriginalFile={!!originalFile}
-          handleNonAssetPptNoChange={handleNonAssetPptNoChange}
+          handlePptNoChange={handlePptNoChange}
         />
       </WhiteBox>
       <Gap gap={50} />

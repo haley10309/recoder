@@ -11,7 +11,6 @@ import "./AssetTemplate.scss";
 const AssetTemplate = ({
   content,
   originalHtmlFile,
-  assetCodeChanges,
   handleAssetPptNoChange,
   handleAssetAsWasChange,
   handleAssetToBeChange,
@@ -23,7 +22,6 @@ const AssetTemplate = ({
 
   const show = () => {
     setVisible(true);
-    // console.log("assetCodeChangess : ", assetCodeChanges);
   }
 
   const hide = () => {

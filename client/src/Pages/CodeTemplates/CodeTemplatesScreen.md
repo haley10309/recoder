@@ -1,10 +1,10 @@
 ### 1) 템플릿 불러오기
 - `/check-template-exsist` : 템플릿 존재하는지 확인
-- `/get-template-details` : 해당 템플릿 DB의 `codeChanges` 그대로 불러옴. (non-asset만 다룸)
+- `/get-template-details` : 해당 템플릿 DB의 `codeChanges` 그대로 불러옴.
   - codeChanges 없으면 새 템플릿 생성 가능 상태
   - codeChanges 있으면 기존 템플릿 수정 가능 상태
 ```
-const nonAssetCodeChanges = [
+const codeChanges = [
   { 
     id: 1,
     ppt_no: 1,
@@ -16,9 +16,9 @@ const nonAssetCodeChanges = [
 
 ### 2) PPT 파일 업로드
 - `/upload-guide`: `pptNos`, `asWasCodes`, `toBeCodes` 반환
-- `nonAssetCodeChanges`에 저장해서 textareas용 state로 사용
+- `codeChanges`에 저장해서 textareas용 state로 사용
 ```
-const nonAssetCodeChanges = [
+const codeChanges = [
   {
     ppt_no: 1,
     aswas_code: "<p id="reviewId"><div>Review</div></p>",

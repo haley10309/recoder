@@ -1,10 +1,10 @@
 ### 1) 템플릿 불러오기
 
 - `/get-template-details` : 해당 템플릿 DB의 codeChanges 그대로 불러옴. 데이터 가공x
-- 프론트 코드 내 `nonAssetCodeChanges(codeChanges)` state에 그대로 넣고, Textareas state에도 넣음
+- 프론트 코드 내 `codeChanges` state에 그대로 넣고, Textareas state에도 넣음
 
 ```
-const nonAssetCodeChanges = [
+const codeChanges = [
   { 
     id: 1,
     ppt_no: 1,
@@ -13,10 +13,10 @@ const nonAssetCodeChanges = [
   }
 ]
 const textareas = [
-  id: nonAssetCodeChangeItem.id,
-  pptNo: nonAssetCodeChangeItem.ppt_no,
-  asWasCode: nonAssetCodeChangeItem.aswas_code,
-  toBeCode: nonAssetCodeChangeItem.tobe_code,
+  id: codeChangesItem.id,
+  pptNo: codeChangesItem.ppt_no,
+  asWasCode: codeChangesItem.aswas_code,
+  toBeCode: codeChangesItem.tobe_code,
 ]
 ```
 
