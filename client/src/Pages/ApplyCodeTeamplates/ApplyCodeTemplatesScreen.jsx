@@ -11,9 +11,9 @@ import { useFileUpload } from "./hooks/useFileUpload";
 import CheckTemplate from "./components/CheckTemplate";
 import FileConvert from "./components/FileConvert";
 import TableSection from "./components/TableSection";
-import { useFetchTemplate } from "./hooks/useFetchTemplate";
 import FileUploadSection from "./components/FileUploadSection";
 import { useFileExecute } from "./hooks/useFileExecute";
+import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
 const ApplyCodeTemplatesScreen = () => {
   const {

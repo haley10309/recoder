@@ -13,7 +13,6 @@ const BasicTextarea = ({
   setLocalizedToBeCode,
   matchedPart,
   errorState,
-  isEnglishCountry,
   countOccurrencesResult_tobe,
   highlights = [], 
 }) => {
@@ -31,8 +30,11 @@ const BasicTextarea = ({
     }
   };
 
+  // TODO: 코드 출현횟수가 0회면 아예 handleLocal 할 때 제외하는 로직 추가
+  // TODO: 실제로 convert 요청하는 로직 확인하고, 리드미 문서 마무리
+  // TODO: 지금은 단순히 다른지만 판단하지만, 추후에는 실제 번역value가 적용돘는지 확인하는 것으로 수정 필요
   const isLocalizedChanged =
-    localizedToBeCode && localizedToBeCode !== toBeCode;
+    localizedToBeCode && (localizedToBeCode !== toBeCode);
 
   return (
     <Container>
@@ -96,6 +98,7 @@ const BasicTextarea = ({
             <div className="text-xs">
               <span className="ml-1 text-[#4b5563;]">
                 [TO-BE] HTML 내 TO-BE 코드 출현 횟수:{" "}
+                {/** TODO: 원본코드 업로드 안했으면 그거 텍스트 띄우기 */}
                 <span className="ml-1 text-xs"
                   style={{
                     color: countOccurrencesResult_tobe === 1 ? "blue" : "red"
@@ -112,7 +115,7 @@ const BasicTextarea = ({
           />
         </CodeBlock>
 
-        {/* LOCALIZED TO-BE - 항상 렌더되지만 텍스트는 값이 있는 경우에만 */}
+        {/* LOCALIZED TO-BE */}
         <CodeBlock>
           <Textarea
             value={localizedToBeCode ?? ""}
@@ -127,7 +130,7 @@ const BasicTextarea = ({
           />
           {errorState && (
             <ErrorMessage>
-              🚨 아직 번역되지 않은 key가 포함되어 있습니다.
+              🚨 아직 번역되지 않은 key가 포함되어 있습니다. 확인이 필요해요.
             </ErrorMessage>
           )}
         </CodeBlock>
@@ -181,10 +184,8 @@ const Textarea = styled.textarea`
   border: 1px solid #d1d5db;
   border-radius: 8px;
 
-  border: ${({ $errorState, $isApplied, $isLocalizedChanged }) => {
+  border: ${({ $errorState, $isLocalizedChanged }) => {
     if ($errorState) return "2px solid #ffa600";
-    if ($isApplied === "yes") return "2px solid blue";
-    if ($isApplied === "no") return "2px solid red";
     if ($isLocalizedChanged) return "4px solid green";
     return "1px solid #d1d5db";
   }};

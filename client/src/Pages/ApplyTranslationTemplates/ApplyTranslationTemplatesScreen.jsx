@@ -8,6 +8,7 @@ import Gap from "@/Components/Common/Gap";
 
 import { useSearchTemplate } from "./hooks/useSearchTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
+import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
 import FileConvert from "./components/FileConvert";
 import CheckTemplate from "./components/CheckTemplate";
@@ -40,6 +41,12 @@ const ApplyTranslationTemplatesScreen = () => {
     handleBackupFileUpload,
     countOccurrences,
   } = useFileUpload();
+    
+    const {
+      loading,
+      ticketNumOptions,
+      ticketUrlOptions,
+    } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
 
   const [englishCopyList, setEnglishCopyList] = useState([]);
   
@@ -53,10 +60,13 @@ const ApplyTranslationTemplatesScreen = () => {
       <TitleLabel text="🗺️ 국가코드 선택" />
       <Gap gap={15} />
       <CheckTemplate
+        loading={loading}
+        ticketNumOptions={ticketNumOptions}
+        ticketUrlOptions={ticketUrlOptions}
         ticketNum={ticketNum}
         ticketUrl={ticketUrl}
-        setTicketNum={setTicketNum}
-        setTicketUrl={setTicketUrl}
+        handleTicketNumChange={setTicketNum}
+        handleTicketUrlChange={setTicketUrl}
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}
         handleSearchCountryTemplate={handleSearchTemplate}
@@ -86,6 +96,7 @@ const ApplyTranslationTemplatesScreen = () => {
             fileName={fileName}
             htmlUploadStatus={htmlUploadStatus}
             handleBackupFileUpload={handleBackupFileUpload}
+            englishCopyList={englishCopyList}
             setEnglishCopyList={setEnglishCopyList}
           />
           <Gap gap={50} />
