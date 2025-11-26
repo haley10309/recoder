@@ -1,14 +1,12 @@
 import { useState } from "react";
 
-import { fetchLocalizationList } from "@/apis/apis";
-
 export function useLocalizationApply({
   tobeHtmlContent,
   tobeHtmlFileName,
   textareas,
   setTextareas,
-  countryCode,
   translationMap,
+  countOccurrences,
 }) {
   const [localizedHtmlContent, setLocalizedHtmlContent] = useState("");
   const [localizedFileName, setLocalizedFileName] = useState("");
@@ -43,72 +41,117 @@ export function useLocalizationApply({
   /**
    * LocalizationEntry에서 블록별로 영어 텍스트를 찾아서 각 국가 번역본으로 치환하는 함수
    */
-  const applyLocalizedTemplateBlocks = (
-    originalTobeContext,
+  const _applyLocalizedTemplateBlocks = (
+    originalTobeCode,
     _translationMap,
-    _localizationEntries
   ) => {
-    let newTobeContext = originalTobeContext;
-    _localizationEntries.forEach((item) => {
-      const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
+    if (!originalTobeCode) return "";
+    if (countOccurrences(originalTobeCode) !== 1) return "";
 
-      let originalBlock = item.code_context;
-      let blockDoc = new DOMParser().parseFromString(
-        originalBlock,
-        "text/html"
-      );
-      // let blockText = blockDoc.documentElement.textContent?.trim(); // textContent만
-      let blockText = getTextWithAttributes(blockDoc.documentElement); // textContent+속성값까지
+    let localizedTobeCode = originalTobeCode;
 
-      Object.entries(_translationMap).forEach(([eng, local]) => {
-        const cleanedEng = eng.trim().replace(/\s+/g, " ");
-        const cleanedBlockText = blockText?.replace(/\s+/g, " ");
-        if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
-          const regex = new RegExp(escapeRegExp(eng), "g");
-          originalBlock = originalBlock.replace(regex, local);
-        }
-      });
+    let blockDoc = new DOMParser().parseFromString(
+      localizedTobeCode,
+      "text/html"
+    );
+    // let blockText = blockDoc.documentElement.textContent?.trim(); // textContent만
+    let blockText = getTextWithAttributes(blockDoc.documentElement); // (updated) textContent+속성값까지
 
-      const code_context__converted_to_country_code = item.code_context.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`);
-      if (newTobeContext.includes(code_context__converted_to_country_code)) {
-        const originalBlock_convertedByCountryCode = originalBlock.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`);
-        newTobeContext = newTobeContext.replace(code_context__converted_to_country_code, originalBlock_convertedByCountryCode);
+    Object.entries(_translationMap).forEach(([eng, local]) => {
+      const cleanedEng = eng.trim().replace(/\s+/g, " ");
+      const cleanedBlockText = blockText?.replace(/\s+/g, " ");
+      if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
+        const regex = new RegExp(escapeRegExp(eng), "g");
+        localizedTobeCode = localizedTobeCode.replace(regex, local);
       }
     });
 
-    return newTobeContext;
+    return localizedTobeCode;
   };
 
   const escapeRegExp = (string) => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   };
 
-  const handleApplyLocalization = async ({ ticketNum, ticketUrl, hasTranslationDeckTxtFile }) => {
+  // const handleConvertByCountryCode = async () => {
+  //   const lowerCaseCode = countryCode?.toLowerCase?.() || "";
+
+  //   const updatedTextareas = textareas.map((textarea) => ({
+  //     ...textarea,
+  //     pptNo: textarea.pptNo,
+  //     asWasCode: textarea.asWasCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
+  //     toBeCode: textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
+  //     changed: textarea.asWasCode !== "",
+  //   }));
+
+  //   setTextareas(updatedTextareas);
+  //   setIsExecuted(true);
+  //   setUploadProgress(0);
+
+  //   if (
+  //     backupHtmlFile &&
+  //     updatedTextareas.every(({ asWasCode, toBeCode }) => asWasCode && (toBeCode !== null || toBeCode === ""))
+  //   ) {
+  //     const formData = new FormData();
+  //     formData.append("file", backupHtmlFile);
+
+  //     const codeChanges = updatedTextareas
+  //       .filter((textarea) => textarea.changed)
+  //       .map((textarea) => ({
+  //         asWasCode: textarea.asWasCode,
+  //         toBeCode: textarea.toBeCode,
+  //       }));
+  //     formData.append("codeChanges", JSON.stringify(codeChanges));
+  //     formData.append("ticket_url", String(ticketUrl));
+  //     formData.append("countryCode", String(countryCode));
+
+  //     try {
+  //       const result = await convertAsWasToToBeCodes({
+  //         formData,
+  //         setIsProcessing,
+  //         setUploadProgress,
+  //       });
+
+  //       if (result) {
+  //         const { fileContent, filename, changeResults } = result;
+  //         setDownloadedFileContent(fileContent);
+  //         setDownloadedFileName(filename);
+  //         setUploadStatus("success");
+
+  //         setTextareas(updatedTextareas);
+  //         handleChangeResults(changeResults);
+  //       } else {
+  //         setUploadStatus("fail");
+  //       }
+  //     } catch (error) {
+  //       console.error("파일 실행 오류", error);
+  //       setUploadStatus("fail");
+  //     } finally {
+  //       setIsProcessing(false);
+  //     }
+  //   } else {
+  //     alert("파일 선택, asWasCode, toBeCode 입력은 필수입니다.");
+  //   }
+  // };
+
+  const handleApplyLocalization = async ({ hasTranslationDeckTxtFile }) => {
     try {
       if (!hasTranslationDeckTxtFile) {
         alert("번역덱 TXT 파일을 업로드 해야 로컬라이제이션을 적용할 수 있어요.");
         return;
       }
 
-      const localizationEntries = await fetchLocalizationList(
-        ticketNum,
-        ticketUrl
-      );
-
-      const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
-
       // textareas 업데이트 (tobe -> 번역 -> localized tobe)
       const updatedTextareas = textareas.map((textarea) => {
-        const localizedToBe = applyLocalizedTemplateBlocks(
+        const localizedToBeCode = _applyLocalizedTemplateBlocks(
           textarea.toBeCode,
           translationMap,
-          localizationEntries
         );
-        const errorState = Object.keys(translationMap).some((key) => localizedToBe.includes(key));
+        const errorState = Object.keys(translationMap).some((key) => localizedToBeCode.includes(key));
 
         return {
           ...textarea,
-          localizedToBeCode: localizedToBe,
+          localizedToBeCode,
           errorState,
         };
       });
@@ -118,10 +161,9 @@ export function useLocalizationApply({
       let localizedHtmlContent = tobeHtmlContent;
 
       updatedTextareas.forEach((textarea) => {
-        const localizedTobeContext = applyLocalizedTemplateBlocks(
-          textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+        const localizedTobeContext = _applyLocalizedTemplateBlocks(
+          textarea.toBeCode,
           translationMap,
-          localizationEntries
         );
 
         if (localizedHtmlContent.includes(textarea.toBeCode)) {

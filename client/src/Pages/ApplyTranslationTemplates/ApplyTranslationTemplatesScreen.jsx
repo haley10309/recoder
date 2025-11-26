@@ -56,7 +56,10 @@ const ApplyTranslationTemplatesScreen = () => {
     txtFileName,
     handleTranslationTxtUpload,
     translationDeckTxtFile,
-  } = useTranslationUpload({ countryCode, setEnglishCopyList });
+  } = useTranslationUpload({
+    countryCode,
+    setEnglishCopyList,
+  });
 
   // 로컬라이제이션 적용 훅
   const {
@@ -69,8 +72,8 @@ const ApplyTranslationTemplatesScreen = () => {
     tobeHtmlFileName,
     textareas,
     setTextareas,
-    countryCode,
     translationMap,
+    countOccurrences,
   });
   
   return (
@@ -130,8 +133,6 @@ const ApplyTranslationTemplatesScreen = () => {
             isEnglishCountry={isEnglishCountry}
             tobeHtmlFileName={tobeHtmlFileName}
             handleApplyLocalization={() => handleApplyLocalization({
-              ticketNum,
-              ticketUrl,
               hasTranslationDeckTxtFile: !!translationDeckTxtFile,
             })}
             handleLocalizedDownload={handleLocalizedDownload}
