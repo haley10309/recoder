@@ -16,10 +16,10 @@ const textareas = [
 ]
 ```
 
-### 백업코드 업로드
-- 업로드한 To-Be 백업코드파일 `fileContent`에 저장해둠
+### 선택한 국가의 ToBe Html 업로드
+- 업로드한 To-Be 백업코드파일 `tobeHtmlFile`, `tobeHtmlContent`에 저장해둠
 
-### 번역덱 업로드
+### 번역덱 Txt 업로드
 - `/upload-translation` : `englishCopyList`, `translations` 반환
 
 ```
@@ -44,28 +44,29 @@ translationMap = {
 }
 ```
 
-### 현재까지의 Textareas
+### 현재까지의 `textareas`
 ```
 toBeCode={textarea.toBeCode}
 localizedToBeCode={textarea.localizedToBeCode}
 ```
 
 ### 로컬라이제이션 적용
-// TODO: 실제 translation key 적용 여부 등의 번역 기능 구현
-// TODO: 번역 기능 업데이트 (localizationEntry에 있으면, 그리고 그게 코드출현횟수 기능에 감지가 되면, 코드가 변환이 되도록!)
-
-- `/get-template-details`: `localizationEntries` 불러옴
+- `handleApplyLocalization` 함수 실행
+- `_applyLocalizedTemplateBlocks` 함수: `textares`의 `toBeCode`에서 번역값을 찾아 `localizedToBeCode`로 치환
+- `/convert-aswas-to-tobe-codes` API: `toBeHtmlFile`내 `toBeCode`를 찾아 `localizedToBeCode`로 치환 (이 때, toBeCode의 코드출현횟수가 0이면 치환 불가)
 ```
-const localizationEntries = [
-  {
-    "id": 241,
-    "code_context": "<span class=\"common-cta-encased__text\">Where to buy</span>\r\n                \t\t   </div>\r\n                            <a href=\"https://www.samsung.com/uk/smartphones/galaxy-s25/reviews/\" class=\"common-cta-underline common-cta-underline--black\" data-omni-type=\"microsite_contentinter\" data-omni=\"galaxy-s25:features:key-vis^img:link-page:reviews\" ga-ca=\"content click\" ga-ac=\"feature\" ga-la=\"galaxy-s25:features:key-vis^img:link-page:reviews\">\r\n                            <span class=\"common-cta-underline__text\">See Reviews</span>\r\n                        </a>\r\n                    </div>\r\n                </div>\r\n                <figure class=\"features-kv__image\">"
-  },
-  ...
+const textareas = [
+  { 
+    localizationEntryId: 1,
+    toBeCode: "<div id="reviewId">See Reviews</div>",
+    localizedToBeCode: "<div id="reviewId">Ver reseñas</div>", // See Reviews에 해당하는 번역값 적용됨 
+  }
 ]
 ```
 
-applyLocalizedTemplateBlocks
+### 로컬라이제이션 적용
+- `/convert-aswas-to-tobe-codes` API의 반환값인 `fileContent`를 프론트 코드 내 `localizedHtmlContent` state에 저장한 것을 `text/html`로 변환하여 html로 다운로드
 
-// TODO: matchedPart 중요하면 붙이기
-// TODO: localized가 비어있으면 서버에 날릴 때 무시하기
+
+
+

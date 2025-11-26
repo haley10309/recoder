@@ -150,16 +150,17 @@ export function useLocalizationApply({
   
   // 로컬라이제이션 다운로드
   const handleLocalizedDownload = () => {
-    const hasUnapplied = textareas.some(
-      (textarea) => textarea.isApplied === "no"
-    );
+    // TODO: 적용 (번역이 적용되지 않은 항목 판단 필요)
+    // const hasUnapplied = textareas.some(
+    //   (textarea) => textarea.isApplied === "no"
+    // );
 
-    if (hasUnapplied) {
-      const proceed = window.confirm(
-        "🚫 변환이 적용되지 않은 항목이 있습니다.\n그래도 다운로드 하시겠습니까?"
-      );
-      if (!proceed) return;
-    }
+    // if (hasUnapplied) {
+    //   const proceed = window.confirm(
+    //     "🚫 변환이 적용되지 않은 항목이 있습니다.\n그래도 다운로드 하시겠습니까?"
+    //   );
+    //   if (!proceed) return;
+    // }
 
     if (localizedHtmlContent) {
       const blob = new Blob([localizedHtmlContent], { type: "text/html" });
