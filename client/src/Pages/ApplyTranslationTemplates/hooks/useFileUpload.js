@@ -57,7 +57,6 @@ export function useFileUpload() {
   return {
     tobeHtmlFile,
     tobeHtmlFileName: tobeHtmlFile?.name ?? "",
-    tobeHtmlContent,
     htmlUploadStatus,
     handleBackupFileUpload,
     countOccurrences,

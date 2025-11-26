@@ -42,7 +42,6 @@ const ApplyTranslationTemplatesScreen = () => {
   // HTML 파일 업로드 훅
   const {
     tobeHtmlFile,
-    tobeHtmlContent,
     tobeHtmlFileName,
     htmlUploadStatus,
     handleBackupFileUpload,
@@ -68,12 +67,14 @@ const ApplyTranslationTemplatesScreen = () => {
     handleApplyLocalization,
     handleLocalizedDownload,
   } = useLocalizationApply({
-    tobeHtmlContent,
+    tobeHtmlFile,
     tobeHtmlFileName,
     textareas,
     setTextareas,
     translationMap,
     countOccurrences,
+    ticketUrl,
+    countryCode,
   });
   
   return (

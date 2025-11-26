@@ -1,12 +1,16 @@
 import { useState } from "react";
 
+import { convertAsWasToToBeCodes } from "@/apis/apis";
+
 export function useLocalizationApply({
-  tobeHtmlContent,
+  tobeHtmlFile,
   tobeHtmlFileName,
   textareas,
   setTextareas,
   translationMap,
   countOccurrences,
+  ticketUrl,
+  countryCode,
 }) {
   const [localizedHtmlContent, setLocalizedHtmlContent] = useState("");
   const [localizedFileName, setLocalizedFileName] = useState("");
@@ -73,67 +77,6 @@ export function useLocalizationApply({
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   };
 
-  // const handleConvertByCountryCode = async () => {
-  //   const lowerCaseCode = countryCode?.toLowerCase?.() || "";
-
-  //   const updatedTextareas = textareas.map((textarea) => ({
-  //     ...textarea,
-  //     pptNo: textarea.pptNo,
-  //     asWasCode: textarea.asWasCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
-  //     toBeCode: textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
-  //     changed: textarea.asWasCode !== "",
-  //   }));
-
-  //   setTextareas(updatedTextareas);
-  //   setIsExecuted(true);
-  //   setUploadProgress(0);
-
-  //   if (
-  //     backupHtmlFile &&
-  //     updatedTextareas.every(({ asWasCode, toBeCode }) => asWasCode && (toBeCode !== null || toBeCode === ""))
-  //   ) {
-  //     const formData = new FormData();
-  //     formData.append("file", backupHtmlFile);
-
-  //     const codeChanges = updatedTextareas
-  //       .filter((textarea) => textarea.changed)
-  //       .map((textarea) => ({
-  //         asWasCode: textarea.asWasCode,
-  //         toBeCode: textarea.toBeCode,
-  //       }));
-  //     formData.append("codeChanges", JSON.stringify(codeChanges));
-  //     formData.append("ticket_url", String(ticketUrl));
-  //     formData.append("countryCode", String(countryCode));
-
-  //     try {
-  //       const result = await convertAsWasToToBeCodes({
-  //         formData,
-  //         setIsProcessing,
-  //         setUploadProgress,
-  //       });
-
-  //       if (result) {
-  //         const { fileContent, filename, changeResults } = result;
-  //         setDownloadedFileContent(fileContent);
-  //         setDownloadedFileName(filename);
-  //         setUploadStatus("success");
-
-  //         setTextareas(updatedTextareas);
-  //         handleChangeResults(changeResults);
-  //       } else {
-  //         setUploadStatus("fail");
-  //       }
-  //     } catch (error) {
-  //       console.error("파일 실행 오류", error);
-  //       setUploadStatus("fail");
-  //     } finally {
-  //       setIsProcessing(false);
-  //     }
-  //   } else {
-  //     alert("파일 선택, asWasCode, toBeCode 입력은 필수입니다.");
-  //   }
-  // };
-
   const handleApplyLocalization = async ({ hasTranslationDeckTxtFile }) => {
     try {
       if (!hasTranslationDeckTxtFile) {
@@ -157,26 +100,50 @@ export function useLocalizationApply({
       });
       setTextareas(updatedTextareas);
 
-      // 전체 HTML 변환
-      let localizedHtmlContent = tobeHtmlContent;
+      if (!tobeHtmlFile) {
+        alert("To-BE Html 파일을 업로드 해야 로컬라이제이션이 가능해요.");
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append("file", tobeHtmlFile);
 
-      updatedTextareas.forEach((textarea) => {
-        const localizedTobeContext = _applyLocalizedTemplateBlocks(
-          textarea.toBeCode,
-          translationMap,
-        );
+      const codeChanges = updatedTextareas
+        .filter((textarea) => textarea.toBeCode && textarea.localizedToBeCode)
+        .map((textarea) => ({
+          // api에서는 asWasCode와 toBeCode 이름으로 input 받고있음
+          asWasCode: textarea.toBeCode,
+          toBeCode: textarea.localizedToBeCode,
+        }));
+      formData.append("codeChanges", JSON.stringify(codeChanges));
+      formData.append("ticket_url", String(ticketUrl));
+      formData.append("countryCode", String(countryCode));
 
-        if (localizedHtmlContent.includes(textarea.toBeCode)) {
-          localizedHtmlContent = localizedHtmlContent.replace(textarea.toBeCode, localizedTobeContext);
+      try {
+        const result = await convertAsWasToToBeCodes({
+          formData,
+          setIsProcessing: () => {}, // TODO: 필요시 함수 만들어서 적용
+          setUploadProgress: () => {}, // TODO: 필요시 함수 만들어서 적용
+        });
+
+        if (result) {
+          const { fileContent, filename, changeResults } = result;
+          setLocalizedHtmlContent(fileContent);
+          setLocalizedFileName(`localized_${tobeHtmlFileName}`);
+          setIsLocalizationApplied(true);
+          setLocalizationStatus("success");
+        } else {
+          setUploadStatus("fail");
         }
-      });
+      } catch (error) {
+        console.error("파일 실행 오류", error);
+        setUploadStatus("fail");
+      } finally {
+        // setIsProcessing(false); // TODO: 필요시 함수 만들어서 적용
+      }
 
-      setLocalizedHtmlContent(localizedHtmlContent);
-      setLocalizedFileName(`localized_${tobeHtmlFileName}`);
-      setIsLocalizationApplied(true);
-      setLocalizationStatus("success");
     } catch (error) {
-      console.error(error);
+      console.error('[handleApplyLocalization] 에러 ', error);
       setLocalizationStatus("fail");
     }
   };
