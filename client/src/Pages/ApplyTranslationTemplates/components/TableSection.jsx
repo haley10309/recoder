@@ -12,6 +12,7 @@ const TableSection = ({
   hasTobeHtmlFile,
   countOccurrences,
   englishCopyList,
+  handleSelectEnglishCopies, 
 }) => {
   return (
     <TableWrapper>
@@ -43,6 +44,9 @@ const TableSection = ({
           errorState={textarea.errorState}
           hasTobeHtmlFile={hasTobeHtmlFile}
           countOccurrencesResult_tobe={countOccurrences(textarea.toBeCode)}
+          matchingEnglishCopies={(textarea.matchingEnglishCopies ?? []).filter(Boolean)}  
+          selectedEnglishCopies={textarea.selectedEnglishCopies ?? []}                    
+          onSelectEnglishCopies={(values) => handleSelectEnglishCopies(index, values)}  
           highlights={englishCopyList}
         />
       ))}

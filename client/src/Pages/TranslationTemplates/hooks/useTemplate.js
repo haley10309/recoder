@@ -53,7 +53,7 @@ export const useTemplate = () => {
         });
         const detailData = detailRes.data;
 
-        const codeChanges = (detailData.codeChanges ?? [])
+        const _codeChanges = (detailData.codeChanges ?? [])
                                       .filter((it) => !isAssetCode(it.aswas_code))
                                       .map( it => ({
                                         id: it.id,

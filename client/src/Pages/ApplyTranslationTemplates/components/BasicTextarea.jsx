@@ -15,6 +15,10 @@ const BasicTextarea = ({
   countOccurrencesResult_tobe,
   highlights = [], 
   hasTobeHtmlFile, 
+  // multi-select
+  matchingEnglishCopies = [],
+  selectedEnglishCopies = [], 
+  onSelectEnglishCopies = () => {},
 }) => {
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
 
@@ -42,6 +46,82 @@ const BasicTextarea = ({
       <Wrapper>
         <IdBox>
           <TextBold>id. {localizationEntryId}</TextBold>
+
+          {/* 영어 원문 선택 영역 */}
+          {matchingEnglishCopies?.length > 0 && (
+          <div
+            style={{
+              marginTop: "8px",
+              width: "100px", 
+              maxHeight: "180px", 
+              overflowY: "auto",
+              background: "#fff",
+              border: "1px solid #ddd",
+              borderRadius: "6px",
+              padding: "6px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "11px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+              }}
+            >
+              English Copy
+            </div>
+
+            {matchingEnglishCopies.map((copy, idx) => {
+              const truncated = copy.length > 28 ? copy.slice(0, 28) + "…" : copy;
+
+              return (
+                <label
+                  key={idx}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    cursor: "pointer",
+                    marginBottom: "3px",
+                    fontSize: "11px",
+                  }}
+                  title={copy} // hover하면 전체 표시됨
+                >
+                  <input
+                    type="checkbox"
+                    name={`eng-copy-${localizationEntryId}`}
+                    value={copy}
+                    checked={selectedEnglishCopies.includes(copy)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        // ✔ 선택됨 → 배열에 추가
+                        onSelectEnglishCopies([...selectedEnglishCopies, copy]);
+                      } else {
+                        // ✔ 해제됨 → 배열에서 제거
+                        onSelectEnglishCopies(
+                          selectedEnglishCopies.filter((c) => c !== copy)
+                        );
+                      }
+                    }}
+                    style={{ margin: 0 }}
+                  />
+
+                  <span
+                    style={{
+                      display: "inline-block",
+                      maxWidth: "140px", // 고정 width 안에서 ellipsis 처리
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {truncated}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        )}
         </IdBox>
 
           {/* {matchedPart && (

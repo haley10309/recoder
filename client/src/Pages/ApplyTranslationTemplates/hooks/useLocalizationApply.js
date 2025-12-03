@@ -8,6 +8,7 @@ export function useLocalizationApply({
   textareas,
   setTextareas,
   translationMap,
+  englishCopyList,  
   countOccurrences,
   ticketUrl,
   countryCode,
@@ -19,7 +20,7 @@ export function useLocalizationApply({
 
   function getTextWithAttributes(node) {
     let texts = [];
-
+    
     // 1. 현재 노드의 텍스트
     if (node.textContent?.trim()) {
       texts.push(node.textContent.trim());
@@ -38,8 +39,22 @@ export function useLocalizationApply({
     for (let child of node.children || []) {
       texts.push(getTextWithAttributes(child));
     }
-
+  
     return texts.join("\n");
+  }
+  
+  function findMatchingEnglishCopies(originalTobeCode, englishList = []) {
+    if (!originalTobeCode) return [];
+    if (!Array.isArray(englishList)) return [];
+
+    return englishList.filter((eng) => {
+      const cleanedEng = eng.trim().replace(/\s+/g, " ");
+
+      // 원본 HTML에서 공백 normalize하여 직접 비교
+      const cleanedHtml = originalTobeCode.replace(/\s+/g, " ");
+
+      return cleanedHtml.includes(cleanedEng);
+    });
   }
 
   /**
@@ -48,24 +63,27 @@ export function useLocalizationApply({
   const _applyLocalizedTemplateBlocks = (
     originalTobeCode,
     _translationMap,
+    selectedEnglishCopies = [],
   ) => {
     if (!originalTobeCode) return "";
     if (countOccurrences(originalTobeCode) !== 1) return "";
 
     let localizedTobeCode = originalTobeCode;
 
-    let blockDoc = new DOMParser().parseFromString(
-      localizedTobeCode,
-      "text/html"
-    );
+    let blockDoc = new DOMParser().parseFromString(localizedTobeCode, "text/html");
+
     // let blockText = blockDoc.documentElement.textContent?.trim(); // textContent만
     let blockText = getTextWithAttributes(blockDoc.documentElement); // (updated) textContent+속성값까지
+   
+    selectedEnglishCopies.forEach((copy) => {
+      if (!copy || !_translationMap[copy]) return;
 
-    Object.entries(_translationMap).forEach(([eng, local]) => {
-      const cleanedEng = eng.trim().replace(/\s+/g, " ");
+      const cleanedCopy = copy.trim().replace(/\s+/g, " ");
       const cleanedBlockText = blockText?.replace(/\s+/g, " ");
-      if (cleanedBlockText && cleanedBlockText.includes(cleanedEng)) {
-        const regex = new RegExp(escapeRegExp(eng), "g");
+
+      if (cleanedBlockText && cleanedBlockText.includes(cleanedCopy)) {
+        const local = _translationMap[copy];
+        const regex = new RegExp(escapeRegExp(copy), "g");
         localizedTobeCode = localizedTobeCode.replace(regex, local);
       }
     });
@@ -74,6 +92,7 @@ export function useLocalizationApply({
   };
 
   const escapeRegExp = (string) => {
+    if (!string || typeof string !== "string") return "";
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   };
 
@@ -86,14 +105,29 @@ export function useLocalizationApply({
 
       // textareas 업데이트 (tobe -> 번역 -> localized tobe)
       const updatedTextareas = textareas.map((textarea) => {
+        const matchingEnglishCopies = findMatchingEnglishCopies(
+          textarea.toBeCode,
+          englishCopyList
+        );
+
+        const selectedEnglishCopies =
+          textarea.selectedEnglishCopies && textarea.selectedEnglishCopies.length > 0
+            ? textarea.selectedEnglishCopies
+            : matchingEnglishCopies;
+
+
         const localizedToBeCode = _applyLocalizedTemplateBlocks(
           textarea.toBeCode,
           translationMap,
+          selectedEnglishCopies, 
         );
+
         const errorState = Object.keys(translationMap).some((key) => localizedToBeCode.includes(key));
 
         return {
           ...textarea,
+          matchingEnglishCopies, 
+          selectedEnglishCopies,
           localizedToBeCode,
           errorState,
         };
@@ -118,7 +152,7 @@ export function useLocalizationApply({
       formData.append("codeChanges", JSON.stringify(codeChanges));
       formData.append("ticket_url", String(ticketUrl));
       formData.append("countryCode", String(countryCode));
-
+      
       try {
         const result = await convertAsWasToToBeCodes({
           formData,
@@ -133,11 +167,11 @@ export function useLocalizationApply({
           setIsLocalizationApplied(true);
           setLocalizationStatus("success");
         } else {
-          setUploadStatus("fail");
+          setLocalizationStatus("fail");
         }
       } catch (error) {
         console.error("파일 실행 오류", error);
-        setUploadStatus("fail");
+        setLocalizationStatus("fail");
       } finally {
         // setIsProcessing(false); // TODO: 필요시 함수 만들어서 적용
       }
@@ -147,6 +181,42 @@ export function useLocalizationApply({
       setLocalizationStatus("fail");
     }
   };
+
+  const handleSelectEnglishCopies = (index, selectedValues) => {
+    setTextareas(prev =>
+      prev.map((ta, i) => {
+        if (i !== index) return ta;
+
+        // 다중 선택 업데이트
+        const selectedEnglishCopies = selectedValues;
+
+        // 번역 적용 (여러 개 모두)
+        let localized = ta.toBeCode;
+
+        selectedEnglishCopies.forEach(eng => {
+          const translated = translationMap[eng];
+          if (!translated) return;
+
+          const regex = new RegExp(escapeRegExp(eng), "g");
+          localized = localized.replace(regex, translated);
+        });
+
+        // 에러 여부
+        const errorState = Object.keys(translationMap).some(key =>
+          localized.includes(key)
+        );
+
+        return {
+          ...ta,
+          selectedEnglishCopies: selectedValues,
+          localizedToBeCode: localized,
+          errorState,
+        };
+      })
+    );
+  };
+
+
   
   // 로컬라이제이션 다운로드
   const handleLocalizedDownload = () => {
@@ -180,6 +250,7 @@ export function useLocalizationApply({
     isLocalizationApplied,
     localizationStatus,
     handleApplyLocalization,
+    handleSelectEnglishCopies,
     handleLocalizedDownload,
   };
 }

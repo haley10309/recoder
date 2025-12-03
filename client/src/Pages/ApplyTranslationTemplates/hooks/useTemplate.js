@@ -16,7 +16,7 @@ export const useTemplate = () => {
     ticketUrlOptions,
   } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
 
-  const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", checked: false, isApplied: null }]);
+  const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", checked: false, isApplied: null, selectedEnglishCopies: [] }]);
   const [countryCode, setCountryCode] = useState("");
   const [templateId, setTemplateId] = useState(null);
   const [englishCopyList, setEnglishCopyList] = useState([]);
@@ -38,10 +38,12 @@ export const useTemplate = () => {
       setTemplateId(templateId);
 
       const localizationEntries = data.localizationEntries || [];
+
       const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
       const newTextareas = localizationEntries.map((entry) => ({
         localizationEntryId: entry.id,
         toBeCode: entry.code_context.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+        selectedEnglishCopies: [],
       }));
 
       setTextareas(newTextareas);

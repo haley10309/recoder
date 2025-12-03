@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -66,16 +66,24 @@ const ApplyTranslationTemplatesScreen = () => {
     localizationStatus,
     handleApplyLocalization,
     handleLocalizedDownload,
+    handleSelectEnglishCopies, 
   } = useLocalizationApply({
     tobeHtmlFile,
     tobeHtmlFileName,
     textareas,
     setTextareas,
     translationMap,
+    englishCopyList,
     countOccurrences,
     ticketUrl,
     countryCode,
   });
+  
+  const onApplyLocalization = useCallback(() => {
+    handleApplyLocalization({
+      hasTranslationDeckTxtFile: !!translationDeckTxtFile,
+    });
+  }, [translationDeckTxtFile, handleApplyLocalization]);
   
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
@@ -133,9 +141,7 @@ const ApplyTranslationTemplatesScreen = () => {
           <FileConvert
             isEnglishCountry={isEnglishCountry}
             tobeHtmlFileName={tobeHtmlFileName}
-            handleApplyLocalization={() => handleApplyLocalization({
-              hasTranslationDeckTxtFile: !!translationDeckTxtFile,
-            })}
+            handleApplyLocalization={onApplyLocalization} 
             handleLocalizedDownload={handleLocalizedDownload}
             localizationStatus={localizationStatus}
             isLocalizationApplied={isLocalizationApplied}
@@ -154,6 +160,7 @@ const ApplyTranslationTemplatesScreen = () => {
               hasTobeHtmlFile={!!tobeHtmlFile}
               countOccurrences={countOccurrences}
               englishCopyList={englishCopyList}
+              handleSelectEnglishCopies={handleSelectEnglishCopies} 
             />
           </WhiteBox>
 

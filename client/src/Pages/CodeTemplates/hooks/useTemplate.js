@@ -73,7 +73,7 @@ export const useTemplate = () => {
         });
         const detailData = detailRes.data;
 
-        const codeChanges = (detailData.codeChanges ?? [])
+        const _codeChanges = (detailData.codeChanges ?? [])
                                       .filter((it) => !isAssetCode(it.aswas_code)) // TODO Later: asset 아닌 코드만 필터링중인데, 쭉 유지할지 결정 필요
                                       .map( it => ({
                                         id: it.id,
@@ -130,7 +130,7 @@ export const useTemplate = () => {
         ticket_url: ticketUrl,
       });
       const detailData = detailRes.data;
-      const codeChanges = (detailData.codeChanges ?? [])
+      const _codeChanges = (detailData.codeChanges ?? [])
                                     .filter((it) => !isAssetCode(it.aswas_code)) // TODO Later: asset 아닌 코드만 필터링중인데, 쭉 유지할지 결정 필요
                                     .map( it => ({
                                       id: it.id,
