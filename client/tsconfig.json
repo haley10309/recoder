@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    // ========================
+    // 기본 환경
+    // ========================
+    "target": "ES2020",              // Node 18+ 호환 안정
+    "module": "ESNext",              // 최신 모듈 시스템
+    "moduleResolution": "Node",      // Node import 해석
+    "esModuleInterop": true,         // CommonJS 호환
+
+    // ========================
+    // JS + TS 점진 마이그레이션
+    // ========================
+    "allowJs": true,                 // 기존 JS 허용
+    "checkJs": false,                // JS 타입 검사 OFF
+    "isolatedModules": true,         // 각 파일 독립 모듈로 처리
+    "outDir": "./dist",              // 빌드 산출물 위치
+    "rootDir": "./src",              // 소스 기준 폴더
+
+    // ========================
+    // React 설정
+    // ========================
+    "jsx": "react-jsx",              // React JSX 지원
+
+    // ========================
+    // 타입 안전성
+    // ========================
+    "strict": true,                  // TS 파일 엄격 모드
+    "skipLibCheck": true,            // 라이브러리 타입 체크 생략
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // ========================
+    // 기타 안정 옵션
+    // ========================
+    "sourceMap": true,               // 디버깅 용
+    "declaration": true,             // 타입 선언 파일 생성
+    "declarationMap": true,
+    "verbatimModuleSyntax": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force"
+  },
+  "include": ["src"]                  // src 폴더 기준
+}
