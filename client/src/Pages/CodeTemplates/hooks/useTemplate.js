@@ -82,7 +82,7 @@ export const useTemplate = () => {
                                         tobe_code: it.tobe_code?.trim() || "",
                                       }) );
 
-        setCodeChanges(codeChanges);
+        setCodeChanges(_codeChanges);
       } else {
         setSaveType("create");
         
@@ -139,7 +139,7 @@ export const useTemplate = () => {
                                       tobe_code: it.tobe_code?.trim() || "",
                                     }) );
 
-      setCodeChanges(codeChanges);
+      setCodeChanges(_codeChanges);
     } catch (err) {
       console.error(err);
       alert(err?.response?.data?.message || "템플릿 저장 중 오류가 발생하였습니다");
