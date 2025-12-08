@@ -38,7 +38,18 @@
     "declarationMap": true,
     "verbatimModuleSyntax": true,
     "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force"
+    "moduleDetection": "force",
+
+    // ========================
+    // 경로 별칭 설정 (jsconfig 이관)
+    // ========================
+    "baseUrl": ".",                          // paths 사용 시 필수 (프로젝트 루트 기준)
+    "paths": {
+      "@/*": ["src/*"],
+      "@Components/*": ["src/Components/*"], // 필요 시 소문자/대문자 경로 확인
+      "@Pages/*": ["src/Pages/*"],
+      "@public/*": ["public/*"]
+    },
   },
-  "include": ["src"]                  // src 폴더 기준
+  "include": ["src", "public"]                  // src 폴더 기준, public 폴더 aliaas 사용을 위해 추가 권장
 }
