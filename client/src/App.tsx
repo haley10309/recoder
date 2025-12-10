@@ -3,8 +3,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import * as jwtDecodeLib from "jwt-decode";
 import { useSetRecoilState } from "recoil";
 
-import LeftNavBar from "@Components/Nav/LeftNavBar";
-import Footer from "@Components/Nav/Footer";
+import LeftNavBar from "@/Components/Nav/LeftNavBar";
+import Footer from "@/Components/Nav/Footer";
 import RequireAuth from "@/Components/Common/RequireAuth";
 
 import MainScreen from "@/Pages/MainScreen";
