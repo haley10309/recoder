@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 
 import Gap from "@/Components/Common/Gap";
@@ -41,6 +40,7 @@ const ApplyCodeTemplatesScreen = () => {
     backupHtmlContent,
     htmlUploadStatus,
     handleBackupHtmlFileUpload,
+    countOccurrences,
   } = useFileUpload();
   
   // 코드 실행 훅
@@ -79,6 +79,7 @@ const ApplyCodeTemplatesScreen = () => {
         handleTicketNumChange={setTicketNum}
         handleTicketUrlChange={setTicketUrl}
         handleGetTemplate={handleGetTemplate}
+        showGetTemplateButton={false}
       />
       <Gap gap={30} />
       <div>
@@ -96,6 +97,14 @@ const ApplyCodeTemplatesScreen = () => {
       />
       <Gap gap={50} />
 
+      <button
+        className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px]"
+        onClick={handleGetTemplate}
+      >
+        템플릿 불러오기
+      </button>
+      <Gap gap={50} />
+
       <TitleLabel text="📤 파일 업로드" />
       <Gap gap={15} />
       <FileUploadSection
@@ -105,7 +114,6 @@ const ApplyCodeTemplatesScreen = () => {
         countryCode={countryCode}
       />
       <FileConvert
-        countryCode={countryCode}
         fileName={backupHtmlFile?.name ?? ""}
         isProcessing={isProcessing}
         isExecuted={isExecuted}
@@ -122,11 +130,11 @@ const ApplyCodeTemplatesScreen = () => {
       <WhiteBox>
         <TableSection
           textareas={textareas}
-          countryCode={countryCode}
           hasBackupHtmlFile={!!backupHtmlFile}
           handleAsWasCodeChange={handleAsWasCodeChange}
           handleToBeCodeChange={handleToBeCodeChange}
           handlePptNoChange={handlePptNoChange}
+          countOccurrences={countOccurrences}
         />
       </WhiteBox>
       <Gap gap={50} />

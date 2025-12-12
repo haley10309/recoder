@@ -1,10 +1,10 @@
 import { useState } from "react";
-import axios from "axios";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
 import { countryOptions } from "@/utils/countryOptions";
-import { BASE_URL } from "@/utils/routePath";
+import defaultAxios from "@/apis/defaultAxios";
+import { replaceCountryCode } from "@/utils/codeUtils";
 
 export const useTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
@@ -30,7 +30,7 @@ export const useTemplate = () => {
   // 템플릿 조회
   const handleGetTemplate = async () => {
     try {
-      const { data } = await axios.post(`${BASE_URL}/get-template-details`, {
+      const { data } = await defaultAxios.post(`/get-template-details`, {
         ticket_num: ticketNum,
         ticket_url: ticketUrl,
       });
@@ -39,18 +39,15 @@ export const useTemplate = () => {
 
       const localizationEntries = data.localizationEntries || [];
 
-      const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
       const newTextareas = localizationEntries.map((entry) => ({
         localizationEntryId: entry.id,
-        toBeCode: entry.code_context.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+        toBeCode: replaceCountryCode(entry.code_context, countryCode),
         selectedEnglishCopies: [],
       }));
 
       setTextareas(newTextareas);
       alert("성공적으로 템플릿을 불러왔습니다.");
     } catch (error) {
-      console.error("❌❌ Error fetching code pairs:", error);
-      alert("서버 요청에 실패했습니다. 콘솔을 확인해주세요.");
     }
   };
 

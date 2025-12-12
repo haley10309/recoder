@@ -1,7 +1,7 @@
 // 사용안함, ASWAS 코드와 TOBE 코드를 하나의 TXT 파일에 넣은 가이드용
 // 가이드 업로드 후, 처리 로직 (ppt 번호별 AS-WAS와 TO-BE 매칭)
 
-exports.guideUploadData = async (req, res) => {
+export const guideUploadData = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
   }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { convertAsWasToToBeCodes } from "@/apis/apis";
 
-import { countOccurrences } from "@/utils/codeUtils";
+import { replaceCountryCode, countOccurrences } from "@/utils/codeUtils";
 
 export function useFileExecute({
   backupHtmlFile,
@@ -35,10 +35,7 @@ export function useFileExecute({
       );
       const toBeOccurrenceCount = countOccurrences(
         downloadedFileContent,
-        textarea.toBeCode.replace(
-          /\/uk\//g,
-          `/${lowerCaseCode}/`
-        )
+        replaceCountryCode(textarea.toBeCode, countryCode),
       );
 
       const normalizedAsWas = normalizePath(textarea.asWasCode);
@@ -53,11 +50,8 @@ export function useFileExecute({
         isApplied: isFound ? (actualChanged ? "yes" : "sameAsBefore") : "no",
         asWasOccurrenceCount,
         toBeOccurrenceCount,
-        asWasCode: textarea.asWasCode.replace(
-          /\/uk\//g,
-          `/${lowerCaseCode}/`
-        ),
-        toBeCode: textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
+        asWasCode: replaceCountryCode(textarea.asWasCode, countryCode),
+        toBeCode: replaceCountryCode(textarea.toBeCode, countryCode),
         changed: isFound && actualChanged,
         matchedPart,
       };
@@ -67,13 +61,11 @@ export function useFileExecute({
   };
 
   const handleConvertByCountryCode = async () => {
-    const lowerCaseCode = countryCode?.toLowerCase?.() || "";
-
     const updatedTextareas = textareas.map((textarea) => ({
       ...textarea,
       pptNo: textarea.pptNo,
-      asWasCode: textarea.asWasCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
-      toBeCode: textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCode}/`),
+      asWasCode: replaceCountryCode(textarea.asWasCode, countryCode),
+      toBeCode: replaceCountryCode(textarea.toBeCode, countryCode),
       changed: textarea.asWasCode !== "",
     }));
 

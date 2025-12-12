@@ -10,6 +10,7 @@ const LocalizationEntriesEditor = ({
   localizationEntries,
   setLocalizationEntries,
   handleCreateOrUpdateLocalization,
+  handleDeleteLocalizationEntry,
 }) => {
   return (
     <>

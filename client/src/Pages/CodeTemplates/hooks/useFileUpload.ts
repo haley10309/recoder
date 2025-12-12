@@ -1,8 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 
 import { isAssetCode } from "@/utils/codeUtils";
-import { BASE_URL } from "@/utils/routePath";
+import defaultAxios from "@/apis/defaultAxios";
 
 export const useFileUpload = ({
   setCodeChanges,
@@ -16,7 +15,7 @@ export const useFileUpload = ({
     const formData = new FormData();
     formData.append("txtfile", file);
     try {
-      const res = await axios.post(`${BASE_URL}/upload-guide`, formData, {
+      const res = await defaultAxios.post(`/upload-guide`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const { pptNos = [], asWasCodes = [], toBeCodes = [] } = res.data;
@@ -41,7 +40,6 @@ export const useFileUpload = ({
 
       setCodeChanges(codeChanges);
     } catch (error) {
-      console.error("Error uploading PPT file:", error);
       alert("PPT 업로드에 실패했습니다.");
     }
   };

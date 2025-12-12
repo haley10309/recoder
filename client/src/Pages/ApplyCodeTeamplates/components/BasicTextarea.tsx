@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 
 import Copy from "@/assets/copy.png";
@@ -12,21 +12,15 @@ const BasicTextarea = ({
   toBeCode,
   setToBeCode,
   isApplied,
-  countryCode,
   matchedPart,
-  asWasOccurrenceCount,
   errorState,
   hasBackupHtmlFile,
   handlePptNoChange,
-  // toBeOccurrenceCount,
+  countOccurrences,
 }) => {
-  const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
-  const transformedAsWasCode = asWasCode?.replace(
-    /\/uk\//g,
-    `/${lowerCaseCountryCode}/`
-  );
-
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
+
+  const asWasOccurrenceCount = countOccurrences(asWasCode);
 
   const handleToggleMatchedPart = () => {
     setIsMatchedPartVisible((prev) => !prev);
@@ -84,7 +78,7 @@ const BasicTextarea = ({
         {/* AS-WAS */}
         <CodeBlock>
           <Textarea
-            value={transformedAsWasCode}
+            value={asWasCode}
             onChange={(e) => setAsWasCode(e.target.value)}
             placeholder="AS-WAS code를 입력하세요."
           />
@@ -115,7 +109,7 @@ const BasicTextarea = ({
           
           <CopyTextButton
             text={"코드 복사"}
-            value={transformedAsWasCode}
+            value={asWasCode}
           />
 
           {matchedPart && (

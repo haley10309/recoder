@@ -5,7 +5,6 @@ import FileConvertButtons from "./FileConvertButtons";
 import PreviewPanel from "./PreviewPanel";
 
 const FileConvert = ({
-  countryCode,
   fileName,
   isProcessing,
   isExecuted,
@@ -20,7 +19,6 @@ const FileConvert = ({
   return (
     <FileConvertBottonBox>
       <FileConvertButtons
-        countryCode={countryCode}
         fileName={fileName}
         isProcessing={isProcessing}
         handleConvertByCountryCode={handleConvertByCountryCode}

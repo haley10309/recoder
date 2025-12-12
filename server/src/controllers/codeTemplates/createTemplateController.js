@@ -1,7 +1,7 @@
 // 템플릿 생성
-const db = require("../../config/db");
+import db from "../../config/db";
 
-exports.createTemplateData = (req, res) => {
+export const createTemplateData = (req, res) => {
   const { ticket_num, ticket_url, code_changes } = req.body;
 
   if (!code_changes) {

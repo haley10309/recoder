@@ -1,7 +1,7 @@
 // Ticket Number 조회
-const db = require("../../config/db");
-  
-exports.getTicketNumData = (req, res) => {
+import db from "../../config/db";
+
+export const getTicketNumData = (req, res) => {
     const query = `
         SELECT ticket_num AS name
         FROM Templates

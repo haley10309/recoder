@@ -1,8 +1,7 @@
 // 템플릿 수정 (기존 값은 update, 새 값은 insert, 사라진 건 delete)
+import db from "../../config/db";
 
-const db = require("../../config/db");
-
-exports.updateTemplateData = async (req, res) => {
+export const updateTemplateData = async (req, res) => {
   try {
     const { ticket_num, ticket_url, code_changes } = req.body;
     

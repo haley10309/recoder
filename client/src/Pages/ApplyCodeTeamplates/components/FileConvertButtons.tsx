@@ -1,8 +1,6 @@
-import React from "react";
 import styled from "styled-components";
 
 const FileConvertButtons = ({
-  countryCode,
   fileName,
   isProcessing,
   handleConvertByCountryCode,
@@ -14,7 +12,7 @@ const FileConvertButtons = ({
         disabled={isProcessing || !fileName}
         $active={!!fileName && !isProcessing}
       >
-        {isProcessing ? "코드 변환 중.." : `/uk/ -> /${countryCode.toLowerCase()}/ 변환`}
+        {isProcessing ? "코드 변환 중.." : `AS-WAS → TO-BE 코드 변환`}
       </ConvertButton>
     </ButtonBox>
   );
@@ -33,7 +31,7 @@ const ConvertButton = styled.button`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  width: 10.9375rem;
+  width: 12.9375rem;
   height: 2.5625rem;
   border-radius: 10px;
   color: white;

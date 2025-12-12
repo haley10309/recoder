@@ -1,7 +1,7 @@
 // Ticket URL 조회
-const db = require("../../config/db");
+import db from "../../config/db";
 
-exports.getTicketURLData = (req, res) => {
+export const getTicketURLData = (req, res) => {
   const query = `
     SELECT ticket_url AS name
     FROM Templates

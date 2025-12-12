@@ -1,11 +1,10 @@
 import { useState } from "react";
-import axios from "axios";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
 import { countryOptions } from "@/utils/countryOptions";
-import { isAssetCode } from "@/utils/codeUtils";
-import { BASE_URL } from "@/utils/routePath";
+import { replaceCountryCode, isAssetCode } from "@/utils/codeUtils";
+import defaultAxios from "@/apis/defaultAxios";
 
 export const useTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
@@ -42,7 +41,7 @@ export const useTemplate = () => {
         return;
       }
 
-      const { data } = await axios.post(`${BASE_URL}/get-template-details`, {
+      const { data } = await defaultAxios.post(`/get-template-details`, {
         ticket_num: ticketNum,
         ticket_url: ticketUrl,
       });
@@ -60,21 +59,18 @@ export const useTemplate = () => {
                                       localized_tobe_code: "",
                                     }) );
 
+                                    
       const newTextareas = codeChanges.map((pair) => ({
         id: pair.id,
         pptNo: pair.ppt_no,
-        asWasCode: pair.aswas_code,
-        toBeCode: pair.tobe_code,
+        asWasCode: replaceCountryCode(pair.aswas_code, countryCode),
+        toBeCode: replaceCountryCode(pair.tobe_code, countryCode),
         localizedToBeCode: "",
         checked: true,
       }));
       setTextareas(newTextareas);
       alert("성공적으로 템플릿을 불러왔습니다.");
     } catch (error) {
-      alert(error.response.data.error 
-              ? `${error.response.data.error} (${error.response.status})` 
-              : `서버 요청에 실패했습니다. 콘솔을 확인해주세요. (${error.response.status})`
-          );
     }
   };
 

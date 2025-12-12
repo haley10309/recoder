@@ -1,3 +1,4 @@
+import { kind_countOccurrences } from "@/utils/codeUtils";
 import { useState } from "react";
 
 export function useFileUpload() {
@@ -8,6 +9,8 @@ export function useFileUpload() {
   const [uploadStatus, setUploadStatus] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  const countOccurrences = (code) => kind_countOccurrences(backupHtmlContent, code);
+  
   const handleBackupHtmlFileUpload = (e) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) {
@@ -56,5 +59,6 @@ export function useFileUpload() {
     backupHtmlContent,
     htmlUploadStatus,
     handleBackupHtmlFileUpload,
+    countOccurrences,
   };
 }

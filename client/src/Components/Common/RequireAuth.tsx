@@ -3,9 +3,9 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 
 const RequireAuth = ({ children }) => {
-  const { userEmail } = useAuth();
+  const token = localStorage.getItem("authToken");
 
-  if (!userEmail) {
+  if (!token) {
     return <Navigate to="/login" replace />;
   }
 

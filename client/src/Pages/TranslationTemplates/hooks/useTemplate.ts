@@ -1,10 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
 import { isAssetCode } from "@/utils/codeUtils";
-import { BASE_URL } from "@/utils/routePath";
+import defaultAxios from "@/apis/defaultAxios";
 
 export const useTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
@@ -34,7 +33,7 @@ export const useTemplate = () => {
   ) => {
     try {
       // 1) 템플릿 존재 여부 확인
-      const response = await axios.post(`${BASE_URL}/check-template-exsist`, {
+      const response = await defaultAxios.post(`/check-template-exsist`, {
         ticket_num: ticketNum,
         ticket_url: ticketUrl,
       });
@@ -47,7 +46,7 @@ export const useTemplate = () => {
         setIsTemplateCreated(true);
 
         // 2) 세부 내용 가져오기
-        const detailRes = await axios.post(`${BASE_URL}/get-template-details`, {
+        const detailRes = await defaultAxios.post(`/get-template-details`, {
           ticket_num: ticketNum,
           ticket_url: ticketUrl,
         });
@@ -63,7 +62,7 @@ export const useTemplate = () => {
                                       }) );
         const localizationEntries = detailData.localizationEntries || [];
 
-        setCodeChanges(codeChanges);
+        setCodeChanges(_codeChanges);
         
         // 템플릿 AS-WAS/TO-BE, 로컬라이제이션 세팅
         setDeleteIds([]);
@@ -89,11 +88,9 @@ export const useTemplate = () => {
         }
       }
     } catch (error) {
-      console.error("Error checking for existing templates:", error);
       setIsTemplateCreated(false);
       setDeleteIds([]);
       setLocalizationEntries([{ code_context: "" }]);
-      alert("템플릿 확인 중 오류가 발생했습니다.");
     }
   };
 
@@ -118,17 +115,16 @@ export const useTemplate = () => {
       };
       
       // LocalizationEntries 삽입/수정/삭제
-      await axios.put(`${BASE_URL}/update-localization-entries`, body, { headers: { "Content-Type": "application/json" } });
+      await defaultAxios.put(`/update-localization-entries`, body, { headers: { "Content-Type": "application/json" } });
       setDeleteIds([]);
 
       // db에 저장된 localizaionEntries 가져오기
-      const { data } = await axios.post(`${BASE_URL}/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketUrl });
+      const { data } = await defaultAxios.post(`/get-template-details`, { ticket_num: ticketNum, ticket_url: ticketUrl });
       setLocalizationEntries(data.localizationEntries || []);
 
       alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
     } catch (err) {
-      console.error("[Error] handleCreateOrUpdateLocalization", err);
-      alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
+      // alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
     }
   };
 

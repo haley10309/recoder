@@ -1,6 +1,6 @@
-const db = require("../../config/db");
+import db from "../../config/db";
 
-exports.updateLocalizationEntries = (req, res) => {
+export const updateLocalizationEntries = (req, res) => {
   const { ticket_num, ticket_url, localization_entries = [], delete_ids = [] } = req.body; // localization_entries, delete_ids 기본값 []로 안전하게 설정
 
   if (!ticket_num || !ticket_url) {

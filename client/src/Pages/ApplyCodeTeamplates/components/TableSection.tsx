@@ -4,11 +4,11 @@ import BasicTextarea from "./BasicTextarea";
 
 const TableSection = ({
   textareas,
-  countryCode,
   hasBackupHtmlFile,
   handleAsWasCodeChange,
   handleToBeCodeChange,
   handlePptNoChange,
+  countOccurrences,
 }) => {
   return (
     <TableWrapper>
@@ -25,27 +25,21 @@ const TableSection = ({
       </TableHeader>
 
       {textareas.map((textarea, index) => {
-        const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
         return (
           <BasicTextarea
             key={index}
             indexText={`${index + 1} of ${textareas.length} / id: ${textarea.id ? textarea.id : "DB 저장 전"}`}
-            pptNo={textarea.pptNo} // ✅ 바로 사용
-            asWasCode={textarea.asWasCode.replace(
-              /\/uk\//g,
-              `/${lowerCaseCountryCode}/`
-            )}
+            pptNo={textarea.pptNo}
+            asWasCode={textarea.asWasCode}
             setAsWasCode={(value) => handleAsWasCodeChange(index, value)}
-            toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`)}
+            toBeCode={textarea.toBeCode}
             setToBeCode={(value) => handleToBeCodeChange(index, value)}
             isApplied={textarea.isApplied}
-            countryCode={countryCode}
             matchedPart={textarea.matchedPart}
-            asWasOccurrenceCount={textarea.asWasOccurrenceCount}
-            toBeOccurrenceCount={textarea.toBeOccurrenceCount}
             errorState={textarea.errorState}
             hasBackupHtmlFile={hasBackupHtmlFile}
             handlePptNoChange={(value) => handlePptNoChange(index, value)}
+            countOccurrences={countOccurrences}
           />
         );
       })}

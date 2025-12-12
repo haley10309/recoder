@@ -1,10 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
 import { isAssetCode, kind_countOccurrences } from "@/utils/codeUtils";
-import { BASE_URL } from "@/utils/routePath";
+import defaultAxios from "@/apis/defaultAxios";
 
 export const useTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
@@ -55,7 +54,7 @@ export const useTemplate = () => {
   const checkAndGetTemplateIfExist = async (path) => {
     try {
       // 1) 템플릿 존재 여부 확인
-      const response = await axios.post(`${BASE_URL}/check-template-exsist`, {
+      const response = await defaultAxios.post(`/check-template-exsist`, {
         ticket_num: ticketNum,
         ticket_url: ticketUrl,
       });
@@ -67,7 +66,7 @@ export const useTemplate = () => {
         setSaveType("update");
 
         // 2) 세부 내용 가져오기
-        const detailRes = await axios.post(`${BASE_URL}/get-template-details`, {
+        const detailRes = await defaultAxios.post(`/get-template-details`, {
           ticket_num: ticketNum,
           ticket_url: ticketUrl,
         });
@@ -94,8 +93,6 @@ export const useTemplate = () => {
         }
       }
     } catch (error) {
-      console.error("Error checking for existing templates:", error);
-      alert("템플릿 확인 중 오류가 발생했습니다.");
     }
   };
 
@@ -113,19 +110,19 @@ export const useTemplate = () => {
         formData.append("ticket_num", ticketNum);
         formData.append("ticket_url", ticketUrl);
         formData.append("code_changes", JSON.stringify(codeChanges));
-        await axios.post(`${BASE_URL}/create-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+        await defaultAxios.post(`/create-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
       } else {
         const formData = new FormData();
         formData.append("ticket_num", ticketNum);
         formData.append("ticket_url", ticketUrl);
         formData.append("code_changes", JSON.stringify(codeChanges));
-        await axios.post(`${BASE_URL}/update-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+        await defaultAxios.post(`/update-template`, formData, { headers: { "Content-Type": "multipart/form-data" } });
       }
       setSaveType("update");
       alert("템플릿이 성공적으로 저장되었습니다");
 
       // codeChanges 업데이트
-      const detailRes = await axios.post(`${BASE_URL}/get-template-details`, {
+      const detailRes = await defaultAxios.post(`/get-template-details`, {
         ticket_num: ticketNum,
         ticket_url: ticketUrl,
       });
@@ -141,8 +138,6 @@ export const useTemplate = () => {
 
       setCodeChanges(_codeChanges);
     } catch (err) {
-      console.error(err);
-      alert(err?.response?.data?.message || "템플릿 저장 중 오류가 발생하였습니다");
     }
   };
 

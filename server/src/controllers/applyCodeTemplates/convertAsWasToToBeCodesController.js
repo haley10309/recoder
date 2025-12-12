@@ -1,5 +1,5 @@
 // apply template 실행 기능
-const { replaceCode } = require('../../utils/codeUtils');
+import { replaceCode } from "../../utils/codeUtils";
 
 /**
  * 현재 시간을 KST 기준으로 yyMMddHHmmss 형식으로 반환
@@ -21,7 +21,7 @@ function formatDateToKST() {
   return `${yy}${MM}${dd}_${HH}${mm}${ss}`;
 }
 
-exports.convertAsWasToToBeCodes = (req, res) => {
+export const convertAsWasToToBeCodes = (req, res) => {
   const codeChanges = JSON.parse(req.body.codeChanges);
   const { ticket_url, countryCode } = req.body;
   

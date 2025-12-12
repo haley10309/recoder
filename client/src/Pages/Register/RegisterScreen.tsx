@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 
-import { BASE_URL } from '@/utils/routePath';
-import { useAuth } from '@/hooks/useAuth';
 import { useAuthRegister } from './hooks/useAuthRegister';
+import defaultAxios from '@/apis/defaultAxios';
 
 interface RegisterRequest {
   email: string;
@@ -33,7 +32,6 @@ const RegisterScreen = () => {
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { userEmail } = useAuth();
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,8 +42,8 @@ const RegisterScreen = () => {
     try {
       const requestData: RegisterRequest = { email, password };
       
-      const res = await axios.post<RegisterResponse>(
-        `${BASE_URL}/auth/register`,
+      const res = await defaultAxios.post<RegisterResponse>(
+        `/auth/register`,
         requestData
       );
 
@@ -72,7 +70,8 @@ const RegisterScreen = () => {
     setPassword(e.target.value);
   };
 
-  if (userEmail) {
+  const token = localStorage.getItem("authToken");
+  if (token) {
     return (
       <div>이미 로그인했어요.</div>
     )
