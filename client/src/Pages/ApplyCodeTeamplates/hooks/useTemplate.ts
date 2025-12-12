@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
 import { countryOptions } from "@/utils/countryOptions";
-import { isAssetCode } from "@/utils/codeUtils";
+import { replaceCountryCode, isAssetCode } from "@/utils/codeUtils";
 import defaultAxios from "@/apis/defaultAxios";
 
 export const useTemplate = () => {
@@ -60,12 +60,11 @@ export const useTemplate = () => {
                                     }) );
 
                                     
-      const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
       const newTextareas = codeChanges.map((pair) => ({
         id: pair.id,
         pptNo: pair.ppt_no,
-        asWasCode: pair.aswas_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
-        toBeCode: pair.tobe_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+        asWasCode: replaceCountryCode(pair.aswas_code, countryCode),
+        toBeCode: replaceCountryCode(pair.tobe_code, countryCode),
         localizedToBeCode: "",
         checked: true,
       }));

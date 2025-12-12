@@ -1,4 +1,14 @@
 /**
+ * 문자열 내에 포함된 "/uk/" 구간을 지정된 국가 코드로 치환합니다.
+ */
+export const replaceCountryCode = (code: string, countryCode: string): string => {
+  if (!countryCode) return code;
+
+  const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
+  return code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`);
+};
+
+/**
  * 코드 문자열에서 공백, 세미콜론, 따옴표, 쉼표, 괄호를 제거하여 비교를 위한 일관된 문자열로 변환합니다.
  * 제거 대상 문자: 공백, ; " ' , ( )
  */

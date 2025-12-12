@@ -4,6 +4,7 @@ import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
 import { countryOptions } from "@/utils/countryOptions";
 import defaultAxios from "@/apis/defaultAxios";
+import { replaceCountryCode } from "@/utils/codeUtils";
 
 export const useTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
@@ -38,10 +39,9 @@ export const useTemplate = () => {
 
       const localizationEntries = data.localizationEntries || [];
 
-      const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
       const newTextareas = localizationEntries.map((entry) => ({
         localizationEntryId: entry.id,
-        toBeCode: entry.code_context.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+        toBeCode: replaceCountryCode(entry.code_context, countryCode),
         selectedEnglishCopies: [],
       }));
 
