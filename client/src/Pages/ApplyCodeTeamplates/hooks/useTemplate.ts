@@ -59,11 +59,13 @@ export const useTemplate = () => {
                                       localized_tobe_code: "",
                                     }) );
 
+                                    
+      const lowerCaseCountryCode = countryCode?.toLowerCase?.() || "";
       const newTextareas = codeChanges.map((pair) => ({
         id: pair.id,
         pptNo: pair.ppt_no,
-        asWasCode: pair.aswas_code,
-        toBeCode: pair.tobe_code,
+        asWasCode: pair.aswas_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
+        toBeCode: pair.tobe_code.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`),
         localizedToBeCode: "",
         checked: true,
       }));
