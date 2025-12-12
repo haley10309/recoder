@@ -5,7 +5,7 @@ const cors = require("cors");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-import { authenticate } from '../middleware/authMiddleware';
+import { authenticate, authorize } from '../middleware/authMiddleware';
 import authRoutes from './authRoutes';
 
 import { checkTemplateData } from '../controllers/common/checkTemplateController';
@@ -21,23 +21,25 @@ import { updateLocalizationEntries } from '../controllers/translationTemplates/u
 
 router.use('/auth', authRoutes);
 
+// 가능한 role: ["pm", "qaer", "author"]
+
 /** 0) Common */
-router.get("/get-templates", cors(), authenticate, getTemplates);
-router.post("/check-template-exsist", cors(), authenticate, checkTemplateData);
-router.post("/get-template-details", cors(), authenticate, getTemplateDetailsData);
+router.get("/get-templates", cors(), authenticate, authorize("author", "qaer", "pm"), getTemplates);
+router.post("/check-template-exsist", cors(), authenticate, authorize("author", "qaer", "pm"), checkTemplateData);
+router.post("/get-template-details", cors(), authenticate, authorize("author", "qaer", "pm"), getTemplateDetailsData);
 
 /** 1) Code Templates */
-router.post("/create-template", upload.single('file'), cors(), authenticate, createTemplateData);
-router.post("/update-template", multer().none(), cors(), authenticate, updateTemplateData);
-router.post("/upload-guide", upload.single("txtfile"), cors(), authenticate, guideUploadData);
+router.post("/create-template", upload.single('file'), cors(), authenticate, authorize("pm"), createTemplateData); // ✅ Only pm
+router.post("/update-template", multer().none(), cors(), authenticate, authorize("pm"), updateTemplateData); // ✅ Only pm
+router.post("/upload-guide", upload.single("txtfile"), cors(), authenticate, authorize("author", "qaer", "pm"), guideUploadData);
 
 /** 2) Apply Code Templates */
-router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), authenticate, convertAsWasToToBeCodes);
-router.post("/upload-translation", upload.single('file'), cors(), authenticate, uploadTranslation);
+router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), convertAsWasToToBeCodes);
+router.post("/upload-translation", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), uploadTranslation);
 
 /** 3) Translation Templates */
-router.post("/extract-english-copy-list", upload.single('file'), cors(), authenticate, extractEnglishCopyListData);
-router.put("/update-localization-entries",cors(), authenticate, updateLocalizationEntries);
+router.post("/extract-english-copy-list", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), extractEnglishCopyListData);
+router.put("/update-localization-entries",cors(), authenticate, authorize("pm"), updateLocalizationEntries); // ✅ Only pm
 
 /** (Deprecated) */
 // const guideUploadControllerV2 = require("../controllers/codeTemplates/guideUploadControllerV2");
