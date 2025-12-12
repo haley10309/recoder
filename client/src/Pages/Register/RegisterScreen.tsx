@@ -3,7 +3,6 @@ import type { FormEvent, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { AxiosError } from 'axios';
 
-import { useAuth } from '@/hooks/useAuth';
 import { useAuthRegister } from './hooks/useAuthRegister';
 import defaultAxios from '@/apis/defaultAxios';
 
@@ -33,7 +32,6 @@ const RegisterScreen = () => {
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { userEmail } = useAuth();
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,7 +70,8 @@ const RegisterScreen = () => {
     setPassword(e.target.value);
   };
 
-  if (userEmail) {
+  const token = localStorage.getItem("authToken");
+  if (token) {
     return (
       <div>이미 로그인했어요.</div>
     )

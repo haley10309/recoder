@@ -22,7 +22,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { userEmail, setUserEmail, setNameEn } = useAuth();
+  const { setUserEmail, setNameEn } = useAuth();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,7 +68,8 @@ const LoginScreen = () => {
     setPassword(e.target.value);
   };
 
-  if (userEmail) {
+  const token = localStorage.getItem("authToken");
+  if (token) {
     return (
       <div>이미 로그인했어요.</div>
     )
