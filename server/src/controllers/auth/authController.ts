@@ -4,7 +4,8 @@ import jwt from 'jsonwebtoken';
 import db from '../../config/db';
 import jwtConfig from '../../config/jwt';
 import { 
-  LoginRequest, 
+  LoginRequest,
+  RegisterRequest,
   AuthRequest, 
   ApiResponse, 
   LoginResponse,
@@ -18,6 +19,110 @@ interface DbUser {
   name_en: string;
   role: string;
 }
+
+// 회원가입
+export const register = async (
+  req: Request<{}, {}, RegisterRequest>,
+  res: Response<ApiResponse<{ user: Omit<DbUser, 'password'> }>>
+): Promise<void> => {
+  const { email, password, name_en, role } = req.body;
+
+  try {
+    // 입력 검증
+    if (!email || !password) {
+      res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
+      });
+      return;
+    }
+
+    // 이메일 형식 검증
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid email format'
+      });
+      return;
+    }
+
+    // 비밀번호 길이 검증
+    if (password.length < 6) {
+      res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long'
+      });
+      return;
+    }
+
+    // 이메일 중복 확인
+    db.query(
+      'SELECT id FROM AdminUsers WHERE email = ? AND deleted_at IS NULL',
+      [email],
+      async (checkErr, checkResults: any) => {
+        if (checkErr) {
+          console.error('Register check error:', checkErr);
+          res.status(500).json({
+            success: false,
+            message: 'Server error during registration'
+          });
+          return;
+        }
+
+        if (checkResults.length > 0) {
+          res.status(409).json({
+            success: false,
+            message: 'Email already exists'
+          });
+          return;
+        }
+
+        // 비밀번호 해싱
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // 사용자 생성
+        const userRole = role || 'author';
+        const userName = name_en || null;
+
+        db.query(
+          'INSERT INTO AdminUsers (email, password, name_en, role) VALUES (?, ?, ?, ?)',
+          [email, hashedPassword, userName, userRole],
+          (insertErr, insertResults: any) => {
+            if (insertErr) {
+              console.error('Register insert error:', insertErr);
+              res.status(500).json({
+                success: false,
+                message: 'Server error during registration'
+              });
+              return;
+            }
+
+            res.status(201).json({
+              success: true,
+              message: 'User registered successfully',
+              data: {
+                user: {
+                  id: insertResults.insertId,
+                  email,
+                  name_en: userName ?? "",
+                  role: userRole
+                }
+              }
+            });
+          }
+        );
+      }
+    );
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during registration'
+    });
+  }
+};
 
 // 로그인
 export const login = async (

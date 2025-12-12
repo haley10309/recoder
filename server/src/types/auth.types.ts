@@ -5,6 +5,13 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  name_en?: string;
+  role?: string;
+}
+
 export interface UserPayload {
   id: number;
   email: string;
