@@ -1,14 +1,13 @@
-import { nameEnState } from '@/recoil/atoms/state';
 import { Navigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+
+import { useAuth } from '@/hooks/useAuth';
 
 const RequireAuth = ({ children }) => {
-  // const token = localStorage.getItem('authToken');
-  // const nameEn = useRecoilValue(nameEnState);
+  const { userEmail } = useAuth();
 
-  // if (!token || !nameEn) {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!userEmail) {
+    return <Navigate to="/login" replace />;
+  }
 
   return <>{children}</>;
 };

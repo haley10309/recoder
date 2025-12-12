@@ -17,11 +17,12 @@ import GuideScreen from "@/Pages/Guide/GuideScreen";
 import LoginScreen from "@/Pages/Login/LoginScreen";
 import RegisterScreen from "@/Pages/Register/RegisterScreen";
 
-import { nameEnState } from "@/recoil/atoms/state";
+import { nameEnState, userEmailState } from "@/recoil/atoms/state";
 import "./style/global.css";
 
 function App() {
   const setNameEn = useSetRecoilState(nameEnState);
+  const setUserEmail = useSetRecoilState(userEmailState);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -29,6 +30,9 @@ function App() {
       const decoded = jwtDecodeLib.jwtDecode(token);
       if (decoded?.name_en) {
         setNameEn(decoded.name_en);
+      }
+      if (decoded?.email) {
+        setUserEmail(decoded.email);
       }
     }
   }, []);

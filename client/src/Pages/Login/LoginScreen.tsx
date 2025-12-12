@@ -1,43 +1,80 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import * as jwtDecodeLib from "jwt-decode";
+import type { FormEvent, ChangeEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import axios, { AxiosError } from 'axios';
 
-import { nameEnState } from '@/recoil/atoms/state';
-import defaultAxios from '@/apis/defaultAxios';
+import { BASE_URL } from '@/utils/routePath';
+import type { LoginRequest, LoginResponse, JwtPayload } from '@/types/auth.types';
+import { useAuth } from '@/hooks/useAuth';
+import { useAuthLogin } from './hooks/useAuthLogin';
+
+interface ErrorResponse {
+  success: boolean;
+  message: string;
+}
 
 const LoginScreen = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
-  const setNameEn = useSetRecoilState(nameEnState);
+  const { } = useAuthLogin(); // TODO: hook으로 옮기는 리팩토링
 
-  const handleLogin = async (e) => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { userEmail, setUserEmail, setNameEn } = useAuth();
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMsg('');
+    setIsLoading(true);
 
     try {
-      const res = await defaultAxios.post('/admin/login', {
-        email,
-        password,
-      });
+      const requestData: LoginRequest = { email, password };
+      
+      const res = await axios.post<LoginResponse>(
+        `${BASE_URL}/auth/login`,
+        requestData
+      );
 
-      const token = res.data.token;
-      localStorage.setItem('authToken', token);
-      
-      const decoded = jwtDecodeLib.jwtDecode(token);
-      if (decoded?.name_en) {
-        setNameEn(decoded.name_en);
+
+      if (res.data.success) {
+        const token = res.data.data.token;
+        localStorage.setItem('authToken', token);
+        
+        const decoded = jwtDecode<JwtPayload>(token);
+        if (decoded?.name_en) {
+          setNameEn(decoded.name_en);
+        }
+        if (decoded?.email) {
+          setUserEmail(decoded.email);
+        }
+
+        navigate('/');
       }
-      
-      navigate('/');
     } catch (err) {
-      setErrorMsg(err?.response?.data?.message || '로그인 실패');
+      const error = err as AxiosError<ErrorResponse>;
+      setErrorMsg(error?.response?.data?.message || '로그인 실패');
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  if (userEmail) {
+    return (
+      <div>이미 로그인했어요.</div>
+    )
+  }
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <form
@@ -46,39 +83,45 @@ const LoginScreen = () => {
       >
         <h2 className="text-2xl font-semibold mb-6 text-center">로그인</h2>
 
-        {errorMsg && <p className="text-red-500 mb-4 text-sm">{errorMsg}</p>}
+        {errorMsg && (
+          <p className="text-red-500 mb-4 text-sm">{errorMsg}</p>
+        )}
 
-        {/* 이메일 입력 */}
-        <label className="block mb-2 text-sm font-medium text-gray-700">이메일</label>
+        <label className="block mb-2 text-sm font-medium text-gray-700">
+          이메일
+        </label>
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           className="w-full p-2 mb-4 border border-gray-300 rounded"
+          placeholder="example@cheilpengtai.com"
           required
+          disabled={isLoading}
         />
 
-        {/* 비밀번호 입력 */}
-        <label className="block mb-2 text-sm font-medium text-gray-700">비밀번호</label>
+        <label className="block mb-2 text-sm font-medium text-gray-700">
+          비밀번호
+        </label>
         <input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
           className="w-full p-2 mb-6 border border-gray-300 rounded"
           required
+          disabled={isLoading}
         />
 
-        {/* 로그인 버튼 */}
         <button
           type="submit"
-          className="w-full bg-[#f4a262] text-white py-2 rounded hover:bg-orange-600 transition"
+          className="w-full bg-[#f4a262] text-white py-2 rounded hover:bg-orange-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+          disabled={isLoading}
         >
-          로그인
+          {isLoading ? '로그인 중...' : '로그인'}
         </button>
-
-        {/* 회원가입 유도 메시지 */}
+                
         <p className="text-center text-sm text-gray-600 mt-6">
-          계정이 없으신가요?{' '}
+          아직 계정이 없으신가요?{' '}
           <Link to="/register" className="text-blue-600 hover:underline">
             회원가입
           </Link>

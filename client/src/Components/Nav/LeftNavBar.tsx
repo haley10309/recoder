@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { useRecoilState } from "recoil";
-import * as jwtDecodeLib from "jwt-decode";
 
 import settingIcon from "@/assets/icon/template-setting.png";
 import localizationIcon from "@/assets/icon/localization.png";
@@ -12,13 +10,18 @@ import guideIcon from "@/assets/icon/guide.png";
 import logo from "@/assets/logo.png";
 import Gap from "../Common/Gap";
 import { getMotivationText } from "@/utils/commonUtils";
-import { nameEnState } from "@/recoil/atoms/state";
+import { useAuth } from "@/hooks/useAuth";
 
 const LeftNavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [nameEn, setNameEn] = useRecoilState(nameEnState);
+  const {
+    setNameEn,
+    userEmail,
+    setUserEmail,
+  } = useAuth();
+
   const [motivationText, setMotivationText] = useState("");
 
   const handleNavigate = (path) => {
@@ -30,23 +33,17 @@ const LeftNavBar = () => {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     setNameEn("");
+    setUserEmail("");
     navigate("/");
   };
 
-  // useEffect(() => {
-  //   if (nameEn) {
-  //     const token = localStorage.getItem('authToken');
-  //     if (token) {
-  //       const decoded = jwtDecodeLib.jwtDecode(token);
-  //       const lastLoggedInAt = decoded.last_logged_in_at;
-  //       if (!motivationText) {
-  //         const text = getMotivationText(new Date(lastLoggedInAt), nameEn);
-  //         setMotivationText(text);
-  //       }
-  //     }
-
-  //   }
-  // }, [nameEn]);
+  // 이메일에서 이름 추출 (day.ahn@xxx.com → Day)
+  const getDisplayName = () => {
+    if (!userEmail) return "";
+    const localPart = userEmail.split("@")[0]; // day.ahn
+    const firstName = localPart.split(".")[0]; // day
+    return firstName.charAt(0).toUpperCase() + firstName.slice(1); // Day
+  };
 
   return (
     <NavContainer>
@@ -59,11 +56,11 @@ const LeftNavBar = () => {
       </LogoContainer>
       <Gap gap={30} />
 
-      {!!nameEn && (
+      {!!userEmail && (
         <>
           <NameEnContainer>
-            <NameText>{nameEn.charAt(0).toUpperCase() + nameEn.slice(1)}</NameText>
-            <MotivationText>{motivationText}</MotivationText>
+            <GreetingText>{getDisplayName()}님, 안녕하세요!</GreetingText>
+            <EmailText>{userEmail}</EmailText>
           </NameEnContainer>
           <Gap gap={30} />
         </>
@@ -118,7 +115,7 @@ const LeftNavBar = () => {
         </NavButton> */}
       </ButtonGroup>
 
-      {!!nameEn && (
+      {!!userEmail && (
         <LogoutButton onClick={handleLogout}>
           로그아웃
         </LogoutButton>
@@ -148,16 +145,17 @@ const NameEnContainer = styled.div`
   background-color: #ffffff1a;
   border-top: 1px solid #ffffff33;
 `;
-const NameText = styled.div`
-  font-size: 18px;
+const GreetingText = styled.div`
+  font-size: 16px;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 `;
-const MotivationText = styled.div`
-  font-size: 12px;
+const EmailText = styled.div`
+  font-size: 11px;
   color: #fff;
   opacity: 0.85;
+  word-break: break-all;
 `;
 const LogoContainer = styled.div`
   display: flex;

@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
-    "target": "ES2020",             // Node 18+ 안정
-    "module": "CommonJS",            // Node용 모듈
+    "target": "ES2020", // Node 18+ 안정
+    "module": "CommonJS", // Node용 모듈
     "moduleResolution": "Node",
-    "outDir": "./dist",              // 빌드 산출물
-    "rootDir": "./src",              // 소스 기준 폴더
-    "allowJs": true,                 // 기존 JS 허용
-    "checkJs": false,                // JS 타입 검사 OFF
-    "strict": true,                  // TS 엄격 모드
-    "esModuleInterop": true,         // CommonJS 호환
+    "outDir": "./dist", // 빌드 산출물
+    "rootDir": "./src", // 소스 기준 폴더
+    "allowJs": true, // 기존 JS 허용
+    "checkJs": false, // JS 타입 검사 OFF
+    "strict": true, // TS 엄격 모드
+    "esModuleInterop": true, // CommonJS 호환
     "skipLibCheck": true,
     "isolatedModules": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "declaration": true
   },
-  "include": ["src"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
