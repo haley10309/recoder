@@ -2,10 +2,10 @@ import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
-import { useRecoilValue } from 'recoil';
 
 import { BASE_URL } from '@/utils/routePath';
-import { userEmailState } from '@/recoil/atoms/state';
+import { useAuth } from '@/hooks/useAuth';
+import { useAuthRegister } from './hooks/useAuthRegister';
 
 interface RegisterRequest {
   email: string;
@@ -26,12 +26,14 @@ interface ErrorResponse {
 }
 
 const RegisterScreen = () => {
+  const { } = useAuthRegister(); // TODO: hook으로 옮기는 리팩토링
+
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const userEmail = useRecoilValue(userEmailState);
+  const { userEmail } = useAuth();
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

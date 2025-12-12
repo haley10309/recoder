@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import axios, { AxiosError } from 'axios';
 
-import { nameEnState, userEmailState } from '@/recoil/atoms/state';
 import { BASE_URL } from '@/utils/routePath';
 import type { LoginRequest, LoginResponse, JwtPayload } from '@/types/auth.types';
+import { useAuth } from '@/hooks/useAuth';
+import { useAuthLogin } from './hooks/useAuthLogin';
 
 interface ErrorResponse {
   success: boolean;
@@ -15,14 +15,14 @@ interface ErrorResponse {
 }
 
 const LoginScreen = () => {
+  const { } = useAuthLogin(); // TODO: hook으로 옮기는 리팩토링
+
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const setNameEn = useSetRecoilState(nameEnState);
-  const setUserEmail = useSetRecoilState(userEmailState);
-  const userEmail = useRecoilValue(userEmailState);
+  const { userEmail, setUserEmail, setNameEn } = useAuth();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,7 +49,7 @@ const LoginScreen = () => {
         if (decoded?.email) {
           setUserEmail(decoded.email);
         }
-        
+
         navigate('/');
       }
     } catch (err) {
@@ -119,6 +119,13 @@ const LoginScreen = () => {
         >
           {isLoading ? '로그인 중...' : '로그인'}
         </button>
+                
+        <p className="text-center text-sm text-gray-600 mt-6">
+          아직 계정이 없으신가요?{' '}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            회원가입
+          </Link>
+        </p>
       </form>
     </div>
   );

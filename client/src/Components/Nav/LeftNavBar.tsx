@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { useRecoilState } from "recoil";
-import * as jwtDecodeLib from "jwt-decode";
 
 import settingIcon from "@/assets/icon/template-setting.png";
 import localizationIcon from "@/assets/icon/localization.png";
@@ -12,14 +10,18 @@ import guideIcon from "@/assets/icon/guide.png";
 import logo from "@/assets/logo.png";
 import Gap from "../Common/Gap";
 import { getMotivationText } from "@/utils/commonUtils";
-import { nameEnState, userEmailState } from "@/recoil/atoms/state";
+import { useAuth } from "@/hooks/useAuth";
 
 const LeftNavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [nameEn, setNameEn] = useRecoilState(nameEnState);
-  const [userEmail, setUserEmail] = useRecoilState(userEmailState);
+  const {
+    setNameEn,
+    userEmail,
+    setUserEmail,
+  } = useAuth();
+
   const [motivationText, setMotivationText] = useState("");
 
   const handleNavigate = (path) => {
