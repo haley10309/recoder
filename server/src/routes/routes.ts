@@ -7,7 +7,7 @@ const upload = multer({ storage: storage });
 
 import authRoutes from './authRoutes';
 
-router.use('/api/auth', authRoutes);
+router.use('/auth', authRoutes);
 
 /** 0) Common */
 const getTemplatesController = require("../controllers/common/getTemplatesController");
