@@ -41,6 +41,7 @@ const ApplyCodeTemplatesScreen = () => {
     backupHtmlContent,
     htmlUploadStatus,
     handleBackupHtmlFileUpload,
+    countOccurrences,
   } = useFileUpload();
   
   // 코드 실행 훅
@@ -127,6 +128,7 @@ const ApplyCodeTemplatesScreen = () => {
           handleAsWasCodeChange={handleAsWasCodeChange}
           handleToBeCodeChange={handleToBeCodeChange}
           handlePptNoChange={handlePptNoChange}
+          countOccurrences={countOccurrences}
         />
       </WhiteBox>
       <Gap gap={50} />

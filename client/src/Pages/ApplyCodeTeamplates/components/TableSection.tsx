@@ -9,6 +9,7 @@ const TableSection = ({
   handleAsWasCodeChange,
   handleToBeCodeChange,
   handlePptNoChange,
+  countOccurrences,
 }) => {
   return (
     <TableWrapper>
@@ -39,13 +40,11 @@ const TableSection = ({
             toBeCode={textarea.toBeCode.replace(/\/uk\//g, `/${lowerCaseCountryCode}/`)}
             setToBeCode={(value) => handleToBeCodeChange(index, value)}
             isApplied={textarea.isApplied}
-            countryCode={countryCode}
             matchedPart={textarea.matchedPart}
-            asWasOccurrenceCount={textarea.asWasOccurrenceCount}
-            toBeOccurrenceCount={textarea.toBeOccurrenceCount}
             errorState={textarea.errorState}
             hasBackupHtmlFile={hasBackupHtmlFile}
             handlePptNoChange={(value) => handlePptNoChange(index, value)}
+            countOccurrences={countOccurrences}
           />
         );
       })}
