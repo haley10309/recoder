@@ -37,7 +37,6 @@ const LoginScreen = () => {
         requestData
       );
 
-
       if (res.data.success) {
         const token = res.data.data.token;
         localStorage.setItem('authToken', token);

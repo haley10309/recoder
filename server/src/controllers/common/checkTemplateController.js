@@ -1,8 +1,8 @@
 // 템플릿 생성 시, 템플릿이 존재하는지 확인
 
-const db = require("../../config/db");
+import db from "../../config/db";
 
-exports.checkTemplateData = (req, res) => {
+export const checkTemplateData = (req, res) => {
   const { ticket_num, ticket_url } = req.body;
 
   const query = `

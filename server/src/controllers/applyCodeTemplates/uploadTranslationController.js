@@ -10,7 +10,7 @@ const validCountryCodes = [
     "uk", "uy", "uz_ru", "uz_uz", "vn", "vn_za", "za"
   ];
 
-exports.uploadTranslation = (req, res) => {
+export const uploadTranslation = (req, res) => {
     try { 
       if (!req.file) {
         return res.status(400).json({ error: "No file uploaded." });

@@ -1,7 +1,7 @@
-const { extractEnglishCopyList } = require("../../utils/codeUtils");
+import { extractEnglishCopyList } from "../../utils/codeUtils";
 
 // // 번역 텍스트 파일에서 영어 원문만 추출
-exports.extractEnglishCopyList = (req, res) => {
+export const extractEnglishCopyListData = (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded." });

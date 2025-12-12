@@ -1,7 +1,7 @@
 // 템플릿 조회
-const db = require("../../config/db");
+import db from "../../config/db";
 
-exports.getTemplates = (req, res) => {
+export const getTemplates = (req, res) => {
   const query = `
     SELECT id, ticket_num, ticket_url
     FROM Templates
