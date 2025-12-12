@@ -233,7 +233,7 @@ export const login = async (
         };
 
         const token = jwt.sign(payload, jwtConfig.secret, { 
-          // expiresIn: jwtConfig.expiresIn // TODO: 토큰 만료 설정 필요 + refreshToken
+          expiresIn: jwtConfig.expiresIn
         });
 
         res.json({
