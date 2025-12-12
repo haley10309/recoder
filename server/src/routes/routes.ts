@@ -4,7 +4,10 @@ const multer = require("multer");
 const cors = require("cors");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-// const authenticateToken = require("../middleware/auth");
+
+import authRoutes from './authRoutes';
+
+router.use('/api/auth', authRoutes);
 
 /** 0) Common */
 const getTemplatesController = require("../controllers/common/getTemplatesController");
