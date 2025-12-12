@@ -1,5 +1,4 @@
-import axios from "axios";
-import { BASE_URL } from "@/utils/routePath";
+import defaultAxios from "./defaultAxios";
 
 // 실행
 export const convertAsWasToToBeCodes = async ({
@@ -10,7 +9,7 @@ export const convertAsWasToToBeCodes = async ({
   try {
     setIsProcessing(true);
 
-    const response = await axios.post(`${BASE_URL}/convert-aswas-to-tobe-codes`, formData, {
+    const response = await defaultAxios.post(`/convert-aswas-to-tobe-codes`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -34,7 +33,7 @@ export const convertAsWasToToBeCodes = async ({
 // Template의 티켓번호, 티켓Url 가져오기
 export const fetchTemplates = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/get-templates`);
+    const response = await defaultAxios.get(`/get-templates`);
     return response.data;
   } catch (error) {
     console.error("Error fetching templates:", error);
@@ -45,7 +44,7 @@ export const fetchTemplates = async () => {
 // 로컬라이제이션 템플릿 가져오기
 export const fetchLocalizationList = async (ticket_num, ticket_url) => {
   try {
-    const response = await axios.post(`${BASE_URL}/get-template-details`, {
+    const response = await defaultAxios.post(`/get-template-details`, {
       ticket_num,
       ticket_url,
     });
@@ -62,8 +61,8 @@ export const uploadTranslationDeck = async (file) => {
   formData.append("file", file);
 
   try {
-    const response = await axios.post(
-      `${BASE_URL}/upload-translation`,
+    const response = await defaultAxios.post(
+      `/upload-translation`,
       formData,
       {
         headers: {

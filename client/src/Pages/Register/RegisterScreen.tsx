@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 
-import { BASE_URL } from '@/utils/routePath';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthRegister } from './hooks/useAuthRegister';
+import defaultAxios from '@/apis/defaultAxios';
 
 interface RegisterRequest {
   email: string;
@@ -44,8 +44,8 @@ const RegisterScreen = () => {
     try {
       const requestData: RegisterRequest = { email, password };
       
-      const res = await axios.post<RegisterResponse>(
-        `${BASE_URL}/auth/register`,
+      const res = await defaultAxios.post<RegisterResponse>(
+        `/auth/register`,
         requestData
       );
 

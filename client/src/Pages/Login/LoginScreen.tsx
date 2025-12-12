@@ -2,12 +2,12 @@ import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 
-import { BASE_URL } from '@/utils/routePath';
 import type { LoginRequest, LoginResponse, JwtPayload } from '@/types/auth.types';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthLogin } from './hooks/useAuthLogin';
+import defaultAxios from '@/apis/defaultAxios';
 
 interface ErrorResponse {
   success: boolean;
@@ -32,8 +32,8 @@ const LoginScreen = () => {
     try {
       const requestData: LoginRequest = { email, password };
       
-      const res = await axios.post<LoginResponse>(
-        `${BASE_URL}/auth/login`,
+      const res = await defaultAxios.post<LoginResponse>(
+        `/auth/login`,
         requestData
       );
 

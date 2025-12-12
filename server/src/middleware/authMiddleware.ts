@@ -25,7 +25,6 @@ export const authenticate = (
 
     // 토큰 검증
     const decoded = jwt.verify(token, jwtConfig.secret) as UserPayload;
-    
     // req 객체에 사용자 정보 추가
     req.user = decoded;
     

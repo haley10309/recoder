@@ -1,10 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
 import { countryOptions } from "@/utils/countryOptions";
-import { BASE_URL } from "@/utils/routePath";
+import defaultAxios from "@/apis/defaultAxios";
 
 export const useTemplate = () => {
   const [ticketNum, setTicketNum] = useState("");
@@ -30,7 +29,7 @@ export const useTemplate = () => {
   // 템플릿 조회
   const handleGetTemplate = async () => {
     try {
-      const { data } = await axios.post(`${BASE_URL}/get-template-details`, {
+      const { data } = await defaultAxios.post(`/get-template-details`, {
         ticket_num: ticketNum,
         ticket_url: ticketUrl,
       });

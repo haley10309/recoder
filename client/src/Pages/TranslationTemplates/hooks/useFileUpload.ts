@@ -1,7 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 
-import { BASE_URL } from "@/utils/routePath";
+import defaultAxios from "@/apis/defaultAxios";
 
 export const useFileUpload = ({
   codeChanges,
@@ -16,8 +15,8 @@ export const useFileUpload = ({
     formData.append("file", file);
     try {
       // 1. englishCopyList 받아오고 업데이트
-      const res = await axios.post(
-        `${BASE_URL}/extract-english-copy-list`, 
+      const res = await defaultAxios.post(
+        `/extract-english-copy-list`, 
         formData, 
         { headers: { "Content-Type": "multipart/form-data" } },
       );
