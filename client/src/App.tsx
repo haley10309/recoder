@@ -20,7 +20,7 @@ import "./style/global.css";
 import { useAuth } from "./hooks/useAuth";
 
 function App() {
-  const { setNameEn, setUserEmail } = useAuth();
+  const { userEmail, setNameEn, setUserEmail } = useAuth();
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
@@ -42,6 +42,17 @@ function App() {
       setIsLoaded(true);
     }
   }, []);
+
+  // 단순 info log용. 로그인 후 [] useEffect에서 decoded 추가 로그 안되어서
+  useEffect(() => {
+    if (!userEmail) return;
+
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      const decoded = jwtDecodeLib.jwtDecode(token);
+      console.log("decoded user info: ", decoded);
+    }
+  }, [userEmail])
 
   if (!isLoaded) {
     return (
