@@ -8,6 +8,8 @@ const CheckTemplate = ({
   ticketUrl,
   handleTicketNumChange,
   handleTicketUrlChange,
+  handleGetTemplate,
+  showGetTemplateButton = true,
 }) => {
   return (
     <div className="flex items-center bg-[#F9F9F9] rounded-[8px] p-6 min-h-[150px] justify-between shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
@@ -29,6 +31,15 @@ const CheckTemplate = ({
           _setValue={handleTicketUrlChange}
         />
       </div>
+
+      {showGetTemplateButton && (
+        <button
+          className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px]"
+          onClick={handleGetTemplate}
+        >
+          템플릿 불러오기
+        </button>
+      )}
     </div>
   );
 };
