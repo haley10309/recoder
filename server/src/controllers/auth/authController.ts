@@ -20,6 +20,20 @@ interface DbUser {
   role: string;
 }
 
+// 이메일 도메인 검증 함수
+const validateEmailDomain = (email: string): { isValid: boolean; message?: string } => {
+  const allowedDomains = ['cheilpengtai.com', 'samsung.com'];
+  const domain = email.split('@')[1]?.toLowerCase();
+  
+  if (!domain || !allowedDomains.includes(domain)) {
+    return {
+      isValid: false,
+      message: 'Email domain must be cheilpengtai.com or samsung.com'
+    };
+  }
+  return { isValid: true };
+};
+
 // 회원가입
 export const register = async (
   req: Request<{}, {}, RegisterRequest>,
@@ -43,6 +57,16 @@ export const register = async (
       res.status(400).json({
         success: false,
         message: 'Invalid email format'
+      });
+      return;
+    }
+
+    // 이메일 도메인 검증
+    const domainValidation = validateEmailDomain(email);
+    if (!domainValidation.isValid) {
+      res.status(400).json({
+        success: false,
+        message: domainValidation.message
       });
       return;
     }
@@ -137,6 +161,16 @@ export const login = async (
       res.status(400).json({
         success: false,
         message: 'Email and password are required'
+      });
+      return;
+    }
+
+    // 이메일 도메인 검증
+    const domainValidation = validateEmailDomain(email);
+    if (!domainValidation.isValid) {
+      res.status(400).json({
+        success: false,
+        message: domainValidation.message
       });
       return;
     }

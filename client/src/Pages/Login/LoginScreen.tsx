@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { jwtDecode } from 'jwt-decode';
 import axios, { AxiosError } from 'axios';
 
-import { nameEnState } from '@/recoil/atoms/state';
+import { nameEnState, userEmailState } from '@/recoil/atoms/state';
 import { BASE_URL } from '@/utils/routePath';
 import type { LoginRequest, LoginResponse, JwtPayload } from '@/types/auth.types';
 
@@ -21,6 +21,7 @@ const LoginScreen = () => {
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const setNameEn = useSetRecoilState(nameEnState);
+  const setUserEmail = useSetRecoilState(userEmailState);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,6 +43,9 @@ const LoginScreen = () => {
         const decoded = jwtDecode<JwtPayload>(token);
         if (decoded?.name_en) {
           setNameEn(decoded.name_en);
+        }
+        if (decoded?.email) {
+          setUserEmail(decoded.email);
         }
         
         navigate('/');
@@ -83,6 +87,7 @@ const LoginScreen = () => {
           value={email}
           onChange={handleEmailChange}
           className="w-full p-2 mb-4 border border-gray-300 rounded"
+          placeholder="example@cheilpengtai.com or example@samsung.com"
           required
           disabled={isLoading}
         />
@@ -106,13 +111,6 @@ const LoginScreen = () => {
         >
           {isLoading ? '로그인 중...' : '로그인'}
         </button>
-        
-        <p className="text-center text-sm text-gray-600 mt-6">
-          아직 계정이 없으신가요?{' '}
-          <Link to="/register" className="text-blue-600 hover:underline">
-            회원가입
-          </Link>
-        </p>
       </form>
     </div>
   );
