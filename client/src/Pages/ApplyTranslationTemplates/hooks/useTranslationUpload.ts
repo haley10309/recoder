@@ -63,7 +63,6 @@ export function useTranslationUpload({ countryCode, setEnglishCopyList }) {
         setTxtFileName(file.name);
         setEnglishCopyList(englishCopyList);
       } catch (err) {
-        console.error(err);
         setTxtUploadStatus("fail");
       }
     };

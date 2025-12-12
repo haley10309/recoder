@@ -35,8 +35,6 @@ export const useFileUpload = ({
         }
       }
     } catch (error) {
-      console.error("Error uploading translation file:", error);
-      alert("번역 업로드에 실패했습니다.");
     }
   };
 

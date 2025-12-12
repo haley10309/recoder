@@ -40,7 +40,6 @@ export const useFileUpload = ({
 
       setCodeChanges(codeChanges);
     } catch (error) {
-      console.error("Error uploading PPT file:", error);
       alert("PPT 업로드에 실패했습니다.");
     }
   };

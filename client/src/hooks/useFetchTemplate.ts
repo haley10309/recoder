@@ -34,7 +34,6 @@ export const useFetchTemplate = ({ shouldFetchOnMount, ticketNum, ticketUrl }) =
         const data = await fetchTemplates();
         setTemplatesData(data);
       } catch (error) {
-        console.error('failed fetch templates', error);
       } finally {
         setLoading(false);
       }

@@ -88,11 +88,9 @@ export const useTemplate = () => {
         }
       }
     } catch (error) {
-      console.error("Error checking for existing templates:", error);
       setIsTemplateCreated(false);
       setDeleteIds([]);
       setLocalizationEntries([{ code_context: "" }]);
-      alert("템플릿 확인 중 오류가 발생했습니다.");
     }
   };
 
@@ -126,8 +124,7 @@ export const useTemplate = () => {
 
       alert(saveType === "update" ? "로컬라이제이션 템플릿이 수정되었습니다" : "로컬라이제이션 템플릿이 생성되었습니다");
     } catch (err) {
-      console.error("[Error] handleCreateOrUpdateLocalization", err);
-      alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
+      // alert(saveType === "update" ? "로컬라이제이션 수정 중 오류가 발생했습니다" : "로컬라이제이션 생성 중 오류가 발생했습니다");
     }
   };
 

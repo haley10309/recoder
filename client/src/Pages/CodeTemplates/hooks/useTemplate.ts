@@ -93,8 +93,6 @@ export const useTemplate = () => {
         }
       }
     } catch (error) {
-      console.error("Error checking for existing templates:", error);
-      alert("템플릿 확인 중 오류가 발생했습니다.");
     }
   };
 
@@ -140,8 +138,6 @@ export const useTemplate = () => {
 
       setCodeChanges(_codeChanges);
     } catch (err) {
-      console.error(err);
-      alert(err?.response?.data?.message || "템플릿 저장 중 오류가 발생하였습니다");
     }
   };
 
