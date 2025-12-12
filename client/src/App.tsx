@@ -1,7 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import * as jwtDecodeLib from "jwt-decode";
-import { useSetRecoilState } from "recoil";
 
 import LeftNavBar from "@/Components/Nav/LeftNavBar";
 import Footer from "@/Components/Nav/Footer";
@@ -17,26 +16,38 @@ import GuideScreen from "@/Pages/Guide/GuideScreen";
 import LoginScreen from "@/Pages/Login/LoginScreen";
 import RegisterScreen from "@/Pages/Register/RegisterScreen";
 
-import { nameEnState, userEmailState } from "@/recoil/atoms/state";
 import "./style/global.css";
+import { useAuth } from "./hooks/useAuth";
 
 function App() {
-  const setNameEn = useSetRecoilState(nameEnState);
-  const setUserEmail = useSetRecoilState(userEmailState);
+  const { setNameEn, setUserEmail } = useAuth();
+
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
       const decoded = jwtDecodeLib.jwtDecode(token);
+      console.log("[App.tsx] token 있음 O ");
+      console.log("decoded user info: ", decoded);
       if (decoded?.name_en) {
         setNameEn(decoded.name_en);
       }
       if (decoded?.email) {
         setUserEmail(decoded.email);
       }
+      setIsLoaded(true);
+    } else {
+      console.log("[App.tsx] token 없음 X");
+      setIsLoaded(true);
     }
   }, []);
 
+  if (!isLoaded) {
+    return (
+      <div>Loading...</div>
+    );
+  }
 
   return (
     <>
