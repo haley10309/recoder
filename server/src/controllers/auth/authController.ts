@@ -52,7 +52,7 @@ export const register = async (
     }
 
     // 이메일 형식 검증
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9]+\.[a-zA-Z0-9]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       res.status(400).json({
         success: false,
@@ -108,7 +108,9 @@ export const register = async (
 
         // 사용자 생성
         const userRole = role || 'author';
-        const userName = name_en || null;
+
+        const userNameFromEmail = email.split("@")[0].split(".")[0] ?? "";
+        const userName = name_en ?? userNameFromEmail;
 
         db.query(
           'INSERT INTO AdminUsers (email, password, name_en, role) VALUES (?, ?, ?, ?)',

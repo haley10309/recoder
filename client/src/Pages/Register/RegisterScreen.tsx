@@ -2,8 +2,10 @@ import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
+import { useRecoilValue } from 'recoil';
 
 import { BASE_URL } from '@/utils/routePath';
+import { userEmailState } from '@/recoil/atoms/state';
 
 interface RegisterRequest {
   email: string;
@@ -29,6 +31,7 @@ const RegisterScreen = () => {
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const userEmail = useRecoilValue(userEmailState);
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,6 +69,12 @@ const RegisterScreen = () => {
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
+
+  if (userEmail) {
+    return (
+      <div>이미 로그인했어요.</div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { jwtDecode } from 'jwt-decode';
 import axios, { AxiosError } from 'axios';
 
@@ -22,6 +22,7 @@ const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const setNameEn = useSetRecoilState(nameEnState);
   const setUserEmail = useSetRecoilState(userEmailState);
+  const userEmail = useRecoilValue(userEmailState);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,6 +36,7 @@ const LoginScreen = () => {
         `${BASE_URL}/auth/login`,
         requestData
       );
+
 
       if (res.data.success) {
         const token = res.data.data.token;
@@ -67,6 +69,12 @@ const LoginScreen = () => {
     setPassword(e.target.value);
   };
 
+  if (userEmail) {
+    return (
+      <div>이미 로그인했어요.</div>
+    )
+  }
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <form
@@ -87,7 +95,7 @@ const LoginScreen = () => {
           value={email}
           onChange={handleEmailChange}
           className="w-full p-2 mb-4 border border-gray-300 rounded"
-          placeholder="example@cheilpengtai.com or example@samsung.com"
+          placeholder="example@cheilpengtai.com"
           required
           disabled={isLoading}
         />
