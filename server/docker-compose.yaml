@@ -8,14 +8,16 @@ services:
     image: raw_auto_server
     container_name: raw_auto_server
     working_dir: /app
-    volumes:
-      - .:/app
-      - /app/node_modules # Volume mounts시, node_modules 덮어씌우기 방지
+    # 프로덕션 배포: volumes 제거 (Dockerfile에서 빌드된 dist/ 폴더 사용)
+    # 개발 환경에서는 volumes를 활성화하여 실시간 코드 반영 가능
+    # volumes:
+    #   - .:/app
+    #   - /app/node_modules # Volume mounts시, node_modules 덮어씌우기 방지
     ports:
       - "8089:8080"
     env_file:
       - .env
-    command: ["node", "server.js"]
+    # command: ["node", "server.js"] 주석처리 - Dockerfile의 CMD 사용
     restart: unless-stopped
     networks:
       - raw_auto_net

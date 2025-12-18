@@ -1,11 +1,12 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const dotenv = require("dotenv");
-dotenv.config();
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+// import swaggerUi from "swagger-ui-express";
+// import swaggerSpec from "./swagger/swagger";
+import routes from "./routes/routes";
 
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./src/swagger/swagger");
+const app = express();
+dotenv.config();
 
 app.use(
   cors({
@@ -18,11 +19,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const routes = require("./src/routes/routes");
 
 app.use("/", routes);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 console.log(`📘 Swagger 문서 👉 http://localhost:${process.env.PORT}/api-docs`);
 
-module.exports = app;
+export default app;
