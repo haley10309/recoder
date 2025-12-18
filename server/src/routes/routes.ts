@@ -51,4 +51,4 @@ router.put("/update-localization-entries",cors(), authenticate, authorize("pm"),
 // router.post("/admin/login", cors(), loginController.login);
 // router.post("/admin/register", cors(), registerController.register);
 
-module.exports = router;
+export default router;

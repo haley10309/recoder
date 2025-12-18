@@ -7,3 +7,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+
+# TypeScript 빌드
+RUN npm run build
+
+# 빌드된 JavaScript 파일 실행
+CMD ["node", "dist/server.js"]
