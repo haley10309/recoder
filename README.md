@@ -29,7 +29,7 @@ Re-coder는 txt 가이드 파일에서 데이터를 추출하고 템플릿을 �
 
 ## 🔗 링크모음
 - [Re-coder 사이트](http://121.252.183.22:8088/)
-- [Swagger(API Docs)](http://121.252.183.22:8088/api-docs/)
+- [Figma](https://www.figma.com/design/BX40D23NxslWOXafBfpzyh/PTKOREA-%EC%9E%90%EB%8F%99%ED%99%94?m=auto&t=mf0BPZgNJYCqERmf-6)
 
 ## 📁 폴더 구조
 
