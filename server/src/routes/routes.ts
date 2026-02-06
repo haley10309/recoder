@@ -29,8 +29,8 @@ router.post("/check-template-exsist", cors(), authenticate, authorize("author", 
 router.post("/get-template-details", cors(), authenticate, authorize("author", "qaer", "pm"), getTemplateDetailsData);
 
 /** 1) Code Templates */
-router.post("/create-template", upload.single('file'), cors(), authenticate, authorize("pm"), createTemplateData); // ✅ Only pm
-router.post("/update-template", multer().none(), cors(), authenticate, authorize("pm"), updateTemplateData); // ✅ Only pm
+router.post("/create-template", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), createTemplateData); // ✅ Only pm (현재 임시로 전체 오픈)
+router.post("/update-template", multer().none(), cors(), authenticate, authorize("author", "qaer", "pm"), updateTemplateData); // ✅ Only pm (현재 임시로 전체 오픈)
 router.post("/upload-guide", upload.single("txtfile"), cors(), authenticate, authorize("author", "qaer", "pm"), guideUploadData);
 
 /** 2) Apply Code Templates */
@@ -39,7 +39,7 @@ router.post("/upload-translation", upload.single('file'), cors(), authenticate, 
 
 /** 3) Translation Templates */
 router.post("/extract-english-copy-list", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), extractEnglishCopyListData);
-router.put("/update-localization-entries",cors(), authenticate, authorize("pm"), updateLocalizationEntries); // ✅ Only pm
+router.put("/update-localization-entries",cors(), authenticate, authorize("author", "qaer", "pm"), updateLocalizationEntries); // ✅ Only pm (현재 임시로 전체 오픈)
 
 /** (Deprecated) */
 // const guideUploadControllerV2 = require("../controllers/codeTemplates/guideUploadControllerV2");
