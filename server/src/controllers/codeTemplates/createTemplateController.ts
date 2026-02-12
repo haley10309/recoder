@@ -1,7 +1,9 @@
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
+
 // 템플릿 생성
 import initDB from "../../config/initDB";
 
-export const createTemplateData = async (req: any, res: any) => {
+export const createTemplateData = async (req, res) => {
   const { ticket_num, ticket_url, code_changes } = req.body;
 
   if (!code_changes) {

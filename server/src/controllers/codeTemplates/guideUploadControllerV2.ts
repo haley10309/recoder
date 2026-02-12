@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
+
 // 사용안함, ASWAS 코드와 TOBE 코드를 하나의 TXT 파일에 넣은 가이드용
 // 가이드 업로드 후, 처리 로직 (ppt 번호별 AS-WAS와 TO-BE 매칭)
 

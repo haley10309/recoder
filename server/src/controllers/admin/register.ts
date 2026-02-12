@@ -1,10 +1,10 @@
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
 
+import bcrypt from 'bcrypt';
+import db from "../../config/db";
+import { isValidEmail } from '../../utils/validator';
 
-const bcrypt = require('bcrypt');
-const db = require("../../config/db");
-const { isValidEmail } = require('../../utils/validator');
-
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   const { email, password } = req.body;
   
   if (!email || !password) {

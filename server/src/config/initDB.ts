@@ -1,9 +1,11 @@
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
+
 // src/config/db.js
-const mysql = require('mysql2/promise');
+import mysql from 'mysql2/promise';
 
 let db;
 
-async function initDB() {
+const initDB = async () => {
   if (!db) {
     db = await mysql.createConnection({
       host: process.env.DB_HOST,
@@ -17,4 +19,4 @@ async function initDB() {
   return db;
 }
 
-module.exports = initDB;
+export default initDB;

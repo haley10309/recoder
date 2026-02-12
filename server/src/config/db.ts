@@ -1,8 +1,10 @@
-const mysql = require('mysql2');
-const dotenv = require("dotenv");
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
+
+import mysql from 'mysql2';
+import dotenv from "dotenv";
 dotenv.config();
 
-function createConnection() {
+const createConnection = () => {
   return mysql.createConnection({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
@@ -40,4 +42,4 @@ db.on('error', (err) => {
   }
 });
 
-module.exports = db; 
+export default db; 

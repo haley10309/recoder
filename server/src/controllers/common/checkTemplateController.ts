@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
+
 // 템플릿 생성 시, 템플릿이 존재하는지 확인
 
 import db from "../../config/db";

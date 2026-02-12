@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
+
 import db from "../../config/db";
 
 export const updateLocalizationEntries = (req, res) => {

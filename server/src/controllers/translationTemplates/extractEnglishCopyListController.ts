@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
+
 import { extractEnglishCopyList } from "../../utils/codeUtils";
 
 // // 번역 텍스트 파일에서 영어 원문만 추출
