@@ -1,57 +1,41 @@
 // 템플릿 세부 내용 조회
-import db from "../../config/db";
+const initDB = require("../../config/initDB");
 
-export const getTemplateDetailsData = (req, res) => {
+exports.getTemplateDetailsData = async (req, res) => {
   const { ticket_num, ticket_url } = req.body;
 
-  const findTemplateQuery = `
-    SELECT id 
-    FROM Templates
-    WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL
-  `;
+  try {
+    const db = await initDB();
 
-  db.query(findTemplateQuery, [ticket_num, ticket_url], (err, results) => {
-    if (err) {
-      console.error("Error fetching template ID:", err);
-      return res.status(500).json({ error: "Failed to fetch template details" });
-    }
+    const [templates] = await db.execute(
+      `SELECT id FROM Templates WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL`,
+      [ticket_num, ticket_url]
+    );
 
-    if (results.length === 0) {
-      console.error("Error fetching template ID: results=0", err);
+    if (templates.length === 0) {
+      console.error("Error fetching template ID: results=0");
       return res.status(404).json({ error: "Template not found" });
     }
 
-    const templateId = results[0].id;
+    const templateId = templates[0].id;
 
-    const getCodeChangesQuery = `
-      SELECT id, ppt_no, aswas_code, tobe_code
-      FROM TemplateCodeChanges
-      WHERE template_id = ? AND deleted_at IS NULL
-    `;
-    const getLocalizationEntriesQuery = `
-      SELECT id, code_context
-      FROM TemplateLocalizationEntries
-      WHERE template_id = ? AND deleted_at IS NULL
-    `;
+    const [codeChanges] = await db.execute(
+      `SELECT id, ppt_no, aswas_code, tobe_code FROM TemplateCodeChanges WHERE template_id = ? AND deleted_at IS NULL`,
+      [templateId]
+    );
 
-    db.query(getCodeChangesQuery, [templateId], (err1, codeChanges) => {
-      if (err1) {
-        console.error("Error fetching TemplateCodeChanges:", err1);
-        return res.status(500).json({ error: "Failed to fetch aswas_tobe_list" });
-      }
+    const [localizationEntries] = await db.execute(
+      `SELECT id, code_context FROM TemplateLocalizationEntries WHERE template_id = ? AND deleted_at IS NULL`,
+      [templateId]
+    );
 
-      db.query(getLocalizationEntriesQuery, [templateId], (err2, localizationEntries) => {
-        if (err2) {
-          console.error("Error fetching TemplateLocalizationEntries:", err2);
-          return res.status(500).json({ error: "Failed to fetch localization" });
-        }
-
-        res.json({
-          templateId,
-          codeChanges,
-          localizationEntries,
-        });
-      });
+    res.json({
+      templateId,
+      codeChanges,
+      localizationEntries,
     });
-  });
+  } catch (err) {
+    console.error("Error fetching template details:", err);
+    return res.status(500).json({ error: "Failed to fetch template details" });
+  }
 };
