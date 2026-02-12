@@ -31,6 +31,33 @@ CREATE TABLE TemplateCodeChanges (
         ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
+CREATE TABLE TemplateCodeChangeVariations (
+    id INT NOT NULL AUTO_INCREMENT,
+    code_change_id INT NOT NULL,
+    aswas_code_variation TEXT NOT NULL,
+    tobe_code_variation TEXT NOT NULL,
+    description TEXT NULL DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    INDEX idx_code_change_id (`code_change_id`),
+    CONSTRAINT fk_variation_to_code_change
+        FOREIGN KEY (`code_change_id`)
+        REFERENCES `TemplateCodeChanges` (`id`)
+        ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE TemplateCodeChangeVariationCountries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    variation_id INT NOT NULL,
+    country_code VARCHAR(10) NOT NULL,
+    INDEX idx_country_code (country_code),
+    FOREIGN KEY (variation_id)
+        REFERENCES TemplateCodeChangeVariations(id)
+        ON DELETE CASCADE
+);
+
 CREATE TABLE TemplateLocalizationEntries (
     id int NOT NULL AUTO_INCREMENT,
     code_context text NOT NULL,
