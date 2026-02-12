@@ -1,15 +1,13 @@
-// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
-
 // src/config/db.js
-import mysql from 'mysql2/promise';
+import mysql, { Connection } from 'mysql2/promise';
 
-let db;
+let db: Connection;
 
-const initDB = async () => {
+const initDB = async (): Promise<Connection> => {
   if (!db) {
     db = await mysql.createConnection({
       host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
+      port: Number(process.env.DB_PORT),
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
