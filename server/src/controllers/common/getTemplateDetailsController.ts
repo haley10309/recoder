@@ -1,7 +1,7 @@
 // 템플릿 세부 내용 조회
-const initDB = require("../../config/initDB");
+import initDB from "../../config/initDB";
 
-exports.getTemplateDetailsData = async (req, res) => {
+export const getTemplateDetailsData = async (req: any, res: any) => {
   const { ticket_num, ticket_url } = req.body;
 
   try {

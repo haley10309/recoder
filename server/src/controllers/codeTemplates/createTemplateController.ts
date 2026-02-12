@@ -1,7 +1,7 @@
 // 템플릿 생성
-const initDB = require("../../config/initDB");
+import initDB from "../../config/initDB";
 
-exports.createTemplateData = async (req, res) => {
+export const createTemplateData = async (req: any, res: any) => {
   const { ticket_num, ticket_url, code_changes } = req.body;
 
   if (!code_changes) {
@@ -28,7 +28,7 @@ exports.createTemplateData = async (req, res) => {
     const createCodeChangeQuery =
       "INSERT INTO TemplateCodeChanges (ppt_no, aswas_code, tobe_code, template_id) VALUES ?";
 
-    const createCodeChangeQueryData = parsedCodeChanges.map((item) => [
+    const createCodeChangeQueryData = parsedCodeChanges.map((item: any) => [
       item.ppt_no,
       item.aswas_code,
       item.tobe_code,

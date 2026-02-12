@@ -1,3 +1,5 @@
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
+
 // apply template 실행 기능
 import { replaceCode } from "../../utils/codeUtils";
 
