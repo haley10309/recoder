@@ -1,29 +1,31 @@
-// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
-
 // 템플릿 생성 시, 템플릿이 존재하는지 확인
 
-import db from "../../config/db";
+import { Request, Response } from "express";
+import { RowDataPacket } from "mysql2";
 
-export const checkTemplateData = (req, res) => {
+import { CheckTemplateBody, CheckTemplatesResponse } from "../../types/codeTemplate.types";
+import initDB from "../../config/initDB";
+
+export const checkTemplateData = async (
+  req: Request<{}, {}, CheckTemplateBody>,
+  res: Response<CheckTemplatesResponse>
+): Promise<void> => {
+  try {
   const { ticket_num, ticket_url } = req.body;
 
-  const query = `
-    SELECT * FROM Templates 
-    WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL
-  `;
+    const db = await initDB();
+    const [results] = await db.execute<RowDataPacket[]>(
+      `SELECT id FROM Templates 
+      WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL`,
+      [ticket_num, ticket_url]
+    );
 
-  db.query(
-    query,
-    [ticket_num, ticket_url],
-    (err, results) => {
-      if (err) {
-        console.error("Error fetching templates:", err);
-        return res.status(500).json({ error: "Failed to fetch templates" });
-      }
-      const isTemplateExist = results.length > 0;
-      res.json({
-        isTemplateExist,
-      });
-    }
-  );
+    const isTemplateExist = results.length > 0;
+    res.json({
+      isTemplateExist,
+    });
+  } catch (error) {
+    console.error("Error fetching templates:", error);
+    res.status(500).json({ error: "Failed to fetch templates" });
+  }
 };

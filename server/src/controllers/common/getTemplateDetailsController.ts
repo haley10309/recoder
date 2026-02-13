@@ -1,7 +1,8 @@
 // 템플릿 세부 내용 조회
 import { Request, Response } from "express";
-import initDB from "../../config/initDB";
 import { RowDataPacket } from "mysql2/promise";
+
+import initDB from "../../config/initDB";
 import {
   GetTemplateDetailsBody,
   GetTemplateDetailsResponse,

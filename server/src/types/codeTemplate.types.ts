@@ -50,6 +50,15 @@ export type GetTemplatesResponse =
   | { error: string }
   | Pick<TemplateRow, "id" | "ticket_num" | "ticket_url">[];
 
+export type CheckTemplateBody = {
+  ticket_num: string;
+  ticket_url: string;
+};
+
+export type CheckTemplatesResponse =
+  | { error: string }
+  | { isTemplateExist: boolean };
+
 // DB row 타입
 export interface TemplateRow {
   id: number;
