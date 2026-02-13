@@ -1,9 +1,12 @@
-// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
-
 // 템플릿 수정 (기존 값은 update, 새 값은 insert, 사라진 건 delete)
+import { Request, Response } from "express";
 import db from "../../config/db";
+import { CodeChange, UpdateTemplateBody } from "../../types/codeTemplate.types";
 
-export const updateTemplateData = async (req, res) => {
+export const updateTemplateData = async (
+  req: Request<{}, {}, UpdateTemplateBody>,
+  res: Response  
+) => {
   try {
     const { ticket_num, ticket_url, code_changes } = req.body;
     
@@ -11,7 +14,7 @@ export const updateTemplateData = async (req, res) => {
       return res.status(400).json({ error: "ticket_num and ticket_url are required for updating." });
     }
 
-    let parsedCodeChanges;
+    let parsedCodeChanges: CodeChange[];
     try {
       parsedCodeChanges = JSON.parse(code_changes);
     } catch (error) {

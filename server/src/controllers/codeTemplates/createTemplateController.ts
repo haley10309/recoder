@@ -3,24 +3,7 @@ import { Request, Response } from "express";
 import initDB from "../../config/initDB";
 import { ResultSetHeader } from "mysql2";
 import { Connection } from "mysql2/promise";
-
-interface CreateTemplateBody {
-  ticket_num: string;
-  ticket_url: string;
-  code_changes: string; // stringified된 code_changes 문자열
-}
-interface Variation {
-  aswas_code_variation: string;
-  tobe_code_variation?: string;
-  description?: string;
-  countries?: string[];
-}
-interface CodeChange {
-  ppt_no: string;
-  aswas_code: string;
-  tobe_code: string;
-  variations?: Variation[];
-}
+import { CodeChange, CreateTemplateBody } from "../../types/codeTemplate.types";
 
 export const createTemplateData = async (
   req: Request<{}, {}, CreateTemplateBody>,
