@@ -1,24 +1,28 @@
 // 템플릿 수정 (기존 값은 update, 새 값은 insert, 사라진 건 delete)
 import { Request, Response } from "express";
 import db from "../../config/db";
-import { CodeChange, UpdateTemplateBody } from "../../types/codeTemplate.types";
+import { QueryError, RowDataPacket } from "mysql2";
+import { CodeChangeWithId, UpdateTemplateBody, UpdateTemplateResponse } from "../../types/codeTemplate.types";
+
 
 export const updateTemplateData = async (
   req: Request<{}, {}, UpdateTemplateBody>,
-  res: Response  
-) => {
+  res: Response<UpdateTemplateResponse>
+): Promise<void> => {
   try {
     const { ticket_num, ticket_url, code_changes } = req.body;
     
     if (!ticket_num || !ticket_url) {
-      return res.status(400).json({ error: "ticket_num and ticket_url are required for updating." });
+      res.status(400).json({ error: "ticket_num and ticket_url are required for updating." });
+      return;
     }
 
-    let parsedCodeChanges: CodeChange[];
+    let parsedCodeChanges: CodeChangeWithId[];
     try {
       parsedCodeChanges = JSON.parse(code_changes);
     } catch (error) {
-      return res.status(400).json({ error: "Invalid format for code_changes" });
+      res.status(400).json({ error: "Invalid format for code_changes" });
+      return;
     }
 
     const query = `
@@ -28,7 +32,7 @@ export const updateTemplateData = async (
     db.query(
       query,
       [ticket_num, ticket_url],
-      (err, results) => {
+      (err: QueryError | null, results: RowDataPacket[]) => {
         if (err) {
           console.error("Error fetching templates:", err);
           return res.status(500).json({ error: "Failed to fetch templates" });
@@ -44,7 +48,10 @@ export const updateTemplateData = async (
         
         // 기존 TemplateCodeChanges 목록 조회
         const getExistingRowsQuery = `SELECT id FROM TemplateCodeChanges WHERE template_id = ? AND deleted_at IS NULL`;
-        db.query(getExistingRowsQuery, [templateId], (err, existingRows) => {
+        db.query(
+          getExistingRowsQuery,
+          [templateId],
+          (err: QueryError | null, existingRows: RowDataPacket[]) => {
           if (err) {
             console.error("Error fetching existing IDs:", err);
             return res.status(500).json({ error: "Failed to fetch existing entries" });
@@ -56,8 +63,8 @@ export const updateTemplateData = async (
 
           // 삭제 대상 처리
           const deletePromises = idsToDelete.map(id => {
-            return new Promise((resolve, reject) => {
-              db.query(`UPDATE TemplateCodeChanges SET deleted_at = NOW() WHERE id = ?`, [id], (err) => {
+            return new Promise<void>((resolve, reject) => {
+              db.query(`UPDATE TemplateCodeChanges SET deleted_at = NOW() WHERE id = ?`, [id], (err: QueryError | null) => {
                 if (err) {
                   console.error("Error deleting row:", err);
                   return reject(err);
@@ -71,7 +78,7 @@ export const updateTemplateData = async (
           const upsertPromises = parsedCodeChanges.map(item => {
             const { id, ppt_no, aswas_code, tobe_code } = item;
 
-            return new Promise((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
               if (id) {
                 // UPDATE
                 const updateQuery = `
@@ -79,7 +86,7 @@ export const updateTemplateData = async (
                   SET ppt_no = ?, aswas_code = ?, tobe_code = ?
                   WHERE id = ?
                 `;
-                db.query(updateQuery, [ppt_no, aswas_code, tobe_code, id], (err) => {
+                db.query(updateQuery, [ppt_no, aswas_code, tobe_code, id], (err: QueryError | null) => {
                   if (err) {
                     console.error("Error updating row:", err);
                     return reject(err);
@@ -92,7 +99,7 @@ export const updateTemplateData = async (
                   INSERT INTO TemplateCodeChanges (ppt_no, aswas_code, tobe_code, template_id)
                   VALUES (?, ?, ?, ?)
                 `;
-                db.query(insertQuery, [ppt_no, aswas_code, tobe_code, templateId], (err) => {
+                db.query(insertQuery, [ppt_no, aswas_code, tobe_code, templateId], (err: QueryError | null) => {
                   if (err) {
                     console.error("Error inserting row:", err);
                     return reject(err);
