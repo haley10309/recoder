@@ -1,6 +1,6 @@
-// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
-
 // 번역 텍스트 파일에서 국가별 번역 리스트 반환!
+import { Request, Response } from "express";
+import { UploadTranslationResponse } from "../../types/codeTemplate.types";
 
 const validCountryCodes = [
     "ae", "ae_ar", "africa_en", "africa_fr", "africa_pt", "al", "ar", "at", "au", "az", "ba", "bd",
@@ -10,49 +10,53 @@ const validCountryCodes = [
     "lv", "mk", "mm", "mn", "mx", "my", "n_africa", "nl", "no", "nz", "pe", "ph", "pk", "pl", "ps",
     "pt", "py", "ro", "rs", "ru", "sa", "sa_en", "se", "sg", "si", "sk", "th", "tr", "tw", "ua", "us",
     "uk", "uy", "uz_ru", "uz_uz", "vn", "vn_za", "za"
-  ];
+  ] as const;
 
-export const uploadTranslation = (req, res) => {
-    try { 
+export const uploadTranslation = (
+  req: Request,
+  res: Response<UploadTranslationResponse>
+): void => {
+    try {
       if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded." });
+        res.status(400).json({ error: "No file uploaded." });
+        return;
       }
-  
+
       const fileContent = req.file.buffer.toString("utf-8");
       const lines = fileContent.split(/\r?\n/);
-  
+
       if (lines.length < 2) {
-        return res.status(400).json({ error: "File does not contain enough data." });
+        res.status(400).json({ error: "File does not contain enough data." });
+        return;
       }
-  
+
       const headers = lines[0].split("\t");
-  
+
       // "COPY" 열 위치를 자동으로 찾음
       const copyColumnIndex = headers.findIndex(h => h.trim().toUpperCase() === "COPY");
       if (copyColumnIndex === -1) {
-        return res.status(400).json({ error: '"COPY" column not found in header.' });
+        res.status(400).json({ error: '"COPY" column not found in header.' });
+        return;
       }
-  
+
       // "COPY" 열을 제외한 국가 코드들 추출
       const countryCodes = headers
         .map((code, i) => ({ code, index: i }))
         .filter((_, i) => i !== copyColumnIndex);
-  
-      const countryCount = {};
-      const validCountries = [];
-      const invalidCountries = [];
-      const englishCopyList = [];
-      const translations = {};
-  
+
+      const validCountries: string[] = [];
+      const invalidCountries: string[] = [];
+      const englishCopyList: string[] = [];
+      const translations: Record<string, string[]> = {};
+
       countryCodes.forEach(({ code }) => {
-        countryCount[code] = 0;
-        if (validCountryCodes.includes(code.toLowerCase())) {
+        if (validCountryCodes.includes(code.toLowerCase() as typeof validCountryCodes[number])) {
           validCountries.push(code);
         } else {
           invalidCountries.push(code);
         }
       });
-  
+
       for (let i = 1; i < lines.length; i++) {
         const row = lines[i].split("\t");
         const englishText = row[copyColumnIndex]?.trim();
@@ -61,14 +65,14 @@ export const uploadTranslation = (req, res) => {
         } else {
           englishCopyList.push(""); // 빈 값이라도 자리 유지
         }
-  
+
         countryCodes.forEach(({ code, index }) => {
           const value = row[index]?.trim();
-  
+
           if (!translations[code]) {
             translations[code] = [];
           }
-  
+
           if (value) {
             translations[code].push(value);
           } else {
@@ -76,7 +80,7 @@ export const uploadTranslation = (req, res) => {
           }
         });
       }
-  
+
       res.json({
         validCountries,
         invalidCountries,
@@ -88,4 +92,3 @@ export const uploadTranslation = (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
   };
-  
