@@ -1,3 +1,6 @@
+### 0) 템플릿 리스트
+- `/get-templates` : 기존 존재하는 템플릿 불러와 드롭다운 옵션으로 표시
+
 ### 1) 템플릿 불러오기
 
 - 템플릿 검색해서 aswas, tobe 코드 불러옴
@@ -67,6 +70,8 @@ const textareas = [
 ### 로컬라이제이션 적용
 - `/convert-aswas-to-tobe-codes` API의 반환값인 `fileContent`를 프론트 코드 내 `localizedHtmlContent` state에 저장한 것을 `text/html`로 변환하여 html로 다운로드
 
-
-
-
+### 사용 API 정리
+- `/get-templates`
+- `/get-template-details`
+- `/upload-translation`
+- `/convert-aswas-to-tobe-codes`

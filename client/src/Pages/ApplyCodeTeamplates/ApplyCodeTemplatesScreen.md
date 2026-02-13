@@ -1,3 +1,6 @@
+### 0) 템플릿 리스트
+- `/get-templates` : 기존 존재하는 템플릿 불러와 드롭다운 옵션으로 표시
+
 ### 1) 템플릿 불러오기
 
 - `/get-template-details` : 해당 템플릿 DB의 codeChanges 그대로 불러옴. 데이터 가공x
@@ -34,3 +37,8 @@ const textareas = [
 // server convertAsWasToToBeCodes 함수 참고
 changeResults = { pairIndex: index, changed: !!changed, matchedPart }
 ```
+
+### 사용 API 정리
+- `/get-templates`
+- `/get-template-details`
+- `/convert-aswas-to-tobe-codes`

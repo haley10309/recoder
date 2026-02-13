@@ -1,3 +1,6 @@
+### 0) 템플릿 리스트
+- `/get-templates` : 기존 존재하는 템플릿 불러와 드롭다운 옵션으로 표시
+
 ### 1) 템플릿 불러오기
 - `/check-template-exsist` : 템플릿 존재하는지 확인
 - `/get-template-details` : 해당 템플릿 DB의 `codeChanges` 그대로 불러옴.
@@ -36,3 +39,11 @@ const codeChanges = [
 ### 4) 템플릿 저장
 - `/create-template` or `/update-template`
 - `/get-template-details` 로 최신 `codegChnages` 불러와 다시 `codeChanges`에 저장
+
+### 사용 API 정리
+- `/get-templates`
+- `/check-template-exsist`
+- `/get-template-details`
+- `/upload-guide`
+- `/create-template`
+- `/update-template`
