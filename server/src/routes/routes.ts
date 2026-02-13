@@ -16,7 +16,7 @@ import { createTemplate } from '../controllers/codeTemplates/createTemplateContr
 import { updateTemplate } from '../controllers/codeTemplates/updateTemplateController';
 import { parseGuideFile } from '../controllers/codeTemplates/parseGuideFileController';
 import { convertAsWasToToBeCodes } from '../controllers/applyCodeTemplates/convertAsWasToToBeCodesController';
-import { parseTranslationFile } from '../controllers/applyCodeTemplates/parseTranslationFileController';
+import { parseTranslationFile } from '../controllers/applyTranslationTemplates/parseTranslationFileController';
 import { updateLocalizationEntries } from '../controllers/translationTemplates/updateLocalizationEntriesController';
 
 router.use('/auth', authRoutes);
@@ -43,8 +43,5 @@ router.put("/update-localization-entries",cors(), authenticate, authorize("autho
 /** 4) Apply Translation Templates */
 router.post("/parse-translation-file", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), parseTranslationFile);
 // 2)와 동일한 `/convert-aswas-to-tobe-codes` 사용
-
-/** (Deprecated) */
-// const guideUploadControllerV2 = require("../controllers/codeTemplates/guideUploadControllerV2");
 
 export default router;
