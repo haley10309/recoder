@@ -142,7 +142,7 @@ function replaceCode(originalCode, asWasCode, toBeCode) {
   }
 }
 
-function extractEnglishCopyList(copyDeckFile) {
+function extractEnglishCopyListUtil(copyDeckFile) {
   const fileContent = copyDeckFile.buffer.toString("utf-8");
   const lines = fileContent.split(/\r?\n/);
 
@@ -181,5 +181,5 @@ module.exports = {
   normalizeCode,
   findMatchedPart,
   replaceCode,
-  extractEnglishCopyList,
+  extractEnglishCopyListUtil,
 } 

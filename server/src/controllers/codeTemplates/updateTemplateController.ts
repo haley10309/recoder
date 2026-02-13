@@ -6,7 +6,7 @@ import db from "../../config/db";
 import { CodeChangeWithId, UpdateTemplateBody, UpdateTemplateResponse } from "../../types/codeTemplate.types";
 
 
-export const updateTemplateData = async (
+export const updateTemplate = async (
   req: Request<{}, {}, UpdateTemplateBody>,
   res: Response<UpdateTemplateResponse>
 ): Promise<void> => {

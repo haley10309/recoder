@@ -6,7 +6,7 @@ import { RowDataPacket } from "mysql2";
 import { CheckTemplateBody, CheckTemplatesResponse } from "../../types/codeTemplate.types";
 import initDB from "../../config/initDB";
 
-export const checkTemplateData = async (
+export const checkTemplateExist = async (
   req: Request<{}, {}, CheckTemplateBody>,
   res: Response<CheckTemplatesResponse>
 ): Promise<void> => {

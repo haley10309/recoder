@@ -6,7 +6,7 @@ import { Connection } from "mysql2/promise";
 import initDB from "../../config/initDB";
 import { CodeChange, CreateTemplateBody } from "../../types/codeTemplate.types";
 
-export const createTemplateData = async (
+export const createTemplate = async (
   req: Request<{}, {}, CreateTemplateBody>,
   res: Response  
 ) => {

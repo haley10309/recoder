@@ -4,7 +4,7 @@
 import { Request, Response } from "express";
 import { GuideUploadResponse } from "../../types/codeTemplate.types";
 
-export const guideUploadData = async (
+export const uploadGuide = async (
   req: Request,
   res: Response<GuideUploadResponse>
 ): Promise<void> => {

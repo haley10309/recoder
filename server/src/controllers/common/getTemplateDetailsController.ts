@@ -11,7 +11,7 @@ import {
   TemplateVariationRow,
 } from "../../types/codeTemplate.types";
 
-export const getTemplateDetailsData = async (
+export const getTemplateDetails = async (
   req: Request<{}, {}, GetTemplateDetailsBody>,
   res: Response<GetTemplateDetailsResponse>
 ): Promise<void> => {
