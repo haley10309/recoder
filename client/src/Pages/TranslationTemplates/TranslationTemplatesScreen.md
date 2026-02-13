@@ -49,9 +49,12 @@ const localizationEntries = [
 - `/update-localization-entries`
 - `/get-template-details` 로 최신 `localizationEntries` 불러와 다시 `localizationEntries`에 저장
 
-### 사용 API 정리
-- `/get-templates`
-- `/check-template-exsist`
-- `/get-template-details`
-- `/extract-english-copy-list`
-- `/update-localization-entries`
+### ☑️ 사용 API 정리
+
+| Endpoint	| Method	| 용도 |
+| ---	| ---	| --- |
+| `/get-templates`|	`GET`|	템플릿 목록 조회|
+|`/check-template-exsist`	|`POST`|	템플릿 존재 여부 확인|
+|`/get-template-details`	|`POST`|	템플릿 상세 조회|
+|`/extract-english-copy-list`	|`POST`|	번역 텍스트 파일에서 영문 카피 추출|
+|`/update-localization-entries`	|`PUT`|	로컬라이제이션 엔트리 생성/수정/삭제|

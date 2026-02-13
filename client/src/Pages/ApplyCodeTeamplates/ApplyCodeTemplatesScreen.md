@@ -38,7 +38,9 @@ const textareas = [
 changeResults = { pairIndex: index, changed: !!changed, matchedPart }
 ```
 
-### 사용 API 정리
-- `/get-templates`
-- `/get-template-details`
-- `/convert-aswas-to-tobe-codes`
+### ☑️ 사용 API 정리
+| Endpoint	| Method	| 용도 |
+| ---	| ---	| --- |
+| `/get-templates`|	`GET`|	템플릿 목록 조회|
+|`/get-template-details`	|`POST`|	템플릿 상세 조회|
+|`/convert-aswas-to-tobe-codes`	|`POST`|	HTML 파일에 코드 변환 적용|

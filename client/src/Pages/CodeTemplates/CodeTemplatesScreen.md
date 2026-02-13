@@ -40,10 +40,12 @@ const codeChanges = [
 - `/create-template` or `/update-template`
 - `/get-template-details` 로 최신 `codegChnages` 불러와 다시 `codeChanges`에 저장
 
-### 사용 API 정리
-- `/get-templates`
-- `/check-template-exsist`
-- `/get-template-details`
-- `/upload-guide`
-- `/create-template`
-- `/update-template`
+### ☑️ 사용 API 정리
+| Endpoint	| Method	| 용도 |
+| ---	| ---	| --- |
+| `/get-templates`|	`GET`|	템플릿 목록 조회|
+|`/check-template-exsist`	|`POST`|	템플릿 존재 여부 확인|
+|`/get-template-details`	|`POST`|	템플릿 상세 조회|
+|`/upload-guide`	|`POST`|	PPT txt 파일 업로드|
+|`/create-template`	|`POST`|	새 템플릿 생성|
+| `/update-template`	|`POST`|	기존 템플릿 수정|

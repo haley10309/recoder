@@ -70,8 +70,10 @@ const textareas = [
 ### 로컬라이제이션 적용
 - `/convert-aswas-to-tobe-codes` API의 반환값인 `fileContent`를 프론트 코드 내 `localizedHtmlContent` state에 저장한 것을 `text/html`로 변환하여 html로 다운로드
 
-### 사용 API 정리
-- `/get-templates`
-- `/get-template-details`
-- `/upload-translation`
-- `/convert-aswas-to-tobe-codes`
+### ☑️ 사용 API 정리
+| Endpoint	| Method	| 용도 |
+| ---	| ---	| --- |
+| `/get-templates`|	`GET`|	템플릿 목록 조회|
+|`/get-template-details`	|`POST`|	템플릿 상세 조회|
+|`/upload-translation`	|`POST`|	번역덱 파일 업로드|
+|`/convert-aswas-to-tobe-codes`	|`POST`|	HTML 파일에 로컬라이제이션 적용|
