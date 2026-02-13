@@ -29,26 +29,23 @@ router.post("/check-template-exsist", cors(), authenticate, authorize("author", 
 router.post("/get-template-details", cors(), authenticate, authorize("author", "qaer", "pm"), getTemplateDetailsData);
 
 /** 1) Code Templates */
+router.post("/upload-guide", upload.single("txtfile"), cors(), authenticate, authorize("author", "qaer", "pm"), guideUploadData);
 router.post("/create-template", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), createTemplateData); // ✅ Only pm (현재 임시로 전체 오픈)
 router.post("/update-template", multer().none(), cors(), authenticate, authorize("author", "qaer", "pm"), updateTemplateData); // ✅ Only pm (현재 임시로 전체 오픈)
-router.post("/upload-guide", upload.single("txtfile"), cors(), authenticate, authorize("author", "qaer", "pm"), guideUploadData);
 
 /** 2) Apply Code Templates */
 router.post("/convert-aswas-to-tobe-codes", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), convertAsWasToToBeCodes);
-router.post("/upload-translation", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), uploadTranslation);
 
 /** 3) Translation Templates */
 router.post("/extract-english-copy-list", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), extractEnglishCopyListData);
 router.put("/update-localization-entries",cors(), authenticate, authorize("author", "qaer", "pm"), updateLocalizationEntries); // ✅ Only pm (현재 임시로 전체 오픈)
 
+/** 4) Apply Translation Templates */
+router.post("/upload-translation", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), uploadTranslation);
+// 2)와 동일한 `/convert-aswas-to-tobe-codes` 사용
+
 /** (Deprecated) */
 // const guideUploadControllerV2 = require("../controllers/codeTemplates/guideUploadControllerV2");
 // router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadControllerV2.guideUploadData);
-
-/** Admin */
-// const loginController = require("../controllers/admin/login");
-// const registerController = require("../controllers/admin/register");
-// router.post("/admin/login", cors(), loginController.login);
-// router.post("/admin/register", cors(), registerController.register);
 
 export default router;

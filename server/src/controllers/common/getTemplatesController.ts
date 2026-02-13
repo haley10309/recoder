@@ -1,20 +1,26 @@
-// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
-
 // 템플릿 조회
-import db from "../../config/db";
+import { Request, Response } from "express";
+import { RowDataPacket } from "mysql2";
 
-export const getTemplates = (req, res) => {
-  const query = `
-    SELECT id, ticket_num, ticket_url
-    FROM Templates
-    WHERE deleted_at IS NULL
-  `;
+import initDB from "../../config/initDB";
+import { GetTemplatesResponse, TemplateRow } from "../../types/codeTemplate.types";
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching templates:", err);
-      return res.status(500).json({ error: "Failed to fetch templates" });
-    }
-    res.json(results);
-  });
+export const getTemplates = async (
+  req: Request,
+  res: Response<GetTemplatesResponse>
+): Promise<void> => {
+  try {
+    const db = await initDB();
+
+    const [results] = await db.execute<RowDataPacket[]>(
+      `SELECT id, ticket_num, ticket_url
+      FROM Templates
+      WHERE deleted_at IS NULL`
+    );
+
+    res.json(results as Pick<TemplateRow, "id" | "ticket_num" | "ticket_url">[]);
+  } catch (error) {
+    console.error("Error fetching templates:", error);
+    res.status(500).json({ error: "Failed to fetch templates" });
+  }
 };

@@ -29,12 +29,10 @@ export type CodeChangeWithId = CodeChange & {
   id?: number;
 };
 
-// updateTemplate 응답 타입
 export type UpdateTemplateResponse =
   | { error: string }
   | { message: string };
 
-// getTemplateDetails 요청/응답 타입
 export type GetTemplateDetailsBody = {
   ticket_num: string;
   ticket_url: string;
@@ -47,6 +45,10 @@ export type GetTemplateDetailsResponse =
       codeChanges: TemplateCodeChangeRow[];
       localizationEntries: TemplateLocalizationEntryRow[];
     };
+
+export type GetTemplatesResponse =
+  | { error: string }
+  | Pick<TemplateRow, "id" | "ticket_num" | "ticket_url">[];
 
 // DB row 타입
 export interface TemplateRow {
