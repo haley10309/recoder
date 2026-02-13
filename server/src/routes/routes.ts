@@ -46,6 +46,5 @@ router.post("/upload-translation", upload.single('file'), cors(), authenticate, 
 
 /** (Deprecated) */
 // const guideUploadControllerV2 = require("../controllers/codeTemplates/guideUploadControllerV2");
-// router.post("/upload-guide", upload.single("txtfile"), cors(), guideUploadControllerV2.guideUploadData);
 
 export default router;

@@ -1,7 +1,8 @@
 // 템플릿 수정 (기존 값은 update, 새 값은 insert, 사라진 건 delete)
 import { Request, Response } from "express";
-import db from "../../config/db";
 import { QueryError, RowDataPacket } from "mysql2";
+
+import db from "../../config/db";
 import { CodeChangeWithId, UpdateTemplateBody, UpdateTemplateResponse } from "../../types/codeTemplate.types";
 
 

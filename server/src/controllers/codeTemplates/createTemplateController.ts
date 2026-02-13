@@ -1,8 +1,9 @@
 // 템플릿 생성
 import { Request, Response } from "express";
-import initDB from "../../config/initDB";
 import { ResultSetHeader } from "mysql2";
 import { Connection } from "mysql2/promise";
+
+import initDB from "../../config/initDB";
 import { CodeChange, CreateTemplateBody } from "../../types/codeTemplate.types";
 
 export const createTemplateData = async (

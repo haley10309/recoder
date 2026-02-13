@@ -59,6 +59,14 @@ export type CheckTemplatesResponse =
   | { error: string }
   | { isTemplateExist: boolean };
 
+export type GuideUploadResponse =
+  | { error: string }
+  | {
+      pptNos: string[];
+      asWasCodes: string[];
+      toBeCodes: string[];
+    };
+
 // DB row 타입
 export interface TemplateRow {
   id: number;

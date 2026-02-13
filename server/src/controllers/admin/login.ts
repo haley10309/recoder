@@ -2,6 +2,7 @@
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+
 import db from "../../config/db";
 import { isValidEmail } from '../../utils/validator';
 

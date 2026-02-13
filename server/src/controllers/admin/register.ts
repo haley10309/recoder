@@ -1,6 +1,7 @@
 // @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
 
 import bcrypt from 'bcrypt';
+
 import db from "../../config/db";
 import { isValidEmail } from '../../utils/validator';
 
