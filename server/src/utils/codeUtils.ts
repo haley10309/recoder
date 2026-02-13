@@ -1,7 +1,11 @@
+// @ts-nocheck // TODO: 추후 삭제하고 타입 맞추기
+
+import { ExtractCopyResult } from "../types/codeTemplate.types";
+
 // 코드 변환 로직  
   
 // 공백 및 특수문자 제거 함수
-function normalizeCode(code) {
+export const normalizeCode = (code) => {
   return code.replace(/[\s;"',/()]/g, '');
 }
 
@@ -13,7 +17,7 @@ function normalizeCode(code) {
 // }
 
 // 일치하는 부분 찾기
-function findMatchedPart(asWasCode, normalizedOriginal, normalizedAsWas) {
+export const findMatchedPart = (asWasCode, normalizedOriginal, normalizedAsWas) => {
   let matchedParts = {
     frontMatch: '',
     backMatch: ''
@@ -63,7 +67,7 @@ function findMatchedPart(asWasCode, normalizedOriginal, normalizedAsWas) {
 }
   
 // 코드 변경
-function replaceCode(originalCode, asWasCode, toBeCode) {
+export const replaceCode = (originalCode, asWasCode, toBeCode) => {
   // 1. 주석, 특수문자로 시작하는 경우 단순 치환
   if (asWasCode.startsWith("//") || asWasCode.startsWith("*") || asWasCode.startsWith("[")) {
     let newCode = originalCode.replace(asWasCode, toBeCode);
@@ -142,7 +146,9 @@ function replaceCode(originalCode, asWasCode, toBeCode) {
   }
 }
 
-function extractEnglishCopyList(copyDeckFile) {
+export const extractEnglishCopyListUtil = (
+  copyDeckFile: Express.Multer.File
+): ExtractCopyResult => {
   const fileContent = copyDeckFile.buffer.toString("utf-8");
   const lines = fileContent.split(/\r?\n/);
 
@@ -177,9 +183,3 @@ function extractEnglishCopyList(copyDeckFile) {
   return { englishCopyList };
 }
   
-module.exports = {
-  normalizeCode,
-  findMatchedPart,
-  replaceCode,
-  extractEnglishCopyList,
-} 

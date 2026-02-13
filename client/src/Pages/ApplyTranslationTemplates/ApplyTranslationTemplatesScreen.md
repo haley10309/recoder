@@ -1,3 +1,6 @@
+### 0) 템플릿 리스트
+- `/get-templates` : 기존 존재하는 템플릿 불러와 드롭다운 옵션으로 표시
+
 ### 1) 템플릿 불러오기
 
 - 템플릿 검색해서 aswas, tobe 코드 불러옴
@@ -20,7 +23,7 @@ const textareas = [
 - 업로드한 To-Be 백업코드파일 `tobeHtmlFile`, `tobeHtmlContent`에 저장해둠
 
 ### 번역덱 Txt 업로드
-- `/upload-translation` : `englishCopyList`, `translations` 반환
+- `/parse-translation-file` : `englishCopyList`, `translations` 반환
 
 ```
 englishCopyList = [
@@ -67,6 +70,10 @@ const textareas = [
 ### 로컬라이제이션 적용
 - `/convert-aswas-to-tobe-codes` API의 반환값인 `fileContent`를 프론트 코드 내 `localizedHtmlContent` state에 저장한 것을 `text/html`로 변환하여 html로 다운로드
 
-
-
-
+### ☑️ 사용 API 정리
+| Endpoint	| Method	| 용도 |
+| ---	| ---	| --- |
+| `/get-templates`|	`GET`|	템플릿 목록 조회|
+|`/get-template-details`	|`POST`|	템플릿 상세 조회|
+|`/parse-translation-file`	|`POST`|	번역 파일 파싱 — 국가별 번역 텍스트 및 유효/무효 국가 분류 반환|
+|`/convert-aswas-to-tobe-codes`	|`POST`|	HTML 파일에 로컬라이제이션 적용|

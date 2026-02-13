@@ -1,19 +1,26 @@
 // 사용중, PPT -> word -> txt 처리한 가이드용
 // 가이드 업로드 후, 처리 로직
 
-export const guideUploadData = async (req, res) => {
+import { Request, Response } from "express";
+import { GuideUploadResponse } from "../../types/codeTemplate.types";
+
+export const parseGuideFile = async (
+  req: Request,
+  res: Response<GuideUploadResponse>
+): Promise<void> => {
   // TODO: 나눠서 보내지말고 하나로 보내고 클라이언트에서도 그렇게 한방에 처리하기
   if (!req.file) {
-    return res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
+    res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
+    return;
   }
 
   const text = req.file.buffer.toString('utf-8');
   
   const slideSections = text.split(/(?=슬라이드\s*\d+\s*\[AS-WAS\])/g); // 슬라이드별로 분리
 
-  const pptNos = [];
-  const asWasCodes = [];
-  const toBeCodes = [];
+  const pptNos: string[] = [];
+  const asWasCodes: string[] = [];
+  const toBeCodes: string[] = [];
 
   slideSections.forEach(section => {
     const slideNoMatch = section.match(/슬라이드\s*(\d+)/);
@@ -24,8 +31,8 @@ export const guideUploadData = async (req, res) => {
     const asWasMatch = section.match(/\[AS-WAS\]([\s\S]*?)\[TO-BE\]/);
     const toBeMatch = section.match(/\[TO-BE\]([\s\S]*?)(?=슬라이드|$)/); 
 
-    let asWasEntries = [];
-    let toBeEntries = [];
+    let asWasEntries: string[] = [];
+    let toBeEntries: string[] = [];
 
     // AS-WAS 처리
     if (asWasMatch) {

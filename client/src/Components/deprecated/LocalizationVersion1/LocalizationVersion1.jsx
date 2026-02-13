@@ -26,7 +26,7 @@
 
 //     try {
 //       const response = await axios.post(
-//         `${BASE_URL}/upload-translation`,
+//         `${BASE_URL}/parse-translation-file`,
 //         formData,
 //         {
 //           headers: { "Content-Type": "multipart/form-data" },

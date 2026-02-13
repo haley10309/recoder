@@ -1,10 +1,12 @@
 // apply template 실행 기능
+import { Request, Response } from "express";
 import { replaceCode } from "../../utils/codeUtils";
+import { ChangeResult, CodeChangePair, ConvertCodesBody, ConvertCodesResponse } from "../../types/codeTemplate.types";
 
 /**
  * 현재 시간을 KST 기준으로 yyMMddHHmmss 형식으로 반환
  */
-function formatDateToKST() {
+const formatDateToKST = () => {
   const now = new Date();
 
   // UTC 시간 기준에서 KST(+9시간)으로 오프셋
@@ -21,22 +23,26 @@ function formatDateToKST() {
   return `${yy}${MM}${dd}_${HH}${mm}${ss}`;
 }
 
-export const convertAsWasToToBeCodes = (req, res) => {
-  const codeChanges = JSON.parse(req.body.codeChanges);
+export const convertAsWasToToBeCodes = (
+  req: Request<{}, {}, ConvertCodesBody>,
+  res: Response<ConvertCodesResponse>
+): void => {
   const { ticket_url, countryCode } = req.body;
+  let parsedCodeChanges: CodeChangePair[] = JSON.parse(req.body.codeChanges);
   
-  if (!req.file || !codeChanges || codeChanges.length === 0 || !ticket_url || !countryCode) {
-    return res.status(400).json({
+  if (!req.file || !parsedCodeChanges || parsedCodeChanges.length === 0 || !ticket_url || !countryCode) {
+    res.status(400).json({
       success: false,
       message: "File, code pairs, product name, and country code are required.",
     });
+    return;
   }
 
   try {
     let originalCode = req.file.buffer.toString('utf-8');
-    const changeResults = [];
+    const changeResults: ChangeResult[] = [];
 
-    codeChanges.forEach(({ asWasCode, toBeCode }, index) => {
+    parsedCodeChanges.forEach(({ asWasCode, toBeCode }, index) => {
       const { newCode, changed, matchedPart } = replaceCode(originalCode, asWasCode, toBeCode);
       changeResults.push({ pairIndex: index, changed: !!changed, matchedPart });
       if (changed) {
@@ -66,9 +72,10 @@ export const convertAsWasToToBeCodes = (req, res) => {
 
   } catch (error) {
     console.error("Error processing file:", error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: "Error processing file.",
     });
+    return;
   }
 };

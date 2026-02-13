@@ -1,0 +1,36 @@
+import { Request, Response } from "express";
+
+import { extractEnglishCopyListUtil } from "../../utils/codeUtils";
+import { ExtractCopyResponse } from "../../types/codeTemplate.types";
+
+// // 번역 텍스트 파일에서 영어 원문만 추출
+export const extractEnglishCopyList = (
+  req: Request,
+  res: Response<ExtractCopyResponse>
+): void => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ error: "No file uploaded." });
+      return;
+    }
+
+    // 애초에 번역 필요없는 COPY는 제외된 file을 클라이언트에서 업로드해서 이곳으로 보낸다.
+    // 이곳은 COPY 열에 있는 카피텍스트를 그대로 반환해주는 것일 뿐.
+
+    const result = extractEnglishCopyListUtil(req.file);
+
+    console.log('✅ extractEnglishCopyList result',result)
+
+    if ("errorMsg" in result) {
+      res.status(result.statusCode).json({ error: result.errorMsg });
+      return;
+    }
+
+    res.json({ 
+      englishCopyList: result.englishCopyList 
+    });
+  } catch (error) {
+    console.error("Error processing file:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
