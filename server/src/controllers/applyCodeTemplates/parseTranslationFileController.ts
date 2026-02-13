@@ -1,6 +1,6 @@
 // 번역 텍스트 파일에서 국가별 번역 리스트 반환!
 import { Request, Response } from "express";
-import { UploadTranslationResponse } from "../../types/codeTemplate.types";
+import { ParseTranslationFileResponse } from "../../types/codeTemplate.types";
 
 const validCountryCodes = [
     "ae", "ae_ar", "africa_en", "africa_fr", "africa_pt", "al", "ar", "at", "au", "az", "ba", "bd",
@@ -12,9 +12,9 @@ const validCountryCodes = [
     "uk", "uy", "uz_ru", "uz_uz", "vn", "vn_za", "za"
   ] as const;
 
-export const uploadTranslation = (
+export const parseTranslationFile = (
   req: Request,
-  res: Response<UploadTranslationResponse>
+  res: Response<ParseTranslationFileResponse>
 ): void => {
     try {
       if (!req.file) {

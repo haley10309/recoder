@@ -18,7 +18,7 @@ const codeChanges = [
 ```
 
 ### 2) PPT 파일 업로드
-- `/upload-guide`: `pptNos`, `asWasCodes`, `toBeCodes` 반환
+- `/parse-guide-file`: `pptNos`, `asWasCodes`, `toBeCodes` 반환
 - `codeChanges`에 저장해서 textareas용 state로 사용
 ```
 const codeChanges = [
@@ -46,6 +46,6 @@ const codeChanges = [
 | `/get-templates`|	`GET`|	템플릿 목록 조회|
 |`/check-template-exsist`	|`POST`|	템플릿 존재 여부 확인|
 |`/get-template-details`	|`POST`|	템플릿 상세 조회|
-|`/upload-guide`	|`POST`|	PPT txt 파일 업로드|
+|`/parse-guide-file`	|`POST`|	PPT txt 파일 파싱 — 가이드 텍스트 추출|
 |`/create-template`	|`POST`|	새 템플릿 생성|
 | `/update-template`	|`POST`|	기존 템플릿 수정|

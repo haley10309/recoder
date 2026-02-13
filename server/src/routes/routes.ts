@@ -14,9 +14,9 @@ import { getTemplateDetails } from '../controllers/common/getTemplateDetailsCont
 import { extractEnglishCopyList } from '../controllers/translationTemplates/extractEnglishCopyListController';
 import { createTemplate } from '../controllers/codeTemplates/createTemplateController';
 import { updateTemplate } from '../controllers/codeTemplates/updateTemplateController';
-import { uploadGuide } from '../controllers/codeTemplates/uploadGuideController';
+import { parseGuideFile } from '../controllers/codeTemplates/parseGuideFileController';
 import { convertAsWasToToBeCodes } from '../controllers/applyCodeTemplates/convertAsWasToToBeCodesController';
-import { uploadTranslation } from '../controllers/applyCodeTemplates/uploadTranslationController';
+import { parseTranslationFile } from '../controllers/applyCodeTemplates/parseTranslationFileController';
 import { updateLocalizationEntries } from '../controllers/translationTemplates/updateLocalizationEntriesController';
 
 router.use('/auth', authRoutes);
@@ -29,7 +29,7 @@ router.post("/check-template-exsist", cors(), authenticate, authorize("author", 
 router.post("/get-template-details", cors(), authenticate, authorize("author", "qaer", "pm"), getTemplateDetails);
 
 /** 1) Code Templates */
-router.post("/upload-guide", upload.single("txtfile"), cors(), authenticate, authorize("author", "qaer", "pm"), uploadGuide);
+router.post("/parse-guide-file", upload.single("txtfile"), cors(), authenticate, authorize("author", "qaer", "pm"), parseGuideFile);
 router.post("/create-template", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), createTemplate); // ✅ Only pm (현재 임시로 전체 오픈)
 router.post("/update-template", multer().none(), cors(), authenticate, authorize("author", "qaer", "pm"), updateTemplate); // ✅ Only pm (현재 임시로 전체 오픈)
 
@@ -41,7 +41,7 @@ router.post("/extract-english-copy-list", upload.single('file'), cors(), authent
 router.put("/update-localization-entries",cors(), authenticate, authorize("author", "qaer", "pm"), updateLocalizationEntries); // ✅ Only pm (현재 임시로 전체 오픈)
 
 /** 4) Apply Translation Templates */
-router.post("/upload-translation", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), uploadTranslation);
+router.post("/parse-translation-file", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), parseTranslationFile);
 // 2)와 동일한 `/convert-aswas-to-tobe-codes` 사용
 
 /** (Deprecated) */

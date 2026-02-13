@@ -35,12 +35,12 @@ export const fetchTemplates = async () => {
   return response.data;
 };
 
-export const uploadTranslationDeck = async (file) => {
+export const parseTranslationFile = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
   const response = await defaultAxios.post(
-    `/upload-translation`,
+    `/parse-translation-file`,
     formData,
     {
       headers: {

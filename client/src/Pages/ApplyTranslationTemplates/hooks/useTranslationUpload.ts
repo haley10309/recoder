@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { uploadTranslationDeck } from "@/apis/apis";
+import { parseTranslationFile } from "@/apis/apis";
 
 export function useTranslationUpload({ countryCode, setEnglishCopyList }) {
   const [translationsByCountry, setTranslationsByCountry] = useState({});
@@ -41,7 +41,7 @@ export function useTranslationUpload({ countryCode, setEnglishCopyList }) {
         setTranslationDeckTxtFile(file);
 
         const { translations, englishCopyList, validCountries } =
-          await uploadTranslationDeck(file);
+          await parseTranslationFile(file);
 
         setValidCountries(validCountries);
         setTranslationsByCountry(translations);

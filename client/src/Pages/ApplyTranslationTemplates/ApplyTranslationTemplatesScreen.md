@@ -23,7 +23,7 @@ const textareas = [
 - 업로드한 To-Be 백업코드파일 `tobeHtmlFile`, `tobeHtmlContent`에 저장해둠
 
 ### 번역덱 Txt 업로드
-- `/upload-translation` : `englishCopyList`, `translations` 반환
+- `/parse-translation-file` : `englishCopyList`, `translations` 반환
 
 ```
 englishCopyList = [
@@ -75,5 +75,5 @@ const textareas = [
 | ---	| ---	| --- |
 | `/get-templates`|	`GET`|	템플릿 목록 조회|
 |`/get-template-details`	|`POST`|	템플릿 상세 조회|
-|`/upload-translation`	|`POST`|	번역덱 파일 업로드|
+|`/parse-translation-file`	|`POST`|	번역 파일 파싱 — 국가별 번역 텍스트 및 유효/무효 국가 분류 반환|
 |`/convert-aswas-to-tobe-codes`	|`POST`|	HTML 파일에 로컬라이제이션 적용|

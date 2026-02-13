@@ -126,7 +126,7 @@ export type UpdateLocalizationEntriesResponse =
   | { success: false; message: string }
   | { success: true };
 
-export type UploadTranslationResponse =
+export type ParseTranslationFileResponse =
   | { error: string }
   | {
       validCountries: string[];
