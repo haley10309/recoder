@@ -1,3 +1,5 @@
+type JsonStringified<T> = string & { __type: T };
+
 export type Variation = {
   aswas_code_variation: string;
   tobe_code_variation?: string;
@@ -15,19 +17,25 @@ export type CodeChange = {
 export type CreateTemplateBody = {
   ticket_num: string;
   ticket_url: string;
-  code_changes: string; // stringified된 code_changes 문자열
+  code_changes: JsonStringified<CodeChange[]>; // stringified된 code_changes 문자열. parse 시 타입은 CodeChange
 };
 
 export type UpdateTemplateBody = {
   ticket_num: string;
   ticket_url: string;
-  code_changes: string; // stringified된 code_changes 문자열
+  code_changes: JsonStringified<CodeChangeWithId[]>; // stringified된 code_changes 문자열. parse 시 타입은 CodeChangeWithId
+};
+
+// update 시 기존 variation row는 id가 있고, 새 row는 없음
+export type VariationWithId = Variation & {
+  id?: number;
 };
 
 // update 시 기존 row는 id가 있고, 새 row는 없음
-export type CodeChangeWithId = CodeChange & {
+export type CodeChangeWithId = Omit<CodeChange, "variations"> & {
   id?: number;
-};
+  variations?: VariationWithId[];
+}; // Omit으로 베이스의 variations 먼저 제거 후 재정의
 
 export type UpdateTemplateResponse =
   | { error: string }
@@ -68,13 +76,12 @@ export type GuideUploadResponse =
     };
 
 export type ConvertCodesBody = {
-  codeChanges: string; // JSON.parse 해서 쓰니까 string으로 들어옴
+  codeChanges: JsonStringified<CodeChangePair[]>;
   ticket_url: string;
   countryCode: string;
 };
 
 // JSON.parse 후 각 항목
-// TODO: CodeChange랑 겹쳐서 합쳐야될듯
 export type CodeChangePair = {
   asWasCode: string;
   toBeCode: string;
