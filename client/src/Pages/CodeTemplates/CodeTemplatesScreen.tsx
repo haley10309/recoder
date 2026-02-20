@@ -35,6 +35,9 @@ const CodeTemplatesScreen = () => {
     handleTobeChange,
     handleGetTemplate,
     setBackupHtmlContent,
+    addVariation,
+    handleVariationChange,
+    removeVariation,
   } = useTemplate();
 
   const {
@@ -92,6 +95,9 @@ const CodeTemplatesScreen = () => {
         handlePptNoChange={handlePptNoChange}
         handleAswasChange={handleAswasChange}
         handleTobeChange={handleTobeChange}
+        addVariation={addVariation}
+        handleVariationChange={handleVariationChange}
+        removeVariation={removeVariation}
       />
     </div>
   );

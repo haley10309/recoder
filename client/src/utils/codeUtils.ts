@@ -47,14 +47,14 @@ export const advancedNormalizeCode = (code) => {
 
 /**
  * 원본 파일 내에서 특정 코드 조각(asWasCode)이 몇 번 등장하는지 계산합니다.
- * advancedNormalizeCode를 통해 공백 및 구두점을 제거한 뒤 비교합니다.
+ * normalizeCode를 통해 공백 및 구두점을 제거한 뒤 비교합니다.
  * 주로 기본 코드 패턴의 등장 횟수를 확인할 때 사용합니다.
  */
 export const countOccurrences = (fileContent, asWasCode) => {
   if (!fileContent || !asWasCode) return 0;
 
-  const normalizedAsWasCode = advancedNormalizeCode(asWasCode);
-  const normalizedFileContent = advancedNormalizeCode(fileContent);
+  const normalizedAsWasCode = normalizeCode(asWasCode);
+  const normalizedFileContent = normalizeCode(fileContent);
 
   let occurrenceCount = 0;
   let startIndex = 0;
@@ -80,8 +80,8 @@ export const countOccurrences = (fileContent, asWasCode) => {
 export const kind_countOccurrences = (fileContent, asWasCode) => {
   if (!fileContent || !asWasCode) return 0;
 
-  const normalizedAsWasCode = advancedNormalizeCode(asWasCode);
-  const normalizedFileContent = advancedNormalizeCode(fileContent);
+  const normalizedAsWasCode = kind_normalizeCode(asWasCode);
+  const normalizedFileContent = kind_normalizeCode(fileContent);
 
   let occurrenceCount = 0;
   let startIndex = 0;
