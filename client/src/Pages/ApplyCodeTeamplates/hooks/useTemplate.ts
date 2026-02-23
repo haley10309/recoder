@@ -48,26 +48,29 @@ export const useTemplate = () => {
       
       if (data.templateId) setTemplateId(data.templateId);
 
-      const codeChanges = (data.codeChanges ?? [])
-                                    .filter((it) => !isAssetCode(it.aswas_code))
-                                    .map( it => ({
-                                      id: it.id,
-                                      ppt_no: it.ppt_no || "",
-                                      aswas_code: it.aswas_code?.trim() || "",
-                                      tobe_code: it.tobe_code?.trim() || "",
-                                      // localized_tobe_code: it.localized_tobe_code?.trim() || "",
-                                      localized_tobe_code: "",
-                                    }) );
+      const newTextareas = (data.codeChanges ?? [])
+        .filter((it) => !isAssetCode(it.aswas_code))
+        .map((it) => {
+          const matchedVariation = it.variations?.find((v) =>
+            v.countries?.includes(countryCode)
+          );
 
-                                    
-      const newTextareas = codeChanges.map((pair) => ({
-        id: pair.id,
-        pptNo: pair.ppt_no,
-        asWasCode: replaceCountryCode(pair.aswas_code, countryCode),
-        toBeCode: replaceCountryCode(pair.tobe_code, countryCode),
-        localizedToBeCode: "",
-        checked: true,
-      }));
+          const finalAsWas =
+            matchedVariation?.aswas_code_variation || it.aswas_code;
+
+          const finalToBe =
+            matchedVariation?.tobe_code_variation || it.tobe_code;
+
+          return {
+            id: it.id,
+            pptNo: it.ppt_no || "",
+            asWasCode: replaceCountryCode(finalAsWas?.trim() || "", countryCode),
+            toBeCode: replaceCountryCode(finalToBe?.trim() || "", countryCode),
+            localizedToBeCode: "",
+            checked: true,
+          };
+        });
+
       setTextareas(newTextareas);
       alert("성공적으로 템플릿을 불러왔습니다.");
     } catch (error) {

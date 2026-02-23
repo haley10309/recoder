@@ -26,6 +26,26 @@ export const kind_normalizeCode = (code) => {
 };
 
 /**
+ * 1. HTML 엔티티를 일반 문자로 변환
+ * 2. 그 후 인덴테이션 및 특수문자 제거
+ */
+export const advancedNormalizeCode = (code) => {
+  if (!code) return '';
+
+  const decodedCode = code
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&amp;/gi, '&')
+
+  // 인덴테이션(공백), 세미콜론, 따옴표, 괄호 등 제거
+  return decodedCode.replace(/[\s;"',/()]/g, '');
+};
+
+
+/**
  * 원본 파일 내에서 특정 코드 조각(asWasCode)이 몇 번 등장하는지 계산합니다.
  * normalizeCode를 통해 공백 및 구두점을 제거한 뒤 비교합니다.
  * 주로 기본 코드 패턴의 등장 횟수를 확인할 때 사용합니다.

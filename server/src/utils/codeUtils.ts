@@ -3,10 +3,20 @@
 import { ExtractCopyResult } from "../types/codeTemplate.types";
 
 // 코드 변환 로직  
-  
-// 공백 및 특수문자 제거 함수
+// 공백 및 특수문자 제거 함수  
+// ⚠️ 프론트 advancedNormalizeCode와 100% 동일
 export const normalizeCode = (code) => {
   return code.replace(/[\s;"',/()]/g, '');
+  // if (!code) return '';
+
+  // return code
+  //   .replace(/&nbsp;/gi, ' ')
+  //   .replace(/&lt;/gi, '<')
+  //   .replace(/&gt;/gi, '>')
+  //   .replace(/&quot;/gi, '"')
+  //   .replace(/&#39;/gi, "'")
+  //   .replace(/&amp;/gi, '&')
+  //   .replace(/[\s;"',/()]/g, '');
 }
 
 // function normalizeCode(code) {

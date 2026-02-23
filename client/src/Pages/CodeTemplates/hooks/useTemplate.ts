@@ -16,15 +16,54 @@ export const useTemplate = () => {
   } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
 
   const [saveType, setSaveType] = useState(""); // 'create' | 'update'
-  const [codeChanges, setCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "" }]);
+  const [codeChanges, setCodeChanges] = useState([{ ppt_no: "", aswas_code: "", tobe_code: "", variations: [] }]);
   const [backupHtmlContent, setBackupHtmlContent] = useState("");
 
   // handlers
   const addTextArea = () => {
-    setCodeChanges(prev => [...prev, { ppt_no: "", aswas_code: "", tobe_code: "" }])
+    setCodeChanges(prev => [...prev, { ppt_no: "", aswas_code: "", tobe_code: "", variations: [] }])
   };
   const removeTextArea = (idx) => {
     setCodeChanges((prev) => prev.filter((_, i) => i !== idx))
+  };
+  const addVariation = (itemIdx) => {
+    setCodeChanges(prev =>
+      prev.map((item, idx) => {
+        if (idx !== itemIdx) return item;
+
+        return {
+          ...item,
+          variations: [
+            ...(item.variations ?? []),
+            {
+              aswas_code_variation: "",
+              tobe_code_variation: "",
+              description: "",
+              countries: []
+            }
+          ]
+        };
+      })
+    );
+  };
+  const removeVariation = (itemIdx, variationIdx) => {
+    setCodeChanges(prev => {
+      const updated = [...prev];
+      updated[itemIdx].variations.splice(variationIdx, 1);
+      return updated;
+    });
+  };
+  const handleVariationChange = (
+    itemIdx,
+    variationIdx,
+    field,
+    value
+  ) => {
+    setCodeChanges(prev => {
+      const updated = [...prev];
+      updated[itemIdx].variations[variationIdx][field] = value;
+      return updated;
+    });
   };
   const handlePptNoChange = (i, v) => {
     const arr = [...codeChanges];
@@ -79,6 +118,7 @@ export const useTemplate = () => {
                                         ppt_no: it.ppt_no || "",
                                         aswas_code: it.aswas_code?.trim() || "",
                                         tobe_code: it.tobe_code?.trim() || "",
+                                        variations: it.variations ?? []
                                       }) );
 
         setCodeChanges(_codeChanges);
@@ -99,6 +139,7 @@ export const useTemplate = () => {
   // 템플릿 저장
   const handleSaveTemplate = async () => {
     // AS-WAS/TO-BE validation: 동시에 비어있는 row 차단
+    // 💡 Variation도 동일하게 검사해야 할지 검토 필요 !!
     if (codeChanges.some(item => !item.aswas_code.trim() && !item.tobe_code.trim())) {
       alert("AS-WAS와 TO-BE 코드 중 최소 하나는 입력해 주세요.");
       return;
@@ -166,5 +207,8 @@ export const useTemplate = () => {
     handleTobeChange,
     handleGetTemplate,
     setBackupHtmlContent,
+    addVariation,
+    handleVariationChange,
+    removeVariation,
   };
 };
