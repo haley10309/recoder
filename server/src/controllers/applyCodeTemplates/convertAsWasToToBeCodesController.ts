@@ -42,8 +42,14 @@ export const convertAsWasToToBeCodes = (
     let originalCode = req.file.buffer.toString('utf-8');
     const changeResults: ChangeResult[] = [];
 
-    parsedCodeChanges.forEach(({ asWasCode, toBeCode }, index) => {
-      const { newCode, changed, matchedPart } = replaceCode(originalCode, asWasCode, toBeCode);
+    parsedCodeChanges.forEach(({ asWasCode, toBeCode,variations}, index) => {
+
+      // 각 국가에 따른 Variation
+      const matched = variations?.find(v => v.countries?.includes(countryCode));
+      const effectiveAsWas = matched?.aswas_code_variation ?? asWasCode;
+      const effectiveToBe  = matched?.tobe_code_variation  ?? toBeCode;
+      
+      const { newCode, changed, matchedPart } = replaceCode(originalCode, effectiveAsWas, effectiveToBe);
       changeResults.push({ pairIndex: index, changed: !!changed, matchedPart });
       if (changed) {
         originalCode = newCode;
