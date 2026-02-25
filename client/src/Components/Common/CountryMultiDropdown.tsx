@@ -41,7 +41,7 @@ export default function CountryMultiDropdown({ value, onChange }: Props) {
     );
   }, [search]);
 
-  const toggleCountry = (country: string) => {
+  const toggleCountry = (country: string) => { 
     const exists = value.includes(country);
 
     const updated = exists
@@ -60,14 +60,14 @@ export default function CountryMultiDropdown({ value, onChange }: Props) {
   };
 
   return (
-    <div ref={wrapperRef} className="relative w-full text-sm">
+    <div ref={wrapperRef} className="relative w-[50%] mt-[15px] text-[13px]">
       {/* Trigger */}
       <div
         onClick={() => setOpen((prev) => !prev)}
-        className="border rounded px-3 py-2 bg-white cursor-pointer flex justify-between items-center hover:border-gray-400"
+        className="border rounded px-3 h-[30px] w-full bg-white cursor-pointer flex justify-between items-center hover:border-gray-400"
       >
         <span className={value.length === 0 ? "text-gray-400" : ""}>
-          {value.length === 0 ? "기본 적용" : value.join(", ")}
+          {value.length === 0 ? "국가 선택" : value.join(", ")}
         </span>
         <span className="text-xs">▼</span>
       </div>
@@ -81,7 +81,7 @@ export default function CountryMultiDropdown({ value, onChange }: Props) {
             placeholder="검색..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full border rounded px-2 py-1 mb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="w-full border rounded px-2 py-1 mb-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 overflow-hidden whitespace-nowrap"
           />
 
           {/* 액션 버튼 */}
