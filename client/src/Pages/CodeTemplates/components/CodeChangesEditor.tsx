@@ -123,7 +123,6 @@ const CodeChangesEditor = ({
                   </div>
                   <CopyTextButton text="코드 복사" value={item.aswas_code} style={{ marginTop: "10px" }} />
                 </div>
-
                 <div className="to_be_div">
                   <br />
                   <div className="mb-[5px]" />
@@ -144,51 +143,63 @@ const CodeChangesEditor = ({
               {/* 2) Variations */}
               {/* ========================= */}
               {item.variations?.map((variation, vIdx) => (
-                <div className="w-[95%] flex gap-[20px] justify-center">
-                  <div key={vIdx} className="as_was_div">
-                    <hr className="border-t border-gray-300 mt-[10px] mb-[10px]" />
+                <div className="w-[95%] flex flex-col gap-[20px]">
+                  <hr className="border-t border-gray-300 mt-[10px] w-full" />
+                  <div className="flex justify-between items-start">
+                    <CountryMultiDropdown
+                      value={variation.countries ?? []}
+                      onChange={(updated) => handleVariationChange(idx, vIdx, "countries", updated)}
+                    />
+                    <span/>
+                    <ActionButton icon="ClearOutlined" type="button" onClick={() => removeVariation(idx, vIdx)}>
+                      삭제
+                    </ActionButton>
+                  </div>
+                  <div className="flex gap-[20px] justify-center">
+                    <div key={vIdx} className="as_was_div">
                     {/* AS-WAS Variation */}
-                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                      <span/>
-                      <ActionButton icon="ClearOutlined" type="button" onClick={() => removeVariation(idx, vIdx)}>
-                        삭제
-                      </ActionButton>
+                        <textarea
+                          rows="5"
+                          className="code-textarea"
+                          placeholder="AS-WAS Variation 코드를 입력해 주세요."
+                          value={variation.aswas_code_variation ?? ""}
+                          onChange={(e) => handleVariationChange(idx, vIdx, "aswas_code_variation", e.target.value)}
+                        />
+                        <div className="flex font-bold">
+                          <div className="text-xs">
+                            <span className="ml-1 text-[#4b5563;]">
+                              [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
+                            </span>==
+                          </div>
+                          {backupHtmlFile ? (
+                            <span className="ml-1 text-xs"
+                              style={{
+                                color: countOccurrences(variation.aswas_code) === 1 ? "blue" : "red"
+                              }}>
+                                {`${countOccurrences(variation.aswas_code)}회`}
+                            </span>
+                          ) : (
+                            <span className="ml-1 text-xs font-normal text-[#ff7300]">
+                              (원본코드 업로드 필요)
+                            </span>
+                          )}
+                        </div>
+                        <CopyTextButton text="코드 복사" value={variation.aswas_code_variation ?? ""} style={{ marginTop: "15px" }} />
                     </div>
+                    <div className="to_be_div">
                       <textarea
                         rows="5"
-                        className="code-textarea mt-2"
-                        placeholder="AS-WAS Variation 코드"
-                        value={variation.aswas_code_variation ?? ""}
-                        onChange={(e) => handleVariationChange(idx, vIdx, "aswas_code_variation", e.target.value)}
+                        className="code-textarea"
+                        placeholder="TO-BE 코드를 입력해 주세요."
+                        value={variation.tobe_code_variation ?? ""}
+                        onChange={(e) => handleVariationChange(idx, vIdx, "tobe_code_variation", e.target.value)}
                       />
-                      <div className="flex font-bold">
-                        <div className="text-xs">
-                          <span className="ml-1 text-[#4b5563;]">
-                            [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
-                          </span>
-                        </div>
-                        {backupHtmlFile ? (
-                          <span className="ml-1 text-xs"
-                            style={{
-                              color: countOccurrences(item.aswas_code) === 1 ? "blue" : "red"
-                            }}>
-                              {`${countOccurrences(item.aswas_code)}회`}
-                          </span>
-                        ) : (
-                          <span className="ml-1 text-xs font-normal text-[#ff7300]">
-                            (원본코드 업로드 필요)
-                          </span>
-                        )}
+                      <div className="text-xs">
+                        <span className="ml-1 font-bold text-[#4b5563;]">[TO-BE]</span>
                       </div>
-                      <div className="flex flex gap-[20px] justify-start">
-                        <CopyTextButton text="코드 복사" value={variation.aswas_code_variation ?? ""} style={{ marginTop: "15px" }} />
-                        <CountryMultiDropdown
-                          value={variation.countries ?? []}
-                          onChange={(updated) => handleVariationChange(idx, vIdx, "countries", updated)}
-                        />
-                      </div>
+                      <CopyTextButton text="코드 복사" value={variation.tobe_code_variation ?? ""} style={{ marginTop: "15px" }} />
+                    </div>
                   </div>
-                  <div className="to_be_div" />
                 </div>
               ))}
             </div>

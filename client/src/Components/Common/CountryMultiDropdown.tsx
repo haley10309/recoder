@@ -60,11 +60,11 @@ export default function CountryMultiDropdown({ value, onChange }: Props) {
   };
 
   return (
-    <div ref={wrapperRef} className="relative w-[50%] mt-[15px] text-[13px]">
+    <div ref={wrapperRef} className="relative w-[60%] text-[13px]">
       {/* Trigger */}
       <div
         onClick={() => setOpen((prev) => !prev)}
-        className="border rounded px-3 h-[30px] w-full bg-white cursor-pointer flex justify-between items-center hover:border-gray-400"
+        className="border rounded px-3 h-[30px] w-full bg-white cursor-pointer flex justify-between items-center hover:border-[#ff7300]"
       >
         <span className={value.length === 0 ? "text-gray-400" : ""}>
           {value.length === 0 ? "국가 선택" : value.join(", ")}
