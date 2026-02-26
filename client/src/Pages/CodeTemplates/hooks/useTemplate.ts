@@ -175,6 +175,7 @@ export const useTemplate = () => {
                                       ppt_no: it.ppt_no || "",
                                       aswas_code: it.aswas_code?.trim() || "",
                                       tobe_code: it.tobe_code?.trim() || "",
+                                      variations: it.variations ?? []
                                     }) );
 
       setCodeChanges(_codeChanges);
