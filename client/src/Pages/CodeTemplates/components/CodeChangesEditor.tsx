@@ -133,10 +133,12 @@ const CodeChangesEditor = ({
                     value={item.tobe_code}
                     onChange={(e) => handleTobeChange(idx, e.target.value)}
                   />
-                  <div className="text-xs">
-                    <span className="ml-1 font-bold text-[#4b5563;]">[TO-BE]</span>
+                  <div className="flex font-bold">
+                    <div className="text-xs">
+                      <span className="ml-1 font-bold text-[#4b5563;]">[TO-BE]</span>
+                    </div>
                   </div>
-                  <CopyTextButton text="코드 복사" value={item.tobe_code} style={{ marginTop: "15px" }} />
+                  <CopyTextButton text="코드 복사" value={item.tobe_code} style={{ marginTop: "10px" }} />
                 </div>
               </div>
               {/* ========================= */}

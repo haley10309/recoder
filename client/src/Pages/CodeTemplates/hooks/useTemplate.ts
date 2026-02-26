@@ -104,12 +104,14 @@ export const useTemplate = () => {
         alert(`${ticketUrl} 템플릿을 불러왔습니다.`);
         setSaveType("update");
 
+        console.log("test use template 1")
         // 2) 세부 내용 가져오기
         const detailRes = await defaultAxios.post(`/get-template-details`, {
           ticket_num: ticketNum,
           ticket_url: ticketUrl,
         });
         const detailData = detailRes.data;
+          console.log("test use template 2")
 
         const _codeChanges = (detailData.codeChanges ?? [])
                                       .filter((it) => !isAssetCode(it.aswas_code)) // TODO Later: asset 아닌 코드만 필터링중인데, 쭉 유지할지 결정 필요

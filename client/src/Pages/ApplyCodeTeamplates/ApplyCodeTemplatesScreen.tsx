@@ -31,6 +31,8 @@ const ApplyCodeTemplatesScreen = () => {
     handleAsWasCodeChange,
     handleToBeCodeChange,
     handlePptNoChange,
+    defaultTextAreas,
+    setDefaultTextAreas,
     templateId,
   } = useTemplate();
 
@@ -135,6 +137,8 @@ const ApplyCodeTemplatesScreen = () => {
           handleToBeCodeChange={handleToBeCodeChange}
           handlePptNoChange={handlePptNoChange}
           countOccurrences={countOccurrences}
+          isDefault={countryCode === "UK"}
+          defaultTextAreas={defaultTextAreas}
         />
       </WhiteBox>
       <Gap gap={50} />
