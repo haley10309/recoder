@@ -69,7 +69,7 @@ const CodeChangesEditor = ({
               </ActionButton>
 
               <ActionButton color="#F7AC6E" icon="Add" type="button" onClick={() => addVariation(idx)}>
-                AS-WAS 추가
+                Variation 추가
               </ActionButton>
               {!!item.ppt_no && (
                 <>
