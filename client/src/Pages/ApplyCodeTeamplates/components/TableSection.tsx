@@ -9,6 +9,8 @@ const TableSection = ({
   handleToBeCodeChange,
   handlePptNoChange,
   countOccurrences,
+  isDefault,
+  defaultTextAreas,
 }) => {
   return (
     <TableWrapper>
@@ -40,6 +42,9 @@ const TableSection = ({
             hasBackupHtmlFile={hasBackupHtmlFile}
             handlePptNoChange={(value) => handlePptNoChange(index, value)}
             countOccurrences={countOccurrences}
+            isDefault={isDefault}
+            defaultAsWasCode={defaultTextAreas[index].asWasCode}
+            defaultToBeCode={defaultTextAreas[index].toBeCode}
           />
         );
       })}

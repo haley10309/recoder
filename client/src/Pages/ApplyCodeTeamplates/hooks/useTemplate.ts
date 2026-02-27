@@ -19,6 +19,7 @@ export const useTemplate = () => {
   const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", localizedToBeCode: "", checked: false, isApplied: null }]);
   const [countryCode, setCountryCode] = useState("");
   const [templateId, setTemplateId] = useState(null);
+  const [defaultTextAreas, setDefaultTextAreas] = useState([{ asWasCode: "", toBeCode: "", localizedToBeCode: "", checked: false, isApplied: null }]);
 
   const isEnglishCountry = countryCode === ""
                             ? null
@@ -72,6 +73,31 @@ export const useTemplate = () => {
         });
 
       setTextareas(newTextareas);
+
+      const defaultTextAreas = (data.codeChanges ?? [])
+        .filter((it) => !isAssetCode(it.aswas_code))
+        .map((it) => {
+          const matchedVariation = it.variations?.find((v) =>
+            v.countries?.includes("UK")
+          );
+
+          const finalAsWas =
+            matchedVariation?.aswas_code_variation || it.aswas_code;
+
+          const finalToBe =
+            matchedVariation?.tobe_code_variation || it.tobe_code;
+
+          return {
+            id: it.id,
+            pptNo: it.ppt_no || "",
+            asWasCode: replaceCountryCode(finalAsWas?.trim() || "", countryCode),
+            toBeCode: replaceCountryCode(finalToBe?.trim() || "", countryCode),
+            localizedToBeCode: "",
+            checked: true,
+          };
+        });
+
+      setDefaultTextAreas(defaultTextAreas);
       alert("성공적으로 템플릿을 불러왔습니다.");
     } catch (error) {
     }
@@ -119,6 +145,8 @@ export const useTemplate = () => {
     handleAsWasCodeChange,
     handleToBeCodeChange,
     handlePptNoChange,
+    defaultTextAreas,
+    setDefaultTextAreas,
     templateId,
   };
 };

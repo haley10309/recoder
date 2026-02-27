@@ -17,6 +17,9 @@ const BasicTextarea = ({
   hasBackupHtmlFile,
   handlePptNoChange,
   countOccurrences,
+  isDefault,
+  defaultAsWasCode,
+  defaultToBeCode,
 }) => {
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
 
@@ -49,8 +52,8 @@ const BasicTextarea = ({
   return (
     <Container>
       <div style={{ fontSize: "12px", paddingLeft: "15px", paddingTop: "10px" }}>{indexText}</div>
-      <Wrapper>
-        <PptNo>
+      <Wrapper className="as_was_to_be_div flex items-start gap-[30px]">
+        <PptNo className="flex flex-col justify-center items-center gap-[10px]">
           <div className="flex items-center gap-[10px]">
             <label className="font-[16px]">PPT NO.</label>
             <input
@@ -74,112 +77,173 @@ const BasicTextarea = ({
             </>
           )}
         </PptNo>
+        <div className="w-[100%] flex flex-col">
+          <div className="w-[95%] flex gap-[20px] justify-center">
+            {/* AS-WAS */}
+            <CodeBlock>
+              <Textarea
+                value={asWasCode}
+                onChange={(e) => setAsWasCode(e.target.value)}
+                placeholder="AS-WAS 코드를 입력해 주세요."
+              />
 
-        {/* AS-WAS */}
-        <CodeBlock>
-          <Textarea
-            value={asWasCode}
-            onChange={(e) => setAsWasCode(e.target.value)}
-            placeholder="AS-WAS code를 입력하세요."
-          />
+              <div className="flex font-bold">
+                <div className="text-xs">
+                  <span className="ml-1 text-[#4b5563;]">
+                    [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
+                  </span>
+                </div>
+                {hasBackupHtmlFile ? (
+                  <span className="ml-1 text-xs"
+                    style={{
+                      color: asWasOccurrenceCount === 1 
+                              ? "blue" 
+                              : asWasOccurrenceCount === 0
+                                ? "red"
+                                : "orange"
+                    }}>
+                      {`${asWasOccurrenceCount}회`}
+                  </span>
+                ) : (
+                  <span className="ml-1 text-xs font-normal text-[#ff7300]">
+                    (원본코드 업로드 필요)
+                  </span>
+                )}
+              </div>
+              
+              <CopyTextButton
+                text={"코드 복사"}
+                value={asWasCode}
+                style={{ marginTop: "10px" }}
+              />
 
-          <div className="flex font-bold">
-            <div className="text-xs">
-              <span className="ml-1 text-[#4b5563;]">
-                [AS-WAS] 원본코드 내 AS-WAS 코드 출현 횟수:
-              </span>
-            </div>
-            {hasBackupHtmlFile ? (
-              <span className="ml-1 text-xs"
-                style={{
-                  color: asWasOccurrenceCount === 1 
-                          ? "blue" 
-                          : asWasOccurrenceCount === 0
-                            ? "red"
-                            : "orange"
-                }}>
-                  {`${asWasOccurrenceCount}회`}
-              </span>
-            ) : (
-              <span className="ml-1 text-xs font-normal text-[#ff7300]">
-                (원본코드 업로드 필요)
-              </span>
-            )}
-          </div>
-          
-          <CopyTextButton
-            text={"코드 복사"}
-            value={asWasCode}
-          />
+              {matchedPart && (
+                <MatchedPartWrapper>
+                  <ToggleButton onClick={handleToggleMatchedPart}>
+                    {isMatchedPartVisible ? "코드 숨기기" : "일치하는 코드 보기"}
+                  </ToggleButton>
 
-          {matchedPart && (
-            <MatchedPartWrapper>
-              <ToggleButton onClick={handleToggleMatchedPart}>
-                {isMatchedPartVisible ? "코드 숨기기" : "일치하는 코드 보기"}
-              </ToggleButton>
-
-              {isMatchedPartVisible && (
-                <MatchedPartContainer>
-                  <strong>Front Matched Part:</strong>
-                  <Pre>{matchedPart[0]}</Pre>
-                  <CopyButton
-                    onClick={() => handleCopyClipBoard(matchedPart[0])}
-                  >
-                    <CopyIcon src={Copy} alt="copy" />
-                  </CopyButton>
-                  <strong>Back Matched Part:</strong>
-                  <Pre>{matchedPart[1]}</Pre>
-                  <CopyButton
-                    onClick={() => handleCopyClipBoard(matchedPart[1])}
-                  >
-                    <CopyIcon src={Copy} alt="copy" />
-                  </CopyButton>
-                </MatchedPartContainer>
+                  {isMatchedPartVisible && (
+                    <MatchedPartContainer>
+                      <strong>Front Matched Part:</strong>
+                      <Pre>{matchedPart[0]}</Pre>
+                      <CopyButton
+                        onClick={() => handleCopyClipBoard(matchedPart[0])}
+                      >
+                        <CopyIcon src={Copy} alt="copy" />
+                      </CopyButton>
+                      <strong>Back Matched Part:</strong>
+                      <Pre>{matchedPart[1]}</Pre>
+                      <CopyButton
+                        onClick={() => handleCopyClipBoard(matchedPart[1])}
+                      >
+                        <CopyIcon src={Copy} alt="copy" />
+                      </CopyButton>
+                    </MatchedPartContainer>
+                  )}
+                </MatchedPartWrapper>
               )}
-            </MatchedPartWrapper>
-          )}
-        </CodeBlock>
+            </CodeBlock>
 
-        {/* TO-BE */}
-        <CodeBlock>
-          <Textarea
-            value={toBeCode}
-            onChange={(e) => setToBeCode(e.target.value)}
-            placeholder="TO-BE code를 입력하세요."
-            $isApplied={isApplied}
-            $borderColor={color_toBe}
-          />
-          
-          <div className="flex font-bold">
-            <div className="text-xs">
-              {/* <span className="ml-1 text-[#4b5563;]">
-                {`[TO-BE] 변환코드 내 TO-BE 코드 출현 횟수: ${toBeOccurrenceCount}회`}
-              </span>
-              <br/> */}
-              <span className="ml-1 text-[#4b5563;]">
-                [TO-BE]{' '}
-                <span className={`ml-1`} style={{ color: color_toBe }}>
-                  {isApplied === 'sameAsBefore' 
-                    ? "AS-WAS와 TO-BE가 똑같아, 변경이 없습니다." 
-                    : isApplied === 'yes' 
-                      ? asWasOccurrenceCount === 1 
-                        ? "변경이 적용돼요." 
-                        : "변경이 적용되나, AS-WAS의 코드 출현 횟수가 2회 이상이라 첫번째 코드만 변경이 적용돼요. 확인이 필요해요." 
-                      : isApplied === 'no'
-                        ? "원본코드에서 AS-WAS를 찾지 못해, 변경이 적용되지 않습니다."
-                        : ""
-                  }
+            {/* TO-BE */}
+            <CodeBlock>
+              <Textarea
+                value={toBeCode}
+                onChange={(e) => setToBeCode(e.target.value)}
+                placeholder="TO-BE 코드를 입력해 주세요."
+                $isApplied={isApplied}
+                $borderColor={color_toBe}
+              />
+              
+              <div className="flex font-bold">
+                <div className="text-xs">
+                  <span className="ml-1 text-[#4b5563;]">
+                    [TO-BE]{' '}
+                    <span className={`ml-1`} style={{ color: color_toBe }}>
+                      {isApplied === 'sameAsBefore' 
+                        ? "AS-WAS와 TO-BE가 똑같아, 변경이 없습니다." 
+                        : isApplied === 'yes' 
+                          ? asWasOccurrenceCount === 1 
+                            ? "변경이 적용돼요." 
+                            : "변경이 적용되나, AS-WAS의 코드 출현 횟수가 2회 이상이라 첫번째 코드만 변경이 적용돼요. 확인이 필요해요." 
+                          : isApplied === 'no'
+                            ? "원본코드에서 AS-WAS를 찾지 못해, 변경이 적용되지 않습니다."
+                            : ""
+                      }
+                    </span>
+                    
+                  </span>
+                </div>
+              </div>
+
+              <CopyTextButton
+                text={"코드 복사"}
+                value={toBeCode}
+                style={{ marginTop: "10px"}}
+              />
+            </CodeBlock>
+          </div>
+          {/* Show Default(UK) Code */}
+          {!isDefault && (
+          <div className="w-[95%] flex flex-col gap-[20px]">
+            <hr className="border-t border-gray-300 mt-[10px] w-full" />
+            <div className="flex font-bold">
+              <div className="text-s">
+                <span className="ml-1 text-[#4b5563;]">
+                  참고용 Default(UK) code
                 </span>
+              </div>
+            </div>
+            <div className="flex gap-[20px] justify-center bg-black/10 rounded">
+              {/* AS-WAS */}
+              <CodeBlock>
+                <Textarea
+                  value={defaultAsWasCode}
+                  placeholder="Default(UK)의 AS-WAS 코드입니다."
+                />
+
+                <div className="flex font-bold">
+                  <div className="text-xs">
+                    <span className="ml-1 text-[#4b5563;]">
+                      [AS-WAS]
+                    </span>
+                  </div>
+                </div>
                 
-              </span>
+                <CopyTextButton
+                  text={"코드 복사"}
+                  value={defaultAsWasCode}
+                  style={{ marginTop: "10px" }}
+                />
+              </CodeBlock>
+
+              {/* TO-BE */}
+              <CodeBlock>
+                <Textarea
+                  value={defaultToBeCode}
+                  placeholder="Default(UK)의 TO-BE 코드입니다."
+                  $isApplied={isApplied}
+                  $borderColor={color_toBe}
+                />
+                
+                <div className="flex font-bold">
+                  <div className="text-xs">
+                    <span className="ml-1 text-[#4b5563;]">
+                      [TO-BE]
+                    </span>
+                  </div>
+                </div>
+
+                <CopyTextButton
+                  text={"코드 복사"}
+                  value={defaultToBeCode}
+                  style={{ marginTop: "10px"}}
+                />
+              </CodeBlock>
             </div>
           </div>
-
-          <CopyTextButton
-            text={"코드 복사"}
-            value={toBeCode}
-          />
-        </CodeBlock>
+          )}
+        </div>
       </Wrapper>
     </Container>
   );
@@ -213,27 +277,31 @@ const PptNo = styled.div`
 `;
 
 const CodeBlock = styled.div`
-  width: 42%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  width: 100%;
+  padding: 5px;
 `;
 
 const Textarea = styled.textarea`
-  width: 100%;
-  height: 150px;
   background-color: #d9d9d9;
+  width: 100%;
+  color: black;
   resize: none;
-  padding: 1rem;
-  overflow: hidden;
-  
-  border-radius: 8px;
-  border-width: 3px;
+  height: 130px;
+  padding: 0.5rem;
+  transition: border-color 0.3s;
+
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  border-width: 1px;
   border-color: ${({ $borderColor }) => $borderColor};
 
-  &:hover,
-  &:focus {
+  &:hover {
     overflow: auto;
+  }
+
+  &:focus {
+    border-color: #595880;
+    outline: none;
   }
 
   scrollbar-width: thin;
@@ -241,6 +309,7 @@ const Textarea = styled.textarea`
 
   &::-webkit-scrollbar {
     width: 8px;
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
