@@ -11,9 +11,10 @@ export const useFileUpload = ({
   const [backupHtmlFile, setBackupHtmlFile] = useState(null);
 
   // PPT.txt 업로드 처리
-  const _handlePptTxtFileSubmit = async (file) => {
+  const _handlePptTxtFileSubmit = async (asWasFile,toBeFile) => {
     const formData = new FormData();
-    formData.append("txtfile", file);
+    formData.append("asWasFile", asWasFile);
+    formData.append("toBeFile", toBeFile);
     try {
       const res = await defaultAxios.post(`/parse-guide-file`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -44,12 +45,13 @@ export const useFileUpload = ({
     }
   };
   
-  const handlePptTxtFileChange = (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
-    setPptTxtFile(f);
-    _handlePptTxtFileSubmit(f);
-  };
+  const handlePptTxtFileChange = (asWasFile,toBeFile) => {
+  if (!asWasFile || !toBeFile) return;
+
+  const f = asWasFile
+  const g = toBeFile
+  _handlePptTxtFileSubmit(f, g);
+};
 
   // 원본코드.html 파일 처리
   const handleBackUpHtmlFileChange = (e) => {

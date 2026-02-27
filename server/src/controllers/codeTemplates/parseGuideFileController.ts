@@ -4,69 +4,90 @@
 import { Request, Response } from "express";
 import { GuideUploadResponse } from "../../types/codeTemplate.types";
 
+
 export const parseGuideFile = async (
   req: Request,
   res: Response<GuideUploadResponse>
 ): Promise<void> => {
-  // TODO: 나눠서 보내지말고 하나로 보내고 클라이언트에서도 그렇게 한방에 처리하기
-  if (!req.file) {
-    res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
-    return;
+
+  const asWasFile = (req.files as any)?.["asWasFile"]?.[0];
+  const toBeFile = (req.files as any)?.["toBeFile"]?.[0];
+
+  if (!asWasFile || !toBeFile) {
+  res.status(400).json({ error: "asWasFile/toBeFile이 필요합니다." });
+  return;
   }
-
-  const text = req.file.buffer.toString('utf-8');
   
-  const slideSections = text.split(/(?=슬라이드\s*\d+\s*\[AS-WAS\])/g); // 슬라이드별로 분리
-
+  const asWasText = asWasFile.buffer.toString("utf-8");
+  const toBeText = toBeFile.buffer.toString("utf-8");
+  
   const pptNos: string[] = [];
   const asWasCodes: string[] = [];
   const toBeCodes: string[] = [];
+  
+  // 슬라이드 단위 분리
+  const asWasSections: string[] = asWasText.split(/(?=슬라이드\s*\d+)/g);
+  const toBeSections: string[] = toBeText.split(/(?=슬라이드\s*\d+)/g);
+  const sectionMap = new Map<
+    string,
+    { asWasEntries: string[]; toBeEntries: string[] }
+  >();
 
-  slideSections.forEach(section => {
-    const slideNoMatch = section.match(/슬라이드\s*(\d+)/);
-    if (!slideNoMatch) return; // 슬라이드 번호가 없으면 건너뜀
-    const slideNo = slideNoMatch[1];
+  asWasSections.forEach(section => {
 
-    // AS-WAS ~ TO-BE 추출
-    const asWasMatch = section.match(/\[AS-WAS\]([\s\S]*?)\[TO-BE\]/);
-    const toBeMatch = section.match(/\[TO-BE\]([\s\S]*?)(?=슬라이드|$)/); 
+    const m = section.match(/슬라이드\s*(\d+)/);
+    const slideNo = m?.[1];          // slideNo: string | undefined
+    if (!slideNo) return;
 
-    let asWasEntries: string[] = [];
-    let toBeEntries: string[] = [];
+    const matches = [...section.matchAll(/^\[AS-WAS\][\r\n]*([\s\S]*?)(?=^\[AS-WAS\]|(?![\s\S]))/gm)];
+    if (matches.length === 0) return;
 
-    // AS-WAS 처리
-    if (asWasMatch) {
-      let asWasText = asWasMatch[1].trim();
-      // asWasEntries = asWasText.split(/\n\s*\n\s*\n/).map(s => s.trim()).filter(Boolean);
-      asWasEntries = asWasText.split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/).map(s => s.trim()).filter(Boolean);
-    }
+    // 여러 AS-WAS 블록을 entries로 합치기(원하면 블록별 분리도 가능)
+    const entries = matches
+      .map(m => m[1].trim())
+      .flatMap(block =>
+        block
+          .replace(/슬라이드\s*\d+/g, "")
+          .split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/)
+          .map(s => s.trim())
+          .filter(Boolean)
+      );
 
-    // TO-BE 처리
-    if (toBeMatch) {
-      let toBeText = toBeMatch[1]
-        .replace(/-\n/g, '') // `-`로 끝나는 줄은 이어 붙이기
-        .trim();
-      // toBeEntries = toBeText.split(/\n\s*\n\s*\n/).map(s => s.trim()).filter(Boolean);
-      toBeEntries = toBeText.split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/).map(s => s.trim()).filter(Boolean);
-   
-      (/\r?\n\s*\r?\n\s*\r?\n\s*\r?\n/)
-   }
-
-    // 길이가 다르면 빈 항목 추가
-    const maxLen = Math.max(asWasEntries.length, toBeEntries.length);
-    if (asWasEntries.length < maxLen) {
-      asWasEntries = [...asWasEntries, ...Array(maxLen - asWasEntries.length).fill("")];
-    }
-    if (toBeEntries.length < maxLen) {
-      toBeEntries = [...toBeEntries, ...Array(maxLen - toBeEntries.length).fill("")];
-    }
-
-    // 각 항목에 대해 슬라이드 번호 추가
-    pptNos.push(...Array(maxLen).fill(slideNo));
-    asWasCodes.push(...asWasEntries);
-    toBeCodes.push(...toBeEntries);
+    const target = sectionMap.get(slideNo) ?? { asWasEntries: [], toBeEntries: [] };
+    target.asWasEntries = entries;
+    sectionMap.set(slideNo, target);
   });
 
+  toBeSections.forEach(section => {
+    const m = section.match(/슬라이드\s*(\d+)/);
+    const slideNo = m?.[1];          // slideNo: string | undefined
+    if (!slideNo) return;
+
+    const matches = [...section.matchAll(/^\[TO-BE\][\r\n]*([\s\S]*?)(?=^\[AS-WAS\]|(?![\s\S]))/gm)];
+    if (matches.length === 0) return;
+
+    const entries = matches
+      .map(m => m[1].trim())
+      .flatMap(block =>
+        block
+          .replace(/슬라이드\s*\d+/g, "")
+          .replace(/-\n/g, "")
+          .split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/)
+          .map(s => s.trim())
+          .filter(Boolean)
+      );
+
+    const target = sectionMap.get(slideNo) ?? { asWasEntries: [], toBeEntries: [] };
+    target.toBeEntries = entries;
+    sectionMap.set(slideNo, target);
+  });
+
+  for (const [slideNo, v] of sectionMap.entries()) {
+    pptNos.push(slideNo);
+    asWasCodes.push(v.asWasEntries.join("\n"));
+    toBeCodes.push(v.toBeEntries.join("\n"));
+  }
+  
   // 응답 전송
   res.json({
     pptNos,
