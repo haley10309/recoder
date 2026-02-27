@@ -5,68 +5,86 @@ import { Request, Response } from "express";
 import { GuideUploadResponse } from "../../types/codeTemplate.types";
 
 export const parseGuideFile = async (
-  req: Request,
+  req: Request<
+    {},
+    {},
+    {
+      asWasText: string;
+      toBeText: string;
+    }
+    >,
   res: Response<GuideUploadResponse>
 ): Promise<void> => {
-  // TODO: 나눠서 보내지말고 하나로 보내고 클라이언트에서도 그렇게 한방에 처리하기
-  if (!req.file) {
-    res.status(400).json({ error: "파일이 업로드되지 않았습니다." });
+  const { asWasText, toBeText } = req.body;
+
+  if (!asWasText || !toBeText) {
+    res.status(400).json({ error: "asWasText / toBeText가 필요합니다." });
     return;
   }
-
-  const text = req.file.buffer.toString('utf-8');
-  
-  const slideSections = text.split(/(?=슬라이드\s*\d+\s*\[AS-WAS\])/g); // 슬라이드별로 분리
 
   const pptNos: string[] = [];
   const asWasCodes: string[] = [];
   const toBeCodes: string[] = [];
+  
+  // 슬라이드 단위 분리
+  const asWasSections = asWasText.split(/(?=슬라이드\s*\d+)/g);
+  const toBeSections = toBeText.split(/(?=슬라이드\s*\d+)/g);
+  const sectionMap = new Map<
+    string,
+    { asWasEntries: string[]; toBeEntries: string[] }
+  >();
 
-  slideSections.forEach(section => {
-    const slideNoMatch = section.match(/슬라이드\s*(\d+)/);
-    if (!slideNoMatch) return; // 슬라이드 번호가 없으면 건너뜀
-    const slideNo = slideNoMatch[1];
+  asWasSections.forEach(section => {
+    const slideMatch = section.match(/슬라이드\s*(\d+)/);
+    if (!slideMatch) return;
 
-    // AS-WAS ~ TO-BE 추출
-    const asWasMatch = section.match(/\[AS-WAS\]([\s\S]*?)\[TO-BE\]/);
-    const toBeMatch = section.match(/\[TO-BE\]([\s\S]*?)(?=슬라이드|$)/); 
+    const slideNo = slideMatch[1];
+    const entries = section
+      .replace(/슬라이드\s*\d+/g, "")
+      .split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/)
+      .map(s => s.trim())
+      .filter(Boolean);
 
-    let asWasEntries: string[] = [];
-    let toBeEntries: string[] = [];
-
-    // AS-WAS 처리
-    if (asWasMatch) {
-      let asWasText = asWasMatch[1].trim();
-      // asWasEntries = asWasText.split(/\n\s*\n\s*\n/).map(s => s.trim()).filter(Boolean);
-      asWasEntries = asWasText.split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/).map(s => s.trim()).filter(Boolean);
-    }
-
-    // TO-BE 처리
-    if (toBeMatch) {
-      let toBeText = toBeMatch[1]
-        .replace(/-\n/g, '') // `-`로 끝나는 줄은 이어 붙이기
-        .trim();
-      // toBeEntries = toBeText.split(/\n\s*\n\s*\n/).map(s => s.trim()).filter(Boolean);
-      toBeEntries = toBeText.split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/).map(s => s.trim()).filter(Boolean);
-   
-      (/\r?\n\s*\r?\n\s*\r?\n\s*\r?\n/)
-   }
-
-    // 길이가 다르면 빈 항목 추가
-    const maxLen = Math.max(asWasEntries.length, toBeEntries.length);
-    if (asWasEntries.length < maxLen) {
-      asWasEntries = [...asWasEntries, ...Array(maxLen - asWasEntries.length).fill("")];
-    }
-    if (toBeEntries.length < maxLen) {
-      toBeEntries = [...toBeEntries, ...Array(maxLen - toBeEntries.length).fill("")];
-    }
-
-    // 각 항목에 대해 슬라이드 번호 추가
-    pptNos.push(...Array(maxLen).fill(slideNo));
-    asWasCodes.push(...asWasEntries);
-    toBeCodes.push(...toBeEntries);
+    sectionMap.set(slideNo, {
+      asWasEntries: entries,
+      toBeEntries: [],
+    });
   });
 
+  toBeSections.forEach(section => {
+    const slideMatch = section.match(/슬라이드\s*(\d+)/);
+    if (!slideMatch) return;
+
+    const slideNo = slideMatch[1];
+    const entries = section
+      .replace(/슬라이드\s*\d+/g, "")
+      .replace(/-\n/g, "")
+      .split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/)
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const target = sectionMap.get(slideNo) ?? {
+      asWasEntries: [],
+      toBeEntries: [],
+    };
+
+    target.toBeEntries = entries;
+    sectionMap.set(slideNo, target);
+  });
+
+  // 결과 정리 (슬라이드 기준)
+  sectionMap.forEach((value, slideNo) => {
+    const maxLen = Math.max(
+      value.asWasEntries.length,
+      value.toBeEntries.length
+    );
+
+    for (let i = 0; i < maxLen; i++) {
+      pptNos.push(slideNo);
+      asWasCodes.push(value.asWasEntries[i] ?? "");
+      toBeCodes.push(value.toBeEntries[i] ?? "");
+    }
+  });
   // 응답 전송
   res.json({
     pptNos,
