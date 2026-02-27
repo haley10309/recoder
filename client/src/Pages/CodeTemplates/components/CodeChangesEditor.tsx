@@ -176,9 +176,9 @@ const CodeChangesEditor = ({
                           {backupHtmlFile ? (
                             <span className="ml-1 text-xs"
                               style={{
-                                color: countOccurrences(variation.aswas_code) === 1 ? "blue" : "red"
+                                color: countOccurrences(variation.aswas_code_variation) === 1 ? "blue" : "red"
                               }}>
-                                {`${countOccurrences(variation.aswas_code)}회`}
+                                {`${countOccurrences(variation.aswas_code_variation)}회`}
                             </span>
                           ) : (
                             <span className="ml-1 text-xs font-normal text-[#ff7300]">
