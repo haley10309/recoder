@@ -29,7 +29,7 @@ router.post("/check-template-exsist", cors(), authenticate, authorize("author", 
 router.post("/get-template-details", cors(), authenticate, authorize("author", "qaer", "pm"), getTemplateDetails);
 
 /** 1) Code Templates */
-router.post("/parse-guide-file", upload.single("txtfile"), cors(), authenticate, authorize("author", "qaer", "pm"), parseGuideFile);
+router.post(  "/parse-guide-file",upload.fields([{ name: "asWasFile", maxCount: 1 },{ name: "toBeFile", maxCount: 1 },]),parseGuideFile);
 router.post("/create-template", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), createTemplate); // ✅ Only pm (현재 임시로 전체 오픈)
 router.post("/update-template", multer().none(), cors(), authenticate, authorize("author", "qaer", "pm"), updateTemplate); // ✅ Only pm (현재 임시로 전체 오픈)
 

@@ -45,12 +45,13 @@ export const useFileUpload = ({
     }
   };
   
-  const handlePptTxtFileChange = (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
-    setPptTxtFile(f);
-    _handlePptTxtFileSubmit(f);
-  };
+  const handlePptTxtFileChange = (asWasFile,toBeFile) => {
+  if (!asWasFile || !toBeFile) return;
+
+  const f = asWasFile
+  const g = toBeFile
+  _handlePptTxtFileSubmit(f, g);
+};
 
   // 원본코드.html 파일 처리
   const handleBackUpHtmlFileChange = (e) => {
