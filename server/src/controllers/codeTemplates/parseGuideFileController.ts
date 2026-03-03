@@ -63,7 +63,7 @@ export const parseGuideFile = async (
     const slideNo = m?.[1];          // slideNo: string | undefined
     if (!slideNo) return;
 
-    const matches = [...section.matchAll(/^\[TO-BE\][\r\n]*([\s\S]*?)(?=^\[AS-WAS\]|(?![\s\S]))/gm)];
+    const matches = [...section.matchAll(/^\[TO-BE\][\r\n]*([\s\S]*?)(?=^\[TO-BE\]|(?![\s\S]))/gm)];
     if (matches.length === 0) return;
 
     const entries = matches
@@ -83,9 +83,13 @@ export const parseGuideFile = async (
   });
 
   for (const [slideNo, v] of sectionMap.entries()) {
-    pptNos.push(slideNo);
-    asWasCodes.push(v.asWasEntries.join("\n"));
-    toBeCodes.push(v.toBeEntries.join("\n"));
+    const maxLen = Math.max(v.asWasEntries.length, v.toBeEntries.length);
+
+    for (let i = 0; i < maxLen; i++) {
+      pptNos.push(slideNo);
+      asWasCodes.push(v.asWasEntries[i] ?? "");
+      toBeCodes.push(v.toBeEntries[i] ?? "");
+    }
   }
   
   // 응답 전송
