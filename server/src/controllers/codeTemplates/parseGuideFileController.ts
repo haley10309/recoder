@@ -48,7 +48,7 @@ export const parseGuideFile = async (
       .flatMap(block =>
         block
           .replace(/슬라이드\s*\d+/g, "")
-          .split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/)
+          .split(/-{3,}/)
           .map(s => s.trim())
           .filter(Boolean)
       );
@@ -72,7 +72,7 @@ export const parseGuideFile = async (
         block
           .replace(/슬라이드\s*\d+/g, "")
           .replace(/-\n/g, "")
-          .split(/-{3,}|(?:\r?\n\s*\r?\n\s*\r?\n\s*\r?\n)/)
+          .split(/-{3,}/)
           .map(s => s.trim())
           .filter(Boolean)
       );

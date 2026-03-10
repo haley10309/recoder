@@ -14,6 +14,7 @@ export const checkTemplateExist = async (
   const { ticket_num, ticket_url } = req.body;
 
     const db = await initDB();
+    
     const [results] = await db.execute<RowDataPacket[]>(
       `SELECT id FROM Templates 
       WHERE ticket_num = ? AND ticket_url = ? AND deleted_at IS NULL`,
