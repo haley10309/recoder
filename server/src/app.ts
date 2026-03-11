@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-// import swaggerUi from "swagger-ui-express";
-// import swaggerSpec from "./swagger/swagger";
+import * as swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./swagger/swagger";
 import routes from "./routes/routes";
 
 const app = express();
@@ -21,7 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use("/", routes);
-// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(
+  "/api-docs",
+  swaggerUi.serve as unknown as import("express").RequestHandler,
+  swaggerUi.setup(swaggerSpec)as unknown as import("express").RequestHandler
+);
 
 console.log(`📘 Swagger 문서 👉 http://localhost:${process.env.PORT}/api-docs`);
 
