@@ -2,7 +2,7 @@
 
 ```cmd
 > ssh seoul_center@121.252.183.22 -p 10022
-> 비밀번호 # PASSWORD=ptkseoul1!
+> 비밀번호 # PASSWORD=ptkseoul987A!
 
 > cd rawcode_auto/rawcode_auto_monorepo
 > (참고) 전체 path: /home/seoul_center/rawcode_auto/...
