@@ -33,7 +33,7 @@
  *       properties:
  *         error:
  *           type: string
- *           example: "파일이 업로드되지 않았습니다."
+ *           example: "AS-WAS / TO-BE File이 필요합니다."
  */
 /**
  * @swagger
@@ -43,8 +43,8 @@
  *       - Guides
  *     summary: 가이드 파일 업로드 및 파싱
  *     description: |
- *       업로드된 텍스트 파일을 읽어서 "슬라이드 N [AS-WAS] ... [TO-BE] ..." 형식을 파싱합니다.
- *       파싱 결과로 pptNos/asWasCodes/toBeCodes 배열을 반환합니다.
+ *       각각 업로드된 AS-WAS, TO-BE 텍스트 파일을 읽어서 파싱합니다.
+ *       파싱 결과로 pptNos, asWasCodes, toBeCodes 배열을 반환합니다.
  *     requestBody:
  *       required: true
  *       content:
@@ -52,11 +52,17 @@
  *           schema:
  *             type: object
  *             required:
- *               - file
+ *               - asWasFile
+ *               - toBeFile
  *             properties:
- *               file:
+ *               asWasFile:
  *                 type: string
  *                 format: binary
+ *                 description: AS-WAS 파일
+ *               toBeFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: TO-BE 파일
  *     responses:
  *       200:
  *         description: 성공
