@@ -25,71 +25,84 @@ export const parseGuideFile = async (
   const asWasCodes: string[] = [];
   const toBeCodes: string[] = [];
   
-  // 슬라이드 단위 분리
-  const asWasSections: string[] = asWasText.split(/(?=슬라이드\s*\d+)/g);
-  const toBeSections: string[] = toBeText.split(/(?=슬라이드\s*\d+)/g);
-  const sectionMap = new Map<
-    string,
-    { asWasEntries: string[]; toBeEntries: string[] }
-  >();
+  const parseTaggedSections = (
+    text: string,
+    tag: "AS-WAS" | "TO-BE"
+  ): { slideNo: string; content: string }[] => {
+    const normalizedText = text.replace(/\r\n/g, "\n");
 
-  asWasSections.forEach(section => {
+    const markerRegex = new RegExp(`슬라이드\\s*(\\d+)|\\[${tag}\\]`, "g");
+    const markers: Array<
+      | { type: "slide"; index: number; slideNo: string; raw: string }
+      | { type: "tag"; index: number; raw: string }
+    > = [];
 
-    const m = section.match(/슬라이드\s*(\d+)/);
-    const slideNo = m?.[1];          // slideNo: string | undefined
-    if (!slideNo) return;
-
-    const matches = [...section.matchAll(/^\[AS-WAS\][\r\n]*([\s\S]*?)(?=^\[AS-WAS\]|(?![\s\S]))/gm)];
-    if (matches.length === 0) return;
-
-    // 여러 AS-WAS 블록을 entries로 합치기(원하면 블록별 분리도 가능)
-    const entries = matches
-      .map(m => m[1].trim())
-      .flatMap(block =>
-        block
-          .replace(/슬라이드\s*\d+/g, "")
-          .split(/-{3,}/)
-          .map(s => s.trim())
-          .filter(Boolean)
-      );
-
-    const target = sectionMap.get(slideNo) ?? { asWasEntries: [], toBeEntries: [] };
-    target.asWasEntries = entries;
-    sectionMap.set(slideNo, target);
-  });
-
-  toBeSections.forEach(section => {
-    const m = section.match(/슬라이드\s*(\d+)/);
-    const slideNo = m?.[1];          // slideNo: string | undefined
-    if (!slideNo) return;
-
-    const matches = [...section.matchAll(/^\[TO-BE\][\r\n]*([\s\S]*?)(?=^\[TO-BE\]|(?![\s\S]))/gm)];
-    if (matches.length === 0) return;
-
-    const entries = matches
-      .map(m => m[1].trim())
-      .flatMap(block =>
-        block
-          .replace(/슬라이드\s*\d+/g, "")
-          .replace(/-\n/g, "")
-          .split(/-{3,}/)
-          .map(s => s.trim())
-          .filter(Boolean)
-      );
-
-    const target = sectionMap.get(slideNo) ?? { asWasEntries: [], toBeEntries: [] };
-    target.toBeEntries = entries;
-    sectionMap.set(slideNo, target);
-  });
-
-  for (const [slideNo, v] of sectionMap.entries()) {
-    const maxLen = Math.max(v.asWasEntries.length, v.toBeEntries.length);
-
-    for (let i = 0; i < maxLen; i++) {
-      pptNos.push(slideNo);
-      asWasCodes.push(v.asWasEntries[i] ?? "");
-      toBeCodes.push(v.toBeEntries[i] ?? "");
+    let match: RegExpExecArray | null;
+    while ((match = markerRegex.exec(normalizedText)) !== null) {
+      if (match[1]) {
+        markers.push({
+          type: "slide",
+          index: match.index,
+          slideNo: match[1],
+          raw: match[0],
+        });
+      } else {
+        markers.push({
+          type: "tag",
+          index: match.index,
+          raw: match[0],
+        });
+      }
     }
+
+    const results: { slideNo: string; content: string }[] = [];
+    let currentSlideNo = "";
+
+    for (let i = 0; i < markers.length; i++) {
+      const marker = markers[i];
+
+      if (marker.type === "slide") {
+        currentSlideNo = marker.slideNo;
+        continue;
+      }
+
+      if (marker.type === "tag") {
+        if (!currentSlideNo) continue;
+
+        const contentStart = marker.index + marker.raw.length;
+        const contentEnd =
+          i + 1 < markers.length ? markers[i + 1].index : normalizedText.length;
+
+        const content = normalizedText.slice(contentStart, contentEnd).trim();
+        if (!content) continue;
+
+        const entries = content
+          .replace(/슬라이드\s*\d+/g, "")
+          .replace(tag === "TO-BE" ? /-\n/g : /$^/, "")
+          .split(/-{3,}|(?:\n\s*\n\s*\n\s*\n)/)
+          .map(s => s.trim())
+          .filter(Boolean);
+
+        results.push({
+          slideNo: currentSlideNo,
+          content: entries.join("\n"),
+        });
+      }
+    }
+
+    return results;
+  };
+
+  const asWasParsed = parseTaggedSections(asWasText, "AS-WAS");
+  const toBeParsed = parseTaggedSections(toBeText, "TO-BE");
+
+  for (const item of asWasParsed) {
+    pptNos.push(item.slideNo);
+    asWasCodes.push(item.content);
+  }
+
+  for (const item of toBeParsed) {
+    toBeCodes.push(item.content);
   }
   
   // 응답 전송
