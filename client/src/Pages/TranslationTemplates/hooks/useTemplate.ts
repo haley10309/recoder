@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
@@ -6,9 +6,15 @@ import { isAssetCode } from "@/utils/codeUtils";
 import defaultAxios from "@/apis/defaultAxios";
 
 export const useTemplate = () => {
-  const [ticketNum, setTicketNum] = useState("");
-  const [ticketUrl, setTicketUrl] = useState("");
-
+  const [ticketNum, setTicketNum] = useState(() => sessionStorage.getItem("ticketNum") ?? "");
+  const [ticketUrl, setTicketUrl] = useState(() => sessionStorage.getItem("ticketUrl") ?? "");
+    useEffect(() => {
+    sessionStorage.setItem("ticketNum", ticketNum);
+  }, [ticketNum]);
+  
+    useEffect(() => {
+      sessionStorage.setItem("ticketUrl", ticketUrl);
+    }, [ticketUrl]);
   const {
     loading,
     ticketNumOptions,
