@@ -17,9 +17,6 @@ const BasicTextarea = ({
   hasBackupHtmlFile,
   handlePptNoChange,
   countOccurrences,
-  isDefault,
-  defaultAsWasCode,
-  defaultToBeCode,
 }) => {
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
 
@@ -183,66 +180,7 @@ const BasicTextarea = ({
               />
             </CodeBlock>
           </div>
-          {/* Show Default(UK) Code */}
-          {!isDefault && (
-          <div className="w-[95%] flex flex-col gap-[20px]">
-            <hr className="border-t border-gray-300 mt-[10px] w-full" />
-            <div className="flex font-bold">
-              <div className="text-s">
-                <span className="ml-1 text-[#4b5563;]">
-                  참고용 Default(UK) code
-                </span>
-              </div>
-            </div>
-            <div className="flex gap-[20px] justify-center bg-black/10 rounded">
-              {/* AS-WAS */}
-              <CodeBlock>
-                <Textarea
-                  value={defaultAsWasCode}
-                  placeholder="Default(UK)의 AS-WAS 코드입니다."
-                />
-
-                <div className="flex font-bold">
-                  <div className="text-xs">
-                    <span className="ml-1 text-[#4b5563;]">
-                      [AS-WAS]
-                    </span>
-                  </div>
-                </div>
-                
-                <CopyTextButton
-                  text={"코드 복사"}
-                  value={defaultAsWasCode}
-                  style={{ marginTop: "10px" }}
-                />
-              </CodeBlock>
-
-              {/* TO-BE */}
-              <CodeBlock>
-                <Textarea
-                  value={defaultToBeCode}
-                  placeholder="Default(UK)의 TO-BE 코드입니다."
-                  $isApplied={isApplied}
-                  $borderColor={color_toBe}
-                />
-                
-                <div className="flex font-bold">
-                  <div className="text-xs">
-                    <span className="ml-1 text-[#4b5563;]">
-                      [TO-BE]
-                    </span>
-                  </div>
-                </div>
-
-                <CopyTextButton
-                  text={"코드 복사"}
-                  value={defaultToBeCode}
-                  style={{ marginTop: "10px"}}
-                />
-              </CodeBlock>
-            </div>
-          </div>
-          )}
+          {/* Show Default(UK) Code - 260414 기준 불필요하여 삭제*/}
         </div>
       </Wrapper>
     </Container>
