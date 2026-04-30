@@ -21,3 +21,14 @@ export type SaveUnpackExcelTemplateResponse =
 export type ExtractUnpackExcelResponse =
   | { success: true; row_list: UnpackRow[] }
   | { success: false; error: string };
+
+  
+  
+export type GetUnpackTemplateDetailsBody = {
+  ticket_num: string;
+  ticket_url: string;
+};
+
+export type GetUnpackTemplateDetailsResponse =
+  | { templateId: number; row_list: UnpackRow[] }
+  | { error: string };

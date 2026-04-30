@@ -74,12 +74,12 @@ CREATE TABLE TemplateLocalizationEntries (
 
 CREATE TABLE TemplateUnpackSpecs (
     id int NOT NULL AUTO_INCREMENT,
-    target_selector TEXT NOT NULL,
-    apply_type TEXT NOT NULL,
+    row_order INT NULL,
+    target_selector VARCHAR(255) NOT NULL,
+    apply_type VARCHAR(50) NOT NULL,
     exclude_sup BOOLEAN NOT NULL DEFAULT FALSE,
     enable_text_transform BOOLEAN NOT NULL DEFAULT FALSE,
     original_copy TEXT NULL,
-    row_order INT NULL,
     template_id int NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
