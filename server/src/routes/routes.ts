@@ -19,6 +19,7 @@ import { convertAsWasToToBeCodes } from '../controllers/applyCodeTemplates/conve
 import { parseTranslationFile } from '../controllers/applyTranslationTemplates/parseTranslationFileController';
 import { updateLocalizationEntries } from '../controllers/translationTemplates/updateLocalizationEntriesController';
 import { extractUnpackExcel } from '../controllers/unpackTemplates/extractUnpackExcelController';
+import { getUnpackTemplateDetails } from '../controllers/unpackTemplates/getUnpackTemplateDetailsController';
 // import { saveUnpackExcelTemplate } from '../controllers/unpackTemplates/saveUnpackExcelTemplateController';
 
 router.use('/auth', authRoutes);
@@ -47,8 +48,8 @@ router.post("/parse-translation-file", upload.single('file'), cors(), authentica
 // 2)와 동일한 `/convert-aswas-to-tobe-codes` 사용
 
 /** 5) Unpack */
-router.post("/unpack-templates/extract", upload.single('file'), cors(), extractUnpackExcel); // TODO: auth 추가
-// router.post("/get-unpack-template-details", upload.single('file'), cors(), getUnpackTemplateDetails); // TODO: auth 추가
+router.post("/unpack-templates/extract", upload.single('file'), cors(), extractUnpackExcel);
+router.post("/unpack-templates/get-details", cors(), authenticate, authorize("author", "qaer", "pm"), getUnpackTemplateDetails);
 // router.post("/save-unpack-excel-template", cors(), saveUnpackExcelTemplate); // TODO: auth 추가
 
 export default router;
