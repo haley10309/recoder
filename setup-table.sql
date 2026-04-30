@@ -72,7 +72,7 @@ CREATE TABLE TemplateLocalizationEntries (
         ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
-CREATE TABLE TemplateTransformSpecs (
+CREATE TABLE TemplateUnpackSpecs (
     id int NOT NULL AUTO_INCREMENT,
     target_selector TEXT NOT NULL,
     apply_type TEXT NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE TemplateTransformSpecs (
     deleted_at TIMESTAMP NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     INDEX idx_template_id (template_id),
-    CONSTRAINT fk_template_transform_specs_to_templates 
+    CONSTRAINT fk_template_unpack_specs_to_templates 
         FOREIGN KEY (`template_id`) 
         REFERENCES `Templates` (`id`) 
         ON DELETE CASCADE
