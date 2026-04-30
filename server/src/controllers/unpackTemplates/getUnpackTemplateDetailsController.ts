@@ -21,12 +21,12 @@ export const getUnpackTemplateDetails = async (
     );
 
     if (templates.length === 0) {
-      res.status(404).json({ error: "Template not found" });
+      res.status(404).json({ success: false, error: "Template not found" });
       return;
     }
 
     if (templates.length > 1) {
-      res.status(409).json({ error: "Multiple templates found" });
+      res.status(409).json({ success: false, error: "Multiple templates found" });
       return;
     }
 
@@ -42,6 +42,7 @@ export const getUnpackTemplateDetails = async (
 
     // 3. 응답 구조 변환
     const row_list: UnpackRow[] = rows.map((row: any) => ({
+      id: row.id,
       row_order: row.row_order ?? undefined,
       target_selector: row.target_selector,
       apply_type: row.apply_type,
@@ -52,12 +53,13 @@ export const getUnpackTemplateDetails = async (
     }));
 
     res.json({
+      success: true,
       templateId,
       row_list,
     });
 
   } catch (err) {
     console.error("Error fetching unpack template details:", err);
-    res.status(500).json({ error: "Failed to fetch unpack template details" });
+    res.status(500).json({ success: false, error: "Failed to fetch unpack template details" });
   }
 };
