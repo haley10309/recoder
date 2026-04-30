@@ -14,8 +14,6 @@ export type UnpackRow = {
 export type ExtractUnpackExcelResponse =
   | { success: true; row_list: UnpackRow[] }
   | { success: false; error: string };
-
-  
   
 export type GetUnpackTemplateDetailsBody = {
   ticket_num: string;
@@ -23,8 +21,8 @@ export type GetUnpackTemplateDetailsBody = {
 };
 
 export type GetUnpackTemplateDetailsResponse =
-  | { templateId: number; row_list: UnpackRow[] }
-  | { error: string };
+  | { success: true; templateId: number; row_list: UnpackRow[] }
+  | { success: false; error: string };
 
 export type SaveUnpackTemplateBody = { 
   ticket_num: string;

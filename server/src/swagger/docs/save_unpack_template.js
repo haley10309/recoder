@@ -8,10 +8,12 @@
  *         id:
  *           type: number
  *           nullable: true
+ *           description: 기존 데이터일 경우 DB PK값 (update 시 사용)
  *           example: 1
  *         row_order:
  *           type: number
  *           nullable: true
+ *           description: 엑셀에서 단순 구분용 값 (unique 아님)
  *           example: 1
  *         target_selector:
  *           type: string
@@ -83,10 +85,11 @@
  *
  *       - template이 존재하지 않으면 새로 생성됩니다. (create)
  *       - template이 존재하면 기존 데이터를 기준으로 업데이트됩니다. (update)
- *       - 전달된 row_list 기준으로 전체 데이터를 동기화합니다.
- *         - id가 있는 row → UPDATE
- *         - id가 없는 row → INSERT
- *         - 기존에 존재하지만 전달되지 않은 row → soft delete 처리
+ *
+ *       row_list 기준으로 전체 데이터를 동기화합니다.
+ *       - id가 있는 row → UPDATE
+ *       - id가 없는 row → INSERT
+ *       - 기존에 존재하지만 전달되지 않은 row → soft delete 처리
  *
  *     security:
  *       - bearerAuth: []
@@ -97,6 +100,24 @@
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/SaveUnpackTemplateBody'
+ *           example:
+ *             ticket_num: "TICKET-1234"
+ *             ticket_url: "https://example.com/ticket/1234"
+ *             row_list:
+ *               - id: 1
+ *                 row_order: 1
+ *                 target_selector: "[data-copy-set='C01-001']"
+ *                 apply_type: "innerText"
+ *                 exclude_sup: false
+ *                 enable_text_transform: false
+ *                 original_copy: "Sample text"
+ *
+ *               - row_order: 2
+ *                 target_selector: "[data-copy-set='C01-002']"
+ *                 apply_type: "alt"
+ *                 exclude_sup: true
+ *                 enable_text_transform: false
+ *                 original_copy: "New row"
  *
  *     responses:
  *       200:
