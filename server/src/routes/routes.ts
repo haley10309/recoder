@@ -21,6 +21,7 @@ import { updateLocalizationEntries } from '../controllers/translationTemplates/u
 import { extractUnpackExcel } from '../controllers/unpackTemplates/extractUnpackExcelController';
 import { getUnpackTemplateDetails } from '../controllers/unpackTemplates/getUnpackTemplateDetailsController';
 import { saveUnpackTemplate } from '../controllers/unpackTemplates/saveUnpackTemplateController';
+import { getUnpackTemplateDetailsWithExcel } from '../controllers/unpackTemplates/getUnpackTemplateDetailsWithExcelController';
 
 router.use('/auth', authRoutes);
 
@@ -48,8 +49,9 @@ router.post("/parse-translation-file", upload.single('file'), cors(), authentica
 // 2)와 동일한 `/convert-aswas-to-tobe-codes` 사용
 
 /** 5) Unpack */
-router.post("/unpack-templates/extract", upload.single('file'), cors(), extractUnpackExcel);
 router.post("/unpack-templates/get-details", cors(), authenticate, authorize("author", "qaer", "pm"), getUnpackTemplateDetails);
+router.post("/unpack-templates/extract", upload.single('file'), cors(), extractUnpackExcel);
 router.post("/unpack-templates/save", cors(), authenticate, authorize("author", "qaer", "pm"), saveUnpackTemplate);
+router.post("/unpack-templates/get-details-with-excel", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), getUnpackTemplateDetailsWithExcel);
 
 export default router;
