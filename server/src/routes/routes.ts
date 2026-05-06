@@ -23,6 +23,7 @@ import { getUnpackTemplateDetails } from '../controllers/unpackTemplates/getUnpa
 import { saveUnpackTemplate } from '../controllers/unpackTemplates/saveUnpackTemplateController';
 import { getUnpackTemplateDetailsWithExcel } from '../controllers/unpackTemplates/getUnpackTemplateDetailsWithExcelController';
 import { processCopy } from '../controllers/unpackTemplates/processCopyController';
+import { applyToHtml } from '../controllers/unpackTemplates/applyToHtmlController';
 
 router.use('/auth', authRoutes);
 
@@ -55,5 +56,6 @@ router.post("/unpack-templates/extract", upload.single('file'), cors(), extractU
 router.post("/unpack-templates/save", cors(), authenticate, authorize("author", "qaer", "pm"), saveUnpackTemplate);
 router.post("/unpack-templates/get-details-with-excel", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), getUnpackTemplateDetailsWithExcel);
 router.post("/unpack-templates/process-copy", cors(), authenticate, authorize("author", "qaer", "pm"), processCopy);
+router.post("/unpack-templates/apply-to-html", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), applyToHtml);
 
 export default router;

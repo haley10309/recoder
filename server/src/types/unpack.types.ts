@@ -1,3 +1,5 @@
+type JsonStringified<T> = string & { __type: T };
+
 export type UnpackRow = {
   /** DB의 PK값 */
   id?: number;
@@ -53,3 +55,8 @@ export type ProcessCopyBody = {
 export type ProcessCopyResponse =
   | { success: true; row_list: UnpackRow[] }
   | { success: false; error: string };
+
+export type ApplyToHtmlBody = {
+  /** JSON.stringify(UnpackRow[]) — multipart form-data라 string으로 수신 */
+  row_list: JsonStringified<UnpackRow[]>; 
+};
