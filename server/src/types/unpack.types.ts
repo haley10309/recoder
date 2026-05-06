@@ -9,6 +9,7 @@ export type UnpackRow = {
   enable_text_transform: boolean;
   original_copy?: string;
   translated_copy?: string;
+  processed_translated_copy?: string;
 };
 
 export type ExtractUnpackExcelResponse =
@@ -33,3 +34,14 @@ export type SaveUnpackTemplateBody = {
 export type SaveUnpackTemplateResponse =
   | { success: false; error: string }
   | { success: true }
+
+export type GetUnpackTemplateDetailsWithExcelBody = {
+  ticket_num: string;
+  ticket_url: string;
+  country_code: string;
+  // +) file
+};
+
+export type GetUnpackTemplateDetailsWithExcelResponse =
+  | { success: true; row_list: UnpackRow[] }
+  | { success: false; error: string };
