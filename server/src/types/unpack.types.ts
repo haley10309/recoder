@@ -1,8 +1,8 @@
 export type UnpackRow = {
   /** DB의 PK값 */
-  id?: number; 
+  id?: number;
   /** 엑셀에서 단순구분을 위한 값 (unique한 값 아님) */
-  row_order?: number; 
+  row_order?: number;
   target_selector: string;
   apply_type: string;
   exclude_sup: boolean;
@@ -43,5 +43,13 @@ export type GetUnpackTemplateDetailsWithExcelBody = {
 };
 
 export type GetUnpackTemplateDetailsWithExcelResponse =
+  | { success: true; row_list: UnpackRow[] }
+  | { success: false; error: string };
+
+export type ProcessCopyBody = {
+  row_list: UnpackRow[];
+};
+
+export type ProcessCopyResponse =
   | { success: true; row_list: UnpackRow[] }
   | { success: false; error: string };
