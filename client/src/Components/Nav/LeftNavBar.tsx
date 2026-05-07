@@ -99,6 +99,22 @@ const LeftNavBar = () => {
           <NavButtonText $active={isActive("/translation-templates/apply")}>Apply Translation Templates</NavButtonText>
         </NavButton>
 
+        <NavButton
+          $active={isActive("/unpack-templates")}
+          onClick={() => handleNavigate("/unpack-templates")}
+        >
+          <IconImage src={localizationIcon} alt="Unpack Templates" />
+          <NavButtonText $active={isActive("/unpack-templates")}>Unpack Template</NavButtonText>
+        </NavButton>
+
+         <NavButton
+          $active={isActive("/unpack-templates/apply")}
+          onClick={() => handleNavigate("/unpack-templates/apply")}
+        >
+          <IconImage src={applyIcon} alt="Apply Unpack Templates" />
+          <NavButtonText $active={isActive("/unpack-templates/apply")}>Apply Unpack Templates</NavButtonText>
+        </NavButton>
+
         {/* <NavButton
           $active={isActive("/qa-check")}
           onClick={() => handleNavigate("/qa-check")}
