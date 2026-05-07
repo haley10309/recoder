@@ -2,11 +2,42 @@ import { Request, Response } from "express";
 
 import { ProcessCopyBody, ProcessCopyResponse, UnpackRow } from "../../types/unpack.types";
 
-const processTranslatedCopy = (row: UnpackRow): string => {
-  // TODO: translated_copy 가공 로직 구현
-  return row.translated_copy ?? "";
+// true 값이 문자열인가 true 인가.
+const isTrue = (value: unknown): boolean => {
+  if (typeof value === "string") {
+    return ["true", "o", "O"].includes(value.trim());
+  }
+
+  return value === true;
 };
 
+const processTranslatedCopy = (row: UnpackRow): string => {
+  let copy = row.translated_copy ?? "";
+
+  // innerText transform
+  // 마지막 온점 이후 제거
+  if (
+    row.apply_type === "innerText" &&
+    isTrue(row.enable_text_transform)
+  ) {
+    const lastDotIndex = copy.lastIndexOf(".");
+
+    if (lastDotIndex !== -1) {
+      copy = copy.slice(0, lastDotIndex + 1).trim();
+    }
+  }
+
+  // text_disclaimer transform
+  // 앞 숫자 제거
+  if (
+    row.apply_type === "text_disclaimer" &&
+    isTrue(row.enable_text_transform)
+  ) {
+    copy = copy.replace(/^\d+\.\s*/, "").trim();
+  }
+
+  return copy;
+};
 export const processCopy = async (
   req: Request<{}, {}, ProcessCopyBody>,
   res: Response<ProcessCopyResponse>
