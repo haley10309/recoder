@@ -26,6 +26,7 @@ const escapeRegExp = (value: string): string => {
 const parseTargetSelector = (
   targetSelector: string
 ): { attr: string; value: string } | null => {
+
   const match = targetSelector.match(/^([\w-]+)=["']([^"']+)["']$/);
   if (!match) return null;
 
