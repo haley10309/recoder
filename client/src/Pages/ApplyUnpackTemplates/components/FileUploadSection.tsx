@@ -71,7 +71,10 @@ const FileUploadSection = ({
             <FileDropLabel htmlFor="dropzone-txt">
               <FileDropInner>
                 <img src={FileUploadIcon} alt="Upload" />
-                <p>copydeck.xlsx 파일을 업로드 해주세요</p>
+                <p>엑셀 파일을 업로드 해 주세요</p>
+                <p className="text-[12px] text-gray-500">
+                  (.xlsx, .xls)
+                </p>
               </FileDropInner>
 
               <input

@@ -120,7 +120,7 @@ const ApplyUnpackTemplatesScreen = () => {
 
       <PageDescriptionText
         text={
-          "copy deck translation 템플릿 기반으로 html 파일 국가별 번역 적용"
+          "Unpack 템플릿 기반으로 HTML 파일 국가별 번역 적용"
         }
       />
 

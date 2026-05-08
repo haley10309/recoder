@@ -48,7 +48,7 @@ const UnpackTemplatesScreen = () => {
     <div className="bg-[#FFFFFF] p-[40px]">
       <Gap gap={15} />
 
-      <PageDescriptionText text={"copy deck translation 템플릿 관리"} />
+      <PageDescriptionText text={"Unpack 템플릿 관리"} />
       <Gap gap={50} />
 
       <TitleLabel text="📄 템플릿 불러오기" />
