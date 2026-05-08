@@ -115,13 +115,10 @@ const ApplyUnpackTemplatesScreen = () => {
 
   return (
     <div className="bg-[#FFFFFF] p-[40px]">
-
       <Gap gap={15} />
 
       <PageDescriptionText
-        text={
-          "Unpack 템플릿 기반으로 HTML 파일 국가별 번역 적용"
-        }
+        text={"Unpack 템플릿 기반으로 HTML 파일 국가별 번역 적용"}
       />
 
       <Gap gap={50} />
@@ -135,13 +132,10 @@ const ApplyUnpackTemplatesScreen = () => {
 
       <CheckTemplateBySku
         loading={loading || listLoading}
-
         skuOptions={ticketNumOptions}
         dateOptions={ticketUrlOptions}
-
         sku={sku}
         setSku={setSku}
-
         workDate={workDate}
         setWorkDate={setWorkDate}
       />
@@ -149,8 +143,41 @@ const ApplyUnpackTemplatesScreen = () => {
       <Gap gap={50} />
 
       {/* ========================= */}
-      {/* ENGLISH COUNTRY */}
+      {/* FILE UPLOAD */}
       {/* ========================= */}
+      <TitleLabel text="📤 파일 업로드" />
+
+      <Gap gap={15} />
+
+      <FileUploadSection
+        tobeHtmlFileName={tobeHtmlFileName}
+        htmlUploadStatus={htmlUploadStatus}
+        handleBackupFileUpload={handleBackupFileUpload}
+        excelUploadStatus={excelUploadStatus}
+        excelUploadProgress={excelUploadProgress}
+        excelFileName={excelFileName}
+        handleExcelUpload={handleExcelUpload}
+        countryCode={countryCode}
+      />
+
+      <Gap gap={50} />
+
+      {/* ========================= */}
+      {/* COUNTRY */}
+      {/* ========================= */}
+      <TitleLabel text="🌐 국가코드 선택" />
+
+      <Gap gap={15} />
+
+      <SiteCode
+        countryCode={countryCode}
+        handleCountryChange={setCountryCode}
+        isEnglishCountry={isEnglishCountry}
+        isDisabled={!sku || !workDate}
+      />
+
+      <Gap gap={30} />
+
       {isEnglishCountry ? (
         <>
           <TitleLabel
@@ -159,87 +186,17 @@ const ApplyUnpackTemplatesScreen = () => {
               textAlign: "center",
             }}
           />
-
           <Gap gap={1000} />
         </>
       ) : (
         <>
           {/* ========================= */}
-          {/* FILE UPLOAD */}
-          {/* ========================= */}
-          <TitleLabel text="📤 파일 업로드" />
-
-          <Gap gap={15} />
-
-          <FileUploadSection
-            tobeHtmlFileName={
-              tobeHtmlFileName
-            }
-
-            htmlUploadStatus={
-              htmlUploadStatus
-            }
-
-            handleBackupFileUpload={
-              handleBackupFileUpload
-            }
-
-            excelUploadStatus={
-              excelUploadStatus
-            }
-
-            excelUploadProgress={
-              excelUploadProgress
-            }
-
-            excelFileName={
-              excelFileName
-            }
-
-            handleExcelUpload={
-              handleExcelUpload
-            }
-
-            countryCode={countryCode}
-          />
-
-          <Gap gap={50} />
-
-          {/* ========================= */}
-          {/* COUNTRY */}
-          {/* ========================= */}
-          <TitleLabel text="🌐 국가코드 선택" />
-
-          <Gap gap={15} />
-
-          <SiteCode
-            countryCode={countryCode}
-
-            handleCountryChange={
-              setCountryCode
-            }
-
-            isEnglishCountry={
-              isEnglishCountry
-            }
-
-            isDisabled={
-              !sku || !workDate
-            }
-          />
-
-          <Gap gap={30} />
-
-          {/* ========================= */}
           {/* TEMPLATE LOAD BUTTON */}
           {/* ========================= */}
           <div className="flex justify-start items-center">
-
             <button
               className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px] disabled:bg-gray-300"
-
               onClick={handleGetTemplate}
-
               disabled={
                 loading ||
                 !sku?.trim() ||
@@ -248,60 +205,36 @@ const ApplyUnpackTemplatesScreen = () => {
                 !excelFile
               }
             >
-              {loading
-                ? "불러오는 중..."
-                : "템플릿 불러오기"}
+              {loading ? "불러오는 중..." : "템플릿 불러오기"}
             </button>
-
           </div>
 
           <Gap gap={50} />
-
+          
           {/* ========================= */}
           {/* COPY SECTION */}
           {/* ========================= */}
           <div className="flex justify-between items-center">
-
             <TitleLabel text="✅ 적용할 Copy 확인하기" />
 
             <div className="flex gap-[10px]">
-
               {/* 가공하기 */}
               <button
                 className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[140px] disabled:bg-gray-300"
-
-                onClick={
-                  handleProcessCopy
-                }
-
-                disabled={
-                  processing ||
-                  textareas.length === 0
-                }
+                onClick={handleProcessCopy}
+                disabled={processing || textareas.length === 0}
               >
-                {processing
-                  ? "가공 중..."
-                  : "가공하기"}
+                {processing ? "가공 중..." : "가공하기"}
               </button>
 
               {/* 다운로드 */}
               <button
                 className="flex justify-center items-center bg-black text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[200px] disabled:bg-gray-300"
-
-                onClick={
-                  handleLocalizedDownload
-                }
-
-                disabled={
-                  downloading ||
-                  textareas.length === 0
-                }
+                onClick={handleLocalizedDownload}
+                disabled={downloading || textareas.length === 0}
               >
-                {downloading
-                  ? "다운로드 중..."
-                  : "변환된 코드 다운로드"}
+                {downloading ? "다운로드 중..." : "변환된 코드 다운로드"}
               </button>
-
             </div>
           </div>
 
@@ -344,6 +277,5 @@ export default ApplyUnpackTemplatesScreen;
 const WhiteBox = styled.div`
   display: flex;
   flex-direction: column;
-
   color: #32383e;
 `;
