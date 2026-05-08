@@ -5,6 +5,7 @@ import styled from "styled-components";
 import settingIcon from "@/assets/icon/template-setting.png";
 import localizationIcon from "@/assets/icon/localization.png";
 import applyIcon from "@/assets/icon/template-apply.png";
+import unpackIcon from "@/assets/icon/unpack.png"
 import qaIcon from "@/assets/icon/qa.png";
 import guideIcon from "@/assets/icon/guide.png";
 import logo from "@/assets/logo.png";
@@ -103,7 +104,7 @@ const LeftNavBar = () => {
           $active={isActive("/unpack-templates")}
           onClick={() => handleNavigate("/unpack-templates")}
         >
-          <IconImage src={localizationIcon} alt="Unpack Templates" />
+          <IconImage src={unpackIcon} alt="Unpack Templates" />
           <NavButtonText $active={isActive("/unpack-templates")}>Unpack Template</NavButtonText>
         </NavButton>
 
@@ -111,7 +112,7 @@ const LeftNavBar = () => {
           $active={isActive("/unpack-templates/apply")}
           onClick={() => handleNavigate("/unpack-templates/apply")}
         >
-          <IconImage src={applyIcon} alt="Apply Unpack Templates" />
+          <IconImage src={unpackIcon} alt="Apply Unpack Templates" />
           <NavButtonText $active={isActive("/unpack-templates/apply")}>Apply Unpack Templates</NavButtonText>
         </NavButton>
 
