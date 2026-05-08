@@ -39,7 +39,7 @@ export const useTemplate = () => {
       setLoading(true);
 
       const res = await defaultAxios.post(
-        "http://localhost:5000/unpack-templates/get-details",
+        "/unpack-templates/get-details",
         {
           ticket_num: sku,
           ticket_url: workDate,
@@ -114,7 +114,7 @@ export const useTemplate = () => {
       };
       
       await defaultAxios.post(
-        "http://localhost:5000/unpack-templates/save",
+        "/unpack-templates/save",
         payload
       );
 
