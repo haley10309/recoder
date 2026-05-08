@@ -7,8 +7,8 @@ export function useExcelUpload({
 }) {
   const [rows, setRows] = useState([]);
   const [translationMap, setTranslationMap] = useState({});
-
-  const [excelUploadStatus, setExcelUploadStatus] = useState("");
+  
+  const [excelUploadStatus, setExcelUploadStatus] = useState<string | null>(null);
   const [excelFileName, setExcelFileName] = useState("");
   const [excelUploadProgress, setExcelUploadProgress] = useState(0);
   const [excelFile, setExcelFile] = useState(null);
@@ -61,52 +61,81 @@ export function useExcelUpload({
       return;
     }
 
+    // 확장자 체크
     if (!file.name.endsWith(".xlsx") && !file.name.endsWith(".xls")) {
       alert("엑셀 파일만 업로드 가능합니다.");
       setExcelUploadStatus("fail");
       return;
     }
 
+    // 상태 초기화
+    setExcelUploadStatus(null);
+    setExcelUploadProgress(0);
+
     const reader = new FileReader();
 
-    reader.onloadstart = () => setExcelUploadProgress(0);
+    // 파일 읽기 시작
+    reader.onloadstart = () => {
+      setExcelUploadProgress(10);
+    };
 
+    // 파일 읽는 중
     reader.onprogress = (event) => {
       if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100);
+        // 파일 읽기 단계는 최대 70%까지만 사용
+        const percent = Math.round((event.loaded / event.total) * 70);
+
         setExcelUploadProgress(percent);
       }
     };
 
+    // 파일 읽기 완료
     reader.onload = async () => {
-      setExcelUploadProgress(100);
-
       try {
+        // 파일 읽기 완료
+        setExcelUploadProgress(70);
+
         setExcelFile(file);
 
+        // 실제 파싱 처리
         const unpackRows = await parseExcelFile(file);
+
+        // 파싱 완료 직전
+        setExcelUploadProgress(90);
+
         setRows(unpackRows);
 
-        // 🔥 englishCopyList (highlight용)
+        // highlight용 english copy list
         const englishCopyList = unpackRows
           .map((row) => row.original_copy?.trim())
           .filter(Boolean);
 
         setEnglishCopyList(englishCopyList);
 
-        setExcelFileName(file.name);
-        setExcelUploadStatus("success");
-
-        // 🔥 최초 map 생성
+        // translation map 생성
         buildTranslationMap(unpackRows, countryCode);
+
+        setExcelFileName(file.name);
+
+        // 최종 완료
+        setExcelUploadProgress(100);
+
+        // 약간의 텀 후 성공 표시 (선택사항)
+        setTimeout(() => {
+          setExcelUploadStatus("success");
+        }, 200);
+
       } catch (err) {
         console.error(err);
+
         setExcelUploadStatus("fail");
+        setExcelUploadProgress(0);
       }
     };
 
     reader.onerror = () => {
       setExcelUploadStatus("fail");
+      setExcelUploadProgress(0);
     };
 
     reader.readAsArrayBuffer(file);

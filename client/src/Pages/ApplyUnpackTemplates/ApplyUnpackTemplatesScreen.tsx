@@ -45,6 +45,7 @@ const ApplyUnpackTemplatesScreen = () => {
   // =========================
   const {
     excelUploadStatus,
+    excelUploadProgress,
     excelFileName,
 
     handleExcelUpload,
@@ -75,12 +76,8 @@ const ApplyUnpackTemplatesScreen = () => {
     isEnglishCountry,
   } = useTemplate({
     excelFile,
-
     countryCode,
     setCountryCode,
-
-    englishCopyList,
-    setEnglishCopyList,
   });
 
   // =========================
@@ -189,6 +186,10 @@ const ApplyUnpackTemplatesScreen = () => {
 
             excelUploadStatus={
               excelUploadStatus
+            }
+
+            excelUploadProgress={
+              excelUploadProgress
             }
 
             excelFileName={

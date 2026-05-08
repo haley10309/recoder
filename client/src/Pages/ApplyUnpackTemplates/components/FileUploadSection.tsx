@@ -8,9 +8,12 @@ const FileUploadSection = ({
   tobeHtmlFileName,
   htmlUploadStatus,
   handleBackupFileUpload,
+
   excelUploadStatus,
+  excelUploadProgress,
   excelFileName,
   handleExcelUpload,
+
   countryCode,
 }) => {
 
@@ -19,14 +22,39 @@ const FileUploadSection = ({
       <ConvertContainer>
         {/* 번역덱 업로드 */}
         <div>
-          {excelUploadStatus ? (
+          {/* 업로드 중 */}
+          {excelUploadProgress > 0 &&
+          excelUploadStatus === null ? (
+
             <PreviewHeader style={{ marginTop: "0.75rem" }}>
               <img src={HtmlFileIcon} alt="TXT Icon" />
+
+              <div id="preview-text">
+                <span>{excelFileName || "copydeck.xlsx"}</span>
+
+                <ProgressBar>
+                  <ProgressFill $progress={excelUploadProgress} />
+                </ProgressBar>
+
+                <UploadStatus $success={true}>
+                  ⏳ 엑셀 파일 처리 중... ({excelUploadProgress}%)
+                </UploadStatus>
+              </div>
+            </PreviewHeader>
+
+          ) : excelUploadStatus ? (
+
+            /* 업로드 완료 */
+            <PreviewHeader style={{ marginTop: "0.75rem" }}>
+              <img src={HtmlFileIcon} alt="TXT Icon" />
+
               <div id="preview-text">
                 <span>{excelFileName}</span>
+
                 <ProgressBar>
                   <ProgressFill $progress={100} />
                 </ProgressBar>
+
                 <UploadStatus $success={excelUploadStatus === "success"}>
                   {
                     excelUploadStatus === "success"
@@ -36,14 +64,25 @@ const FileUploadSection = ({
                 </UploadStatus>
               </div>
             </PreviewHeader>
+
           ) : (
+
+            /* 업로드 전 */
             <FileDropLabel htmlFor="dropzone-txt">
               <FileDropInner>
                 <img src={FileUploadIcon} alt="Upload" />
                 <p>copydeck.xlsx 파일을 업로드 해주세요</p>
               </FileDropInner>
-              <input id="dropzone-txt" type="file" accept=".xlsx, .xls" onChange={handleExcelUpload} hidden />
+
+              <input
+                id="dropzone-txt"
+                type="file"
+                accept=".xlsx, .xls"
+                onChange={handleExcelUpload}
+                hidden
+              />
             </FileDropLabel>
+
           )}
         </div>
         
