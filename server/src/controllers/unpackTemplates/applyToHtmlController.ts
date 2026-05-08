@@ -56,7 +56,7 @@ const isSupSelector = (targetSelector: string): boolean => {
   return /^data-sup=["']sup-\d+["']$/.test(targetSelector);
 };
 
-//속성 값 변경 (alt, aria-label 등)
+//속성 값 변경 (alt, aria-label 등)cd 
 const replaceAttribute = (
   html: string,
   targetSelector: string,
@@ -72,15 +72,23 @@ const replaceAttribute = (
   // 특수문자로 인한 오류를 막기위한 방어 함수(사실 escapeRegExp는 없어도 됨)
   const targetAttr = escapeRegExp(parsed.attr);
   const targetValue = escapeRegExp(parsed.value);
+  const targetAttrName = escapeRegExp(attrName);
+
+  const tagRegex = new RegExp(
+    `<[^>]*\\s${targetAttr}=["']${targetValue}["'][^>]*>`,
+    "i"
+  );
 
   // alt 부분을 regex 함수를 통해 찾는다.
   // < .... data-copy-set="C01-001" .... alt="여기" .... >
-  const tagRegex = new RegExp(
-    `(<[^>]*\\s${targetAttr}=["']${targetValue}["'][^>]*\\s${attrName}=["'])([^"']*)(["'][^>]*>)`,
-    "i"
-  );
-  // 값 변경
-  return html.replace(tagRegex, `$1${copy}$3`);
+  return html.replace(tagRegex, (tag) => {
+    const attrRegex = new RegExp(
+      `(${targetAttrName}=["'])([^"']*)(["'])`,
+      "i"
+    );
+
+    return tag.replace(attrRegex, `$1${copy}$3`);
+  });
 };
 
 // inner html 변경하기
@@ -143,7 +151,10 @@ const replaceDisclaimer = (
     const replacedInner = inner.replace(
       disclaimerRegex,
       (
+        full: string,
         disclaimerOpenTag: string,
+        tagName: string,
+        disclaimerInner: string,
         disclaimerCloseTag: string
       ) => {
         return `${disclaimerOpenTag}${copy}${disclaimerCloseTag}`;
