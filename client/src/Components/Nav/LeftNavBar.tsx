@@ -105,7 +105,7 @@ const LeftNavBar = () => {
           onClick={() => handleNavigate("/unpack-templates")}
         >
           <IconImage src={unpackIcon} alt="Unpack Templates" />
-          <NavButtonText $active={isActive("/unpack-templates")}>Unpack Template</NavButtonText>
+          <NavButtonText $active={isActive("/unpack-templates")}>Unpack Templates</NavButtonText>
         </NavButton>
 
          <NavButton
