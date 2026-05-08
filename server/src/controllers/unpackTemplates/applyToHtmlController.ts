@@ -2,6 +2,7 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { Request, Response } from "express";
+// import * as cheerio from "cheerio";
 
 import { ApplyToHtmlBody, UnpackRow } from "../../types/unpack.types";
 
@@ -25,7 +26,8 @@ const escapeRegExp = (value: string): string => {
 const parseTargetSelector = (
   targetSelector: string
 ): { attr: string; value: string } | null => {
-  const match = targetSelector.match(/^\[([\w-]+)=["']([^"']+)["']\]$/);
+  const match = targetSelector.match(/^([\w-]+)=["']([^"']+)["']$/);
+
   if (!match) return null;
 
   /*
@@ -46,12 +48,12 @@ const parseTargetSelector = (
 
 // data-copy-set="C1-1", data-copy-set="C22-3" 이런 형식인지 검사(특정 형식)
 const isCopySetSelector = (targetSelector: string): boolean => {
-  return /^\[data-copy-set=["']C\d+-\d+["']\]$/.test(targetSelector);
+  return /^data-copy-set=["']C\d+-\d+["']$/.test(targetSelector);
 };
 
 // 위와 마찬가지로 데이터 sup의 형식 검사 
 const isSupSelector = (targetSelector: string): boolean => {
-  return /^\[data-sup=["']sup-\d+["']\]$/.test(targetSelector);
+  return /^data-sup=["']sup-\d+["']$/.test(targetSelector);
 };
 
 //속성 값 변경 (alt, aria-label 등)

@@ -62,3 +62,20 @@ export const parseTranslationFile = async (file) => {
     validCountries,
   };
 };
+
+export const parseExcelFile = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const { data } = await defaultAxios.post(
+    "/unpack-templates/extract", 
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return data?.row_list || [];
+};

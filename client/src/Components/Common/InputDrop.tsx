@@ -15,7 +15,11 @@ const InputDrop = ({ options, loading, _wrapperProps, _divProps, _title, _value,
 
   const searchOptions = (e) => {
     const q = e.query?.toLowerCase() || "";
-    setFilteredOptions(options.filter((opt) => opt.name && opt.name.toLowerCase().includes(q)));
+    setFilteredOptions(
+      (options || []).filter(
+        (opt) => opt?.name && opt.name.toLowerCase().includes(q)
+      )
+    );
   };
 
   return (
