@@ -2,7 +2,7 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { Request, Response } from "express";
-import * as cheerio from "cheerio";
+// import * as cheerio from "cheerio";
 
 import { ApplyToHtmlBody, UnpackRow } from "../../types/unpack.types";
 

@@ -311,39 +311,23 @@ const ApplyUnpackTemplatesScreen = () => {
           {/* ========================= */}
           <WhiteBox>
             <div className="flex flex-col gap-[20px]">
-
               {textareas.map(
                 (entry, index) => (
                   <ApplyEntryItem
-                    key={index}
-
+                    key={`apply-entry-${index}`}
                     entry={entry}
-
                     index={index}
-
-                    onChange={(
-                      idx,
-                      value
-                    ) => {
-                      setTextareas(
-                        (prev) => {
-                          const copy = [
-                            ...prev,
-                          ];
-
-                          copy[
-                            idx
-                          ].appliedCopy =
-                            value;
-
-                          return copy;
-                        }
-                      );
+                    totalLength={textareas.length}
+                    onChange={(idx, value) => {
+                      setTextareas((prev) => {
+                        const copy = [...prev];
+                        copy[idx].appliedCopy = value;
+                        return copy;
+                      });
                     }}
                   />
                 )
               )}
-
             </div>
           </WhiteBox>
 

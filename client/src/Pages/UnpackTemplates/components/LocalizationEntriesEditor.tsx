@@ -8,16 +8,16 @@ const LocalizationEntryItem = ({ entry, index, onDelete }) => {
     <div className="flex gap-[20px] p-[20px] bg-[#f9f9f9] rounded-[10px] shadow-sm">
       {/* 좌측 */}
       <div className="w-[250px] text-[13px] text-gray-700">
-        <p><b>attr:</b></p>
+        <p><b>target_selector:</b></p>
         <p className="ml-2">{entry.target}</p>
 
-        <p className="mt-2"><b>type:</b></p>
+        <p className="mt-2"><b>apply_type:</b></p>
         <p className="ml-2">{entry.applyType}</p>
 
-        <p className="mt-2"><b>Sup:</b></p>
+        <p className="mt-2"><b>exclude_sup:</b></p>
         <p className="ml-2">{entry.excludeSup ? "O" : "X"}</p>
 
-        <p className="mt-2"><b>enable-text-transform:</b></p>
+        <p className="mt-2"><b>enable_text_transform:</b></p>
         <p className="ml-2">{entry.enableTextTransform ? "O" : "X"}</p>
 
         <button

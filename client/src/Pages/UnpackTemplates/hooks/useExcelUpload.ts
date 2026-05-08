@@ -1,4 +1,5 @@
 import { useState } from "react";
+import defaultAxios from "@/apis/defaultAxios";
 
 export const useExcelUpload = ({ setLocalizationEntries }) => {
   const [excelFile, setExcelFile] = useState<File | null>(null);
@@ -26,16 +27,18 @@ export const useExcelUpload = ({ setLocalizationEntries }) => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("http://localhost:5000/unpack-templates/extract", {
-        method: "POST",
-        body: formData,
+      const res = await defaultAxios.post(`/unpack-templates/extract`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        responseType: "json",
       });
 
-      if (!res.ok) {
+      if (res.status !== 200) {
         throw new Error("엑셀 업로드 실패");
       }
 
-      const data = await res.json();
+      const data = res.data;
 
       const mapped = data.row_list.map((row: any, index: number) => ({
         row_order: index + 1,
@@ -48,6 +51,7 @@ export const useExcelUpload = ({ setLocalizationEntries }) => {
 
       setLocalizationEntries(mapped);
     } catch (err) {
+      console.error("🔴 useExcelUpload error");
       console.error(err);
       alert("엑셀 처리 중 오류 발생");
     } finally {

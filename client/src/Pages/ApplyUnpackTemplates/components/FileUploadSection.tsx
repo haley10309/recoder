@@ -30,8 +30,8 @@ const FileUploadSection = ({
                 <UploadStatus $success={excelUploadStatus === "success"}>
                   {
                     excelUploadStatus === "success"
-                      ? "✅ 번역덱 TXT 업로드 성공!"
-                      : "❌ 번역덱 TXT 업로드 실패"
+                      ? "✅ 엑셀 파일 업로드 성공!"
+                      : "❌ 엑셀 파일 업로드 실패"
                   }
                 </UploadStatus>
               </div>
