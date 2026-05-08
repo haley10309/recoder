@@ -210,7 +210,7 @@ const ApplyUnpackTemplatesScreen = () => {
           </div>
 
           <Gap gap={50} />
-          
+
           {/* ========================= */}
           {/* COPY SECTION */}
           {/* ========================= */}

@@ -15,10 +15,10 @@ const ApplyEntryItem = ({ entry, index, totalLength, onChange }) => {
           <p className="ml-2">{entry.applyType}</p>
 
           <p className="mt-2"><b>exclude_sup:</b></p>
-          <p className="ml-2">{entry.excludeSup || "X"}</p>
+          <p className="ml-2">{entry.excludeSup ? "O" : "X"}</p>
 
           <p className="mt-2"><b>enable_text_transform:</b></p>
-          <p className="ml-2">{entry.enableTextTransform || "X"}</p>
+          <p className="ml-2">{entry.enableTextTransform ? "O" : "X"}</p>
         </div>
 
         {/* 우측 */}
@@ -56,7 +56,7 @@ const ApplyEntryItem = ({ entry, index, totalLength, onChange }) => {
                 className={`
                   w-full h-[100px] p-[10px] bg-white rounded border text-[14px]
                   ${
-                    entry.deckCopy !== entry.appliedCopy
+                    entry.appliedCopy && entry.deckCopy !== entry.appliedCopy
                       ? "border-blue-500 border-4"
                       : "border-black"
                   }
