@@ -37,6 +37,7 @@ const UnpackTemplatesScreen = () => {
   });
 
   const {
+    loading: excelLoading,
     excelFile,
     handleExcelFileChange,
   } = useExcelUpload({
@@ -68,6 +69,7 @@ const UnpackTemplatesScreen = () => {
       <TitleLabel text="📤 엑셀 파일 업로드" />
       <Gap gap={15} />
       <ExcelFileUpload
+        loading={excelLoading}
         excelFile={excelFile}
         handleExcelFileChange={handleExcelFileChange}
       />
