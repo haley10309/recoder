@@ -1,5 +1,3 @@
--- local에서 초기 sql 세팅 시 한번만 사용
-
 create database recoder_db;
 
 use recoder_db;
@@ -84,8 +82,6 @@ CREATE TABLE AdminUsers (
   last_logged_in_at DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
-
-
 CREATE TABLE TemplateUnpackSpecs (
     id int NOT NULL AUTO_INCREMENT,
     row_order INT NULL,
