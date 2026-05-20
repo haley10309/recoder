@@ -60,7 +60,7 @@ const ApplyUnpackTemplatesScreen = () => {
   // TEMPLATE
   // =========================
   const {
-    loading,
+    templateLoading,
 
     sku,
     setSku,
@@ -134,7 +134,7 @@ const ApplyUnpackTemplatesScreen = () => {
       <Gap gap={15} />
 
       <CheckTemplateBySku
-        loading={loading || listLoading}
+        loading={listLoading}
 
         skuOptions={ticketNumOptions}
         dateOptions={ticketUrlOptions}
@@ -236,19 +236,21 @@ const ApplyUnpackTemplatesScreen = () => {
           <div className="flex justify-start items-center">
 
             <button
-              className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px] disabled:bg-gray-300"
-
+              className="flex justify-center items-center gap-2 bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px] disabled:bg-gray-300"
               onClick={handleGetTemplate}
-
               disabled={
-                loading ||
+                templateLoading ||
                 !sku?.trim() ||
                 !workDate?.trim() ||
                 !countryCode ||
                 !excelFile
               }
             >
-              {loading
+              {templateLoading && (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              )}
+
+              {templateLoading
                 ? "불러오는 중..."
                 : "템플릿 불러오기"}
             </button>

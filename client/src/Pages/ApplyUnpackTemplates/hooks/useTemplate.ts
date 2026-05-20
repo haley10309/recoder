@@ -28,7 +28,7 @@ export const useTemplate = ({
     sessionStorage.setItem("ticketUrl", workDate);
   }, [workDate]);
   const {
-    loading,
+    loading: templateOptionLoading,
     ticketNumOptions: skuOptions,    
     ticketUrlOptions: dateOptions,
   } = useFetchTemplate({
@@ -39,6 +39,7 @@ export const useTemplate = ({
 
   const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", checked: false, isApplied: null, selectedEnglishCopies: [] }]);
   const [templateId, setTemplateId] = useState(null);
+  const [templateLoading, setTemplateLoading] = useState(false);
 
   const isEnglishCountry = countryCode === ""
                             ? null
@@ -49,6 +50,8 @@ export const useTemplate = ({
   // 템플릿 조회
   const handleGetTemplate = async () => {
     try {
+      setTemplateLoading(true);
+
       // 🔥 필수값 체크
       if (!sku || !workDate) {
         alert("SKU와 작업일자를 입력해주세요.");
@@ -109,6 +112,8 @@ export const useTemplate = ({
     } catch (error) {
       console.error("❌ 템플릿 조회 실패:", error);
       alert("템플릿 조회 중 오류가 발생했습니다.");
+    } finally {
+      setTemplateLoading(false);
     }
   };
 
@@ -139,7 +144,7 @@ export const useTemplate = ({
   };
   
   return {
-    loading,
+    templateLoading,
     skuOptions,
     dateOptions,
     countryCode,
