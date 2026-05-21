@@ -54,7 +54,7 @@ const InputDrop = ({
           dropdownMode="blank"
 
           onDropdownClick={() => setFiltered(options)}
-          onFocus={() => setFiltered(options)}
+          // onFocus={() => setFiltered(options)}
 
           onChange={(e) => _setValue?.(e.target.value)}
           onSelect={(e) => _setValue?.(e.value.name)}

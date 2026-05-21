@@ -17,7 +17,6 @@ const InputDrop = ({
 }: any) => {
   const [filtered, setFiltered] = useState<OptionType[]>([]);
 
-  // 🔥 핵심: 항상 "전체 or 필터"
   const search = (e: any) => {
     const query = (e.query || "").toLowerCase();
 
@@ -54,9 +53,8 @@ const InputDrop = ({
           dropdown
           dropdownMode="blank"
 
-          // 🔥 UX 핵심
           onDropdownClick={() => setFiltered(options)}
-          onFocus={() => setFiltered(options)}
+          // onFocus={() => setFiltered(options)}
 
           onChange={(e) => _setValue?.(e.target.value)}
           onSelect={(e) => _setValue?.(e.value.name)}
