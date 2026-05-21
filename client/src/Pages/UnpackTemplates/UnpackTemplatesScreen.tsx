@@ -14,10 +14,10 @@ import { useFetchTemplate } from "./hooks/useFetchTemplate";
 
 const UnpackTemplatesScreen = () => {
   const {
-    sku,
-    setSku,
     workDate,
     setWorkDate,
+    sku,
+    setSku,
     localizationEntries,
     setLocalizationEntries,
     loading,
@@ -32,8 +32,8 @@ const UnpackTemplatesScreen = () => {
     loading: listLoading,
   } = useFetchTemplate({
     shouldFetchOnMount: true,
-    ticketNum: sku,
-    ticketUrl: workDate,
+    ticketNum: workDate,
+    ticketUrl: sku,
   });
 
   const {
@@ -54,12 +54,12 @@ const UnpackTemplatesScreen = () => {
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplateBySku
-        sku={sku}
-        setSku={setSku}
         workDate={workDate}
         setWorkDate={setWorkDate}
-        skuOptions={ticketNumOptions}
-        dateOptions={ticketUrlOptions}
+        sku={sku}
+        setSku={setSku}
+        dateOptions={ticketNumOptions}
+        skuOptions={ticketUrlOptions}
         loading={listLoading}
         handleGetTemplate={handleGetTemplate}
       />

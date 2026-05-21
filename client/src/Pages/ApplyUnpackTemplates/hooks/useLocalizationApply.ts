@@ -7,8 +7,8 @@ interface UseLocalizationApplyProps {
   textareas: any[];
   setTextareas: React.Dispatch<React.SetStateAction<any[]>>;
 
-  sku: string;
   workDate: string;
+  sku: string;
   countryCode: string;
 }
 
@@ -16,8 +16,8 @@ export const useLocalizationApply = ({
   tobeHtmlFile,
   textareas,
   setTextareas,
-  sku,
   workDate,
+  sku,
   countryCode,
 }: UseLocalizationApplyProps) => {
   // =========================
@@ -230,8 +230,15 @@ export const useLocalizationApply = ({
 
         a.href = url;
 
-        a.download =
-          `${sku}_${workDate}_${countryCode}.html`;
+        const now = new Date();
+        const dateStr = now.getFullYear().toString().slice(2)
+                      + (now.getMonth() + 1).toString().padStart(2, '0')
+                      + now.getDate().toString().padStart(2, '0');
+        const timeStr = now.getHours().toString().padStart(2, '0')
+                      + now.getMinutes().toString().padStart(2, '0')
+                      + now.getSeconds().toString().padStart(2, '0');
+
+        a.download = `${workDate}_${sku}_${countryCode}__${dateStr}_${timeStr}.html`;
 
         document.body.appendChild(a);
 

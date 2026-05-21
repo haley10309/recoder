@@ -61,18 +61,13 @@ const ApplyUnpackTemplatesScreen = () => {
   // =========================
   const {
     templateLoading,
-
-    sku,
-    setSku,
-
     workDate,
     setWorkDate,
-
+    sku,
+    setSku,
     textareas,
     setTextareas,
-
     handleGetTemplate,
-
     isEnglishCountry,
   } = useTemplate({
     excelFile,
@@ -89,8 +84,8 @@ const ApplyUnpackTemplatesScreen = () => {
     loading: listLoading,
   } = useFetchTemplate({
     shouldFetchOnMount: true,
-    ticketNum: sku,
-    ticketUrl: workDate,
+    ticketNum: workDate,
+    ticketUrl: sku,
   });
 
   // =========================
@@ -104,12 +99,10 @@ const ApplyUnpackTemplatesScreen = () => {
     handleLocalizedDownload,
   } = useLocalizationApply({
     tobeHtmlFile,
-
     textareas,
     setTextareas,
-
-    sku,
     workDate,
+    sku,
     countryCode,
   });
 
@@ -132,12 +125,12 @@ const ApplyUnpackTemplatesScreen = () => {
 
       <CheckTemplateBySku
         loading={listLoading}
-        skuOptions={ticketNumOptions}
-        dateOptions={ticketUrlOptions}
-        sku={sku}
-        setSku={setSku}
+        dateOptions={ticketNumOptions}
+        skuOptions={ticketUrlOptions}
         workDate={workDate}
         setWorkDate={setWorkDate}
+        sku={sku}
+        setSku={setSku}
       />
 
       <Gap gap={50} />
@@ -173,7 +166,7 @@ const ApplyUnpackTemplatesScreen = () => {
         countryCode={countryCode}
         handleCountryChange={setCountryCode}
         isEnglishCountry={isEnglishCountry}
-        isDisabled={!sku || !workDate}
+        isDisabled={!workDate || !sku}
       />
 
       <Gap gap={30} />
@@ -199,8 +192,8 @@ const ApplyUnpackTemplatesScreen = () => {
               onClick={handleGetTemplate}
               disabled={
                 templateLoading ||
-                !sku?.trim() ||
                 !workDate?.trim() ||
+                !sku?.trim() ||
                 !countryCode ||
                 !excelFile
               }

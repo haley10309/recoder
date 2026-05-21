@@ -2,9 +2,9 @@ import { useState } from "react";
 import defaultAxios from "@/apis/defaultAxios";
 
 export const useTemplate = () => {
-  // 🔹 SKU + 작업일자
-  const [sku, setSku] = useState("");
+  // 🔹 작업일자 + SKU
   const [workDate, setWorkDate] = useState("");
+  const [sku, setSku] = useState("");
 
   // 🔹 상태
   const [loading, setLoading] = useState(false);
@@ -30,8 +30,8 @@ export const useTemplate = () => {
    * 템플릿 불러오기
    */
   const handleGetTemplate = async () => {
-    if (!sku || !workDate) {
-      alert("SKU와 작업일자를 입력해주세요.");
+    if (!workDate || !sku) {
+      alert("작업일자와 SKU 번호를 입력해주세요.");
       return;
     }
     
@@ -41,8 +41,9 @@ export const useTemplate = () => {
       const res = await defaultAxios.post(
         "/unpack-templates/get-details",
         {
-          ticket_num: sku,
-          ticket_url: workDate,
+          // 서버쪽 body key도 언팩용 직관적인 변수명으로 수정하는 것이 좋음 (다만 중요한 부분 아니므로 일단 작업 생략) 
+          ticket_num: workDate,
+          ticket_url: sku,
         }
       );
 
@@ -85,8 +86,8 @@ export const useTemplate = () => {
    * 저장 (create + update 통합)
    */
   const handleSaveTemplate = async () => {
-    if (!sku || !workDate) {
-      alert("SKU와 작업일자를 입력해주세요.");
+    if (!workDate || !sku) {
+      alert("작업일자와 SKU를 입력해주세요.");
       return;
     }
 
@@ -99,8 +100,8 @@ export const useTemplate = () => {
       setLoading(true);
 
       const payload = {
-        ticket_num: sku,
-        ticket_url: workDate,
+        ticket_num: workDate,
+        ticket_url: sku,
         row_list: localizationEntries.map((it, index) => ({
           id: it.id, // 있으면 update, 없으면 insert
           row_order: index + 1,
@@ -139,10 +140,10 @@ export const useTemplate = () => {
 
   return {
     // 입력값
-    sku,
-    setSku,
     workDate,
     setWorkDate,
+    sku,
+    setSku,
 
     // 데이터
     localizationEntries,

@@ -1,12 +1,12 @@
 import InputDrop from "./InputDrop";
 
 const CheckTemplateBySku = ({
-  sku,
-  setSku,
   workDate,
   setWorkDate,
-  skuOptions,
+  sku,
+  setSku,
   dateOptions,
+  skuOptions,
   loading,
   handleGetTemplate,
 }) => {
@@ -15,6 +15,18 @@ const CheckTemplateBySku = ({
       
       {/* 입력 영역 */}
       <div className="flex gap-6">
+        {/* 작업일자 */}
+        <InputDrop
+          options={dateOptions}
+          loading={loading}
+          _wrapperProps={{ className: "w-[260px] mx-auto" }}
+          _title="작업일자(버전)"
+          _value={workDate}
+          _setValue={setWorkDate}
+          _divProps={{
+            placeholder: "예: 260506",
+          }}
+        />
         
         {/* SKU */}
         <InputDrop
@@ -25,19 +37,6 @@ const CheckTemplateBySku = ({
           _value={sku}
           _setValue={setSku}
         />
-
-        {/* 작업일자 */}
-        <InputDrop
-          options={dateOptions}
-          loading={loading}
-          _wrapperProps={{ className: "w-[260px] mx-auto" }}
-          _title="작업 버전, 일자"
-          _value={workDate}
-          _setValue={setWorkDate}
-          _divProps={{
-            placeholder: "예: 260506",
-          }}
-        />
       </div>
 
       {/* 조회 버튼 */}
@@ -45,8 +44,8 @@ const CheckTemplateBySku = ({
         onClick={handleGetTemplate}
         disabled={
           loading ||
-          !String(sku || "").trim() ||
-          !String(workDate || "").trim()
+          !String(workDate || "").trim() ||
+          !String(sku || "").trim()
         }
         className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px] disabled:bg-gray-300"
       >
