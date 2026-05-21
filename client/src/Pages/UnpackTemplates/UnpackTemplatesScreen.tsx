@@ -14,10 +14,10 @@ import { useFetchTemplate } from "./hooks/useFetchTemplate";
 
 const UnpackTemplatesScreen = () => {
   const {
-    sku,
-    setSku,
     workDate,
     setWorkDate,
+    sku,
+    setSku,
     localizationEntries,
     setLocalizationEntries,
     loading,
@@ -32,8 +32,8 @@ const UnpackTemplatesScreen = () => {
     loading: listLoading,
   } = useFetchTemplate({
     shouldFetchOnMount: true,
-    ticketNum: sku,
-    ticketUrl: workDate,
+    ticketNum: workDate,
+    ticketUrl: sku,
   });
 
   const {
@@ -48,18 +48,18 @@ const UnpackTemplatesScreen = () => {
     <div className="bg-[#FFFFFF] p-[40px]">
       <Gap gap={15} />
 
-      <PageDescriptionText text={"copy deck translation 템플릿 관리"} />
+      <PageDescriptionText text={"Unpack 템플릿 관리"} />
       <Gap gap={50} />
 
       <TitleLabel text="📄 템플릿 불러오기" />
       <Gap gap={15} />
       <CheckTemplateBySku
-        sku={sku}
-        setSku={setSku}
         workDate={workDate}
         setWorkDate={setWorkDate}
-        skuOptions={ticketNumOptions}
-        dateOptions={ticketUrlOptions}
+        sku={sku}
+        setSku={setSku}
+        dateOptions={ticketNumOptions}
+        skuOptions={ticketUrlOptions}
         loading={listLoading}
         handleGetTemplate={handleGetTemplate}
       />

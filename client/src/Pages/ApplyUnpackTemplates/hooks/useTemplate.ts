@@ -17,24 +17,24 @@ export const useTemplate = ({
   countryCode,
   setCountryCode,
 }: UseTemplateProps) => {
-  const [sku, setSku] = useState(() => sessionStorage.getItem("sku") ?? "");
   const [workDate, setWorkDate] = useState(() => sessionStorage.getItem("workDate") ?? "");
+  const [sku, setSku] = useState(() => sessionStorage.getItem("sku") ?? "");
 
   useEffect(() => {
-    sessionStorage.setItem("ticketNum", sku);
+    sessionStorage.setItem("ticketNum", workDate);
+  }, [workDate]);
+  useEffect(() => {
+    sessionStorage.setItem("ticketUrl", sku);
   }, [sku]);
 
-  useEffect(() => {
-    sessionStorage.setItem("ticketUrl", workDate);
-  }, [workDate]);
   const {
     loading: templateOptionLoading,
     ticketNumOptions: skuOptions,    
     ticketUrlOptions: dateOptions,
   } = useFetchTemplate({
     shouldFetchOnMount: true,
-    ticketNum: sku,
-    ticketUrl: workDate,
+    ticketNum: workDate,
+    ticketUrl: sku,
   });
 
   const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", checked: false, isApplied: null, selectedEnglishCopies: [] }]);
@@ -53,8 +53,8 @@ export const useTemplate = ({
       setTemplateLoading(true);
 
       // 🔥 필수값 체크
-      if (!sku || !workDate) {
-        alert("SKU와 작업일자를 입력해주세요.");
+      if (!workDate || !sku) {
+        alert("작업일자와 SKU를 입력해주세요.");
         return;
       }
 
@@ -71,8 +71,8 @@ export const useTemplate = ({
       // 🔥 multipart/form-data
       const formData = new FormData();
 
-      formData.append("ticket_num", sku);
-      formData.append("ticket_url", workDate);
+      formData.append("ticket_num", workDate);
+      formData.append("ticket_url", sku);
       formData.append("country_code", countryCode.toUpperCase());
 
       // 파일
@@ -148,10 +148,10 @@ export const useTemplate = ({
     skuOptions,
     dateOptions,
     countryCode,
-    sku,
-    setSku,
     workDate,
     setWorkDate,
+    sku,
+    setSku,
     isEnglishCountry,
     textareas,
     setTextareas,

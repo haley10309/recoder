@@ -19,6 +19,7 @@ export type ExtractUnpackExcelResponse =
   | { success: false; error: string };
   
 export type GetUnpackTemplateDetailsBody = {
+  // 언팩용 직관적인 변수명으로 수정하는 것이 좋음 (다만 중요한 부분 아니므로 일단 작업 생략) 
   ticket_num: string;
   ticket_url: string;
 };

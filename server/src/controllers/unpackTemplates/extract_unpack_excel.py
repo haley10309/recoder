@@ -37,7 +37,7 @@ def load_translation_rows(sheet, country_code):
 
     country_key = norm(country_code).lower()
 
-    required_cols = ["row_order", "target_selector", "apply_type", "exclude_sup", "enable_text_transform", "original_copy", country_key]
+    required_cols = ["target_selector", "apply_type", "exclude_sup", "enable_text_transform", "original_copy", country_key]
     missing = [col for col in required_cols if col not in header_map]
     if missing:
         raise ValueError(f"필수 컬럼이 없습니다: {', '.join(missing)}")
@@ -49,7 +49,8 @@ def load_translation_rows(sheet, country_code):
         if not row:
             continue
 
-        row_order = norm(row[header_map["row_order"]] if header_map["row_order"] < len(row) else None)
+        row_order_raw = row[header_map["row_order"]] if "row_order" in header_map and header_map["row_order"] < len(row) else None
+        row_order = norm(row_order_raw) if row_order_raw is not None else None
         target_selector = norm(row[header_map["target_selector"]] if header_map["target_selector"] < len(row) else None)
         apply_type = norm(row[header_map["apply_type"]] if header_map["apply_type"] < len(row) else None)
         exclude_sup = norm(
