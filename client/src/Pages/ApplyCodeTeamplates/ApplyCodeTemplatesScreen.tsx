@@ -80,7 +80,7 @@ const ApplyCodeTemplatesScreen = () => {
         ticketUrl={ticketUrl}
         handleTicketNumChange={setTicketNum}
         handleTicketUrlChange={setTicketUrl}
-        handleGetTemplate={handleGetTemplate}
+        handleGetTemplate={() => null}
         showGetTemplateButton={false}
       />
       <Gap gap={30} />
