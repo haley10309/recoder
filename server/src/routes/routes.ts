@@ -18,6 +18,7 @@ import { parseGuideFile } from '../controllers/codeTemplates/parseGuideFileContr
 import { convertAsWasToToBeCodes } from '../controllers/applyCodeTemplates/convertAsWasToToBeCodesController';
 import { parseTranslationFile } from '../controllers/applyTranslationTemplates/parseTranslationFileController';
 import { updateLocalizationEntries } from '../controllers/translationTemplates/updateLocalizationEntriesController';
+import { applyLocalization } from '../controllers/applyTranslationTemplates/applyLocalizationController';
 
 router.use('/auth', authRoutes);
 
@@ -29,7 +30,7 @@ router.post("/check-template-exsist", cors(), authenticate, authorize("author", 
 router.post("/get-template-details", cors(), authenticate, authorize("author", "qaer", "pm"), getTemplateDetails);
 
 /** 1) Code Templates */
-router.post(  "/parse-guide-file",upload.fields([{ name: "asWasFile", maxCount: 1 },{ name: "toBeFile", maxCount: 1 },]),parseGuideFile);
+router.post("/parse-guide-file",upload.fields([{ name: "asWasFile", maxCount: 1 },{ name: "toBeFile", maxCount: 1 },]),parseGuideFile);
 router.post("/create-template", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), createTemplate); // ✅ Only pm (현재 임시로 전체 오픈)
 router.post("/update-template", multer().none(), cors(), authenticate, authorize("author", "qaer", "pm"), updateTemplate); // ✅ Only pm (현재 임시로 전체 오픈)
 
@@ -42,6 +43,7 @@ router.put("/update-localization-entries",cors(), authenticate, authorize("autho
 
 /** 4) Apply Translation Templates */
 router.post("/parse-translation-file", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), parseTranslationFile);
-// 2)와 동일한 `/convert-aswas-to-tobe-codes` 사용
+router.post("/apply-localization", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), applyLocalization);
+// +) 2)와 동일한 `/convert-aswas-to-tobe-codes` 사용
 
 export default router;
