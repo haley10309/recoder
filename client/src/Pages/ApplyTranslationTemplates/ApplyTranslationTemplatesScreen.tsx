@@ -102,7 +102,8 @@ const ApplyTranslationTemplatesScreen = () => {
         ticketUrl={ticketUrl}
         handleTicketNumChange={setTicketNum}
         handleTicketUrlChange={setTicketUrl}
-        handleGetTemplate={handleGetTemplate}
+        handleGetTemplate={() => null}
+        showGetTemplateButton={false}
       />
       <Gap gap={30} />
       <div>
@@ -119,7 +120,15 @@ const ApplyTranslationTemplatesScreen = () => {
         isDisabled={!ticketNum || !ticketUrl}
       />
       <Gap gap={50} />
-      
+
+      <button
+        className="flex justify-center items-center bg-[#FF782F] text-white font-[600] text-[13px] rounded-[10px] h-[42px] w-[175px]"
+        onClick={handleGetTemplate}
+      >
+        템플릿 불러오기
+      </button>
+      <Gap gap={50} />
+    
       {isEnglishCountry ? (
         <>
           <TitleLabel text="영문국은 번역 대상이 아닙니다" style={{ textAlign: "center" }} />
