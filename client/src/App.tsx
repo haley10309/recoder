@@ -11,6 +11,8 @@ import CodeTemplatesScreen from "@/Pages/CodeTemplates/CodeTemplatesScreen";
 import ApplyCodeTemplatesScreen from "@/Pages/ApplyCodeTeamplates/ApplyCodeTemplatesScreen";
 import TranslationTemplatesScreen from "@/Pages/TranslationTemplates/TranslationTemplatesScreen";
 import ApplyTranslationTemplatesScreen from "@/Pages/ApplyTranslationTemplates/ApplyTranslationTemplatesScreen";
+import UnpackTemplatesScreen from "@/Pages/UnpackTemplates/UnpackTemplatesScreen";
+import ApplyUnpackTemplatesScreen from "@/Pages/ApplyUnpackTemplates/ApplyUnpackTemplatesScreen";
 import QaScreen from "@/Pages/Qa/QaScreen";
 import GuideScreen from "@/Pages/Guide/GuideScreen";
 import LoginScreen from "@/Pages/Login/LoginScreen";
@@ -108,6 +110,22 @@ function App() {
                 element={
                   <RequireAuth>
                     <ApplyTranslationTemplatesScreen />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/unpack-templates"
+                element={
+                  <RequireAuth>
+                    <UnpackTemplatesScreen />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/unpack-templates/apply"
+                element={
+                  <RequireAuth>
+                    <ApplyUnpackTemplatesScreen />
                   </RequireAuth>
                 }
               />

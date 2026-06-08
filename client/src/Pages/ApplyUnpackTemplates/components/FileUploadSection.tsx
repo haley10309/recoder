@@ -1,0 +1,216 @@
+import React from "react";
+import styled from "styled-components";
+
+import FileUploadIcon from "@/assets/shift-fill.svg";
+import HtmlFileIcon from "@/assets/union.svg";
+
+const FileUploadSection = ({
+  tobeHtmlFileName,
+  htmlUploadStatus,
+  handleBackupFileUpload,
+
+  excelUploadStatus,
+  excelUploadProgress,
+  excelFileName,
+  handleExcelUpload,
+
+  countryCode,
+}) => {
+
+  return (
+    <ConvertSection>
+      <ConvertContainer>
+        {/* 번역덱 업로드 */}
+        <div>
+          {/* 업로드 중 */}
+          {excelUploadProgress > 0 &&
+          excelUploadStatus === null ? (
+
+            <PreviewHeader style={{ marginTop: "0.75rem" }}>
+              <img src={HtmlFileIcon} alt="TXT Icon" />
+
+              <div id="preview-text">
+                <span>{excelFileName || "copydeck.xlsx"}</span>
+
+                <ProgressBar>
+                  <ProgressFill $progress={excelUploadProgress} />
+                </ProgressBar>
+
+                <UploadStatus $success={true}>
+                  ⏳ 엑셀 파일 처리 중... ({excelUploadProgress}%)
+                </UploadStatus>
+              </div>
+            </PreviewHeader>
+
+          ) : excelUploadStatus ? (
+
+            /* 업로드 완료 */
+            <PreviewHeader style={{ marginTop: "0.75rem" }}>
+              <img src={HtmlFileIcon} alt="TXT Icon" />
+
+              <div id="preview-text">
+                <span>{excelFileName}</span>
+
+                <ProgressBar>
+                  <ProgressFill $progress={100} />
+                </ProgressBar>
+
+                <UploadStatus $success={excelUploadStatus === "success"}>
+                  {
+                    excelUploadStatus === "success"
+                      ? "✅ 엑셀 파일 업로드 성공!"
+                      : "❌ 엑셀 파일 업로드 실패"
+                  }
+                </UploadStatus>
+              </div>
+            </PreviewHeader>
+
+          ) : (
+
+            /* 업로드 전 */
+            <FileDropLabel htmlFor="dropzone-txt">
+              <FileDropInner>
+                <img src={FileUploadIcon} alt="Upload" />
+                <p>엑셀 파일을 업로드 해 주세요</p>
+                <p className="text-[12px] text-gray-500">
+                  (.xlsx, .xls)
+                </p>
+              </FileDropInner>
+
+              <input
+                id="dropzone-txt"
+                type="file"
+                accept=".xlsx, .xls"
+                onChange={handleExcelUpload}
+                hidden
+              />
+            </FileDropLabel>
+
+          )}
+        </div>
+        
+        {/* HTML 업로드 */}
+        <div>
+          {htmlUploadStatus ? (
+            <PreviewHeader style={{ marginTop: "0.75rem" }}>
+              <img src={HtmlFileIcon} alt="HTML Icon" />
+              <div id="preview-text">
+                <span>{tobeHtmlFileName}</span>
+                <ProgressBar>
+                  <ProgressFill $progress={100} />
+                </ProgressBar>
+                <UploadStatus $success={htmlUploadStatus === "success"}>
+                  {
+                    htmlUploadStatus === "success"
+                      ? "✅ HTML 파일 업로드 성공!"
+                      : "❌ HTML 파일 업로드 실패"
+                  }
+                </UploadStatus>
+              </div>
+            </PreviewHeader>
+          ) : (
+            <FileDropLabel htmlFor="dropzone-file">
+              <FileDropInner>
+                <img src={FileUploadIcon} alt="Upload" />
+                <p className="mt-3 font-[500] text-[15px] text-center">{`${countryCode ? `'${countryCode}' 국가의 원본 html 파일을 업로드 해주세요` : '원본 html 파일을 업로드 해주세요'} `}</p>
+              </FileDropInner>
+              <input id="dropzone-file" type="file" accept=".html" onChange={handleBackupFileUpload} hidden  />
+            </FileDropLabel>
+          )}
+        </div>
+      </ConvertContainer>
+    </ConvertSection>
+  );
+};
+
+export default FileUploadSection;
+
+const ConvertSection = styled.div`
+  display: flex;
+  min-height: 11.5rem;
+  border-radius: 0.625rem;
+  background: #f9f9f9;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+`;
+
+const ConvertContainer = styled.div`
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+`;
+
+const FileDropLabel = styled.label`
+  width: 20.625rem;
+  height: 7.6875rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #111827;
+  cursor: pointer;
+`;
+
+const FileDropInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+
+  p {
+    font-size: 14px;
+  }
+
+  span {
+    font-size: 12px;
+  }
+`;
+
+const PreviewHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  #preview-text {
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  img {
+    width: 1.875rem;
+    height: 1.875rem;
+  }
+`;
+
+const ProgressBar = styled.div`
+  width: 11.25rem;
+  height: 0.125rem;
+  background-color: #e5e7eb;
+  border-radius: 999px;
+  margin-top: 8px;
+`;
+
+const ProgressFill = styled.div`
+  width: ${({ $progress }) => ($progress ? `${$progress}%` : "0%")};
+  height: 100%;
+  background: #5b975b;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+`;
+
+const UploadStatus = styled.div`
+  font-size: 12px;
+  margin-top: 4px;
+  color: ${({ $success }) => ($success ? "#009900" : "#ff0000")};
+  width: 100%;
+`;

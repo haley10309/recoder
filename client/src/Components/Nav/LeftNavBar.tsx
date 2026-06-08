@@ -5,6 +5,7 @@ import styled from "styled-components";
 import settingIcon from "@/assets/icon/template-setting.png";
 import localizationIcon from "@/assets/icon/localization.png";
 import applyIcon from "@/assets/icon/template-apply.png";
+import unpackIcon from "@/assets/icon/unpack.png"
 import qaIcon from "@/assets/icon/qa.png";
 import guideIcon from "@/assets/icon/guide.png";
 import logo from "@/assets/logo.png";
@@ -98,6 +99,22 @@ const LeftNavBar = () => {
           <IconImage src={applyIcon} alt="Apply Translation Templates" />
           <NavButtonText $active={isActive("/translation-templates/apply")}>Apply Translation Templates</NavButtonText>
         </NavButton>
+
+        {/* <NavButton
+          $active={isActive("/unpack-templates")}
+          onClick={() => handleNavigate("/unpack-templates")}
+        >
+          <IconImage src={unpackIcon} alt="Unpack Templates" />
+          <NavButtonText $active={isActive("/unpack-templates")}>Unpack Templates</NavButtonText>
+        </NavButton>
+
+         <NavButton
+          $active={isActive("/unpack-templates/apply")}
+          onClick={() => handleNavigate("/unpack-templates/apply")}
+        >
+          <IconImage src={unpackIcon} alt="Apply Unpack Templates" />
+          <NavButtonText $active={isActive("/unpack-templates/apply")}>Apply Unpack Templates</NavButtonText>
+        </NavButton> */}
 
         {/* <NavButton
           $active={isActive("/qa-check")}

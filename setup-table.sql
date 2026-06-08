@@ -1,5 +1,3 @@
--- local에서 초기 sql 세팅 시 한번만 사용
-
 create database recoder_db;
 
 use recoder_db;
@@ -72,6 +70,18 @@ CREATE TABLE TemplateLocalizationEntries (
         ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
+CREATE TABLE AdminUsers (
+  id INT AUTO_INCREMENT,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  name_en VARCHAR(20),
+  role VARCHAR(20) DEFAULT 'author',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at DATETIME NULL DEFAULT NULL,
+  last_logged_in_at DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE TemplateUnpackSpecs (
     id int NOT NULL AUTO_INCREMENT,
     row_order INT NULL,
@@ -90,17 +100,4 @@ CREATE TABLE TemplateUnpackSpecs (
         FOREIGN KEY (`template_id`) 
         REFERENCES `Templates` (`id`) 
         ON DELETE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
-
-CREATE TABLE AdminUsers (
-  id INT AUTO_INCREMENT,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
-  name_en VARCHAR(20),
-  role VARCHAR(20) DEFAULT 'author',
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  deleted_at DATETIME NULL DEFAULT NULL,
-  last_logged_in_at DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
