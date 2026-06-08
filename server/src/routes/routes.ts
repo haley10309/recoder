@@ -24,6 +24,7 @@ import { saveUnpackTemplate } from '../controllers/unpackTemplates/saveUnpackTem
 import { getUnpackTemplateDetailsWithExcel } from '../controllers/unpackTemplates/getUnpackTemplateDetailsWithExcelController';
 import { processCopy } from '../controllers/unpackTemplates/processCopyController';
 import { applyToHtml } from '../controllers/unpackTemplates/applyToHtmlController';
+import { applyLocalization } from '../controllers/applyTranslationTemplates/applyLocalizationController';
 
 router.use('/auth', authRoutes);
 
@@ -48,7 +49,8 @@ router.put("/update-localization-entries",cors(), authenticate, authorize("autho
 
 /** 4) Apply Translation Templates */
 router.post("/parse-translation-file", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), parseTranslationFile);
-// 2)와 동일한 `/convert-aswas-to-tobe-codes` 사용
+router.post("/apply-localization", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), applyLocalization);
+// +) 2)와 동일한 `/convert-aswas-to-tobe-codes` 사용
 
 /** 5) Unpack */
 router.post("/unpack-templates/get-details", cors(), authenticate, authorize("author", "qaer", "pm"), getUnpackTemplateDetails);

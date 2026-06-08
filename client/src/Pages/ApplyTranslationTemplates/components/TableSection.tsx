@@ -45,7 +45,7 @@ const TableSection = ({
           hasTobeHtmlFile={hasTobeHtmlFile}
           countOccurrencesResult_tobe={countOccurrences(textarea.toBeCode)}
           matchingEnglishCopies={(textarea.matchingEnglishCopies ?? []).filter(Boolean)}  
-          selectedEnglishCopies={textarea.selectedEnglishCopies ?? []}                    
+          selectedEnglishCopies={textarea.selectedEnglishCopies}                    
           onSelectEnglishCopies={(values) => handleSelectEnglishCopies(index, values)}  
           highlights={englishCopyList}
         />

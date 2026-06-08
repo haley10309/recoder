@@ -297,5 +297,7 @@ export const extractEnglishCopyListUtil = (
     }
   }
 
+  englishCopyList.sort((a, b) => b.length - a.length); // 긴 문자열부터 치환 (짧은 게 먼저 치환되면 긴 것과 겹칠 수 있음)
+
   return { englishCopyList };
 };

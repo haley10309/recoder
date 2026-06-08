@@ -40,25 +40,25 @@ export function useTranslationUpload({ countryCode, setEnglishCopyList }) {
       try {
         setTranslationDeckTxtFile(file);
 
-        const { translations, englishCopyList, validCountries } =
-          await parseTranslationFile(file);
+        const { translations, englishCopyList, validCountries, translationMap, } =
+          await parseTranslationFile(file, countryCode);
 
         setValidCountries(validCountries);
         setTranslationsByCountry(translations);
 
-        const currentCountry = countryCode;
-        const countryTranslations = translations[currentCountry] || [];
+        // const currentCountry = countryCode;
+        // const countryTranslations = translations[currentCountry] || [];
 
-        const _translationMap = {};
-        for (let i = 0; i < englishCopyList.length; i++) {
-          const key = englishCopyList[i]?.trim();
-          const value = countryTranslations[i]?.trim();
-          if (value && key !== value) {
-            _translationMap[key] = value;
-          }
-        }
+        // const _translationMap = {};
+        // for (let i = 0; i < englishCopyList.length; i++) {
+        //   const key = englishCopyList[i]?.trim();
+        //   const value = countryTranslations[i]?.trim();
+        //   if (value && key !== value) {
+        //     _translationMap[key] = value;
+        //   }
+        // }
 
-        setTranslationMap(_translationMap);
+        setTranslationMap(translationMap);
         setTxtUploadStatus("success");
         setTxtFileName(file.name);
         setEnglishCopyList(englishCopyList);

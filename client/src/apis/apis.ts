@@ -1,5 +1,19 @@
 import defaultAxios from "./defaultAxios";
 
+export const applyLocalization = async ({ formData }) => {
+  const res = await defaultAxios.post(
+    "/apply-localization",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return res.data;
+};
+
 // 실행
 export const convertAsWasToToBeCodes = async ({
   formData,
@@ -35,9 +49,10 @@ export const fetchTemplates = async () => {
   return response.data;
 };
 
-export const parseTranslationFile = async (file) => {
+export const parseTranslationFile = async (file, countryCode) => {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("countryCode", String(countryCode));
 
   const response = await defaultAxios.post(
     `/parse-translation-file`,
@@ -49,9 +64,9 @@ export const parseTranslationFile = async (file) => {
     }
   );
 
-  const { translations, englishCopyList, validCountries } = response.data;
+  const { translations, englishCopyList, validCountries, translationMap } = response.data;
 
-  if (!translations || !englishCopyList) {
+  if (!translations || !englishCopyList || !translationMap) {
     alert("❌ 번역덱 데이터가 비어 있습니다.");
     throw new Error("❌ 번역덱 데이터가 비어 있습니다.");
   }
@@ -60,6 +75,7 @@ export const parseTranslationFile = async (file) => {
     translations,
     englishCopyList,
     validCountries,
+    translationMap,
   };
 };
 

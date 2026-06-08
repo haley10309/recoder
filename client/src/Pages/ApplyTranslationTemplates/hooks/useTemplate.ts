@@ -23,7 +23,7 @@ export const useTemplate = () => {
     ticketUrlOptions,
   } = useFetchTemplate({ shouldFetchOnMount: true, ticketNum, ticketUrl });
 
-  const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", checked: false, isApplied: null, selectedEnglishCopies: [] }]);
+  const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", checked: false, isApplied: null }]);
   const [countryCode, setCountryCode] = useState("");
   const [templateId, setTemplateId] = useState(null);
   const [englishCopyList, setEnglishCopyList] = useState([]);
@@ -49,7 +49,6 @@ export const useTemplate = () => {
       const newTextareas = localizationEntries.map((entry) => ({
         localizationEntryId: entry.id,
         toBeCode: replaceCountryCode(entry.code_context, countryCode),
-        selectedEnglishCopies: [],
       }));
 
       setTextareas(newTextareas);
