@@ -133,6 +133,9 @@ export type UpdateLocalizationEntriesResponse =
   | { success: false; message: string }
   | { success: true };
 
+export type ParseTranslationFileInput = {
+  countryCode: string;
+};
 export type ParseTranslationFileResponse =
   | { error: string }
   | {
@@ -140,6 +143,7 @@ export type ParseTranslationFileResponse =
       invalidCountries: string[];
       translations: Record<string, string[]>;
       englishCopyList: string[];
+      translationMap: Record<string, string>;
     };
 
 // DB row 타입

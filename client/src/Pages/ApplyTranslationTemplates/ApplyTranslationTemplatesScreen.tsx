@@ -74,7 +74,6 @@ const ApplyTranslationTemplatesScreen = () => {
     setTextareas,
     translationMap,
     englishCopyList,
-    countOccurrences,
     ticketUrl,
     countryCode,
   });

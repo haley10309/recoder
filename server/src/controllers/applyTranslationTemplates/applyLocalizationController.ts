@@ -74,9 +74,10 @@ const applyLocalizedTemplateBlocks = (
     if (!copy || !translationMap[copy]) return;
 
     const cleanedCopy = copy.trim().replace(/\s+/g, " ");
-    const cleanedBlockText = blockText?.replace(/\s+/g, " ");
 
-    if (cleanedBlockText && cleanedBlockText.includes(cleanedCopy)) {
+    // ✅ 변경 — HTML 원본에서 공백만 normalize해서 비교
+    const cleanedBlockHtml = localizedToBeCode.replace(/\s+/g, " ");
+    if (cleanedBlockHtml.includes(cleanedCopy)) {
       const local = translationMap[copy];
       const regex = new RegExp(escapeRegExp(copy), "g");
       localizedToBeCode = localizedToBeCode.replace(regex, local);

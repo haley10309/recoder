@@ -17,7 +17,7 @@ const BasicTextarea = ({
   hasTobeHtmlFile, 
   // multi-select
   matchingEnglishCopies = [],
-  selectedEnglishCopies = [], 
+  selectedEnglishCopies, 
   onSelectEnglishCopies = () => {},
 }) => {
   const [isMatchedPartVisible, setIsMatchedPartVisible] = useState(false);
@@ -39,6 +39,8 @@ const BasicTextarea = ({
   // TODO: 지금은 단순히 다른지만 판단하지만, 추후에는 실제 번역value가 적용돘는지 확인하는 것으로 수정 필요
   const isLocalizedChanged =
     localizedToBeCode && (localizedToBeCode !== toBeCode);
+
+  const displaySelectedEnglishCopies = selectedEnglishCopies === undefined ? matchingEnglishCopies : selectedEnglishCopies;
 
   return (
     <Container>
@@ -91,15 +93,15 @@ const BasicTextarea = ({
                     type="checkbox"
                     name={`eng-copy-${localizationEntryId}`}
                     value={copy}
-                    checked={selectedEnglishCopies.includes(copy)}
+                    checked={displaySelectedEnglishCopies.includes(copy)}
                     onChange={(e) => {
                       if (e.target.checked) {
                         // ✔ 선택됨 → 배열에 추가
-                        onSelectEnglishCopies([...selectedEnglishCopies, copy]);
+                        onSelectEnglishCopies([...displaySelectedEnglishCopies, copy]);
                       } else {
                         // ✔ 해제됨 → 배열에서 제거
                         onSelectEnglishCopies(
-                          selectedEnglishCopies.filter((c) => c !== copy)
+                          displaySelectedEnglishCopies.filter((c) => c !== copy)
                         );
                       }
                     }}

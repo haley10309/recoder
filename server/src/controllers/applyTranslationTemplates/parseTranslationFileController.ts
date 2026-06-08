@@ -1,6 +1,6 @@
 // 번역 텍스트 파일에서 국가별 번역 리스트 반환!
 import { Request, Response } from "express";
-import { ParseTranslationFileResponse } from "../../types/codeTemplate.types";
+import { ParseTranslationFileInput, ParseTranslationFileResponse } from "../../types/codeTemplate.types";
 
 const validCountryCodes = [
     "ae", "ae_ar", "africa_en", "africa_fr", "africa_pt", "al", "ar", "at", "au", "az", "ba", "bd",
@@ -13,7 +13,7 @@ const validCountryCodes = [
   ] as const;
 
 export const parseTranslationFile = (
-  req: Request,
+  req: Request<{}, {}, ParseTranslationFileInput>,
   res: Response<ParseTranslationFileResponse>
 ): void => {
     try {
@@ -21,6 +21,10 @@ export const parseTranslationFile = (
         res.status(400).json({ error: "No file uploaded." });
         return;
       }
+
+      const { countryCode } = req.body;
+
+      console.log("req.body !!!", req.body)
 
       const fileContent = req.file.buffer.toString("utf-8");
       const lines = fileContent.split(/\r?\n/);
@@ -81,6 +85,18 @@ export const parseTranslationFile = (
         });
       }
 
+      const translationMap: Record<string, string> = {};
+      
+      const countryTranslations = translations[countryCode] || [];
+      for (let i = 0; i < englishCopyList.length; i++) {
+        const key = englishCopyList[i]?.trim();
+        const value = countryTranslations[i]?.trim();
+        if (value && key !== value) {
+          translationMap[key] = value;
+        }
+      }
+
+      // translationMap 만든 후 정렬해야됨
       englishCopyList.sort((a, b) => b.length - a.length); // 긴 문자열부터 치환 (짧은 게 먼저 치환되면 긴 것과 겹칠 수 있음)
 
       res.json({
@@ -88,6 +104,7 @@ export const parseTranslationFile = (
         invalidCountries,
         translations,
         englishCopyList,
+        translationMap,
       });
     } catch (error) {
       console.error("Error processing file:", error);
