@@ -26,13 +26,8 @@ const escapeRegExp = (value: string): string => {
 const parseTargetSelector = (
   targetSelector: string
 ): { attr: string; value: string } | null => {
-<<<<<<< HEAD
-
-  const match = targetSelector.match(/^([\w-]+)=["']([^"']+)["']$/);
-=======
   const match = targetSelector.match(/^([\w-]+)=["']([^"']+)["']$/);
 
->>>>>>> ba295c0f31a27b5315e1453cac3009caeeb25dab
   if (!match) return null;
 
   /*
@@ -81,7 +76,7 @@ const replaceAttribute = (
 
   const tagRegex = new RegExp(
     `<[^>]*\\s${targetAttr}=["']${targetValue}["'][^>]*>`,
-    "i"
+    "gi"
   );
 
   // alt 부분을 regex 함수를 통해 찾는다.
@@ -111,7 +106,7 @@ const replaceInnerHtml = (
 
   const tagRegex = new RegExp(
     `(<([a-zA-Z][\\w:-]*)[^>]*\\s${targetAttr}=["']${targetValue}["'][^>]*>)([\\s\\S]*?)(</\\2>)`,
-    "i"
+    "gi"
   );
 
   return html.replace(tagRegex, (full, openTag, tagName, inner, closeTag) => {
@@ -146,7 +141,7 @@ const replaceDisclaimer = (
 
   const targetBlockRegex = new RegExp(
     `(<([a-zA-Z][\\w:-]*)[^>]*\\s${targetAttr}=["']${targetValue}["'][^>]*>)([\\s\\S]*?)(</\\2>)`,
-    "i"
+    "gi"
   );
 
   return html.replace(targetBlockRegex, (full, openTag, tagName, inner, closeTag) => {
