@@ -68,7 +68,7 @@ const LeftNavBar = () => {
       )}
 
       <ButtonGroup>
-        <NavButton
+        {/* <NavButton
           $active={location.pathname === "/" || isActive("/code-templates")}
           onClick={() => handleNavigate("/code-templates")}
         >
@@ -98,9 +98,9 @@ const LeftNavBar = () => {
         >
           <IconImage src={applyIcon} alt="Apply Translation Templates" />
           <NavButtonText $active={isActive("/translation-templates/apply")}>Apply Translation Templates</NavButtonText>
-        </NavButton>
+        </NavButton> */}
 
-        {/* <NavButton
+        <NavButton
           $active={isActive("/unpack-templates")}
           onClick={() => handleNavigate("/unpack-templates")}
         >
@@ -114,7 +114,7 @@ const LeftNavBar = () => {
         >
           <IconImage src={unpackIcon} alt="Apply Unpack Templates" />
           <NavButtonText $active={isActive("/unpack-templates/apply")}>Apply Unpack Templates</NavButtonText>
-        </NavButton> */}
+        </NavButton>
 
         {/* <NavButton
           $active={isActive("/qa-check")}
