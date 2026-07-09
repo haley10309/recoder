@@ -95,6 +95,12 @@ const TranslationQaResultRow = ({ block, indexText }) => {
             {!matched && block.failReason && (
               <FailReason>🚨 {block.failReason}</FailReason>
             )}
+            {!matched && block.originalStillPresent && block.correctAnswer && (
+              <CorrectAnswerBox>
+                <CorrectAnswerTitle>✅ 이 자리에 들어가야 할 정답 번역</CorrectAnswerTitle>
+                <CorrectAnswerText>{block.correctAnswer}</CorrectAnswerText>
+              </CorrectAnswerBox>
+            )}
           </ResultBox>
         </CodeBlock>
       </Wrapper>
@@ -251,4 +257,26 @@ const ResultText = styled.div`
 const FailReason = styled.div`
   font-size: 12px;
   color: #b45309;
+`;
+
+const CorrectAnswerBox = styled.div`
+  margin-top: auto;
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  border: 1px solid #86efac;
+  border-radius: 6px;
+`;
+
+const CorrectAnswerTitle = styled.div`
+  font-size: 11px;
+  font-weight: 700;
+  color: #15803d;
+  margin-bottom: 4px;
+`;
+
+const CorrectAnswerText = styled.div`
+  font-size: 13px;
+  font-weight: 600;
+  color: #15803d;
+  word-break: break-all;
 `;

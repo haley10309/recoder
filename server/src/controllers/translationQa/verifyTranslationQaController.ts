@@ -210,12 +210,31 @@ const buildBlock = (
     };
   }
 
+  // 매칭 실패 — after.html에 번역 전 원문(original_copy)이 그대로 남아있는지 확인
+  const normalizedOriginal = normalize(row.original_copy);
+  const originalStillPresent =
+    !!normalizedOriginal && normalizedAfter.includes(normalizedOriginal);
+
+  if (originalStillPresent) {
+    // 원문이 그대로 남아있으면 = 아직 번역이 안 된 것 → 정답 번역을 찾아서 제시
+    return {
+      ...base,
+      afterValue,
+      matched: false,
+      resultText: "매칭 실패한 카피가 있습니다.",
+      failReason: "번역 전 원문이 그대로 남아있습니다. 아직 번역이 반영되지 않았습니다.",
+      originalStillPresent: true,
+      correctAnswer: expectedCopy,
+    };
+  }
+
   return {
     ...base,
     afterValue,
     matched: false,
     resultText: "매칭 실패한 카피가 있습니다.",
     failReason: "번역 카피가 after.html에 반영되지 않았습니다.",
+    originalStillPresent: false,
   };
 };
 

@@ -25,6 +25,10 @@ export type TranslationQaBlock = {
   resultText: string;
   /** 실패 사유 (matched=false일 때) */
   failReason?: string;
+  /** 매칭 실패했지만 after.html에 번역 전 원문이 그대로 남아있는지 여부 */
+  originalStillPresent?: boolean;
+  /** 매칭 실패 시, 이 자리에 반영되어야 할 정답 번역 카피 (원문이 남아있을 때) */
+  correctAnswer?: string;
 };
 
 export type VerifyTranslationQaResponse =
