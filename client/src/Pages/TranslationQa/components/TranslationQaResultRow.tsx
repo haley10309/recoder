@@ -95,10 +95,18 @@ const TranslationQaResultRow = ({ block, indexText }) => {
             {!matched && block.failReason && (
               <FailReason>🚨 {block.failReason}</FailReason>
             )}
-            {!matched && block.originalStillPresent && block.correctAnswer && (
+            {!matched && block.correctAnswer && (
               <CorrectAnswerBox>
-                <CorrectAnswerTitle>✅ 이 자리에 들어가야 할 정답 번역</CorrectAnswerTitle>
-                <CorrectAnswerText>{block.correctAnswer}</CorrectAnswerText>
+                {block.originalInBefore && block.original_copy && (
+                  <AnswerRow>
+                    <AnswerLabel $kind="original">기존 영어 원문 (BEFORE)</AnswerLabel>
+                    <OriginalText>{block.original_copy}</OriginalText>
+                  </AnswerRow>
+                )}
+                <AnswerRow>
+                  <AnswerLabel $kind="correct">✅ 이 자리에 들어가야 할 정답 번역</AnswerLabel>
+                  <CorrectAnswerText>{block.correctAnswer}</CorrectAnswerText>
+                </AnswerRow>
               </CorrectAnswerBox>
             )}
           </ResultBox>
@@ -261,17 +269,32 @@ const FailReason = styled.div`
 
 const CorrectAnswerBox = styled.div`
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
   padding: 0.6rem 0.75rem;
   background: #fff;
   border: 1px solid #86efac;
   border-radius: 6px;
 `;
 
-const CorrectAnswerTitle = styled.div`
+const AnswerRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+`;
+
+const AnswerLabel = styled.div`
   font-size: 11px;
   font-weight: 700;
-  color: #15803d;
-  margin-bottom: 4px;
+  color: ${({ $kind }) => ($kind === "original" ? "#b45309" : "#15803d")};
+`;
+
+const OriginalText = styled.div`
+  font-size: 13px;
+  font-weight: 600;
+  color: #b45309;
+  word-break: break-all;
 `;
 
 const CorrectAnswerText = styled.div`

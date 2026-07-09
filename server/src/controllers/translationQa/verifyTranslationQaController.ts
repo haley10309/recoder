@@ -158,9 +158,21 @@ const buildBlock = (
   const copySetNumber = getCopySetNumber(targetSelector);
   const expectedCopy = computeExpectedCopy(row);
 
-  const beforeCode = extractElementHtml(beforeHtml, targetSelector) ?? "";
+  const beforeElement = extractElementHtml(beforeHtml, targetSelector);
+  const beforeCode = beforeElement ?? "";
   const afterElement = extractElementHtml(afterHtml, targetSelector);
   const afterCode = afterElement ?? "";
+
+  // 번역 전 원문(original_copy)이 before.html의 해당 data-copy-set에 실제로 존재하는지.
+  // 이게 true면 = 번역 대상 카피가 맞으므로, after가 틀렸을 때 정답 번역을 제시한다.
+  const beforeValue = beforeElement
+    ? extractAppliedValue(beforeElement, applyType)
+    : null;
+  const normalizedOriginal = normalize(row.original_copy);
+  const originalInBefore =
+    !!normalizedOriginal &&
+    (normalize(beforeValue).includes(normalizedOriginal) ||
+      normalize(beforeCode).includes(normalizedOriginal));
 
   const base = {
     index,
@@ -171,7 +183,12 @@ const buildBlock = (
     expected_copy: expectedCopy,
     beforeCode,
     afterCode,
+    originalInBefore,
   };
+
+  // before에 원문이 있을 때만 "정답 번역"을 제시한다 (번역 대상임이 확인된 카피)
+  const correctAnswer =
+    originalInBefore && normalize(expectedCopy) ? expectedCopy : undefined;
 
   // after.html에서 해당 요소를 못 찾은 경우
   if (!afterElement) {
@@ -181,6 +198,7 @@ const buildBlock = (
       matched: false,
       resultText: "매칭 실패한 카피가 있습니다.",
       failReason: `after.html에서 ${targetSelector} 요소를 찾을 수 없습니다.`,
+      correctAnswer,
     };
   }
 
@@ -210,31 +228,20 @@ const buildBlock = (
     };
   }
 
-  // 매칭 실패 — after.html에 번역 전 원문(original_copy)이 그대로 남아있는지 확인
-  const normalizedOriginal = normalize(row.original_copy);
-  const originalStillPresent =
+  // 매칭 실패 — after에 번역 전 원문이 그대로 남아있으면 "아직 미번역", 아니면 "오역/다른 값"
+  const afterStillOriginal =
     !!normalizedOriginal && normalizedAfter.includes(normalizedOriginal);
-
-  if (originalStillPresent) {
-    // 원문이 그대로 남아있으면 = 아직 번역이 안 된 것 → 정답 번역을 찾아서 제시
-    return {
-      ...base,
-      afterValue,
-      matched: false,
-      resultText: "매칭 실패한 카피가 있습니다.",
-      failReason: "번역 전 원문이 그대로 남아있습니다. 아직 번역이 반영되지 않았습니다.",
-      originalStillPresent: true,
-      correctAnswer: expectedCopy,
-    };
-  }
+  const failReason = afterStillOriginal
+    ? "번역 전 원문이 그대로 남아있습니다. 아직 번역이 반영되지 않았습니다."
+    : "번역 카피가 after.html에 반영되지 않았습니다.";
 
   return {
     ...base,
     afterValue,
     matched: false,
     resultText: "매칭 실패한 카피가 있습니다.",
-    failReason: "번역 카피가 after.html에 반영되지 않았습니다.",
-    originalStillPresent: false,
+    failReason,
+    correctAnswer,
   };
 };
 
