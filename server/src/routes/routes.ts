@@ -25,6 +25,7 @@ import { getUnpackTemplateDetailsWithExcel } from '../controllers/unpackTemplate
 import { processCopy } from '../controllers/unpackTemplates/processCopyController';
 import { applyToHtml } from '../controllers/unpackTemplates/applyToHtmlController';
 import { applyLocalization } from '../controllers/applyTranslationTemplates/applyLocalizationController';
+import { verifyTranslationQa } from '../controllers/translationQa/verifyTranslationQaController';
 
 router.use('/auth', authRoutes);
 
@@ -59,5 +60,17 @@ router.post("/unpack-templates/save", cors(), authenticate, authorize("author", 
 router.post("/unpack-templates/get-details-with-excel", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), getUnpackTemplateDetailsWithExcel);
 router.post("/unpack-templates/process-copy", cors(), authenticate, authorize("author", "qaer", "pm"), processCopy);
 router.post("/unpack-templates/apply-to-html", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), applyToHtml);
+
+/** 6) Translation QA (언팩 번역이 after.html에 잘 반영됐는지 검사) */
+router.post(
+  "/translation-qa/verify",
+  upload.fields([
+    { name: "beforeFile", maxCount: 1 },
+    { name: "afterFile", maxCount: 1 },
+    { name: "excelFile", maxCount: 1 },
+  ]),
+  cors(),
+  verifyTranslationQa
+);
 
 export default router;

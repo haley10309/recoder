@@ -116,6 +116,14 @@ const LeftNavBar = () => {
           <NavButtonText $active={isActive("/unpack-templates/apply")}>Apply Unpack Templates</NavButtonText>
         </NavButton>
 
+        <NavButton
+          $active={isActive("/translation-qa")}
+          onClick={() => handleNavigate("/translation-qa")}
+        >
+          <IconImage src={qaIcon} alt="Translation QA" />
+          <NavButtonText $active={isActive("/translation-qa")}>Translation QA</NavButtonText>
+        </NavButton>
+
         {/* <NavButton
           $active={isActive("/qa-check")}
           onClick={() => handleNavigate("/qa-check")}
