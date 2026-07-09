@@ -42,13 +42,13 @@ const parseTargetSelector = (
   */
   return {
     attr: match[1],
-    value: match[2],
+    value: match[2].trim(),
   };
 };
 
 // data-copy-set="C1-1", data-copy-set="C22-3" 이런 형식인지 검사(특정 형식)
 const isCopySetSelector = (targetSelector: string): boolean => {
-  return /^data-copy-set=["']C\d+-\d+["']$/.test(targetSelector);
+  return /^data-copy-set=["'][A-Za-z]+\d+(?:-\d+)+\s*["']$/.test(targetSelector);
 };
 
 // 위와 마찬가지로 데이터 sup의 형식 검사 

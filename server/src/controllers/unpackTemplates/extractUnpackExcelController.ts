@@ -42,7 +42,19 @@ export const extractUnpackExcel = async (
       "extract_unpack_excel.py"
     );
 
-    const py = spawn("python", [pythonScriptPath, tempPath, countryCode], {
+    // pkg로 빌드된 exe 환경에서는 서버 exe 옆의 extract_unpack_excel.exe를 실행
+    const isPkg = !!(process as any).pkg;
+    const command = isPkg
+      ? path.join(path.dirname(process.execPath), "extract_unpack_excel.exe")
+      : "python";
+    const args = isPkg
+      ? [tempPath, countryCode]
+      : [pythonScriptPath, tempPath, countryCode];
+    console.log("[extract] cwd:", process.cwd());
+    console.log("[extract] execPath:", process.execPath);
+    console.log("[extract] pythonScriptPath:", pythonScriptPath);
+    console.log("[extract] script exists:", fs.existsSync(pythonScriptPath));
+    const py = spawn(command, args, {
       cwd: process.cwd(),
     });
 
@@ -75,6 +87,7 @@ export const extractUnpackExcel = async (
     });
 
     py.on("close", (code) => {
+      console.log("[extract] python exit code:", code); 
       cleanupTempFile();
 
       if (code !== 0) {

@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger/swagger";
 import routes from "./routes/routes";
-
+import path from 'path'; 
 const app = express();
 dotenv.config();
 
@@ -16,11 +16,11 @@ app.use(
   })
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 
-app.use("/", routes);
+app.use("/api", routes);
 app.use(
   "/api-docs",
   swaggerUi.serve as unknown as import("express").RequestHandler,
@@ -28,5 +28,11 @@ app.use(
 );
 
 console.log(`📘 Swagger 문서 👉 http://localhost:${process.env.PORT}/api-docs`);
+
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
+app.get('*', (req, res) => {
+res.sendFile(path.join(publicPath, 'index.html'));
+});
 
 export default app;
