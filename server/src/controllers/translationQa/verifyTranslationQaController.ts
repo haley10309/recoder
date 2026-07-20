@@ -25,8 +25,17 @@ const escapeRegExp = (value: string): string => {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
+// 양방향(BiDi) 제어문자: RTL(아랍어 등) HTML에 흔히 섞이지만 눈에는 안 보이는 문자들.
+// 매칭 시 오탐을 막기 위해 비교 전에 제거한다.
+//  LRM/RLM/ALM(U+200E,200F,061C), embedding/override(U+202A-202E), isolate(U+2066-2069)
+const BIDI_CONTROL_REGEX = /[\u200E\u200F\u061C\u202A-\u202E\u2066-\u2069]/g;
+
 const normalize = (value: string | null | undefined): string => {
-  return (value ?? "").replace(/\s+/g, " ").trim();
+  return (value ?? "")
+    .normalize("NFC") // 유니코드 정규화 (아랍어 diacritic 등 NFC/NFD 차이 흡수)
+    .replace(BIDI_CONTROL_REGEX, "") // 보이지 않는 방향 제어문자 제거
+    .replace(/\s+/g, " ")
+    .trim();
 };
 
 // data-copy-set="C01-001" -> { attr: "data-copy-set", value: "C01-001" }
