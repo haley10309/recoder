@@ -15,6 +15,7 @@ import UnpackTemplatesScreen from "@/Pages/UnpackTemplates/UnpackTemplatesScreen
 import ApplyUnpackTemplatesScreen from "@/Pages/ApplyUnpackTemplates/ApplyUnpackTemplatesScreen";
 import QaScreen from "@/Pages/Qa/QaScreen";
 import TranslationQaScreen from "@/Pages/TranslationQa/TranslationQaScreen";
+import PreCoderScreen from "@/Pages/PreCoder/PreCoderScreen";
 import GuideScreen from "@/Pages/Guide/GuideScreen";
 import LoginScreen from "@/Pages/Login/LoginScreen";
 import RegisterScreen from "@/Pages/Register/RegisterScreen";
@@ -143,6 +144,14 @@ function App() {
                 element={
                   <RequireAuth>
                     <TranslationQaScreen />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/pre-coder"
+                element={
+                  <RequireAuth>
+                    <PreCoderScreen />
                   </RequireAuth>
                 }
               />

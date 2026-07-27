@@ -8,6 +8,7 @@ import applyIcon from "@/assets/icon/template-apply.png";
 import unpackIcon from "@/assets/icon/unpack.png"
 import qaIcon from "@/assets/icon/qa.png";
 import guideIcon from "@/assets/icon/guide.png";
+import preCoderIcon from "@/assets/check.png";
 import logo from "@/assets/logo.png";
 import Gap from "../Common/Gap";
 import { getMotivationText } from "@/utils/commonUtils";
@@ -122,6 +123,14 @@ const LeftNavBar = () => {
         >
           <IconImage src={qaIcon} alt="Translation QA" />
           <NavButtonText $active={isActive("/translation-qa")}>Translation QA</NavButtonText>
+        </NavButton>
+
+        <NavButton
+          $active={isActive("/pre-coder")}
+          onClick={() => handleNavigate("/pre-coder")}
+        >
+          <IconImage src={preCoderIcon} alt="Pre Coder" />
+          <NavButtonText $active={isActive("/pre-coder")}>Pre Coder</NavButtonText>
         </NavButton>
 
         {/* <NavButton

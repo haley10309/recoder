@@ -1,0 +1,444 @@
+// Pre Coder: wwpd 작업 전 recoder에 넣기 위한 파일(html) 최적화 검사 로직.
+// 사업부 제공 .html 파일 + 영문 카피덱(xlsx → row_list)을 대조하여
+// data-copy-set 고유성 / 태그 스코프 / 카피 종류 자동분류 / 순서 / 누락카피 를 검사한다.
+
+export type CopyDeckRow = {
+  row_order?: number;
+  target_selector: string; // 예: data-copy-set="F02-004"
+  apply_type: string; // alt | aria-label | innerText | text_disclaimer 등
+  exclude_sup?: boolean;
+  enable_text_transform?: boolean;
+  original_copy?: string;
+};
+
+export type DetectedCopyType =
+  | "alt"
+  | "aria-label"
+  | "title"
+  | "innerText"
+  | "disclaimer"
+  | "unknown";
+
+export type HtmlCopySetNode = {
+  domIndex: number; // 문서 내 등장 순서 (0부터)
+  value: string; // data-copy-set 값 ("" 이면 미할당)
+  tagName: string;
+  detectedType: DetectedCopyType;
+  extractedText: string;
+  line: number; // 원본 html 기준 몇 번째 줄인지 (못 찾으면 -1)
+  outerHtmlPreview: string;
+};
+
+export type DuplicateIssue = {
+  value: string;
+  count: number;
+  lines: number[];
+  contentsMatch: boolean;
+  message: string;
+};
+
+export type ScopeIssue = {
+  value: string;
+  type: "nested-child" | "deck-not-in-html";
+  line?: number;
+  deckRowOrder?: number;
+  message: string;
+};
+
+export type TypeMismatchIssue = {
+  value: string;
+  tagName: string;
+  declaredType: string;
+  detectedType: DetectedCopyType;
+  suggestedType?: string;
+  line: number;
+  message: string;
+};
+
+export type OrderIssue = {
+  value: string;
+  deckRowOrder?: number;
+  line: number;
+  prevValue: string;
+  prevLine: number;
+  message: string;
+};
+
+export type OrderSequenceItem = {
+  value: string;
+  deckRowOrder?: number;
+  line: number;
+  original_copy?: string;
+  outOfOrder: boolean;
+};
+
+export type UntaggedCopyIssue = {
+  tagName: string;
+  attrText: string;
+  value: string | null;
+  line: number;
+  message: string;
+};
+
+export type PreCoderAnalysisResult = {
+  totalHtmlCopySetCount: number;
+  totalDeckRowCount: number;
+  unassignedCount: number;
+  unassignedLines: number[];
+  duplicateIssues: DuplicateIssue[];
+  scopeIssues: ScopeIssue[];
+  typeMismatchIssues: TypeMismatchIssue[];
+  orderIssues: OrderIssue[];
+  orderSequence: OrderSequenceItem[];
+  untaggedCopyIssues: UntaggedCopyIssue[];
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// 공통 유틸
+// ────────────────────────────────────────────────────────────────────────────
+
+const normalize = (value: string | null | undefined): string => {
+  return (value ?? "")
+    .normalize("NFC")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+// data-copy-set="F02-004" -> { attr: "data-copy-set", value: "F02-004" }
+const parseTargetSelector = (
+  targetSelector: string
+): { attr: string; value: string } | null => {
+  const match = (targetSelector || "").match(/^([\w-]+)=["']([^"']+)["']$/);
+  if (!match) return null;
+  return { attr: match[1], value: match[2].trim() };
+};
+
+const buildLineOffsets = (text: string): number[] => {
+  const offsets = [0];
+  for (let i = 0; i < text.length; i++) {
+    if (text.charCodeAt(i) === 10) offsets.push(i + 1);
+  }
+  return offsets;
+};
+
+const lineNumberFromOffset = (offsets: number[], index: number): number => {
+  if (index < 0) return -1;
+  let lo = 0;
+  let hi = offsets.length - 1;
+  let ans = 0;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (offsets[mid] <= index) {
+      ans = mid;
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;
+    }
+  }
+  return ans + 1;
+};
+
+// alt 속성을 실제로 지원하는 태그
+const ALT_CAPABLE_TAGS = ["img", "area", "input"];
+// 자식 텍스트를 가질 수 없는(innerText 불가능) 태그
+const VOID_LIKE_TAGS = ["img", "area", "input", "video", "source", "track", "br", "hr"];
+
+const detectCopyType = (el: Element): { type: DetectedCopyType; text: string } => {
+  const value = el.getAttribute("data-copy-set") || "";
+  if (value === "disclaimer") {
+    return { type: "disclaimer", text: normalize(el.textContent) };
+  }
+  if (el.hasAttribute("alt")) {
+    return { type: "alt", text: normalize(el.getAttribute("alt")) };
+  }
+  if (el.hasAttribute("aria-label")) {
+    return { type: "aria-label", text: normalize(el.getAttribute("aria-label")) };
+  }
+  if (el.hasAttribute("title") && !normalize(el.textContent)) {
+    return { type: "title", text: normalize(el.getAttribute("title")) };
+  }
+  if (normalize(el.textContent)) {
+    return { type: "innerText", text: normalize(el.textContent) };
+  }
+  return { type: "unknown", text: "" };
+};
+
+// 카피덱 apply_type이 실제 태그 구조상 유효한지 확인.
+// (ex. apply_type=alt 인데 <video> 태그라 alt 미지원 → aria-label 로 지정되어야 함)
+const validateApplyTypeForTag = (
+  applyType: string,
+  tagName: string
+): { valid: boolean; suggested?: string } => {
+  const type = (applyType || "").toLowerCase();
+
+  if (type === "alt") {
+    if (ALT_CAPABLE_TAGS.includes(tagName)) return { valid: true };
+    return { valid: false, suggested: "aria-label" };
+  }
+  if (type === "aria-label") {
+    return { valid: true };
+  }
+  if (type === "text_disclaimer" || type === "disclaimer") {
+    return { valid: true };
+  }
+  if (type === "title") {
+    return { valid: true };
+  }
+  // innerText 등 텍스트형: img/area/input/video 등 텍스트를 담을 수 없는 태그면 이상 케이스
+  if (VOID_LIKE_TAGS.includes(tagName)) {
+    return {
+      valid: false,
+      suggested: ALT_CAPABLE_TAGS.includes(tagName) ? "alt" : "aria-label",
+    };
+  }
+  return { valid: true };
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// 메인 분석 함수
+// ────────────────────────────────────────────────────────────────────────────
+
+export const analyzePreCoder = (
+  htmlText: string,
+  copyDeckRows: CopyDeckRow[]
+): PreCoderAnalysisResult => {
+  const offsets = buildLineOffsets(htmlText);
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlText, "text/html");
+  const domEls = Array.from(doc.querySelectorAll("[data-copy-set]"));
+
+  // 소스 원문에서 data-copy-set 등장 위치를 순서대로 수집해 line number를 붙인다.
+  // (DOM 순회 순서 == 원문 등장 순서라고 가정하고 index로 매칭)
+  const attrRegex = /data-copy-set\s*=\s*["']([^"']*)["']/g;
+  const positions: number[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = attrRegex.exec(htmlText))) {
+    positions.push(m.index);
+  }
+  const canAlignByIndex = positions.length === domEls.length;
+
+  const nodes: HtmlCopySetNode[] = domEls.map((el, i) => {
+    const value = el.getAttribute("data-copy-set") || "";
+    const { type, text } = detectCopyType(el);
+    const line = canAlignByIndex ? lineNumberFromOffset(offsets, positions[i]) : -1;
+    const outerHtmlPreview = (el.outerHTML || "").slice(0, 160);
+    return {
+      domIndex: i,
+      value,
+      tagName: el.tagName.toLowerCase(),
+      detectedType: type,
+      extractedText: text,
+      line,
+      outerHtmlPreview,
+    };
+  });
+
+  // value -> node[] 맵 (빈 값 제외)
+  const valueMap = new Map<string, HtmlCopySetNode[]>();
+  nodes.forEach((n) => {
+    if (!n.value) return;
+    if (!valueMap.has(n.value)) valueMap.set(n.value, []);
+    valueMap.get(n.value)!.push(n);
+  });
+
+  // ── ① 고유성 검사 (동일 data-copy-set이 2개 이상의 서로 다른 위치를 가리키는지)
+  const duplicateIssues: DuplicateIssue[] = [];
+  valueMap.forEach((group, value) => {
+    if (value === "disclaimer") return; // disclaimer는 예약값 (여러 곳에서 재사용되는 정책)
+    if (group.length <= 1) return;
+
+    const texts = group.map((g) => g.extractedText);
+    const contentsMatch = texts.every((t) => t === texts[0]);
+
+    duplicateIssues.push({
+      value,
+      count: group.length,
+      lines: group.map((g) => g.line),
+      contentsMatch,
+      message: contentsMatch
+        ? `data-copy-set="${value}"가 ${group.length}개 태그에 동일한 값으로 중복 사용되었습니다. 고유값으로 분리해야 합니다.`
+        : `data-copy-set="${value}"가 서로 다른 카피를 가리키며 ${group.length}개 태그에 중복 사용되었습니다.`,
+    });
+  });
+
+  const unassigned = nodes.filter((n) => !n.value);
+
+  // ── ② 태그 스코프 검사 (부모/자식 태그에 중첩된 data-copy-set이 있는지 + 카피덱 값이 html에 존재하는지)
+  const scopeIssues: ScopeIssue[] = [];
+  domEls.forEach((el) => {
+    const value = el.getAttribute("data-copy-set");
+    if (!value || value === "disclaimer") return;
+
+    const nestedChildren = Array.from(el.querySelectorAll("[data-copy-set]")).filter(
+      (c) => c.getAttribute("data-copy-set")
+    );
+    if (nestedChildren.length > 0) {
+      const childValues = nestedChildren
+        .map((c) => c.getAttribute("data-copy-set"))
+        .join(", ");
+      const node = nodes.find((n) => n.value === value);
+      scopeIssues.push({
+        value,
+        type: "nested-child",
+        line: node?.line,
+        message: `data-copy-set="${value}" 태그 내부에 또 다른 data-copy-set(${childValues})을 가진 자식 태그가 있습니다. 카피를 감싸는 정확한 태그에만 지정되어야 합니다.`,
+      });
+    }
+  });
+
+  copyDeckRows.forEach((row) => {
+    const parsed = parseTargetSelector(row.target_selector);
+    if (!parsed || parsed.attr !== "data-copy-set") return;
+    if (valueMap.has(parsed.value)) return;
+    scopeIssues.push({
+      value: parsed.value,
+      type: "deck-not-in-html",
+      deckRowOrder: row.row_order,
+      message: `카피덱에 있는 data-copy-set="${parsed.value}"가 HTML에 존재하지 않습니다.`,
+    });
+  });
+
+  // ── ③ 카피 종류 자동 분류 검사
+  const deckByValue = new Map<string, CopyDeckRow>();
+  copyDeckRows.forEach((row) => {
+    const parsed = parseTargetSelector(row.target_selector);
+    if (parsed) deckByValue.set(parsed.value, row);
+  });
+
+  const typeMismatchIssues: TypeMismatchIssue[] = [];
+  nodes.forEach((n) => {
+    if (!n.value || n.value === "disclaimer") return;
+    const deckRow = deckByValue.get(n.value);
+    const declaredType = deckRow?.apply_type || n.detectedType;
+
+    const validity = validateApplyTypeForTag(declaredType, n.tagName);
+    if (!validity.valid) {
+      typeMismatchIssues.push({
+        value: n.value,
+        tagName: n.tagName,
+        declaredType,
+        detectedType: n.detectedType,
+        suggestedType: validity.suggested,
+        line: n.line,
+        message: `<${n.tagName}> 태그는 "${declaredType}" 속성을 지원하지 않습니다. "${validity.suggested}"(으)로 지정되어야 합니다.`,
+      });
+      return;
+    }
+
+    // 카피덱에 apply_type이 있는데, 실제 HTML에서 감지된 종류와 다른 경우
+    if (
+      deckRow &&
+      n.detectedType !== "unknown" &&
+      deckRow.apply_type &&
+      deckRow.apply_type.toLowerCase() !== n.detectedType.toLowerCase() &&
+      !(deckRow.apply_type.toLowerCase() === "text_disclaimer" && n.detectedType === "disclaimer")
+    ) {
+      typeMismatchIssues.push({
+        value: n.value,
+        tagName: n.tagName,
+        declaredType: deckRow.apply_type,
+        detectedType: n.detectedType,
+        line: n.line,
+        message: `카피덱에는 apply_type="${deckRow.apply_type}"로 지정되어 있지만, HTML에서는 "${n.detectedType}" 형태로 감지되었습니다.`,
+      });
+    }
+  });
+
+  // ── ④ 영문 카피덱 순서 vs HTML 노출 순서 비교
+  const deckSequence = copyDeckRows
+    .map((row) => {
+      const parsed = parseTargetSelector(row.target_selector);
+      const value = parsed?.value;
+      const node = value ? valueMap.get(value)?.[0] : undefined;
+      return {
+        value: value || "",
+        deckRowOrder: row.row_order,
+        original_copy: row.original_copy,
+        line: node?.line ?? -1,
+        domIndex: node?.domIndex ?? -1,
+      };
+    })
+    .filter((x) => x.value && x.domIndex !== -1);
+
+  const orderIssues: OrderIssue[] = [];
+  const orderSequence: OrderSequenceItem[] = deckSequence.map((item, i) => {
+    let outOfOrder = false;
+    if (i > 0 && item.domIndex < deckSequence[i - 1].domIndex) {
+      outOfOrder = true;
+      orderIssues.push({
+        value: item.value,
+        deckRowOrder: item.deckRowOrder,
+        line: item.line,
+        prevValue: deckSequence[i - 1].value,
+        prevLine: deckSequence[i - 1].line,
+        message: `카피덱 순서상 "${item.value}"가 "${deckSequence[i - 1].value}" 다음에 와야 하지만, HTML에서는 ${item.line}번째 줄로 더 앞(${deckSequence[i - 1].line}번째 줄보다 앞)에 위치해 순서가 뒤바뀌었습니다.`,
+      });
+    }
+    return {
+      value: item.value,
+      deckRowOrder: item.deckRowOrder,
+      line: item.line,
+      original_copy: item.original_copy,
+      outOfOrder,
+    };
+  });
+
+  // ── ⑤ 카피덱에 없지만 번역이 필요해 보이는 카피가 HTML에 존재하는지
+  const deckValueSet = new Set(Array.from(deckByValue.keys()));
+  const candidates = Array.from(doc.querySelectorAll("[title], [alt], [aria-label]"));
+  const untaggedCopyIssues: UntaggedCopyIssue[] = [];
+  let searchCursor = 0;
+
+  candidates.forEach((el) => {
+    const attrTexts = ["title", "alt", "aria-label"]
+      .map((a) => el.getAttribute(a))
+      .filter((v) => v && v.trim());
+    if (attrTexts.length === 0) return;
+
+    const value = el.getAttribute("data-copy-set");
+    const hasCopySetAttr = el.hasAttribute("data-copy-set");
+
+    let reason: string | null = null;
+    if (!hasCopySetAttr) {
+      reason = `data-copy-set이 지정되지 않은 번역 대상 카피가 있습니다.`;
+    } else if (!value) {
+      reason = `data-copy-set이 빈 값으로 지정된 번역 대상 카피가 있습니다.`;
+    } else if (value !== "disclaimer" && !deckValueSet.has(value)) {
+      reason = `data-copy-set="${value}"가 지정되어 있지만 카피덱에는 해당 값이 없습니다.`;
+    }
+    if (!reason) return;
+
+    const openTagMatch = (el.outerHTML || "").match(/^<[^>]*>/);
+    const needle = openTagMatch ? openTagMatch[0] : "";
+    let line = -1;
+    if (needle) {
+      const idx = htmlText.indexOf(needle, searchCursor);
+      if (idx !== -1) {
+        line = lineNumberFromOffset(offsets, idx);
+        searchCursor = idx + needle.length;
+      }
+    }
+
+    untaggedCopyIssues.push({
+      tagName: el.tagName.toLowerCase(),
+      attrText: attrTexts.join(" / "),
+      value: value ?? null,
+      line,
+      message: reason,
+    });
+  });
+
+  return {
+    totalHtmlCopySetCount: nodes.filter((n) => n.value).length,
+    totalDeckRowCount: copyDeckRows.length,
+    unassignedCount: unassigned.length,
+    unassignedLines: unassigned.map((n) => n.line),
+    duplicateIssues,
+    scopeIssues,
+    typeMismatchIssues,
+    orderIssues,
+    orderSequence,
+    untaggedCopyIssues,
+  };
+};
