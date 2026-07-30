@@ -26,6 +26,10 @@ import { processCopy } from '../controllers/unpackTemplates/processCopyControlle
 import { applyToHtml } from '../controllers/unpackTemplates/applyToHtmlController';
 import { applyLocalization } from '../controllers/applyTranslationTemplates/applyLocalizationController';
 import { verifyTranslationQa } from '../controllers/translationQa/verifyTranslationQaController';
+import { savePreCoderResult } from '../controllers/preCoder/savePreCoderResultController';
+import { getPreCoderResults } from '../controllers/preCoder/getPreCoderResultsController';
+import { getPreCoderResultDetail } from '../controllers/preCoder/getPreCoderResultDetailController';
+import { downloadPreCoderExcel } from '../controllers/preCoder/downloadPreCoderExcelController';
 
 router.use('/auth', authRoutes);
 
@@ -72,5 +76,20 @@ router.post(
   cors(),
   verifyTranslationQa
 );
+
+/** 7) Pre Coder (recoder 입력 전 html/카피덱 검사 + 결과 공유) */
+router.post(
+  "/pre-coder/save",
+  upload.fields([
+    { name: "htmlFile", maxCount: 1 },
+    { name: "excelFile", maxCount: 1 },
+  ]),
+  cors(),
+  authenticate,
+  savePreCoderResult
+);
+router.get("/pre-coder/list", cors(), authenticate, getPreCoderResults);
+router.get("/pre-coder/:id", cors(), authenticate, getPreCoderResultDetail);
+router.get("/pre-coder/:id/excel", cors(), authenticate, downloadPreCoderExcel);
 
 export default router;
