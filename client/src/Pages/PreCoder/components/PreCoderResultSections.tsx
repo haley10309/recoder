@@ -67,9 +67,9 @@ const LineBadge = styled.span`
 // ────────────────────────────────────────────────────────────────────────────
 export const DuplicateSection = ({ issues }: { issues: DuplicateIssue[] }) => (
   <div>
-    <SectionTitle>① data-copy-set 고유값 검사</SectionTitle>
+    <SectionTitle>① data-copy-set 고유값 검사 (서로 다른 카피가 같은 값을 공유하는 경우)</SectionTitle>
     {issues.length === 0 ? (
-      <EmptyState>중복 사용된 data-copy-set이 없습니다.</EmptyState>
+      <EmptyState>서로 다른 카피가 동일한 data-copy-set을 공유하는 경우가 없습니다.</EmptyState>
     ) : (
       <Table>
         <thead>
@@ -77,7 +77,6 @@ export const DuplicateSection = ({ issues }: { issues: DuplicateIssue[] }) => (
             <th>data-copy-set</th>
             <th>중복 횟수</th>
             <th>줄 번호</th>
-            <th>내용 일치 여부</th>
             <th>설명</th>
           </tr>
         </thead>
@@ -90,11 +89,6 @@ export const DuplicateSection = ({ issues }: { issues: DuplicateIssue[] }) => (
                 {issue.lines
                   .map((l) => (l >= 0 ? l : "-"))
                   .join(", ")}
-              </td>
-              <td>
-                <Pill $tone={issue.contentsMatch ? "warn" : undefined}>
-                  {issue.contentsMatch ? "동일 내용 중복" : "서로 다른 카피 충돌"}
-                </Pill>
               </td>
               <td>{issue.message}</td>
             </tr>
@@ -129,7 +123,11 @@ export const ScopeSection = ({ issues }: { issues: ScopeIssue[] }) => (
               <td>{issue.value}</td>
               <td>
                 <Pill>
-                  {issue.type === "nested-child" ? "부모/자식 중첩" : "카피덱 값이 HTML에 없음"}
+                  {issue.type === "nested-child"
+                    ? "부모/자식 중첩"
+                    : issue.type === "child-missing-copyset"
+                    ? "자식 태그 data-copy-set 누락"
+                    : "카피덱 값이 HTML에 없음"}
                 </Pill>
               </td>
               <td>
@@ -267,10 +265,18 @@ export const UntaggedCopySection = ({ issues }: { issues: UntaggedCopyIssue[] })
         <tbody>
           {issues.map((issue, i) => (
             <tr key={i}>
-              <td>&lt;{issue.tagName}&gt;</td>
-              <td>{issue.value || <Pill>없음</Pill>}</td>
+              <td>{issue.tagNames.map((t) => `<${t}>`).join(", ")}</td>
               <td>
-                <LineBadge>{issue.line >= 0 ? issue.line : "-"}</LineBadge>
+                {issue.values.filter(Boolean).length > 0
+                  ? issue.values.filter(Boolean).join(", ")
+                  : <Pill>없음</Pill>}
+              </td>
+              <td>
+                <LineBadge>
+                  {issue.lines.length > 0
+                    ? issue.lines.map((l) => (l >= 0 ? l : "-")).join(", ")
+                    : "-"}
+                </LineBadge>
               </td>
               <td>{issue.attrText}</td>
               <td>{issue.message}</td>
