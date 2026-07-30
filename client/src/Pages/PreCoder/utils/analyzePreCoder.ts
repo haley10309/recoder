@@ -39,7 +39,7 @@ export type DuplicateIssue = {
 
 export type ScopeIssue = {
   value: string;
-  type: "nested-child" | "deck-not-in-html";
+  type: "nested-child" | "child-missing-copyset" | "deck-not-in-html";
   line?: number;
   deckRowOrder?: number;
   message: string;
@@ -73,10 +73,10 @@ export type OrderSequenceItem = {
 };
 
 export type UntaggedCopyIssue = {
-  tagName: string;
   attrText: string;
-  value: string | null;
-  line: number;
+  tagNames: string[];
+  values: (string | null)[];
+  lines: number[];
   message: string;
 };
 
@@ -142,6 +142,28 @@ const lineNumberFromOffset = (offsets: number[], index: number): number => {
 const ALT_CAPABLE_TAGS = ["img", "area", "input"];
 // 자식 텍스트를 가질 수 없는(innerText 불가능) 태그
 const VOID_LIKE_TAGS = ["img", "area", "input", "video", "source", "track", "br", "hr"];
+
+// 자기 자신의 텍스트를 직접 담는, 별도 카피 단위로 취급될 가능성이 높은 태그
+// (span/div는 단순 스타일 래핑용으로 쓰이는 경우가 많아 노이즈를 줄이기 위해 제외)
+const TEXT_CONTAINER_TAGS = [
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "p",
+  "li",
+  "a",
+  "button",
+  "label",
+  "blockquote",
+  "figcaption",
+  "dt",
+  "dd",
+  "td",
+  "th",
+];
 
 const detectCopyType = (el: Element): { type: DetectedCopyType; text: string } => {
   const value = el.getAttribute("data-copy-set") || "";
@@ -242,7 +264,8 @@ export const analyzePreCoder = (
     valueMap.get(n.value)!.push(n);
   });
 
-  // ── ① 고유성 검사 (동일 data-copy-set이 2개 이상의 서로 다른 위치를 가리키는지)
+  // ── ① 고유성 검사 (동일 data-copy-set이 서로 다른 카피를 가리키는 경우만 위반)
+  // 내용이 동일한 중복은 어차피 같은 값으로 치환되므로 fail로 잡지 않는다.
   const duplicateIssues: DuplicateIssue[] = [];
   valueMap.forEach((group, value) => {
     if (value === "disclaimer") return; // disclaimer는 예약값 (여러 곳에서 재사용되는 정책)
@@ -250,15 +273,14 @@ export const analyzePreCoder = (
 
     const texts = group.map((g) => g.extractedText);
     const contentsMatch = texts.every((t) => t === texts[0]);
+    if (contentsMatch) return; // 동일 내용 중복은 문제 없음
 
     duplicateIssues.push({
       value,
       count: group.length,
       lines: group.map((g) => g.line),
       contentsMatch,
-      message: contentsMatch
-        ? `data-copy-set="${value}"가 ${group.length}개 태그에 동일한 값으로 중복 사용되었습니다. 고유값으로 분리해야 합니다.`
-        : `data-copy-set="${value}"가 서로 다른 카피를 가리키며 ${group.length}개 태그에 중복 사용되었습니다.`,
+      message: `data-copy-set="${value}"가 서로 다른 카피를 가리키며 ${group.length}개 태그에 중복 사용되었습니다.`,
     });
   });
 
@@ -283,6 +305,41 @@ export const analyzePreCoder = (
         type: "nested-child",
         line: node?.line,
         message: `data-copy-set="${value}" 태그 내부에 또 다른 data-copy-set(${childValues})을 가진 자식 태그가 있습니다. 카피를 감싸는 정확한 태그에만 지정되어야 합니다.`,
+      });
+    }
+
+    // 부모에는 data-copy-set이 있지만, 그 내부에 자기 자신만의 카피(별도 data-copy-set)가
+    // 필요해 보이는 자식 태그가 부모 값에 묻혀있는 케이스.
+    // 대상: alt/aria-label 속성을 가진 태그, 또는 h1~h6/p/li/a/button 등 자기 텍스트를 직접
+    // 담는 태그. (title만 있는 태그는 별도 지정이 어려운 경우가 많아 제외)
+    const attrCandidates = Array.from(el.querySelectorAll("[alt], [aria-label]"));
+    const textCandidates = Array.from(el.querySelectorAll(TEXT_CONTAINER_TAGS.join(","))).filter(
+      (c) => normalize(c.textContent).length > 0
+    );
+    const rawCandidates = Array.from(new Set([...attrCandidates, ...textCandidates])).filter(
+      (c) => !c.hasAttribute("data-copy-set")
+    );
+    const rawSet = new Set(rawCandidates);
+    // 후보끼리 중첩된 경우(ex. <li><a>text</a></li>) 가장 바깥쪽 태그만 남긴다.
+    const topLevelCandidates = rawCandidates.filter((c) => {
+      let p = c.parentElement;
+      while (p && p !== el) {
+        if (rawSet.has(p)) return false;
+        p = p.parentElement;
+      }
+      return true;
+    });
+
+    if (topLevelCandidates.length > 0) {
+      const node = nodes.find((n) => n.value === value);
+      const childTags = Array.from(
+        new Set(topLevelCandidates.map((c) => c.tagName.toLowerCase()))
+      ).join(", ");
+      scopeIssues.push({
+        value,
+        type: "child-missing-copyset",
+        line: node?.line,
+        message: `data-copy-set="${value}" 태그 내부에 별도 카피로 보이는 자식 태그(${childTags})가 있지만 자기 자신의 data-copy-set이 지정되어 있지 않습니다. 부모 카피에 묻혀 번역 대상에서 누락될 수 있습니다.`,
       });
     }
   });
@@ -314,14 +371,16 @@ export const analyzePreCoder = (
 
     const validity = validateApplyTypeForTag(declaredType, n.tagName);
     if (!validity.valid) {
+      // 권장 종류는 임의로 추측하지 않고, HTML에서 실제로 감지된 종류를 그대로 사용한다.
+      const suggested = n.detectedType !== "unknown" ? n.detectedType : validity.suggested;
       typeMismatchIssues.push({
         value: n.value,
         tagName: n.tagName,
         declaredType,
         detectedType: n.detectedType,
-        suggestedType: validity.suggested,
+        suggestedType: suggested,
         line: n.line,
-        message: `<${n.tagName}> 태그는 "${declaredType}" 속성을 지원하지 않습니다. "${validity.suggested}"(으)로 지정되어야 합니다.`,
+        message: `<${n.tagName}> 태그는 "${declaredType}" 속성을 지원하지 않습니다. HTML에서 실제 감지된 "${suggested}" 종류로 지정되어야 합니다.`,
       });
       return;
     }
@@ -339,6 +398,7 @@ export const analyzePreCoder = (
         tagName: n.tagName,
         declaredType: deckRow.apply_type,
         detectedType: n.detectedType,
+        suggestedType: n.detectedType,
         line: n.line,
         message: `카피덱에는 apply_type="${deckRow.apply_type}"로 지정되어 있지만, HTML에서는 "${n.detectedType}" 형태로 감지되었습니다.`,
       });
@@ -387,8 +447,16 @@ export const analyzePreCoder = (
   // ── ⑤ 카피덱에 없지만 번역이 필요해 보이는 카피가 HTML에 존재하는지
   const deckValueSet = new Set(Array.from(deckByValue.keys()));
   const candidates = Array.from(doc.querySelectorAll("[title], [alt], [aria-label]"));
-  const untaggedCopyIssues: UntaggedCopyIssue[] = [];
   let searchCursor = 0;
+
+  type RawUntaggedItem = {
+    tagName: string;
+    attrText: string;
+    value: string | null;
+    line: number;
+    reason: string;
+  };
+  const rawItems: RawUntaggedItem[] = [];
 
   candidates.forEach((el) => {
     const attrTexts = ["title", "alt", "aria-label"]
@@ -420,14 +488,37 @@ export const analyzePreCoder = (
       }
     }
 
-    untaggedCopyIssues.push({
+    rawItems.push({
       tagName: el.tagName.toLowerCase(),
       attrText: attrTexts.join(" / "),
       value: value ?? null,
       line,
-      message: reason,
+      reason,
     });
   });
+
+  // 동일한 카피(속성값) 내용은 하나로 합치고, 줄 번호만 배열로 모은다.
+  const untaggedGroups = new Map<string, RawUntaggedItem[]>();
+  rawItems.forEach((item) => {
+    const key = normalize(item.attrText);
+    if (!untaggedGroups.has(key)) untaggedGroups.set(key, []);
+    untaggedGroups.get(key)!.push(item);
+  });
+
+  const untaggedCopyIssues: UntaggedCopyIssue[] = Array.from(untaggedGroups.values()).map(
+    (group) => {
+      const lines = Array.from(new Set(group.map((g) => g.line))).sort((a, b) => a - b);
+      const tagNames = Array.from(new Set(group.map((g) => g.tagName)));
+      const values = Array.from(new Set(group.map((g) => g.value)));
+      return {
+        attrText: group[0].attrText,
+        tagNames,
+        values,
+        lines,
+        message: group[0].reason,
+      };
+    }
+  );
 
   return {
     totalHtmlCopySetCount: nodes.filter((n) => n.value).length,

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { parseExcelFile } from "@/apis/apis";
 import { analyzePreCoder } from "../utils/analyzePreCoder";
-import type { PreCoderAnalysisResult } from "../utils/analyzePreCoder";
+import type { CopyDeckRow, PreCoderAnalysisResult } from "../utils/analyzePreCoder";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -21,6 +21,7 @@ export function usePreCoderAnalysis({
   excelFile: File | null;
 }) {
   const [result, setResult] = useState<PreCoderAnalysisResult | null>(null);
+  const [copyDeckRows, setCopyDeckRows] = useState<CopyDeckRow[] | null>(null);
   const [analyzeStatus, setAnalyzeStatus] = useState<"" | "loading" | "success" | "fail">("");
 
   const handleAnalyze = async () => {
@@ -45,6 +46,7 @@ export function usePreCoderAnalysis({
 
       const analyzed = analyzePreCoder(htmlText, row_list);
       setResult(analyzed);
+      setCopyDeckRows(row_list);
       setAnalyzeStatus("success");
     } catch (error) {
       console.error("[usePreCoderAnalysis] 에러", error);
@@ -54,11 +56,13 @@ export function usePreCoderAnalysis({
 
   const resetAnalysis = () => {
     setResult(null);
+    setCopyDeckRows(null);
     setAnalyzeStatus("");
   };
 
   return {
     result,
+    copyDeckRows,
     analyzeStatus,
     handleAnalyze,
     resetAnalysis,
