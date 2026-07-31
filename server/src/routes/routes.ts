@@ -30,6 +30,7 @@ import { savePreCoderResult } from '../controllers/preCoder/savePreCoderResultCo
 import { getPreCoderResults } from '../controllers/preCoder/getPreCoderResultsController';
 import { getPreCoderResultDetail } from '../controllers/preCoder/getPreCoderResultDetailController';
 import { downloadPreCoderExcel } from '../controllers/preCoder/downloadPreCoderExcelController';
+import { updatePreCoderResultTitle } from '../controllers/preCoder/updatePreCoderResultTitleController';
 
 router.use('/auth', authRoutes);
 
@@ -91,5 +92,6 @@ router.post(
 router.get("/pre-coder/list", cors(), authenticate, getPreCoderResults);
 router.get("/pre-coder/:id", cors(), authenticate, getPreCoderResultDetail);
 router.get("/pre-coder/:id/excel", cors(), authenticate, downloadPreCoderExcel);
+router.patch("/pre-coder/:id/title", cors(), authenticate, updatePreCoderResultTitle);
 
 export default router;

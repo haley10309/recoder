@@ -17,6 +17,7 @@ import {
 import { usePreCoderFiles } from "../hooks/usePreCoderFiles";
 import { usePreCoderAnalysis } from "../hooks/usePreCoderAnalysis";
 import { usePreCoderSave } from "../hooks/usePreCoderSave";
+import { exportPreCoderResultToExcel } from "../utils/exportPreCoderExcel";
 
 // "검사 실행" 탭: html + 카피덱을 업로드해 검사를 돌리고, 결과를 팀 공유용으로 저장한다.
 const PreCoderRunTab = () => {
@@ -59,6 +60,17 @@ const PreCoderRunTab = () => {
 
   const handleClickSave = async () => {
     await handleSave(saveTitle || htmlFileName);
+  };
+
+  const handleExportExcel = () => {
+    if (!result) return;
+    exportPreCoderResultToExcel(result, {
+      title: saveTitle || htmlFileName || "PreCoder_결과",
+      htmlFilename: htmlFileName,
+      excelFilename: excelFileName,
+      createdByName: null,
+      createdAt: null,
+    });
   };
 
   const getStatusText = () => {
@@ -107,6 +119,7 @@ const PreCoderRunTab = () => {
             </SaveButton>
             {saveStatus === "success" && <SavedText>✅ 저장 완료 — "결과 열람" 탭에서 확인할 수 있어요.</SavedText>}
             {saveStatus === "fail" && <FailedText>❌ 저장 실패</FailedText>}
+            <ExportButton onClick={handleExportExcel}>📊 엑셀로 내보내기</ExportButton>
           </SaveBox>
           <Gap gap={25} />
 
@@ -231,4 +244,20 @@ const FailedText = styled.span`
   font-size: 0.78rem;
   color: #d1691a;
   font-weight: 600;
+`;
+
+const ExportButton = styled.button`
+  height: 2.25rem;
+  padding: 0 1rem;
+  border-radius: 8px;
+  border: 1px solid #ff782f;
+  background: #ffffff;
+  color: #ff782f;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &:hover {
+    background: #fff5eb;
+  }
 `;

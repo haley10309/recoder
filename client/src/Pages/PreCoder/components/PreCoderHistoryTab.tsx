@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 
 import Gap from "@/Components/Common/Gap";
@@ -15,6 +15,7 @@ import {
 } from "./PreCoderResultSections";
 
 import { usePreCoderHistory } from "../hooks/usePreCoderHistory";
+import { exportPreCoderResultToExcel } from "../utils/exportPreCoderExcel";
 
 const normalize = (v: string) => v.toLowerCase().trim();
 
@@ -26,9 +27,35 @@ const PreCoderHistoryTab = () => {
     loadedResult,
     detailLoadStatus,
     loadResultDetail,
+    renameResult,
+    renameStatus,
   } = usePreCoderHistory();
 
   const [keyword, setKeyword] = useState("");
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState("");
+
+  useEffect(() => {
+    setIsEditingTitle(false);
+    setTitleDraft(loadedResult?.title || "");
+  }, [loadedResult?.id]);
+
+  const handleSaveTitle = async () => {
+    if (!loadedResult) return;
+    await renameResult(loadedResult.id, titleDraft);
+    setIsEditingTitle(false);
+  };
+
+  const handleExportExcel = () => {
+    if (!loadedResult) return;
+    exportPreCoderResultToExcel(loadedResult.result, {
+      title: loadedResult.title,
+      htmlFilename: loadedResult.htmlFilename,
+      excelFilename: loadedResult.excelFilename,
+      createdByName: loadedResult.createdByName,
+      createdAt: loadedResult.createdAt,
+    });
+  };
 
   const filteredList = useMemo(() => {
     const q = normalize(keyword);
@@ -69,7 +96,33 @@ const PreCoderHistoryTab = () => {
       {loadedResult && (
         <>
           <MetaCard>
-            <MetaTitle>{loadedResult.title}</MetaTitle>
+            {isEditingTitle ? (
+              <TitleEditRow>
+                <TitleInput
+                  type="text"
+                  value={titleDraft}
+                  onChange={(e) => setTitleDraft(e.target.value)}
+                  autoFocus
+                />
+                <SmallButton onClick={handleSaveTitle} disabled={renameStatus === "loading"}>
+                  {renameStatus === "loading" ? "저장 중..." : "저장"}
+                </SmallButton>
+                <SmallButtonGhost
+                  onClick={() => {
+                    setIsEditingTitle(false);
+                    setTitleDraft(loadedResult.title);
+                  }}
+                >
+                  취소
+                </SmallButtonGhost>
+              </TitleEditRow>
+            ) : (
+              <TitleEditRow>
+                <MetaTitle>{loadedResult.title}</MetaTitle>
+                <SmallButtonGhost onClick={() => setIsEditingTitle(true)}>✏️ 이름 수정</SmallButtonGhost>
+                <SmallButtonGhost onClick={handleExportExcel}>📊 엑셀로 내보내기</SmallButtonGhost>
+              </TitleEditRow>
+            )}
             <MetaGrid>
               <MetaItem>
                 <MetaLabel>저장자</MetaLabel>
@@ -149,7 +202,50 @@ const MetaTitle = styled.div`
   font-size: 0.95rem;
   font-weight: 700;
   color: #111827;
+`;
+
+const TitleEditRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   margin-bottom: 0.8rem;
+`;
+
+const TitleInput = styled.input`
+  flex: 1;
+  max-width: 22rem;
+  height: 2rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0 0.7rem;
+  font-size: 0.85rem;
+`;
+
+const SmallButton = styled.button`
+  height: 2rem;
+  padding: 0 0.8rem;
+  border-radius: 6px;
+  background: #ff782f;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+`;
+
+const SmallButtonGhost = styled.button`
+  height: 2rem;
+  padding: 0 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
 `;
 
 const MetaGrid = styled.div`

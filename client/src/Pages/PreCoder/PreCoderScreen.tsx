@@ -6,6 +6,7 @@ import Gap from "@/Components/Common/Gap";
 
 import PreCoderRunTab from "./components/PreCoderRunTab";
 import PreCoderHistoryTab from "./components/PreCoderHistoryTab";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 
 type PreCoderTabKey = "run" | "history";
 
@@ -36,6 +37,8 @@ const PreCoderScreen = () => {
       <Gap gap={30} />
 
       {activeTab === "run" ? <PreCoderRunTab /> : <PreCoderHistoryTab />}
+
+      <ScrollToTopButton />
 
       <Gap gap={50} />
     </div>

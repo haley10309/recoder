@@ -54,6 +54,10 @@ export const fetchPreCoderResultDetail = async (id: number): Promise<PreCoderRes
 
 // 다운로드 라우트도 authenticate 미들웨어를 타므로, 단순 <a href>가 아니라
 // axios(Authorization 헤더 자동 첨부)로 blob을 받아온 뒤 브라우저 다운로드를 트리거한다.
+export const updatePreCoderResultTitle = async (id: number, title: string): Promise<void> => {
+  await defaultAxios.patch(`/pre-coder/${id}/title`, { title });
+};
+
 export const downloadPreCoderExcel = async (id: number, filename: string): Promise<void> => {
   const response = await defaultAxios.get(`/pre-coder/${id}/excel`, {
     responseType: "blob",
