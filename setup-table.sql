@@ -101,3 +101,26 @@ CREATE TABLE TemplateUnpackSpecs (
         REFERENCES `Templates` (`id`) 
         ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE PreCoderResults (
+    id INT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    html_filename VARCHAR(255) NOT NULL,
+    html_content LONGTEXT NOT NULL,
+    excel_filename VARCHAR(255) NOT NULL,
+    excel_file LONGBLOB NOT NULL,
+    copy_deck_json LONGTEXT NOT NULL,
+    result_json LONGTEXT NOT NULL,
+    created_by_id INT NULL,
+    created_by_name VARCHAR(255) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    INDEX idx_precoder_created_at (created_at),
+    INDEX idx_precoder_deleted_at (deleted_at),
+    CONSTRAINT fk_precoder_results_to_admin_users
+        FOREIGN KEY (`created_by_id`)
+        REFERENCES `AdminUsers` (`id`)
+        ON DELETE SET NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

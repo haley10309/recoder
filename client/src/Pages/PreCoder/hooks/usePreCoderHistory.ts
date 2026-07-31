@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   fetchPreCoderResultDetail,
   fetchPreCoderResults,
+  updatePreCoderResultTitle,
 } from "@/apis/preCoderApis";
 import type { PreCoderResultSummary } from "@/apis/preCoderApis";
 import type { CopyDeckRow, PreCoderAnalysisResult } from "../utils/analyzePreCoder";
@@ -24,6 +25,7 @@ export function usePreCoderHistory() {
   const [historyLoadStatus, setHistoryLoadStatus] = useState<"" | "loading" | "success" | "fail">("");
   const [loadedResult, setLoadedResult] = useState<LoadedPreCoderResult | null>(null);
   const [detailLoadStatus, setDetailLoadStatus] = useState<"" | "loading" | "success" | "fail">("");
+  const [renameStatus, setRenameStatus] = useState<"" | "loading" | "success" | "fail">("");
 
   const refreshHistory = async () => {
     try {
@@ -59,6 +61,29 @@ export function usePreCoderHistory() {
     }
   };
 
+  const renameResult = async (id: number, newTitle: string) => {
+    if (!newTitle.trim()) {
+      alert("제목을 입력해주세요.");
+      return;
+    }
+    try {
+      setRenameStatus("loading");
+      await updatePreCoderResultTitle(id, newTitle.trim());
+
+      setLoadedResult((prev) => (prev && prev.id === id ? { ...prev, title: newTitle.trim() } : prev));
+      setHistoryList((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, title: newTitle.trim() } : item))
+      );
+
+      setRenameStatus("success");
+    } catch (error: any) {
+      console.error("[usePreCoderHistory] 제목 수정 에러", error);
+      setRenameStatus("fail");
+      const message = error?.response?.data?.error || "제목 수정에 실패했습니다.";
+      alert(message);
+    }
+  };
+
   const clearLoadedResult = () => setLoadedResult(null);
 
   useEffect(() => {
@@ -73,5 +98,7 @@ export function usePreCoderHistory() {
     detailLoadStatus,
     loadResultDetail,
     clearLoadedResult,
+    renameResult,
+    renameStatus,
   };
 }
