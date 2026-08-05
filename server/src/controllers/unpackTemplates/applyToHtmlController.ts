@@ -6,10 +6,48 @@ import { Request, Response } from "express";
 
 import { ApplyToHtmlBody, UnpackRow } from "../../types/unpack.types";
 
+// 따옴표가 속성 구분자로 오인되지 않도록 HTML 엔티티로 치환
+// 태그 형태(<br />, <sup>, </span> 등)만 매칭
+// 앞에 반드시 알파벳 또는 /가 와야 하므로 "5 < 10" 같은 일반 텍스트는 태그로 오인하지 않음
+const HTML_TAG_REGEX = /<\/?[a-zA-Z][^>]*>/g;
+
+// 텍스트 조각의 따옴표만 HTML 엔티티로 치환
+const escapeQuotesInText = (value: string): string => {
+  return value
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+};
+
+// 카피 내 HTML 태그(속성 따옴표 포함)는 원본 유지, 텍스트 구간만 치환
+const escapeQuotes = (value: string): string => {
+  let result = "";
+  let lastIndex = 0;
+
+  HTML_TAG_REGEX.lastIndex = 0;
+
+  let match: RegExpExecArray | null;
+  while ((match = HTML_TAG_REGEX.exec(value)) !== null) {
+    // 태그 앞 텍스트 → 치환
+    result += escapeQuotesInText(value.slice(lastIndex, match.index));
+    // 태그 자체 → 원본 그대로
+    result += match[0];
+    lastIndex = match.index + match[0].length;
+  }
+
+  // 마지막 태그 이후 남은 텍스트 → 치환
+  result += escapeQuotesInText(value.slice(lastIndex));
+
+  return result;
+};
+
 // process-copy에서 가공된 값이 있으면 그것을 사용하며, 없다면 기존 카피값 그대로를 사용
 const getCopy = (row: UnpackRow): string => {
-  return row.processed_translated_copy ?? row.translated_copy ?? "";
+  const copy = row.processed_translated_copy ?? row.translated_copy ?? "";
+  return escapeQuotes(copy);
 };
+// const getCopy = (row: UnpackRow): string => {
+//   return row.processed_translated_copy ?? row.translated_copy ?? "";
+// };
 
 
 // 시트에서 넘어오는 값이 O인지 o인지 "true"인지 True인지를 단순하게 한번에 판별
@@ -87,7 +125,9 @@ const replaceAttribute = (
       "i"
     );
 
-    return tag.replace(attrRegex, `$1${copy}$3`);
+    // $ 문자 버그 수정 로직 추가
+    // return tag.replace(attrRegex, `$1${copy}$3`);
+    return tag.replace(attrRegex, (_m, open, _old, close) => `${open}${copy}${close}`);
   });
 };
 
