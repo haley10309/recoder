@@ -12,6 +12,7 @@ import {
   TypeMismatchSection,
   OrderSection,
   UntaggedCopySection,
+  UnassignedSection,
 } from "./PreCoderResultSections";
 
 import { usePreCoderFiles } from "../hooks/usePreCoderFiles";
@@ -138,6 +139,8 @@ const PreCoderRunTab = () => {
             <OrderSection issues={result.orderIssues} sequence={result.orderSequence} />
             <Gap gap={40} />
             <UntaggedCopySection issues={result.untaggedCopyIssues} />
+            <Gap gap={40} />
+            <UnassignedSection issues={result.unassignedIssues} count={result.unassignedCount} />
           </WhiteBox>
         </>
       )}

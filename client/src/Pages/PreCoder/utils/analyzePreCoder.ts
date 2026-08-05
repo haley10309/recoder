@@ -80,11 +80,18 @@ export type UntaggedCopyIssue = {
   message: string;
 };
 
+export type UnassignedTagIssue = {
+  tagName: string;
+  line: number;
+  snippet: string; // data-copy-set="" 이 포함된 태그 코드 조각
+};
+
 export type PreCoderAnalysisResult = {
   totalHtmlCopySetCount: number;
   totalDeckRowCount: number;
   unassignedCount: number;
   unassignedLines: number[];
+  unassignedIssues: UnassignedTagIssue[];
   duplicateIssues: DuplicateIssue[];
   scopeIssues: ScopeIssue[];
   typeMismatchIssues: TypeMismatchIssue[];
@@ -285,6 +292,11 @@ export const analyzePreCoder = (
   });
 
   const unassigned = nodes.filter((n) => !n.value);
+  const unassignedIssues: UnassignedTagIssue[] = unassigned.map((n) => ({
+    tagName: n.tagName,
+    line: n.line,
+    snippet: n.outerHtmlPreview,
+  }));
 
   // ── ② 태그 스코프 검사 (부모/자식 태그에 중첩된 data-copy-set이 있는지 + 카피덱 값이 html에 존재하는지)
   const scopeIssues: ScopeIssue[] = [];
@@ -525,6 +537,7 @@ export const analyzePreCoder = (
     totalDeckRowCount: copyDeckRows.length,
     unassignedCount: unassigned.length,
     unassignedLines: unassigned.map((n) => n.line),
+    unassignedIssues,
     duplicateIssues,
     scopeIssues,
     typeMismatchIssues,

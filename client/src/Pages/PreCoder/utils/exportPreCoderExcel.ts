@@ -296,6 +296,18 @@ export const exportPreCoderResultToExcel = (
     "⑤ 누락 카피"
   );
 
+  XLSX.utils.book_append_sheet(
+    wb,
+    buildTableSheet({
+      headers: ["태그", "줄 번호", "코드 (data-copy-set=\"\")"],
+      colWidths: [10, 10, 90],
+      rows: result.unassignedIssues.map((i) => [`<${i.tagName}>`, i.line >= 0 ? i.line : "-", i.snippet]),
+      rowStyler: (row, i) => row.map(() => bodyCellStyle({ warn: true, alt: i % 2 === 1 })),
+      emptyMessage: "✅ data-copy-set 값이 비어있는 태그가 없습니다.",
+    }),
+    "⑥ 미할당 태그"
+  );
+
   const safeTitle = meta.title.replace(/[\\/:*?"<>|]/g, "_").slice(0, 80);
   XLSX.writeFile(wb, `PreCoder_${safeTitle}_${Date.now()}.xlsx`);
 };
