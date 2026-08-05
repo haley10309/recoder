@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-
+import { stripDisclaimerNumber } from "../../utils/copyTransform";
 import { ProcessCopyBody, ProcessCopyResponse, UnpackRow } from "../../types/unpack.types";
 
 // true 값이 문자열인가 true 인가.
@@ -11,29 +11,46 @@ const isTrue = (value: unknown): boolean => {
   return value === true;
 };
 
+// const processTranslatedCopy = (row: UnpackRow): string => {
+//   let copy = row.translated_copy ?? "";
+
+//   // innerText transform
+//   // 마지막 온점 이후 제거
+//   if (
+//     row.apply_type === "innerText" &&
+//     isTrue(row.enable_text_transform)
+//   ) {
+//     const lastDotIndex = copy.lastIndexOf(".");
+
+//     if (lastDotIndex !== -1) {
+//       copy = copy.slice(0, lastDotIndex + 1).trim();
+//     }
+//   }
+
+//   // text_disclaimer transform
+//   // 앞 숫자 제거
+//   if (
+//     row.apply_type === "text_disclaimer" &&
+//     isTrue(row.enable_text_transform)
+//   ) {
+//     copy = copy.replace(/^\d+\.\s*/, "").trim();
+//   }
+
+//   return copy;
+// };
 const processTranslatedCopy = (row: UnpackRow): string => {
-  let copy = row.translated_copy ?? "";
+  const copy = row.translated_copy ?? "";
 
-  // innerText transform
-  // 마지막 온점 이후 제거
-  if (
-    row.apply_type === "innerText" &&
-    isTrue(row.enable_text_transform)
-  ) {
-    const lastDotIndex = copy.lastIndexOf(".");
+  if (!isTrue(row.enable_text_transform)) return copy;
 
-    if (lastDotIndex !== -1) {
-      copy = copy.slice(0, lastDotIndex + 1).trim();
-    }
+  // innerText → 카피 끝의 디스클레이머 번호 제거
+  if (row.apply_type === "innerText") {
+    return stripDisclaimerNumber(copy).copy;
   }
 
-  // text_disclaimer transform
-  // 앞 숫자 제거
-  if (
-    row.apply_type === "text_disclaimer" &&
-    isTrue(row.enable_text_transform)
-  ) {
-    copy = copy.replace(/^\d+\.\s*/, "").trim();
+  // text_disclaimer → 앞 번호 제거 (기존 로직 유지)
+  if (row.apply_type === "text_disclaimer") {
+    return copy.replace(/^\d+\.\s*/, "").trim();
   }
 
   return copy;

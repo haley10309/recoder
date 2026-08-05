@@ -2,6 +2,7 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { Request, Response } from "express";
+import { stripDisclaimerNumber } from "../../utils/copyTransform";
 // import * as cheerio from "cheerio";
 
 import { ApplyToHtmlBody, UnpackRow } from "../../types/unpack.types";
@@ -45,9 +46,6 @@ const getCopy = (row: UnpackRow): string => {
   const copy = row.processed_translated_copy ?? row.translated_copy ?? "";
   return escapeQuotes(copy);
 };
-// const getCopy = (row: UnpackRow): string => {
-//   return row.processed_translated_copy ?? row.translated_copy ?? "";
-// };
 
 
 // 시트에서 넘어오는 값이 O인지 o인지 "true"인지 True인지를 단순하게 한번에 판별
@@ -125,8 +123,6 @@ const replaceAttribute = (
       "i"
     );
 
-    // $ 문자 버그 수정 로직 추가
-    // return tag.replace(attrRegex, `$1${copy}$3`);
     return tag.replace(attrRegex, (_m, open, _old, close) => `${open}${copy}${close}`);
   });
 };
@@ -149,21 +145,39 @@ const replaceInnerHtml = (
     "gi"
   );
 
+  // return html.replace(tagRegex, (full, openTag, tagName, inner, closeTag) => {
+  //   if (!excludeSup) {
+  //     // excludeSup 값이 false이면 통째로 교체
+  //     return `${openTag}${copy}${closeTag}`;
+  //   }
+
+  //   // sup을 제외한다면, sup의 시작 위치를 찾는다.
+  //   const supIndex = inner.search(/<sup\b[^>]*>/i);
+
+  //   if (supIndex === -1) {
+  //     // sup 이 없으면 그냥 전체 교체.
+  //     return `${openTag}${copy}${closeTag}`;
+  //   }
+  //   // 아니라면 
+  //   return `${openTag}${copy}${inner.slice(supIndex)}${closeTag}`;
+  // });
   return html.replace(tagRegex, (full, openTag, tagName, inner, closeTag) => {
     if (!excludeSup) {
-      // excludeSup 값이 false이면 통째로 교체
       return `${openTag}${copy}${closeTag}`;
     }
 
-    // sup을 제외한다면, sup의 시작 위치를 찾는다.
     const supIndex = inner.search(/<sup\b[^>]*>/i);
 
+    // sup 없음 → 기존 로직 유지
     if (supIndex === -1) {
-      // sup 이 없으면 그냥 전체 교체.
       return `${openTag}${copy}${closeTag}`;
     }
-    // 아니라면 
-    return `${openTag}${copy}${inner.slice(supIndex)}${closeTag}`;
+
+    // sup 존재 → 디스클레이머 번호 제거 + 공백 규칙 적용
+    const { copy: cleaned, needsSpace } = stripDisclaimerNumber(copy);
+    const space = needsSpace ? " " : "";
+
+    return `${openTag}${cleaned}${space}${inner.slice(supIndex)}${closeTag}`;
   });
 };
 
