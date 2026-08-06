@@ -43,8 +43,7 @@ const escapeQuotes = (value: string): string => {
 
 // process-copy에서 가공된 값이 있으면 그것을 사용하며, 없다면 기존 카피값 그대로를 사용
 const getCopy = (row: UnpackRow): string => {
-  const copy = row.processed_translated_copy ?? row.translated_copy ?? "";
-  return escapeQuotes(copy);
+  return row.processed_translated_copy ?? row.translated_copy ?? "";
 };
 
 
@@ -92,38 +91,61 @@ const isSupSelector = (targetSelector: string): boolean => {
   return /^data-sup=["']sup-\d+["']$/.test(targetSelector);
 };
 
+// alt / aria-label 속성 값에서 이스케이프할 따옴표 문자
+// 국가별 스마트 따옴표를 포함해 속성 구분자 오인을 방지한다
+const QUOTE_ENTITY_MAP: Record<string, string> = {
+  '"': "&quot;",       // U+0022 쌍따옴표
+  "\u201C": "&quot;",  // “ 좌측 쌍따옴표
+  "\u201D": "&quot;",  // ” 우측 쌍따옴표
+  "\u201E": "&quot;",  // „ 하단 쌍따옴표 (독일어 등)
+  "\u201F": "&quot;",  // ‟ 역방향 쌍따옴표
+  "'": "&#39;",        // U+0027 홑따옴표
+  "\u2018": "&#39;",   // ‘ 좌측 홑따옴표
+  "\u2019": "&#39;",   // ’ 우측 홑따옴표 / 아포스트로피
+  "\u201A": "&#39;",   // ‚ 하단 홑따옴표
+  "\u201B": "&#39;",   // ‛ 역방향 홑따옴표
+};
+
+const QUOTE_REGEX = /["'\u2018-\u201F]/g;
+
+// 속성 값에 삽입되는 카피의 따옴표를 HTML 엔티티로 치환
+const escapeQuotesForAttribute = (value: string): string => {
+  return value.replace(QUOTE_REGEX, (char) => QUOTE_ENTITY_MAP[char] ?? char);
+};
+
 //속성 값 변경 (alt, aria-label 등)cd 
+//속성 값 변경 (alt, aria-label 등)
 const replaceAttribute = (
   html: string,
   targetSelector: string,
   attrName: string,
   copy: string
 ): string => {
-
-  //selector를 가져옴. data copy set & alt
   const parsed = parseTargetSelector(targetSelector);
   if (!parsed) return html;
 
-
-  // 특수문자로 인한 오류를 막기위한 방어 함수(사실 escapeRegExp는 없어도 됨)
   const targetAttr = escapeRegExp(parsed.attr);
   const targetValue = escapeRegExp(parsed.value);
   const targetAttrName = escapeRegExp(attrName);
+
+  // 속성 값에 들어가므로 따옴표를 엔티티로 치환
+  const escapedCopy = escapeQuotesForAttribute(copy);
 
   const tagRegex = new RegExp(
     `<[^>]*\\s${targetAttr}=["']${targetValue}["'][^>]*>`,
     "gi"
   );
 
-  // alt 부분을 regex 함수를 통해 찾는다.
-  // < .... data-copy-set="C01-001" .... alt="여기" .... >
   return html.replace(tagRegex, (tag) => {
     const attrRegex = new RegExp(
       `(${targetAttrName}=["'])([^"']*)(["'])`,
       "i"
     );
 
-    return tag.replace(attrRegex, (_m, open, _old, close) => `${open}${copy}${close}`);
+    // 콜백으로 치환하여 카피 내 $ 문자가 정규식 패턴으로 해석되는 것을 방지
+    return tag.replace(attrRegex, (_m, open, _old, close) =>
+      `${open}${escapedCopy}${close}`
+    );
   });
 };
 
