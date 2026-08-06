@@ -134,12 +134,12 @@ const buildSummarySheet = (result: PreCoderAnalysisResult, meta: PreCoderExportM
   const kpis: [string, number, boolean][] = [
     ["HTML 내 data-copy-set", result.totalHtmlCopySetCount, false],
     ["카피덱 row 수", result.totalDeckRowCount, false],
-    ["미할당(빈 값) 태그", result.unassignedCount, result.unassignedCount > 0],
     ["① 고유값 위반", result.duplicateIssues.length, result.duplicateIssues.length > 0],
     ["② 태그 스코프 이슈", result.scopeIssues.length, result.scopeIssues.length > 0],
     ["③ 카피 종류 불일치", result.typeMismatchIssues.length, result.typeMismatchIssues.length > 0],
     ["④ 순서 불일치", result.orderIssues.length, result.orderIssues.length > 0],
     ["⑤ 카피덱 누락 카피", result.untaggedCopyIssues.length, result.untaggedCopyIssues.length > 0],
+    ["⑥ 미할당(빈 값) 태그", result.unassignedCount, result.unassignedCount > 0],
   ];
   kpis.forEach(([label, value, warn]) => {
     setCell(ws, `A${r + 1}`, label, kpiLabelStyle);
@@ -267,7 +267,7 @@ export const exportPreCoderResultToExcel = (
         item.value,
         item.line >= 0 ? item.line : "-",
         item.original_copy || "",
-        item.outOfOrder ? "순서 뒤바뀜" : "정상",
+        item.alreadyMentioned ? "앞에서 언급됨" : item.outOfOrder ? "순서 뒤바뀜" : "정상",
       ]),
       rowStyler: (row, i) => {
         const outOfOrder = row[4] === "순서 뒤바뀜";

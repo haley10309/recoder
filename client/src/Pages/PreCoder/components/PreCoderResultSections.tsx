@@ -48,14 +48,16 @@ const Table = styled.table`
   }
 `;
 
-const Pill = styled.span<{ $tone?: "warn" | "ok" }>`
+const Pill = styled.span<{ $tone?: "warn" | "ok" | "neutral" }>`
   display: inline-block;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
-  background: ${({ $tone }) => ($tone === "ok" ? "#eafaf0" : "#fff0e0")};
-  color: ${({ $tone }) => ($tone === "ok" ? "#1a7f4b" : "#d1691a")};
+  background: ${({ $tone }) =>
+    $tone === "ok" ? "#eafaf0" : $tone === "neutral" ? "#f3f4f6" : "#fff0e0"};
+  color: ${({ $tone }) =>
+    $tone === "ok" ? "#1a7f4b" : $tone === "neutral" ? "#4b5563" : "#d1691a"};
 `;
 
 const LineBadge = styled.span`
@@ -257,7 +259,9 @@ export const OrderSection = ({
               </td>
               <td>{item.original_copy}</td>
               <td>
-                {item.outOfOrder ? (
+                {item.alreadyMentioned ? (
+                  <Pill $tone="neutral">앞에서 언급됨</Pill>
+                ) : item.outOfOrder ? (
                   <Pill>순서 뒤바뀜</Pill>
                 ) : (
                   <Pill $tone="ok">정상</Pill>
