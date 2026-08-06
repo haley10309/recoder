@@ -54,6 +54,7 @@ const Pill = styled.span<{ $tone?: "warn" | "ok" | "neutral" }>`
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
+  white-space: nowrap;
   background: ${({ $tone }) =>
     $tone === "ok" ? "#eafaf0" : $tone === "neutral" ? "#f3f4f6" : "#fff0e0"};
   color: ${({ $tone }) =>
@@ -246,7 +247,7 @@ export const OrderSection = ({
             <th>data-copy-set</th>
             <th>HTML 줄 번호</th>
             <th>원문 카피</th>
-            <th>상태</th>
+            <th style={{ minWidth: "6.5rem" }}>상태</th>
           </tr>
         </thead>
         <tbody>
