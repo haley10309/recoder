@@ -303,14 +303,9 @@ const replaceDisclaimer = (
 // sup 포맷 정리
 // =========================================
 
-// 공백을 유지해야 하는 인라인 태그
-const INLINE_TAGS = new Set([
-  "sup", "sub", "strong", "b", "em", "i", "span", "a", "u", "small", "mark",
-]);
-
-// 디스클레이머 sup 직전 문맥 (닫는 태그 또는 일반 문자)
+// 디스클레이머 sup 직전 문맥 (닫는 태그 또는 일반 문자 1개)
 const BEFORE_DISCLAIMER_SUP =
-  /(<\/([a-zA-Z][\w:-]*)>|[^\s>])\s*(?=<sup\b[^>]*>\s*<a\b[^>]*(?:\bclick_sup\b|\bdata-sup-tag\s*=))/gi;
+  /(<\/[a-zA-Z][\w:-]*>|[^\s>])\s*(?=<sup\b[^>]*>\s*<a\b[^>]*(?:\bclick_sup\b|\bdata-sup-tag\s*=))/gi;
 
 // <sup> 블록 전체
 const SUP_BLOCK = /<sup\b[^>]*>[\s\S]*?<\/sup>/gi;
@@ -319,21 +314,14 @@ const SUP_BLOCK = /<sup\b[^>]*>[\s\S]*?<\/sup>/gi;
  * 디스클레이머 <sup> 앞 공백을 앞 문맥에 따라 일괄 결정하고,
  * <sup> 내부 구분 쉼표 뒤 공백을 제거한다.
  *
- * - 온점(.)              → 공백 없음
- * - 인라인 닫는 태그      → 공백 1개 (</sup>, </strong> 등)
- * - 블록 닫는 태그        → 공백 없음 (</p>, </h3> 등)
- * - 그 외 일반 문자       → 공백 1개
+ * - 온점(.)  → 공백 없음
+ * - 그 외    → 공백 1개 (일반 문자, </p>, </sup> 등 모든 닫는 태그 포함)
  */
 const normalizeSupFormat = (html: string): string => {
   return html
-    .replace(BEFORE_DISCLAIMER_SUP, (_m, prev: string, closeTag?: string) => {
-      // 닫는 태그: 인라인이면 공백 1개, 블록이면 붙임
-      if (closeTag) {
-        return INLINE_TAGS.has(closeTag.toLowerCase()) ? `${prev} ` : prev;
-      }
-      // 일반 문자: 온점이면 붙이고, 그 외에는 공백 1개
-      return prev === "." ? prev : `${prev} `;
-    })
+    .replace(BEFORE_DISCLAIMER_SUP, (_m, prev: string) =>
+      prev === "." ? prev : `${prev} `
+    )
     .replace(SUP_BLOCK, (block) => block.replace(/,\s+/g, ","));
 };
 
