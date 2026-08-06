@@ -45,7 +45,7 @@ const processTranslatedCopy = (row: UnpackRow): string => {
 
   // innerText → 카피 끝의 디스클레이머 번호 제거
   if (row.apply_type === "innerText") {
-    return stripDisclaimerNumber(copy).copy;
+    return stripDisclaimerNumber(copy);   // 기존: stripDisclaimerNumber(copy).copy
   }
 
   // text_disclaimer → 앞 번호 제거 (기존 로직 유지)

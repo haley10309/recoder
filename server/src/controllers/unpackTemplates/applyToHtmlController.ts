@@ -1,63 +1,30 @@
-import fs from "fs";
-import os from "os";
 import path from "path";
 import { Request, Response } from "express";
-import { stripDisclaimerNumber } from "../../utils/copyTransform";
-// import * as cheerio from "cheerio";
 
 import { ApplyToHtmlBody, UnpackRow } from "../../types/unpack.types";
+import { stripDisclaimerNumber } from "../../utils/copyTransform";
 
-// 따옴표가 속성 구분자로 오인되지 않도록 HTML 엔티티로 치환
-// 태그 형태(<br />, <sup>, </span> 등)만 매칭
-// 앞에 반드시 알파벳 또는 /가 와야 하므로 "5 < 10" 같은 일반 텍스트는 태그로 오인하지 않음
-const HTML_TAG_REGEX = /<\/?[a-zA-Z][^>]*>/g;
-
-// 텍스트 조각의 따옴표만 HTML 엔티티로 치환
-const escapeQuotesInText = (value: string): string => {
-  return value
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-};
-
-// 카피 내 HTML 태그(속성 따옴표 포함)는 원본 유지, 텍스트 구간만 치환
-const escapeQuotes = (value: string): string => {
-  let result = "";
-  let lastIndex = 0;
-
-  HTML_TAG_REGEX.lastIndex = 0;
-
-  let match: RegExpExecArray | null;
-  while ((match = HTML_TAG_REGEX.exec(value)) !== null) {
-    // 태그 앞 텍스트 → 치환
-    result += escapeQuotesInText(value.slice(lastIndex, match.index));
-    // 태그 자체 → 원본 그대로
-    result += match[0];
-    lastIndex = match.index + match[0].length;
-  }
-
-  // 마지막 태그 이후 남은 텍스트 → 치환
-  result += escapeQuotesInText(value.slice(lastIndex));
-
-  return result;
-};
+// =========================================
+// 공통 유틸
+// =========================================
 
 // process-copy에서 가공된 값이 있으면 그것을 사용하며, 없다면 기존 카피값 그대로를 사용
 const getCopy = (row: UnpackRow): string => {
   return row.processed_translated_copy ?? row.translated_copy ?? "";
 };
 
-
 // 시트에서 넘어오는 값이 O인지 o인지 "true"인지 True인지를 단순하게 한번에 판별
 const isTrue = (value: unknown): boolean => {
   return value === true || value === "true" || value === "o" || value === "O";
 };
 
-// 혹여나 특수 문자가 있을 경우 이스케이프 시켜주는 함수.
+// 혹여나 특수 문자가 있을 경우 이스케이프 시켜주는 함수
 const escapeRegExp = (value: string): string => {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
-// selector를 분해하여 전달해준다.
+// selector를 분해하여 전달해준다
+// data-copy-set="C01-001" -> { attr: "data-copy-set", value: "C01-001" }
 const parseTargetSelector = (
   targetSelector: string
 ): { attr: string; value: string } | null => {
@@ -65,182 +32,105 @@ const parseTargetSelector = (
 
   if (!match) return null;
 
-  /*
-
-  data-copy-set="C01-001"
-
-  ->
-
-  attr: "data-copy-set",
-  value: "C01-001"
-
-  */
   return {
     attr: match[1],
     value: match[2].trim(),
   };
 };
 
-// data-copy-set="C1-1", data-copy-set="C22-3" 이런 형식인지 검사(특정 형식)
+// data-copy-set="C1-1", data-copy-set="C22-3" 이런 형식인지 검사
 const isCopySetSelector = (targetSelector: string): boolean => {
   return /^data-copy-set=["'][A-Za-z]+\d+(?:-\d+)+\s*["']$/.test(targetSelector);
 };
 
-// 위와 마찬가지로 데이터 sup의 형식 검사 
+// data-sup="sup-1" 형식 검사
 const isSupSelector = (targetSelector: string): boolean => {
   return /^data-sup=["']sup-\d+["']$/.test(targetSelector);
 };
 
-// alt / aria-label 속성 값에서 이스케이프할 따옴표 문자
+// =========================================
+// 따옴표 이스케이프 (alt / aria-label 전용)
+// =========================================
+
 // 속성 값에 삽입되는 카피의 따옴표를 HTML 엔티티로 치환
+// (속성 구분자로 오인되는 문자만 처리. 스마트 따옴표는 파싱에 영향이 없어 제외)
 const escapeQuotesForAttribute = (value: string): string => {
   return value
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 };
-//속성 값 변경 (alt, aria-label 등)cd 
-// const replaceAttribute = (
-//   html: string,
-//   targetSelector: string,
-//   attrName: string,
-//   copy: string
-// ): string => {
-//   const parsed = parseTargetSelector(targetSelector);
-//   if (!parsed) return html;
 
-//   const targetAttr = escapeRegExp(parsed.attr);
-//   const targetValue = escapeRegExp(parsed.value);
-//   const targetAttrName = escapeRegExp(attrName);
+// =========================================
+// sup 태그 판별
+// =========================================
 
-//   // 속성 값에 들어가므로 따옴표를 엔티티로 치환
-//   const escapedCopy = escapeQuotesForAttribute(copy);
+// 디스클레이머용 <sup> 태그
+// 내부에 click_sup 앵커(data-sup-tag)를 가진 <sup>만 대상으로 한다.
+// class 유무는 템플릿마다 달라 판별 기준으로 삼지 않는다.
+// (<sup>&reg;</sup>, <sup class="sup-text">&reg;</sup> 등 기호용 sup은 제외)
+const DISCLAIMER_SUP_REGEX =
+  /<sup\b[^>]*>\s*<a\b[^>]*(?:\bclick_sup\b|\bdata-sup-tag\s*=)/i;
 
-//   const tagRegex = new RegExp(
-//     `<[^>]*\\s${targetAttr}=["']${targetValue}["'][^>]*>`,
-//     "gi"
-//   );
-
-//   return html.replace(tagRegex, (tag) => {
-//     const attrRegex = new RegExp(
-//       `(${targetAttrName}=["'])([^"']*)(["'])`,
-//       "i"
-//     );
-
-//     // 콜백으로 치환하여 카피 내 $ 문자가 정규식 패턴으로 해석되는 것을 방지
-//     return tag.replace(attrRegex, (_m, open, _old, close) =>
-//       `${open}${escapedCopy}${close}`
-//     );
-//   });
-// };
-
-// 속성 값 변경 (alt, aria-label)
-const replaceAttribute = (
-  html: string,
-  targetSelector: string,
-  attrName: string,
-  copy: string
-): string => {
-  const parsed = parseTargetSelector(targetSelector);
-  if (!parsed) return html;
-
-  const targetAttr = escapeRegExp(parsed.attr);
-  const targetValue = escapeRegExp(parsed.value);
-  const targetAttrName = escapeRegExp(attrName);
-
-  const escapedCopy = escapeQuotesForAttribute(copy);
-
-  const tagRegex = new RegExp(
-    `<[^>]*\\s${targetAttr}=(["'])${targetValue}\\1[^>]*>`,
-    "gi"
-  );
-
-  return html.replace(tagRegex, (tag) => {
-    // 속성 종료는 "여는 따옴표와 동일한 따옴표"로만 판단한다.
-    // 값 내부의 Apostrophe(') 나 스마트 따옴표는 종료로 인식하지 않는다.
-    // 앞의 \s 는 data-alt 같은 유사 속성명 오매칭 방지용.
-    const attrRegex = new RegExp(
-      `(\\s${targetAttrName}=(["']))[\\s\\S]*?\\2`,
-      "i"
-    );
-
-    // 콜백 치환으로 카피 내 $ 문자가 정규식 패턴으로 해석되는 것을 방지
-    return tag.replace(attrRegex, (_m, head, quote) =>
-      `${head}${escapedCopy}${quote}`
-    );
-  });
+// 카피에 디스클레이머용 sup이 포함되어 있는지 검사
+const containsDisclaimerSup = (value: string): boolean => {
+  return DISCLAIMER_SUP_REGEX.test(value);
 };
 
-// inner html 변경하기
-// 
-const replaceInnerHtml = (
-  html: string,
-  targetSelector: string,
-  copy: string,
-  excludeSup: boolean
-): string => {
-  const parsed = parseTargetSelector(targetSelector);
-  if (!parsed) return html;
+// =========================================
+// Copy Deck 불균형 태그 정리
+// =========================================
 
-  return replaceTagInner(html, parsed.attr, parsed.value, (inner) => {
-    // 카피에 sup이 포함된 경우 → 카피가 sup까지 포함한 완성본이므로 통째로 교체
-    // (기존 sup을 덧붙이면 중복 생성됨)
-    if (containsSupTag(copy)) return copy;
+const VOID_TAGS = new Set([
+  "br", "img", "input", "hr", "meta", "link",
+  "source", "area", "base", "col", "embed", "param", "track", "wbr",
+]);
 
-    if (!excludeSup) return copy;
+/**
+ * Copy Deck에 포함된 짝 없는 닫는 태그를 제거한다.
+ * (덱 작성 오류로 기존 HTML 구조가 깨지는 것을 방지)
+ */
+const stripUnbalancedCloseTags = (copy: string): string => {
+  const stack: string[] = [];
+  const removeRanges: Array<[number, number]> = [];
+  const tagRegex = /<(\/?)([a-zA-Z][\w:-]*)\b[^>]*?(\/?)>/g;
 
-    const supIndex = inner.search(/<sup\b[^>]*>/i);
-    if (supIndex === -1) return copy;
+  let m: RegExpExecArray | null;
+  while ((m = tagRegex.exec(copy)) !== null) {
+    const name = m[2].toLowerCase();
 
-    // sup 존재 → 디스클레이머 번호 제거 + 공백 규칙 적용
-    const { copy: cleaned, needsSpace } = stripDisclaimerNumber(copy);
-    const space = needsSpace ? " " : "";
+    // self-closing 및 void 태그는 스택에 쌓지 않음
+    if (m[3] === "/" || VOID_TAGS.has(name)) continue;
 
-    return `${cleaned}${space}${inner.slice(supIndex)}`;
-  });
+    if (m[1] === "/") {
+      const idx = stack.lastIndexOf(name);
+
+      if (idx === -1) {
+        // 여는 태그 없이 등장한 닫는 태그 → 제거 대상
+        removeRanges.push([m.index, m.index + m[0].length]);
+      } else {
+        stack.length = idx;
+      }
+    } else {
+      stack.push(name);
+    }
+  }
+
+  if (removeRanges.length === 0) return copy;
+
+  let result = "";
+  let cursor = 0;
+
+  for (const [start, end] of removeRanges) {
+    result += copy.slice(cursor, start);
+    cursor = end;
+  }
+
+  return result + copy.slice(cursor);
 };
 
-// 디스클레이머 변경하기.
-// const replaceDisclaimer = (
-//   html: string,
-//   targetSelector: string,
-//   copy: string
-// ): string => {
-//   const parsed = parseTargetSelector(targetSelector);
-//   if (!parsed) return html;
-
-//   const targetAttr = escapeRegExp(parsed.attr);
-//   const targetValue = escapeRegExp(parsed.value);
-
-//   const targetBlockRegex = new RegExp(
-//     `(<([a-zA-Z][\\w:-]*)[^>]*\\s${targetAttr}=["']${targetValue}["'][^>]*>)([\\s\\S]*?)(</\\2>)`,
-//     "gi"
-//   );
-
-//   return html.replace(targetBlockRegex, (full, openTag, tagName, inner, closeTag) => {
-//     const disclaimerRegex =
-//       /(<([a-zA-Z][\w:-]*)[^>]*\sdata-copy-set=["']disclaimer["'][^>]*>)([\s\S]*?)(<\/\2>)/i;
-
-//     const replacedInner = inner.replace(
-//       disclaimerRegex,
-//       (
-//         full: string,
-//         disclaimerOpenTag: string,
-//         tagName: string,
-//         disclaimerInner: string,
-//         disclaimerCloseTag: string
-//       ) => {
-//         return `${disclaimerOpenTag}${copy}${disclaimerCloseTag}`;
-//       }
-//     );
-
-//     return `${openTag}${replacedInner}${closeTag}`;
-//   });
-// };
-
-// 카피에 sup 태그가 포함되어 있는지 검사
-const containsSupTag = (value: string): boolean => {
-  return /<sup\b[^>]*>/i.test(value);
-};
+// =========================================
+// 태그 범위 탐색
+// =========================================
 
 /**
  * fromIndex부터 스캔하며 depth를 세어 대응되는 닫는 태그 위치를 찾는다.
@@ -267,7 +157,10 @@ const findMatchingCloseIndex = (
     if (isClosing) {
       depth -= 1;
       if (depth === 0) {
-        return { closeStart: match.index, closeEnd: match.index + match[0].length };
+        return {
+          closeStart: match.index,
+          closeEnd: match.index + match[0].length,
+        };
       }
     } else if (!isSelfClosing) {
       depth += 1;
@@ -319,6 +212,77 @@ const replaceTagInner = (
   return result;
 };
 
+// =========================================
+// 치환 로직
+// =========================================
+
+// 속성 값 변경 (alt, aria-label)
+const replaceAttribute = (
+  html: string,
+  targetSelector: string,
+  attrName: string,
+  copy: string
+): string => {
+  const parsed = parseTargetSelector(targetSelector);
+  if (!parsed) return html;
+
+  const targetAttr = escapeRegExp(parsed.attr);
+  const targetValue = escapeRegExp(parsed.value);
+  const targetAttrName = escapeRegExp(attrName);
+
+  // 속성 값에 들어가므로 따옴표를 엔티티로 치환
+  const escapedCopy = escapeQuotesForAttribute(copy);
+
+  const tagRegex = new RegExp(
+    `<[^>]*\\s${targetAttr}=(["'])${targetValue}\\1[^>]*>`,
+    "gi"
+  );
+
+  return html.replace(tagRegex, (tag) => {
+    // 속성 종료는 "여는 따옴표와 동일한 따옴표"로만 판단한다.
+    // 값 내부의 Apostrophe(') 나 스마트 따옴표는 종료로 인식하지 않는다.
+    // 앞의 \s 는 data-alt 같은 유사 속성명 오매칭 방지용.
+    const attrRegex = new RegExp(
+      `(\\s${targetAttrName}=(["']))[\\s\\S]*?\\2`,
+      "i"
+    );
+
+    // 콜백 치환으로 카피 내 $ 문자가 정규식 패턴으로 해석되는 것을 방지
+    return tag.replace(
+      attrRegex,
+      (_m, head, quote) => `${head}${escapedCopy}${quote}`
+    );
+  });
+};
+
+// inner html 변경
+const replaceInnerHtml = (
+  html: string,
+  targetSelector: string,
+  copy: string
+): string => {
+  const parsed = parseTargetSelector(targetSelector);
+  if (!parsed) return html;
+
+  const safeCopy = stripUnbalancedCloseTags(copy);
+
+  return replaceTagInner(html, parsed.attr, parsed.value, (inner) => {
+    // 카피에 디스클레이머 sup 포함 → 카피가 완성본이므로 통째로 교체
+    if (containsDisclaimerSup(safeCopy)) return safeCopy;
+
+    // HTML의 디스클레이머 sup 위치 (기호용 sup은 건너뜀)
+    const supIndex = inner.search(DISCLAIMER_SUP_REGEX);
+
+    // 디스클레이머 sup 없음 → 기존 로직 유지
+    if (supIndex === -1) return safeCopy;
+
+    // sup 존재 → 번호만 제거하고 sup 보존
+    // (앞 공백은 normalizeSupFormat에서 일괄 결정)
+    return `${stripDisclaimerNumber(safeCopy)}${inner.slice(supIndex)}`;
+  });
+};
+
+// 디스클레이머 변경
 const replaceDisclaimer = (
   html: string,
   targetSelector: string,
@@ -327,11 +291,55 @@ const replaceDisclaimer = (
   const parsed = parseTargetSelector(targetSelector);
   if (!parsed) return html;
 
+  const safeCopy = stripUnbalancedCloseTags(copy);
+
   // 외곽 블록 → 내부의 data-copy-set="disclaimer" 요소 inner 교체
   return replaceTagInner(html, parsed.attr, parsed.value, (inner) =>
-    replaceTagInner(inner, "data-copy-set", "disclaimer", () => copy)
+    replaceTagInner(inner, "data-copy-set", "disclaimer", () => safeCopy)
   );
 };
+
+// =========================================
+// sup 포맷 정리
+// =========================================
+
+// 공백을 유지해야 하는 인라인 태그
+const INLINE_TAGS = new Set([
+  "sup", "sub", "strong", "b", "em", "i", "span", "a", "u", "small", "mark",
+]);
+
+// 디스클레이머 sup 직전 문맥 (닫는 태그 또는 일반 문자)
+const BEFORE_DISCLAIMER_SUP =
+  /(<\/([a-zA-Z][\w:-]*)>|[^\s>])\s*(?=<sup\b[^>]*>\s*<a\b[^>]*(?:\bclick_sup\b|\bdata-sup-tag\s*=))/gi;
+
+// <sup> 블록 전체
+const SUP_BLOCK = /<sup\b[^>]*>[\s\S]*?<\/sup>/gi;
+
+/**
+ * 디스클레이머 <sup> 앞 공백을 앞 문맥에 따라 일괄 결정하고,
+ * <sup> 내부 구분 쉼표 뒤 공백을 제거한다.
+ *
+ * - 온점(.)              → 공백 없음
+ * - 인라인 닫는 태그      → 공백 1개 (</sup>, </strong> 등)
+ * - 블록 닫는 태그        → 공백 없음 (</p>, </h3> 등)
+ * - 그 외 일반 문자       → 공백 1개
+ */
+const normalizeSupFormat = (html: string): string => {
+  return html
+    .replace(BEFORE_DISCLAIMER_SUP, (_m, prev: string, closeTag?: string) => {
+      // 닫는 태그: 인라인이면 공백 1개, 블록이면 붙임
+      if (closeTag) {
+        return INLINE_TAGS.has(closeTag.toLowerCase()) ? `${prev} ` : prev;
+      }
+      // 일반 문자: 온점이면 붙이고, 그 외에는 공백 1개
+      return prev === "." ? prev : `${prev} `;
+    })
+    .replace(SUP_BLOCK, (block) => block.replace(/,\s+/g, ","));
+};
+
+// =========================================
+// 행 적용
+// =========================================
 
 const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
   let convertedHtml = html;
@@ -350,12 +358,7 @@ const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
       }
 
       if (applyType === "innerText") {
-        convertedHtml = replaceInnerHtml(
-          convertedHtml,
-          targetSelector,
-          copy,
-          isTrue(row.exclude_sup)
-        );
+        convertedHtml = replaceInnerHtml(convertedHtml, targetSelector, copy);
         return;
       }
 
@@ -370,8 +373,13 @@ const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
     }
   });
 
-  return convertedHtml;
+  // 치환 완료 후 sup 포맷 정리
+  return normalizeSupFormat(convertedHtml);
 };
+
+// =========================================
+// 컨트롤러
+// =========================================
 
 export const applyToHtml = async (
   req: Request<{}, {}, ApplyToHtmlBody>,
@@ -382,6 +390,7 @@ export const applyToHtml = async (
       res.status(400).json({ success: false, error: "No file uploaded." });
       return;
     }
+
     if (!req.body.row_list) {
       res.status(400).json({ success: false, error: "row_list is required." });
       return;
