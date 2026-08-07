@@ -261,17 +261,30 @@ export const exportPreCoderResultToExcel = (
     wb,
     buildTableSheet({
       headers: ["#", "data-copy-set", "줄 번호", "원문 카피", "상태"],
-      colWidths: [6, 16, 10, 60, 14],
+      colWidths: [6, 16, 10, 60, 26],
       rows: result.orderSequence.map((item, idx) => [
         idx + 1,
         item.value,
         item.line >= 0 ? item.line : "-",
         item.original_copy || "",
-        item.alreadyMentioned ? "앞에서 언급됨" : item.outOfOrder ? "순서 뒤바뀜" : "정상",
+        item.alreadyMentioned
+          ? "앞에서 언급됨"
+          : item.issueType === "deckIdOrder"
+          ? "카피덱 순서 오류"
+          : item.outOfOrder
+          ? "HTML 노출 순서 불일치"
+          : "정상",
       ]),
       rowStyler: (row, i) => {
-        const outOfOrder = row[4] === "순서 뒤바뀜";
-        return row.map(() => bodyCellStyle({ warn: outOfOrder, alt: i % 2 === 1 }));
+        const outOfOrder = row[4] === "카피덱 순서 오류" || row[4] === "HTML 노출 순서 불일치";
+        return row.map((_, c) => {
+          const style = bodyCellStyle({ warn: outOfOrder, alt: i % 2 === 1 });
+          // 상태 컬럼(마지막)은 텍스트가 짧으므로 줄바꿈 없이 가운데 정렬한다.
+          if (c === row.length - 1) {
+            return { ...style, alignment: { vertical: "center", horizontal: "center", wrapText: false } };
+          }
+          return style;
+        });
       },
       emptyMessage: "카피덱과 대조 가능한 순서 정보가 없습니다.",
     }),

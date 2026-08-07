@@ -247,7 +247,7 @@ export const OrderSection = ({
             <th>data-copy-set</th>
             <th>HTML 줄 번호</th>
             <th>원문 카피</th>
-            <th style={{ minWidth: "6.5rem" }}>상태</th>
+            <th style={{ minWidth: "9rem" }}>상태</th>
           </tr>
         </thead>
         <tbody>
@@ -262,8 +262,10 @@ export const OrderSection = ({
               <td>
                 {item.alreadyMentioned ? (
                   <Pill $tone="neutral">앞에서 언급됨</Pill>
+                ) : item.issueType === "deckIdOrder" ? (
+                  <Pill>카피덱 순서 오류</Pill>
                 ) : item.outOfOrder ? (
-                  <Pill>순서 뒤바뀜</Pill>
+                  <Pill>HTML 노출 순서 불일치</Pill>
                 ) : (
                   <Pill $tone="ok">정상</Pill>
                 )}
