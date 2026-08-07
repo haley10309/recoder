@@ -34,3 +34,44 @@ export const stripDisclaimerNumber = (rawCopy: string): string => {
     .replace(TRAILING_DISCLAIMER_NUMBERS, "")
     .replace(/\s+$/, "");
 };
+
+// =========================================
+// Disclaimer Snapdragon® 기호 처리
+// =========================================
+
+// ® 기호 표기 (문자 / 엔티티 모두 대응)
+const REG_SYMBOL_PATTERN = /®|&reg;|&#174;|&#xAE;/gi;
+
+// <sup> 블록 (중복 감싸기 방지용 탐색)
+const SUP_BLOCK_SCAN = /<sup\b[^>]*>[\s\S]*?<\/sup>/gi;
+
+/**
+ * Disclaimer 카피의 ® 기호를 <sup>&reg;</sup> 형태로 변환한다.
+ * 이미 <sup>으로 감싸진 구간은 내부 표기만 &reg;로 통일하여
+ * <sup> 태그가 중복 생성되지 않도록 한다.
+ *
+ * 이미 변환된 값이 다시 들어와도 결과가 동일한 멱등 함수.
+ */
+export const wrapRegSymbol = (copy: string): string => {
+  let result = "";
+  let lastIndex = 0;
+
+  SUP_BLOCK_SCAN.lastIndex = 0;
+
+  let match: RegExpExecArray | null;
+  while ((match = SUP_BLOCK_SCAN.exec(copy)) !== null) {
+    // sup 밖 구간 → <sup>&reg;</sup> 로 감쌈
+    result += copy
+      .slice(lastIndex, match.index)
+      .replace(REG_SYMBOL_PATTERN, "<sup>&reg;</sup>");
+
+    // sup 안 구간 → 표기만 &reg; 로 통일 (감싸지 않음)
+    result += match[0].replace(REG_SYMBOL_PATTERN, "&reg;");
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  result += copy.slice(lastIndex).replace(REG_SYMBOL_PATTERN, "<sup>&reg;</sup>");
+
+  return result;
+};

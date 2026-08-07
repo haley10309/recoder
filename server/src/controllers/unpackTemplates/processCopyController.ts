@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { stripDisclaimerNumber } from "../../utils/copyTransform";
+import { stripDisclaimerNumber, wrapRegSymbol  } from "../../utils/copyTransform";
 import { ProcessCopyBody, ProcessCopyResponse, UnpackRow } from "../../types/unpack.types";
 
 // true 값이 문자열인가 true 인가.
@@ -11,50 +11,29 @@ const isTrue = (value: unknown): boolean => {
   return value === true;
 };
 
-// const processTranslatedCopy = (row: UnpackRow): string => {
-//   let copy = row.translated_copy ?? "";
-
-//   // innerText transform
-//   // 마지막 온점 이후 제거
-//   if (
-//     row.apply_type === "innerText" &&
-//     isTrue(row.enable_text_transform)
-//   ) {
-//     const lastDotIndex = copy.lastIndexOf(".");
-
-//     if (lastDotIndex !== -1) {
-//       copy = copy.slice(0, lastDotIndex + 1).trim();
-//     }
-//   }
-
-//   // text_disclaimer transform
-//   // 앞 숫자 제거
-//   if (
-//     row.apply_type === "text_disclaimer" &&
-//     isTrue(row.enable_text_transform)
-//   ) {
-//     copy = copy.replace(/^\d+\.\s*/, "").trim();
-//   }
-
-//   return copy;
-// };
 const processTranslatedCopy = (row: UnpackRow): string => {
   const copy = row.translated_copy ?? "";
+
+  // Disclaimer 영역의 ® 변환은 구조적 요구사항이므로
+  // enable_text_transform 플래그와 무관하게 적용한다
+  if (row.apply_type === "text_disclaimer") {
+    const converted = wrapRegSymbol(copy);
+
+    return isTrue(row.enable_text_transform)
+      ? converted.replace(/^\d+\.\s*/, "").trim()   // 앞 번호 제거
+      : converted;
+  }
 
   if (!isTrue(row.enable_text_transform)) return copy;
 
   // innerText → 카피 끝의 디스클레이머 번호 제거
   if (row.apply_type === "innerText") {
-    return stripDisclaimerNumber(copy);   // 기존: stripDisclaimerNumber(copy).copy
-  }
-
-  // text_disclaimer → 앞 번호 제거 (기존 로직 유지)
-  if (row.apply_type === "text_disclaimer") {
-    return copy.replace(/^\d+\.\s*/, "").trim();
+    return stripDisclaimerNumber(copy);
   }
 
   return copy;
 };
+
 export const processCopy = async (
   req: Request<{}, {}, ProcessCopyBody>,
   res: Response<ProcessCopyResponse>

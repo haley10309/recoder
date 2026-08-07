@@ -2,7 +2,7 @@ import path from "path";
 import { Request, Response } from "express";
 
 import { ApplyToHtmlBody, UnpackRow } from "../../types/unpack.types";
-import { stripDisclaimerNumber } from "../../utils/copyTransform";
+import { stripDisclaimerNumber, wrapRegSymbol } from "../../utils/copyTransform";
 
 // =========================================
 // 공통 유틸
@@ -291,9 +291,9 @@ const replaceDisclaimer = (
   const parsed = parseTargetSelector(targetSelector);
   if (!parsed) return html;
 
-  const safeCopy = stripUnbalancedCloseTags(copy);
+  // data-sup 영역 전용: ® → <sup>&reg;</sup>
+  const safeCopy = wrapRegSymbol(stripUnbalancedCloseTags(copy));
 
-  // 외곽 블록 → 내부의 data-copy-set="disclaimer" 요소 inner 교체
   return replaceTagInner(html, parsed.attr, parsed.value, (inner) =>
     replaceTagInner(inner, "data-copy-set", "disclaimer", () => safeCopy)
   );
