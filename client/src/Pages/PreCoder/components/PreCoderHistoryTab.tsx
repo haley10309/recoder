@@ -12,6 +12,7 @@ import {
   TypeMismatchSection,
   OrderSection,
   UntaggedCopySection,
+  UnassignedSection,
 } from "./PreCoderResultSections";
 
 import { usePreCoderHistory } from "../hooks/usePreCoderHistory";
@@ -162,6 +163,11 @@ const PreCoderHistoryTab = () => {
             />
             <Gap gap={40} />
             <UntaggedCopySection issues={loadedResult.result.untaggedCopyIssues} />
+            <Gap gap={40} />
+            <UnassignedSection
+              issues={loadedResult.result.unassignedIssues}
+              count={loadedResult.result.unassignedCount}
+            />
           </WhiteBox>
         </>
       )}

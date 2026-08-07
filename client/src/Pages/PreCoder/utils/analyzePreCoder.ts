@@ -55,12 +55,15 @@ export type TypeMismatchIssue = {
   message: string;
 };
 
+export type OrderIssueType = "deckIdOrder" | "htmlPosition";
+
 export type OrderIssue = {
   value: string;
   deckRowOrder?: number;
   line: number;
   prevValue: string;
   prevLine: number;
+  issueType: OrderIssueType;
   message: string;
 };
 
@@ -70,6 +73,8 @@ export type OrderSequenceItem = {
   line: number;
   original_copy?: string;
   outOfOrder: boolean;
+  issueType?: OrderIssueType; // 정상이거나 alreadyMentioned면 없음
+  alreadyMentioned: boolean; // 같은 data-copy-set이 카피덱에 반복 등장해, 앞서 이미 검수된 값인 경우
 };
 
 export type UntaggedCopyIssue = {
@@ -80,11 +85,18 @@ export type UntaggedCopyIssue = {
   message: string;
 };
 
+export type UnassignedTagIssue = {
+  tagName: string;
+  line: number;
+  snippet: string; // data-copy-set="" 이 포함된 태그 코드 조각
+};
+
 export type PreCoderAnalysisResult = {
   totalHtmlCopySetCount: number;
   totalDeckRowCount: number;
   unassignedCount: number;
   unassignedLines: number[];
+  unassignedIssues: UnassignedTagIssue[];
   duplicateIssues: DuplicateIssue[];
   scopeIssues: ScopeIssue[];
   typeMismatchIssues: TypeMismatchIssue[];
@@ -111,6 +123,41 @@ const parseTargetSelector = (
   const match = (targetSelector || "").match(/^([\w-]+)=["']([^"']+)["']$/);
   if (!match) return null;
   return { attr: match[1], value: match[2].trim() };
+};
+
+// data-copy-set은 보통 "알파벳+숫자" + "-숫자"(1개 이상) 형태(예: C04-138, C04-138-2).
+// 문자열(사전식) 비교로는 "C10"이 "C9"보다 작다고 오판할 수 있어(자리수 다른 숫자 비교 버그),
+// 각 숫자 세그먼트를 실제 숫자값으로 파싱해 비교한다.
+type ParsedCopySetId = {
+  prefix: string; // 예: "C"
+  groupNumber: number; // 예: 4 (그룹 세그먼트 "04")
+  groupKey: string; // 예: "C-4" (같은 그룹인지 판별용)
+  restSegments: number[]; // 그룹 뒤의 나머지 숫자 세그먼트들, 예: "003" -> [3], "003-2" -> [3, 2]
+};
+
+const parseCopySetId = (value: string): ParsedCopySetId | null => {
+  const match = (value || "").match(/^([A-Za-z]+)(\d+)((?:-\d+)*)$/);
+  if (!match) return null;
+  const [, prefix, groupStr, restStr] = match;
+  const groupNumber = parseInt(groupStr, 10);
+  const restSegments = restStr
+    ? restStr
+        .split("-")
+        .filter(Boolean)
+        .map((s) => parseInt(s, 10))
+    : [];
+  return { prefix, groupNumber, groupKey: `${prefix}-${groupNumber}`, restSegments };
+};
+
+// 숫자 세그먼트 배열을 앞자리부터 순서대로 비교 (버전 번호 비교와 동일한 방식, 진수 처리)
+const compareSegments = (a: number[], b: number[]): number => {
+  const len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    const av = a[i] ?? 0;
+    const bv = b[i] ?? 0;
+    if (av !== bv) return av - bv;
+  }
+  return 0;
 };
 
 const buildLineOffsets = (text: string): number[] => {
@@ -285,6 +332,11 @@ export const analyzePreCoder = (
   });
 
   const unassigned = nodes.filter((n) => !n.value);
+  const unassignedIssues: UnassignedTagIssue[] = unassigned.map((n) => ({
+    tagName: n.tagName,
+    line: n.line,
+    snippet: n.outerHtmlPreview,
+  }));
 
   // ── ② 태그 스코프 검사 (부모/자식 태그에 중첩된 data-copy-set이 있는지 + 카피덱 값이 html에 존재하는지)
   const scopeIssues: ScopeIssue[] = [];
@@ -422,25 +474,108 @@ export const analyzePreCoder = (
     .filter((x) => x.value && x.domIndex !== -1);
 
   const orderIssues: OrderIssue[] = [];
-  const orderSequence: OrderSequenceItem[] = deckSequence.map((item, i) => {
-    let outOfOrder = false;
-    if (i > 0 && item.domIndex < deckSequence[i - 1].domIndex) {
-      outOfOrder = true;
-      orderIssues.push({
+  // 같은 data-copy-set이 카피덱에 반복 등장하는 경우(동일 카피 재사용), 매번 첫 등장 위치와
+  // 비교하면 오탐이 나므로, 이미 검수된 값이 다시 나오면 순서 비교 대상에서 제외하고
+  // "앞에서 언급됨"으로만 표시한다. 순서 비교 기준점(lastGenuine*)도 갱신하지 않는다.
+  const seenValues = new Set<string>();
+  let lastGenuineDomIndex = -1;
+  let lastGenuineValue = "";
+  let lastGenuineLine = -1;
+  let lastGenuineParsed: ParsedCopySetId | null = null;
+
+  const orderSequence: OrderSequenceItem[] = deckSequence.map((item) => {
+    if (seenValues.has(item.value)) {
+      return {
         value: item.value,
         deckRowOrder: item.deckRowOrder,
         line: item.line,
-        prevValue: deckSequence[i - 1].value,
-        prevLine: deckSequence[i - 1].line,
-        message: `카피덱 순서상 "${item.value}"가 "${deckSequence[i - 1].value}" 다음에 와야 하지만, HTML에서는 ${item.line}번째 줄로 더 앞(${deckSequence[i - 1].line}번째 줄보다 앞)에 위치해 순서가 뒤바뀌었습니다.`,
-      });
+        original_copy: item.original_copy,
+        outOfOrder: false,
+        alreadyMentioned: true,
+      };
     }
+
+    const parsedCurrent = parseCopySetId(item.value);
+    let outOfOrder = false;
+    let issueType: OrderIssueType | undefined;
+
+    if (lastGenuineDomIndex !== -1) {
+      const sameGroup =
+        parsedCurrent && lastGenuineParsed && parsedCurrent.groupKey === lastGenuineParsed.groupKey;
+
+      if (parsedCurrent && lastGenuineParsed) {
+        // 먼저 data-copy-set 번호 자체의 자연스러운 순서(진수 비교)로 "카피덱 행 순서가
+        // 번호 순서와 맞는지"를 검사한다. 이건 HTML과 무관하게 카피덱 자체의 실수를 잡아낸다.
+        const idCompare = sameGroup
+          ? compareSegments(parsedCurrent.restSegments, lastGenuineParsed.restSegments)
+          : (() => {
+              const prefixCompare = parsedCurrent.prefix.localeCompare(lastGenuineParsed!.prefix);
+              return prefixCompare !== 0
+                ? prefixCompare
+                : parsedCurrent.groupNumber - lastGenuineParsed!.groupNumber;
+            })();
+
+        if (idCompare < 0) {
+          // 카피덱 자체 순서 오류: 번호상 앞서야 할 항목이 카피덱에 더 뒤에 나열되어 있음
+          outOfOrder = true;
+          issueType = "deckIdOrder";
+          orderIssues.push({
+            value: item.value,
+            deckRowOrder: item.deckRowOrder,
+            line: item.line,
+            prevValue: lastGenuineValue,
+            prevLine: lastGenuineLine,
+            issueType: "deckIdOrder",
+            message: `카피덱 행 순서 오류: data-copy-set 번호 기준으로 "${item.value}"가 "${lastGenuineValue}"보다 앞에 와야 하는데, 카피덱에는 더 뒤에 나열되어 있습니다.`,
+          });
+        } else if (sameGroup && item.domIndex < lastGenuineDomIndex) {
+          // 카피덱 번호 순서 자체는 맞지만(같은 그룹 내), 실제 HTML 물리적 위치가 그 순서와 다름
+          outOfOrder = true;
+          issueType = "htmlPosition";
+          orderIssues.push({
+            value: item.value,
+            deckRowOrder: item.deckRowOrder,
+            line: item.line,
+            prevValue: lastGenuineValue,
+            prevLine: lastGenuineLine,
+            issueType: "htmlPosition",
+            message: `HTML 노출 순서 불일치: 카피덱 순서상 "${item.value}"가 "${lastGenuineValue}" 다음에 와야 하지만, HTML에서는 ${item.line}번째 줄로 더 앞(${lastGenuineLine}번째 줄보다 앞)에 위치해 있습니다.`,
+          });
+        }
+        // 그룹이 바뀌면서 번호가 정상적으로 증가한 경우는 물리적 줄 번호가 뒤섞여 있어도 정상으로 간주한다
+        // (서로 다른 섹션이라 HTML 소스상 위치가 번호 순서와 무관할 수 있음).
+      } else {
+        // 형식이 맞지 않는 값 등 파싱이 안 되는 경우는 기존처럼 줄 번호 비교로 폴백한다.
+        if (item.domIndex < lastGenuineDomIndex) {
+          outOfOrder = true;
+          issueType = "htmlPosition";
+          orderIssues.push({
+            value: item.value,
+            deckRowOrder: item.deckRowOrder,
+            line: item.line,
+            prevValue: lastGenuineValue,
+            prevLine: lastGenuineLine,
+            issueType: "htmlPosition",
+            message: `카피덱 순서상 "${item.value}"가 "${lastGenuineValue}" 다음에 와야 하지만, HTML에서는 ${item.line}번째 줄로 더 앞(${lastGenuineLine}번째 줄보다 앞)에 위치해 순서가 뒤바뀌었습니다.`,
+          });
+        }
+      }
+    }
+
+    seenValues.add(item.value);
+    lastGenuineDomIndex = item.domIndex;
+    lastGenuineValue = item.value;
+    lastGenuineLine = item.line;
+    lastGenuineParsed = parsedCurrent;
+
     return {
       value: item.value,
       deckRowOrder: item.deckRowOrder,
       line: item.line,
       original_copy: item.original_copy,
       outOfOrder,
+      issueType,
+      alreadyMentioned: false,
     };
   });
 
@@ -525,6 +660,7 @@ export const analyzePreCoder = (
     totalDeckRowCount: copyDeckRows.length,
     unassignedCount: unassigned.length,
     unassignedLines: unassigned.map((n) => n.line),
+    unassignedIssues,
     duplicateIssues,
     scopeIssues,
     typeMismatchIssues,

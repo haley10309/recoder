@@ -8,6 +8,7 @@ import type {
   OrderIssue,
   OrderSequenceItem,
   UntaggedCopyIssue,
+  UnassignedTagIssue,
 } from "../utils/analyzePreCoder";
 
 const SectionTitle = styled.h3`
@@ -47,14 +48,17 @@ const Table = styled.table`
   }
 `;
 
-const Pill = styled.span<{ $tone?: "warn" | "ok" }>`
+const Pill = styled.span<{ $tone?: "warn" | "ok" | "neutral" }>`
   display: inline-block;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
-  background: ${({ $tone }) => ($tone === "ok" ? "#eafaf0" : "#fff0e0")};
-  color: ${({ $tone }) => ($tone === "ok" ? "#1a7f4b" : "#d1691a")};
+  white-space: nowrap;
+  background: ${({ $tone }) =>
+    $tone === "ok" ? "#eafaf0" : $tone === "neutral" ? "#f3f4f6" : "#fff0e0"};
+  color: ${({ $tone }) =>
+    $tone === "ok" ? "#1a7f4b" : $tone === "neutral" ? "#4b5563" : "#d1691a"};
 `;
 
 const LineBadge = styled.span`
@@ -62,11 +66,38 @@ const LineBadge = styled.span`
   color: #6b7280;
 `;
 
+const CodeSnippet = styled.code`
+  display: block;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.72rem;
+  color: #b35c00;
+  background: #fff8f0;
+  border: 1px solid #ffe4c2;
+  border-radius: 0.35rem;
+  padding: 0.4rem 0.55rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+`;
+
+// 요약 카드에서 클릭했을 때 해당 섹션으로 스크롤 이동하기 위한 앵커 id.
+export const PRE_CODER_SECTION_ANCHORS = {
+  duplicate: "precoder-section-duplicate",
+  scope: "precoder-section-scope",
+  type: "precoder-section-type",
+  order: "precoder-section-order",
+  untagged: "precoder-section-untagged",
+  unassigned: "precoder-section-unassigned",
+} as const;
+
+const SectionAnchor = styled.div`
+  scroll-margin-top: 90px;
+`;
+
 // ────────────────────────────────────────────────────────────────────────────
 // ① 고유값 검사
 // ────────────────────────────────────────────────────────────────────────────
 export const DuplicateSection = ({ issues }: { issues: DuplicateIssue[] }) => (
-  <div>
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.duplicate}>
     <SectionTitle>① data-copy-set 고유값 검사 (서로 다른 카피가 같은 값을 공유하는 경우)</SectionTitle>
     {issues.length === 0 ? (
       <EmptyState>서로 다른 카피가 동일한 data-copy-set을 공유하는 경우가 없습니다.</EmptyState>
@@ -96,14 +127,14 @@ export const DuplicateSection = ({ issues }: { issues: DuplicateIssue[] }) => (
         </tbody>
       </Table>
     )}
-  </div>
+  </SectionAnchor>
 );
 
 // ────────────────────────────────────────────────────────────────────────────
 // ② 태그 스코프 검사
 // ────────────────────────────────────────────────────────────────────────────
 export const ScopeSection = ({ issues }: { issues: ScopeIssue[] }) => (
-  <div>
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.scope}>
     <SectionTitle>② 태그 스코프 검사 (부모/자식 중첩 · 카피덱-HTML 대조)</SectionTitle>
     {issues.length === 0 ? (
       <EmptyState>부모/자식 태그 중첩이나 카피덱-HTML 불일치가 없습니다.</EmptyState>
@@ -139,14 +170,14 @@ export const ScopeSection = ({ issues }: { issues: ScopeIssue[] }) => (
         </tbody>
       </Table>
     )}
-  </div>
+  </SectionAnchor>
 );
 
 // ────────────────────────────────────────────────────────────────────────────
 // ③ 카피 종류 자동 분류 검사
 // ────────────────────────────────────────────────────────────────────────────
 export const TypeMismatchSection = ({ issues }: { issues: TypeMismatchIssue[] }) => (
-  <div>
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.type}>
     <SectionTitle>③ 카피 종류 자동 분류 검사 (alt / aria-label / disclaimer / innerText)</SectionTitle>
     {issues.length === 0 ? (
       <EmptyState>카피 종류 불일치가 없습니다.</EmptyState>
@@ -180,7 +211,7 @@ export const TypeMismatchSection = ({ issues }: { issues: TypeMismatchIssue[] })
         </tbody>
       </Table>
     )}
-  </div>
+  </SectionAnchor>
 );
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -193,7 +224,7 @@ export const OrderSection = ({
   issues: OrderIssue[];
   sequence: OrderSequenceItem[];
 }) => (
-  <div>
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.order}>
     <SectionTitle>④ 영문 카피덱 순서 vs HTML 노출 순서 비교</SectionTitle>
     {issues.length === 0 ? (
       <EmptyState>카피덱 순서와 HTML 노출 순서가 모두 일치합니다.</EmptyState>
@@ -216,7 +247,7 @@ export const OrderSection = ({
             <th>data-copy-set</th>
             <th>HTML 줄 번호</th>
             <th>원문 카피</th>
-            <th>상태</th>
+            <th style={{ minWidth: "9rem" }}>상태</th>
           </tr>
         </thead>
         <tbody>
@@ -229,8 +260,12 @@ export const OrderSection = ({
               </td>
               <td>{item.original_copy}</td>
               <td>
-                {item.outOfOrder ? (
-                  <Pill>순서 뒤바뀜</Pill>
+                {item.alreadyMentioned ? (
+                  <Pill $tone="neutral">앞에서 언급됨</Pill>
+                ) : item.issueType === "deckIdOrder" ? (
+                  <Pill>카피덱 순서 오류</Pill>
+                ) : item.outOfOrder ? (
+                  <Pill>HTML 노출 순서 불일치</Pill>
                 ) : (
                   <Pill $tone="ok">정상</Pill>
                 )}
@@ -240,14 +275,14 @@ export const OrderSection = ({
         </tbody>
       </Table>
     </details>
-  </div>
+  </SectionAnchor>
 );
 
 // ────────────────────────────────────────────────────────────────────────────
 // ⑤ 카피덱에 없지만 번역이 필요해 보이는 카피
 // ────────────────────────────────────────────────────────────────────────────
 export const UntaggedCopySection = ({ issues }: { issues: UntaggedCopyIssue[] }) => (
-  <div>
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.untagged}>
     <SectionTitle>⑤ 카피덱에 없지만 번역이 필요해 보이는 카피 (title / alt / aria-label)</SectionTitle>
     {issues.length === 0 ? (
       <EmptyState>카피덱에 누락된 번역 대상 카피가 없습니다.</EmptyState>
@@ -285,8 +320,72 @@ export const UntaggedCopySection = ({ issues }: { issues: UntaggedCopyIssue[] })
         </tbody>
       </Table>
     )}
-  </div>
+  </SectionAnchor>
 );
+
+const StaleState = styled.div`
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: #fff5eb;
+  color: #b35c00;
+  font-size: 0.82rem;
+  font-weight: 600;
+`;
+
+// ────────────────────────────────────────────────────────────────────────────
+// ⑥ 미할당(빈 값) 태그 - data-copy-set="" 상태로 남아있는 태그
+// ────────────────────────────────────────────────────────────────────────────
+export const UnassignedSection = ({
+  issues = [],
+  count,
+}: {
+  issues?: UnassignedTagIssue[];
+  count?: number;
+}) => {
+  // unassignedIssues는 나중에 추가된 필드라, 그 이전에 저장된 결과는 개수(count)만 있고
+  // 상세 목록(issues)이 비어있을 수 있다. 이 경우 "이상 없음"이 아니라 별도로 안내한다.
+  const isStaleData = issues.length === 0 && (count ?? 0) > 0;
+
+  return (
+    <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.unassigned}>
+      <SectionTitle>⑥ 미할당(빈 값) 태그 (data-copy-set="")</SectionTitle>
+      {issues.length === 0 ? (
+        isStaleData ? (
+          <StaleState>
+            ⚠️ 요약상 미할당 태그가 {count}개 있지만, 이 결과는 상세 목록 기능이 추가되기 전에
+            저장되어 줄 번호별 목록을 표시할 수 없습니다. "검사 실행" 탭에서 다시 검사한 뒤 저장하면
+            상세 목록을 볼 수 있어요.
+          </StaleState>
+        ) : (
+          <EmptyState>data-copy-set 값이 비어있는 태그가 없습니다.</EmptyState>
+        )
+      ) : (
+        <Table>
+          <thead>
+            <tr>
+              <th>태그</th>
+              <th>줄 번호</th>
+              <th>코드</th>
+            </tr>
+          </thead>
+          <tbody>
+            {issues.map((issue, i) => (
+              <tr key={i}>
+                <td>&lt;{issue.tagName}&gt;</td>
+                <td>
+                  <LineBadge>{issue.line >= 0 ? issue.line : "-"}</LineBadge>
+                </td>
+                <td>
+                  <CodeSnippet>{issue.snippet}</CodeSnippet>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
+    </SectionAnchor>
+  );
+};
 
 const IssueList = styled.ul`
   list-style: disc;

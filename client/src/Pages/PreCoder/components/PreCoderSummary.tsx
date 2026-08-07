@@ -2,6 +2,12 @@ import React from "react";
 import styled from "styled-components";
 
 import type { PreCoderAnalysisResult } from "../utils/analyzePreCoder";
+import { PRE_CODER_SECTION_ANCHORS } from "./PreCoderResultSections";
+
+const scrollToAnchor = (anchorId: string) => {
+  const el = document.getElementById(anchorId);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+};
 
 const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
   const totalIssueCount =
@@ -14,12 +20,42 @@ const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
   const cards = [
     { label: "HTML 내 data-copy-set", value: result.totalHtmlCopySetCount },
     { label: "카피덱 row 수", value: result.totalDeckRowCount },
-    { label: "미할당(빈 값) 태그", value: result.unassignedCount, warn: result.unassignedCount > 0 },
-    { label: "① 고유값 위반", value: result.duplicateIssues.length, warn: result.duplicateIssues.length > 0 },
-    { label: "② 태그 스코프 이슈", value: result.scopeIssues.length, warn: result.scopeIssues.length > 0 },
-    { label: "③ 카피 종류 불일치", value: result.typeMismatchIssues.length, warn: result.typeMismatchIssues.length > 0 },
-    { label: "④ 순서 불일치", value: result.orderIssues.length, warn: result.orderIssues.length > 0 },
-    { label: "⑤ 카피덱 누락 카피", value: result.untaggedCopyIssues.length, warn: result.untaggedCopyIssues.length > 0 },
+    {
+      label: "① 고유값 위반",
+      value: result.duplicateIssues.length,
+      warn: result.duplicateIssues.length > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.duplicate,
+    },
+    {
+      label: "② 태그 스코프 이슈",
+      value: result.scopeIssues.length,
+      warn: result.scopeIssues.length > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.scope,
+    },
+    {
+      label: "③ 카피 종류 불일치",
+      value: result.typeMismatchIssues.length,
+      warn: result.typeMismatchIssues.length > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.type,
+    },
+    {
+      label: "④ 순서 불일치",
+      value: result.orderIssues.length,
+      warn: result.orderIssues.length > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.order,
+    },
+    {
+      label: "⑤ 카피덱 누락 카피",
+      value: result.untaggedCopyIssues.length,
+      warn: result.untaggedCopyIssues.length > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.untagged,
+    },
+    {
+      label: "⑥ 미할당(빈 값) 태그",
+      value: result.unassignedCount,
+      warn: result.unassignedCount > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.unassigned,
+    },
   ];
 
   return (
@@ -30,12 +66,23 @@ const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
           : `⚠️ 총 ${totalIssueCount}건의 이슈가 발견되었습니다. 아래 결과를 확인해주세요.`}
       </StatusBanner>
       <CardGrid>
-        {cards.map((c) => (
-          <Card key={c.label} $warn={!!c.warn}>
-            <CardLabel>{c.label}</CardLabel>
-            <CardValue $warn={!!c.warn}>{c.value}</CardValue>
-          </Card>
-        ))}
+        {cards.map((c) => {
+          const clickable = !!c.anchorId && c.value > 0;
+          return (
+            <Card
+              key={c.label}
+              $warn={!!c.warn}
+              $clickable={clickable}
+              onClick={clickable ? () => scrollToAnchor(c.anchorId as string) : undefined}
+              role={clickable ? "button" : undefined}
+              tabIndex={clickable ? 0 : undefined}
+            >
+              <CardLabel>{c.label}</CardLabel>
+              <CardValue $warn={!!c.warn}>{c.value}</CardValue>
+              {clickable && <AnchorChip>바로가기 →</AnchorChip>}
+            </Card>
+          );
+        })}
       </CardGrid>
     </Wrapper>
   );
@@ -69,11 +116,27 @@ const CardGrid = styled.div`
   }
 `;
 
-const Card = styled.div<{ $warn: boolean }>`
+const Card = styled.div<{ $warn: boolean; $clickable: boolean }>`
+  position: relative;
   border-radius: 0.5rem;
   padding: 0.9rem 1rem;
   background: ${({ $warn }) => ($warn ? "#fff5eb" : "#f9f9f9")};
   border: 1px solid ${({ $warn }) => ($warn ? "#ffd8ad" : "#eeeeee")};
+  cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+
+  ${({ $clickable }) =>
+    $clickable &&
+    `
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      }
+      &:focus-visible {
+        outline: 2px solid #ff782f;
+        outline-offset: 2px;
+      }
+    `}
 `;
 
 const CardLabel = styled.div`
@@ -86,4 +149,15 @@ const CardValue = styled.div<{ $warn: boolean }>`
   font-size: 1.35rem;
   font-weight: 700;
   color: ${({ $warn }) => ($warn ? "#d1691a" : "#111827")};
+`;
+
+const AnchorChip = styled.span`
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #ff782f;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
 `;

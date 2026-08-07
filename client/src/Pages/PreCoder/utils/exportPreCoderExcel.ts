@@ -134,12 +134,12 @@ const buildSummarySheet = (result: PreCoderAnalysisResult, meta: PreCoderExportM
   const kpis: [string, number, boolean][] = [
     ["HTML 내 data-copy-set", result.totalHtmlCopySetCount, false],
     ["카피덱 row 수", result.totalDeckRowCount, false],
-    ["미할당(빈 값) 태그", result.unassignedCount, result.unassignedCount > 0],
     ["① 고유값 위반", result.duplicateIssues.length, result.duplicateIssues.length > 0],
     ["② 태그 스코프 이슈", result.scopeIssues.length, result.scopeIssues.length > 0],
     ["③ 카피 종류 불일치", result.typeMismatchIssues.length, result.typeMismatchIssues.length > 0],
     ["④ 순서 불일치", result.orderIssues.length, result.orderIssues.length > 0],
     ["⑤ 카피덱 누락 카피", result.untaggedCopyIssues.length, result.untaggedCopyIssues.length > 0],
+    ["⑥ 미할당(빈 값) 태그", result.unassignedCount, result.unassignedCount > 0],
   ];
   kpis.forEach(([label, value, warn]) => {
     setCell(ws, `A${r + 1}`, label, kpiLabelStyle);
@@ -261,17 +261,30 @@ export const exportPreCoderResultToExcel = (
     wb,
     buildTableSheet({
       headers: ["#", "data-copy-set", "줄 번호", "원문 카피", "상태"],
-      colWidths: [6, 16, 10, 60, 14],
+      colWidths: [6, 16, 10, 60, 26],
       rows: result.orderSequence.map((item, idx) => [
         idx + 1,
         item.value,
         item.line >= 0 ? item.line : "-",
         item.original_copy || "",
-        item.outOfOrder ? "순서 뒤바뀜" : "정상",
+        item.alreadyMentioned
+          ? "앞에서 언급됨"
+          : item.issueType === "deckIdOrder"
+          ? "카피덱 순서 오류"
+          : item.outOfOrder
+          ? "HTML 노출 순서 불일치"
+          : "정상",
       ]),
       rowStyler: (row, i) => {
-        const outOfOrder = row[4] === "순서 뒤바뀜";
-        return row.map(() => bodyCellStyle({ warn: outOfOrder, alt: i % 2 === 1 }));
+        const outOfOrder = row[4] === "카피덱 순서 오류" || row[4] === "HTML 노출 순서 불일치";
+        return row.map((_, c) => {
+          const style = bodyCellStyle({ warn: outOfOrder, alt: i % 2 === 1 });
+          // 상태 컬럼(마지막)은 텍스트가 짧으므로 줄바꿈 없이 가운데 정렬한다.
+          if (c === row.length - 1) {
+            return { ...style, alignment: { vertical: "center", horizontal: "center", wrapText: false } };
+          }
+          return style;
+        });
       },
       emptyMessage: "카피덱과 대조 가능한 순서 정보가 없습니다.",
     }),
@@ -294,6 +307,18 @@ export const exportPreCoderResultToExcel = (
       emptyMessage: "✅ 카피덱에 누락된 번역 대상 카피가 없습니다.",
     }),
     "⑤ 누락 카피"
+  );
+
+  XLSX.utils.book_append_sheet(
+    wb,
+    buildTableSheet({
+      headers: ["태그", "줄 번호", "코드 (data-copy-set=\"\")"],
+      colWidths: [10, 10, 90],
+      rows: result.unassignedIssues.map((i) => [`<${i.tagName}>`, i.line >= 0 ? i.line : "-", i.snippet]),
+      rowStyler: (row, i) => row.map(() => bodyCellStyle({ warn: true, alt: i % 2 === 1 })),
+      emptyMessage: "✅ data-copy-set 값이 비어있는 태그가 없습니다.",
+    }),
+    "⑥ 미할당 태그"
   );
 
   const safeTitle = meta.title.replace(/[\\/:*?"<>|]/g, "_").slice(0, 80);
