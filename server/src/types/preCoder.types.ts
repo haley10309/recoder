@@ -18,3 +18,15 @@ export interface SavePreCoderResultBody {
   copyDeckJson: string;
   resultJson: string;
 }
+
+export type FaqCopyDeckRow = {
+  key: string;
+  category: string;
+  item: string; // "Questions" | "Answer"
+  copy: string;
+  remark: string;
+};
+
+export type ExtractFaqCopyDeckResponse =
+  | { success: true; row_list: FaqCopyDeckRow[] }
+  | { success: false; error: string };
