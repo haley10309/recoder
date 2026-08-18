@@ -31,6 +31,7 @@ import { getPreCoderResults } from '../controllers/preCoder/getPreCoderResultsCo
 import { getPreCoderResultDetail } from '../controllers/preCoder/getPreCoderResultDetailController';
 import { downloadPreCoderExcel } from '../controllers/preCoder/downloadPreCoderExcelController';
 import { updatePreCoderResultTitle } from '../controllers/preCoder/updatePreCoderResultTitleController';
+import { extractFaqCopyDeck } from '../controllers/preCoder/extractFaqCopyDeckController';
 
 router.use('/auth', authRoutes);
 
@@ -93,5 +94,6 @@ router.get("/pre-coder/list", cors(), authenticate, getPreCoderResults);
 router.get("/pre-coder/:id", cors(), authenticate, getPreCoderResultDetail);
 router.get("/pre-coder/:id/excel", cors(), authenticate, downloadPreCoderExcel);
 router.patch("/pre-coder/:id/title", cors(), authenticate, updatePreCoderResultTitle);
+router.post("/pre-coder/faq/extract-copydeck", upload.single("file"), cors(), extractFaqCopyDeck);
 
 export default router;

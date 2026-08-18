@@ -6,12 +6,13 @@ import Gap from "@/Components/Common/Gap";
 
 import PreCoderRunTab from "./components/PreCoderRunTab";
 import PreCoderHistoryTab from "./components/PreCoderHistoryTab";
+import PreCoderFaqTab from "./components/PreCoderFaqTab";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
-type PreCoderTabKey = "run" | "history";
+type PreCoderTabKey = "run" | "history" | "faq";
 
 // pre-coder: wwpd 작업 전 recoder에 넣기 위한 파일(html) 최적화 검사 화면.
-// "검사 실행" 탭과 "결과 열람" 탭으로 분리해, 검사 결과가 한 화면에 계속 쌓이지 않도록 한다.
+// "검사 실행" / "결과 열람" / "FAQ 정제" 세 탭으로 분리해, 검사 결과가 한 화면에 계속 쌓이지 않도록 한다.
 const PreCoderScreen = () => {
   const [activeTab, setActiveTab] = useState<PreCoderTabKey>("run");
 
@@ -33,10 +34,15 @@ const PreCoderScreen = () => {
         <TabButton $active={activeTab === "history"} onClick={() => setActiveTab("history")}>
           결과 열람
         </TabButton>
+        <TabButton $active={activeTab === "faq"} onClick={() => setActiveTab("faq")}>
+          FAQ 정제
+        </TabButton>
       </TabBar>
       <Gap gap={30} />
 
-      {activeTab === "run" ? <PreCoderRunTab /> : <PreCoderHistoryTab />}
+      {activeTab === "run" && <PreCoderRunTab />}
+      {activeTab === "history" && <PreCoderHistoryTab />}
+      {activeTab === "faq" && <PreCoderFaqTab />}
 
       <ScrollToTopButton />
 

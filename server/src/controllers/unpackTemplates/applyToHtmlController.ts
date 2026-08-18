@@ -77,6 +77,64 @@ const containsDisclaimerSup = (value: string): boolean => {
 };
 
 // =========================================
+// 문장 중간 sup 위치 보존 (exclude_sup === O 전용)
+// =========================================
+
+// 원본 inner 안의 <sup>...</sup> 블록 (트레일링 각주형 여부와 무관하게 전부 대상)
+const ANY_SUP_BLOCK_REGEX = /<sup\b[^>]*>[\s\S]*?<\/sup>/i;
+
+// html에서 태그를 제거한 순수 텍스트 기준으로, index 이전에 등장한 온점(.) 개수를 센다.
+const countPeriodsBeforeIndex = (html: string, index: number): number => {
+  const textBefore = html.slice(0, index).replace(/<[^>]*>/g, "");
+  const matches = textBefore.match(/\./g);
+  return matches ? matches.length : 0;
+};
+
+// 순수 텍스트에서 n번째 온점 "바로 뒤" 위치를 찾는다. 못 찾으면 -1.
+const findIndexAfterNthPeriod = (text: string, n: number): number => {
+  if (n <= 0) return -1;
+  let count = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === ".") {
+      count += 1;
+      if (count === n) return i + 1;
+    }
+  }
+  return -1;
+};
+
+/**
+ * exclude_sup === O 인 행 전용: 원본 inner에 있는 sup을,
+ * 원본에서 "몇 번째 온점 뒤에 있었는지"와 동일한 위치(번역 카피 기준 몇 번째 온점 뒤)에
+ * 그대로 옮겨 붙인다. (문장 중간의 sup이 잘려나가는 문제 방지)
+ *
+ * - 원본에 sup이 없으면 번역 카피를 그대로 반환한다.
+ * - 온점 위치를 카피에서 찾지 못하면(온점 개수가 다름 등) 안전하게 카피 끝에 붙인다.
+ */
+const insertSupAtPeriodOccurrence = (
+  originalInner: string,
+  translatedCopy: string
+): string => {
+  const match = originalInner.match(ANY_SUP_BLOCK_REGEX);
+  if (!match || match.index === undefined) return translatedCopy;
+
+  const supHtml = match[0];
+  const periodCount = countPeriodsBeforeIndex(originalInner, match.index);
+
+  // 온점이 없는 경우(문장 앞/전체) → 기존처럼 끝에 붙이는 것이 가장 안전한 폴백
+  if (periodCount === 0) {
+    return `${translatedCopy}${supHtml}`;
+  }
+
+  const insertAt = findIndexAfterNthPeriod(translatedCopy, periodCount);
+  if (insertAt === -1) {
+    return `${translatedCopy}${supHtml}`;
+  }
+
+  return `${translatedCopy.slice(0, insertAt)}${supHtml}${translatedCopy.slice(insertAt)}`;
+};
+
+// =========================================
 // Copy Deck 불균형 태그 정리
 // =========================================
 
@@ -259,7 +317,8 @@ const replaceAttribute = (
 const replaceInnerHtml = (
   html: string,
   targetSelector: string,
-  copy: string
+  copy: string,
+  excludeSup: boolean
 ): string => {
   const parsed = parseTargetSelector(targetSelector);
   if (!parsed) return html;
@@ -273,12 +332,19 @@ const replaceInnerHtml = (
     // HTML의 디스클레이머 sup 위치 (기호용 sup은 건너뜀)
     const supIndex = inner.search(DISCLAIMER_SUP_REGEX);
 
-    // 디스클레이머 sup 없음 → 기존 로직 유지
-    if (supIndex === -1) return safeCopy;
-
-    // sup 존재 → 번호만 제거하고 sup 보존
+    // 디스클레이머(트레일링 각주형) sup 존재 → 번호만 제거하고 sup 보존
     // (앞 공백은 normalizeSupFormat에서 일괄 결정)
-    return `${stripDisclaimerNumber(safeCopy)}${inner.slice(supIndex)}`;
+    if (supIndex !== -1) {
+      return `${stripDisclaimerNumber(safeCopy)}${inner.slice(supIndex)}`;
+    }
+
+    // exclude_sup === O: 문장 중간을 포함해 원본에 sup이 있으면, 번역 카피에서도
+    // 같은 번째 온점 뒤에 동일한 sup을 그대로 옮겨 붙인다.
+    if (excludeSup) {
+      return insertSupAtPeriodOccurrence(inner, safeCopy);
+    }
+
+    return safeCopy;
   });
 };
 
@@ -346,7 +412,7 @@ const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
       }
 
       if (applyType === "innerText") {
-        convertedHtml = replaceInnerHtml(convertedHtml, targetSelector, copy);
+        convertedHtml = replaceInnerHtml(convertedHtml, targetSelector, copy, isTrue(row.exclude_sup));
         return;
       }
 
