@@ -1,5 +1,5 @@
 // Pre Coder "FAQ 정제" 기능의 핵심 로직.
-// - 입력: data-copy-set이 없는 FAQ html + Key/Category/Item/Copy/Remark 형식의 카피덱
+// - 입력: data-copy-set이 없는 FAQ html + Key/Category/Item/Copy/Remark(+로컬 국가) 형식의 카피덱
 // - 출력: ① 새 data-copy-set이 삽입된 html, ② recoder 입력용 엑셀 데이터(row 목록)
 //
 // 매칭 방식은 "카피덱의 Questions/Answer 순서" ↔ "HTML의 FAQ 아이템 순서"를 그대로 1:1로
@@ -11,6 +11,7 @@ export type FaqCopyDeckRow = {
   item: string; // "Questions" | "Answer"
   copy: string;
   remark: string;
+  locales: Record<string, string>; // V 마커 오른쪽 로컬 국가 컬럼 원본 값 (code -> value)
 };
 
 export type FaqExportRow = {
@@ -24,6 +25,7 @@ export type FaqExportRow = {
   item: string;
   copy: string;
   remark: string;
+  locales: Record<string, string>; // 소스 행의 로컬 국가 컬럼 값을 그대로 이어받음
 };
 
 export type FaqRefineWarning = {
@@ -87,12 +89,15 @@ const groupDeckRows = (rows: FaqCopyDeckRow[], warnings: FaqRefineWarning[]): Fa
   return groups;
 };
 
+type AnswerSegment = { text: string; sourceRow: FaqCopyDeckRow };
+
 // 카피덱 Copy 셀 하나를 줄바꿈 기준으로 여러 세그먼트로 분리 (불릿 마커 제거)
-const splitAnswerSegments = (copy: string): string[] => {
-  return copy
+const splitAnswerSegments = (row: FaqCopyDeckRow): AnswerSegment[] => {
+  return row.copy
     .split(/\r\n|\r|\n/)
     .map((line) => line.replace(/^[•▪‣◦\-*]\s*/, "").trim())
-    .filter((line) => line.length > 0);
+    .filter((line) => line.length > 0)
+    .map((text) => ({ text, sourceRow: row }));
 };
 
 // sup 각주 참조(<sup><a class="click_sup" data-sup-tag="sup-N">...) 감지 및 번호 추출
@@ -200,13 +205,13 @@ export const refineFaqHtml = (
         item: "Questions",
         copy: normalize(group.questionRow.copy),
         remark: group.questionRow.remark,
+        locales: group.questionRow.locales || {},
       });
     }
 
     // ── 답변 (문단 + 불릿, 순서대로 매칭)
     const answerEls = Array.from(item.querySelectorAll(".watch-faq_desc, .watch-faq_answer-item"));
-    const answerSegments = group.answerRows.flatMap((row) => splitAnswerSegments(row.copy));
-    const lastAnswerRow = group.answerRows[group.answerRows.length - 1] ?? group.questionRow;
+    const answerSegments = group.answerRows.flatMap((row) => splitAnswerSegments(row));
 
     if (answerSegments.length !== answerEls.length) {
       warnings.push({
@@ -218,7 +223,7 @@ export const refineFaqHtml = (
     const answerPairCount = Math.min(answerSegments.length, answerEls.length);
     for (let a = 0; a < answerPairCount; a++) {
       const el = answerEls[a];
-      const segmentText = answerSegments[a];
+      const segment = answerSegments[a];
       const supNumbers = detectTrailingSupFootnote(el);
 
       const existing = el.getAttribute("data-copy-set");
@@ -226,16 +231,17 @@ export const refineFaqHtml = (
       pending.push({ el, value, needsInsertion: !existing });
 
       exportRows.push({
-        key: lastAnswerRow.key,
+        key: segment.sourceRow.key,
         dataCopySet: value,
         targetSelector: `data-copy-set="${value}"`,
         applyType: "innerText",
         excludeSup: !!supNumbers,
         enableTextTransform: !!supNumbers,
-        category: lastAnswerRow.category,
+        category: segment.sourceRow.category,
         item: "Answer",
-        copy: supNumbers ? `${segmentText}${supNumbers}` : segmentText,
-        remark: lastAnswerRow.remark,
+        copy: supNumbers ? `${segment.text}${supNumbers}` : segment.text,
+        remark: segment.sourceRow.remark,
+        locales: segment.sourceRow.locales || {},
       });
     }
   }

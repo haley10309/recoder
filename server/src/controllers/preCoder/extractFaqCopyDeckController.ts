@@ -3,10 +3,14 @@ import os from "os";
 import path from "path";
 import { spawn } from "child_process";
 import { Request, Response } from "express";
-import { ExtractFaqCopyDeckResponse, FaqCopyDeckRow } from "../../types/preCoder.types";
+import {
+  ExtractFaqCopyDeckResponse,
+  FaqCopyDeckRow,
+  FaqCopyDeckLocaleColumn,
+} from "../../types/preCoder.types";
 
 type PythonResult =
-  | { row_list: FaqCopyDeckRow[] }
+  | { row_list: FaqCopyDeckRow[]; locale_columns: FaqCopyDeckLocaleColumn[] }
   | { errorMsg: string; statusCode: number };
 
 export const extractFaqCopyDeck = async (
@@ -104,7 +108,11 @@ export const extractFaqCopyDeck = async (
           return;
         }
 
-        safeSend(200, { success: true, row_list: result.row_list });
+        safeSend(200, {
+          success: true,
+          row_list: result.row_list,
+          locale_columns: result.locale_columns,
+        });
       } catch (parseError) {
         console.error("JSON parse error:", parseError);
         console.error("python stdout:", stdout);

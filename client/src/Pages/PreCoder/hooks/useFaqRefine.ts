@@ -28,6 +28,7 @@ export function useFaqRefine({
   const [refinedHtml, setRefinedHtml] = useState<string | null>(null);
   const [exportRows, setExportRows] = useState<FaqExportRow[]>([]);
   const [warnings, setWarnings] = useState<FaqRefineWarning[]>([]);
+  const [localeCodes, setLocaleCodes] = useState<string[]>([]);
 
   const handleRun = async () => {
     if (!htmlFile || !excelFile) {
@@ -41,21 +42,22 @@ export function useFaqRefine({
 
     try {
       setStatus("loading");
-      const [htmlText, deckRows] = await Promise.all([
+      const [htmlText, deckExtract] = await Promise.all([
         readFileAsText(htmlFile),
         extractFaqCopyDeck(excelFile),
       ]);
 
-      if (!deckRows || deckRows.length === 0) {
+      if (!deckExtract.rows || deckExtract.rows.length === 0) {
         setStatus("fail");
         alert("카피덱(xlsx)에서 데이터를 읽어오지 못했습니다. 파일 형식을 확인해주세요.");
         return;
       }
 
-      const result = refineFaqHtml(htmlText, deckRows, prefix.trim());
+      const result = refineFaqHtml(htmlText, deckExtract.rows, prefix.trim());
       setRefinedHtml(result.html);
       setExportRows(result.exportRows);
       setWarnings(result.warnings);
+      setLocaleCodes(deckExtract.localeColumns.map((c) => c.code));
       setStatus("success");
     } catch (error) {
       console.error("[useFaqRefine] 에러", error);
@@ -86,6 +88,7 @@ export function useFaqRefine({
     setRefinedHtml(null);
     setExportRows([]);
     setWarnings([]);
+    setLocaleCodes([]);
     setStatus("");
   };
 
@@ -96,6 +99,7 @@ export function useFaqRefine({
     refinedHtml,
     exportRows,
     warnings,
+    localeCodes,
     handleRun,
     handleDownloadHtml,
     handleDownloadExcel,

@@ -1,4 +1,5 @@
 // FAQ 정제 결과(exportRows)를 recoder 입력 포맷 엑셀로 내보낸다.
+// V 마커 오른쪽의 로컬 국가 컬럼들은 원본 그대로 뒤에 이어붙인다.
 import * as XLSX from "xlsx-js-style";
 
 import type { FaqExportRow } from "./refineFaqHtml";
@@ -38,7 +39,15 @@ const setCell = (ws: XLSX.WorkSheet, ref: string, value: any, style?: any) => {
 const colLetter = (i: number) => XLSX.utils.encode_col(i);
 
 export const exportFaqRefineExcel = (rows: FaqExportRow[], title: string) => {
-  const headers = [
+  // 모든 row의 locales 키를 모아서 등장한 순서대로 로컬 국가 컬럼 목록을 만든다.
+  const localeCodes: string[] = [];
+  rows.forEach((row) => {
+    Object.keys(row.locales || {}).forEach((code) => {
+      if (!localeCodes.includes(code)) localeCodes.push(code);
+    });
+  });
+
+  const fixedHeaders = [
     "Key",
     "target_selector",
     "apply_type",
@@ -49,13 +58,16 @@ export const exportFaqRefineExcel = (rows: FaqExportRow[], title: string) => {
     "Copy",
     "Remark",
   ];
-  const colWidths = [10, 20, 12, 12, 20, 14, 12, 60, 30];
+  const headers = [...fixedHeaders, ...localeCodes];
+
+  const fixedColWidths = [10, 20, 12, 12, 20, 14, 12, 60, 30];
+  const colWidths = [...fixedColWidths, ...localeCodes.map(() => 40)];
 
   const ws: XLSX.WorkSheet = {};
   headers.forEach((h, c) => setCell(ws, `${colLetter(c)}1`, h, headerCellStyle));
 
   rows.forEach((row, i) => {
-    const values = [
+    const fixedValues = [
       row.key,
       row.targetSelector,
       row.applyType,
@@ -66,6 +78,9 @@ export const exportFaqRefineExcel = (rows: FaqExportRow[], title: string) => {
       row.copy,
       row.remark,
     ];
+    const localeValues = localeCodes.map((code) => row.locales?.[code] ?? "");
+    const values = [...fixedValues, ...localeValues];
+
     const style = bodyCellStyle(i % 2 === 1);
     values.forEach((v, c) => setCell(ws, `${colLetter(c)}${i + 2}`, v, style));
   });

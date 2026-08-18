@@ -8,7 +8,7 @@ import PreCoderFileUploadSection from "./PreCoderFileUploadSection";
 import { usePreCoderFiles } from "../hooks/usePreCoderFiles";
 import { useFaqRefine } from "../hooks/useFaqRefine";
 
-// "FAQ 정제" 탭: data-copy-set이 없는 FAQ html + Key/Category/Item/Copy/Remark 형식의
+// "FAQ 정제" 탭: data-copy-set이 없는 FAQ html + Key/Category/Item/Copy/Remark(+로컬 국가) 형식의
 // 카피덱을 업로드하면, html에 새 data-copy-set을 자동 배정하고 recoder 입력용 엑셀을 만들어준다.
 const PreCoderFaqTab = () => {
   const {
@@ -29,6 +29,7 @@ const PreCoderFaqTab = () => {
     status,
     exportRows,
     warnings,
+    localeCodes,
     handleRun,
     handleDownloadHtml,
     handleDownloadExcel,
@@ -53,8 +54,9 @@ const PreCoderFaqTab = () => {
     <div>
       <InfoBox>
         FAQ 영역은 아직 data-copy-set이 없어 recoder를 바로 사용할 수 없어요. 여기서 FAQ html과
-        카피덱(Key/Category/Item/Copy/Remark 형식)을 업로드하면, html에 새 data-copy-set을 태그
-        단위로 자동 배정하고, recoder에 바로 올릴 수 있는 입력 엑셀을 만들어드려요.
+        카피덱(Key/Category/Item/Copy/Remark + 로컬 국가 컬럼 형식)을 업로드하면, html에 새
+        data-copy-set을 태그 단위로 자동 배정하고, recoder에 바로 올릴 수 있는 입력 엑셀을
+        만들어드려요. (엑셀의 "V" 표시 오른쪽 로컬 국가 컬럼들은 내용 그대로 결과 엑셀에 이어붙여요)
       </InfoBox>
       <Gap gap={25} />
 
@@ -96,9 +98,16 @@ const PreCoderFaqTab = () => {
       {status === "success" && (
         <>
           <SummaryBox>
-            <SummaryText>
-              총 <b>{exportRows.length}건</b>의 카피에 data-copy-set을 새로 배정했어요.
-            </SummaryText>
+            <SummaryTextGroup>
+              <SummaryText>
+                총 <b>{exportRows.length}건</b>의 카피에 data-copy-set을 새로 배정했어요.
+              </SummaryText>
+              {localeCodes.length > 0 && (
+                <LocaleText>
+                  감지된 로컬 국가 컬럼: {localeCodes.join(", ")} (원본 그대로 결과 엑셀에 포함됨)
+                </LocaleText>
+              )}
+            </SummaryTextGroup>
             <DownloadRow>
               <DownloadButton onClick={handleDownloadHtml}>📄 html 다운로드</DownloadButton>
               <DownloadButton onClick={handleDownloadExcel}>📊 recoder 입력 엑셀 다운로드</DownloadButton>
@@ -247,9 +256,20 @@ const SummaryBox = styled.div`
   border: 1px solid #b6e6cc;
 `;
 
+const SummaryTextGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+`;
+
 const SummaryText = styled.div`
   font-size: 0.85rem;
   color: #1a7f4b;
+`;
+
+const LocaleText = styled.div`
+  font-size: 0.75rem;
+  color: #4b5563;
 `;
 
 const DownloadRow = styled.div`
