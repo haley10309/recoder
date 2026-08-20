@@ -40,6 +40,7 @@ const PreCoderFileUploadSection = ({
   excelFileName,
   excelUploadStatus,
   handleExcelFileUpload,
+  showExcel = true,
 }: any) => {
   return (
     <ConvertSection>
@@ -52,14 +53,16 @@ const PreCoderFileUploadSection = ({
           inputId="dropzone-precoder-html"
           onChange={handleHtmlFileUpload}
         />
-        <UploadSlot
-          label="영문 카피덱(xlsx)을 업로드 해주세요"
-          fileName={excelFileName}
-          status={excelUploadStatus}
-          accept=".xlsx,.xls"
-          inputId="dropzone-precoder-excel"
-          onChange={handleExcelFileUpload}
-        />
+        {showExcel && (
+          <UploadSlot
+            label="영문 카피덱(xlsx)을 업로드 해주세요"
+            fileName={excelFileName}
+            status={excelUploadStatus}
+            accept=".xlsx,.xls"
+            inputId="dropzone-precoder-excel"
+            onChange={handleExcelFileUpload}
+          />
+        )}
       </ConvertContainer>
     </ConvertSection>
   );

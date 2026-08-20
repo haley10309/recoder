@@ -178,6 +178,49 @@ const buildDataCopySetGenerator = (prefix: string, existingValues: Set<string>) 
   };
 };
 
+type PendingInsertion = { el: Element; value: string; needsInsertion: boolean };
+
+// pending 요소들의 여는 태그 위치를 원문 htmlText에서 순서대로 찾아
+// data-copy-set 속성을 삽입한다. (DOM 재직렬화 없이 원문 문자열을 그대로 보존)
+const buildTaggedHtml = (
+  htmlText: string,
+  pending: PendingInsertion[],
+  warnings: FaqRefineWarning[]
+): string => {
+  const orderedPending = pending
+    .map((p) => {
+      const openTagMatch = (p.el.outerHTML || "").match(/^<([a-zA-Z][a-zA-Z0-9-]*)[^>]*>/);
+      return { ...p, tagName: openTagMatch ? openTagMatch[1] : "", needle: openTagMatch ? openTagMatch[0] : "" };
+    })
+    .filter((p) => p.needle);
+
+  let cursor = 0;
+  let resultHtml = "";
+  let lastCut = 0;
+
+  orderedPending.forEach((p) => {
+    const idx = htmlText.indexOf(p.needle, cursor);
+    if (idx === -1) {
+      warnings.push({
+        type: "element-not-found",
+        message: `<${p.tagName}> 태그 위치를 원문에서 찾지 못해 data-copy-set="${p.value}" 삽입을 건너뜁니다.`,
+      });
+      return;
+    }
+    cursor = idx + p.needle.length;
+
+    if (!p.needsInsertion) return; // 이미 data-copy-set이 있던 요소는 삽입하지 않음
+
+    const insertionPoint = idx + 1 + p.tagName.length; // "<tagname" 바로 뒤
+    resultHtml += htmlText.slice(lastCut, insertionPoint);
+    resultHtml += ` data-copy-set="${p.value}"`;
+    lastCut = insertionPoint;
+  });
+  resultHtml += htmlText.slice(lastCut);
+
+  return resultHtml;
+};
+
 export const refineFaqHtml = (
   htmlText: string,
   deckRowsRaw: FaqCopyDeckRow[],
@@ -214,7 +257,6 @@ export const refineFaqHtml = (
   }
   const nextDataCopySet = buildDataCopySetGenerator(prefix, existingValues);
 
-  type PendingInsertion = { el: Element; value: string; needsInsertion: boolean };
   const pending: PendingInsertion[] = [];
   const exportRows: FaqExportRow[] = [];
 
@@ -284,7 +326,14 @@ export const refineFaqHtml = (
         enableTextTransform: needsSupHandling,
         category: segment.sourceRow.category,
         item: "Answer",
-        copy: supNumbers ? `${segment.text}${supNumbers}` : segment.text,
+        // ⚠️ 카피덱의 Copy 셀(segment.text)은 사람이 엑셀에 직접 입력한 원문이라,
+        //   각주 표시 번호가 이미 그 안에 포함돼 있을 수도, 아예 없을 수도 있다.
+        //   여기서 html의 data-sup-tag ID로부터 뽑은 supNumbers를 다시 덧붙이면
+        //   사람이 이미 적어둔 번호와 중복되어 "1,21,2" 같은 값이 나온다.
+        //   recoder(applyToHtmlController)가 이제 이 번호 값에 의존하지 않고
+        //   온점 순번 기준으로 sup 위치를 스스로 복원하므로, 여기서는 원문을
+        //   그대로 두고 excludeSup/enableTextTransform 플래그만 표시한다.
+        copy: segment.text,
         remark: segment.sourceRow.remark,
         locales: segment.sourceRow.locales || {},
       });
@@ -292,37 +341,143 @@ export const refineFaqHtml = (
   }
 
   // ── 실제 원문 HTML 문자열에 data-copy-set 삽입 (DOM 재직렬화 없이 원문 그대로 유지)
-  // 요소들을 문서 등장 순서대로 정렬한 뒤, 커서를 단조 증가시키며 각 요소의 여는 태그 위치를 찾는다.
-  const orderedPending = pending
-    .map((p) => {
-      const openTagMatch = (p.el.outerHTML || "").match(/^<([a-zA-Z][a-zA-Z0-9-]*)[^>]*>/);
-      return { ...p, tagName: openTagMatch ? openTagMatch[1] : "", needle: openTagMatch ? openTagMatch[0] : "" };
-    })
-    .filter((p) => p.needle);
+  const resultHtml = buildTaggedHtml(htmlText, pending, warnings);
 
-  let cursor = 0;
-  let resultHtml = "";
-  let lastCut = 0;
+  return { html: resultHtml, exportRows, warnings };
+};
 
-  orderedPending.forEach((p) => {
-    const idx = htmlText.indexOf(p.needle, cursor);
-    if (idx === -1) {
+// =========================================
+// 옵션 2: html 파일 하나만으로 FAQ 영역을 인식해서 카피덱을 새로 뽑아내는 모드
+// (기존 refineFaqHtml처럼 별도 카피덱 엑셀과의 정합성 확인이 아니라,
+//  html 자체의 텍스트를 그대로 원본 카피로 사용해 recoder 입력 엑셀을 생성한다)
+// =========================================
+
+// 요소 하나의 표시 텍스트를 추출한다. <br>은 줄바꿈으로 보존하고, 불릿 마커는 제거한다.
+// (recoder의 normalizeCopyLineBreaks가 "\n"을 다시 <br />로 되돌려주므로 왕복이 보존된다)
+const extractElementText = (doc: Document, el: Element): string => {
+  const clone = el.cloneNode(true) as Element;
+  Array.from(clone.querySelectorAll("br")).forEach((br) => {
+    br.replaceWith(doc.createTextNode("\n"));
+  });
+
+  return normalize(clone.textContent)
+    .split(/\r\n|\r|\n/)
+    .map(stripBulletMarker)
+    .filter((line) => line.length > 0)
+    .join("\n");
+};
+
+// FAQ 아이템 주변에서 카테고리로 쓸 만한 라벨을 best-effort로 찾는다.
+// (사업부 템플릿마다 구조가 달라 확정할 수 없으므로, 흔히 쓰이는 클래스명 몇 가지만
+//  시도하고 못 찾으면 빈 값으로 둔다 — 필요하면 결과 화면에서 직접 채워 넣을 수 있다)
+const detectCategoryLabel = (item: Element): string => {
+  const candidate =
+    item.querySelector("[data-faq-category]") ||
+    item.closest("[data-faq-category]") ||
+    item.querySelector(".watch-faq_category, .watch-faq_category-name") ||
+    item.closest(".watch-faq_group")?.querySelector(".watch-faq_category-title, .watch-faq_group-title") ||
+    null;
+
+  return normalize(candidate?.getAttribute?.("data-faq-category") || candidate?.textContent);
+};
+
+export const extractFaqFromHtml = (htmlText: string, prefix: string): FaqRefineResult => {
+  const warnings: FaqRefineWarning[] = [];
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlText, "text/html");
+  const faqItems = Array.from(doc.querySelectorAll(".watch-faq_item"));
+
+  if (faqItems.length === 0) {
+    warnings.push({
+      type: "element-not-found",
+      message: `HTML에서 FAQ 아이템(.watch-faq_item)을 찾지 못했습니다. FAQ 템플릿 구조가 다를 수 있습니다.`,
+    });
+    return { html: htmlText, exportRows: [], warnings };
+  }
+
+  const existingValues = new Set<string>();
+  const attrRegex = /data-copy-set\s*=\s*["']([^"']+)["']/g;
+  let m: RegExpExecArray | null;
+  while ((m = attrRegex.exec(htmlText))) {
+    if (m[1]) existingValues.add(m[1]);
+  }
+  const nextDataCopySet = buildDataCopySetGenerator(prefix, existingValues);
+
+  const pending: PendingInsertion[] = [];
+  const exportRows: FaqExportRow[] = [];
+
+  faqItems.forEach((item, g) => {
+    const category = detectCategoryLabel(item);
+
+    // ── 질문
+    const questionEl = item.querySelector(".watch-faq_text");
+    if (!questionEl) {
       warnings.push({
         type: "element-not-found",
-        message: `<${p.tagName}> 태그 위치를 원문에서 찾지 못해 data-copy-set="${p.value}" 삽입을 건너뜁니다.`,
+        message: `${g + 1}번째 FAQ: 질문 요소(.watch-faq_text)를 찾지 못해 건너뜁니다.`,
       });
-      return;
+    } else {
+      const existing = questionEl.getAttribute("data-copy-set");
+      const value = existing && existing.trim() ? existing.trim() : nextDataCopySet();
+      pending.push({ el: questionEl, value, needsInsertion: !existing });
+
+      exportRows.push({
+        key: value,
+        dataCopySet: value,
+        targetSelector: `data-copy-set="${value}"`,
+        applyType: "innerText",
+        excludeSup: false,
+        enableTextTransform: false,
+        category,
+        item: "Questions",
+        copy: extractElementText(doc, questionEl),
+        remark: "",
+        locales: {},
+      });
     }
-    cursor = idx + p.needle.length;
 
-    if (!p.needsInsertion) return; // 이미 data-copy-set이 있던 요소는 삽입하지 않음
+    // ── 답변 (문단 + 불릿 요소 각각을 그대로 한 행씩)
+    const answerEls = Array.from(item.querySelectorAll(".watch-faq_desc, .watch-faq_answer-item"));
+    if (answerEls.length === 0) {
+      warnings.push({
+        type: "element-not-found",
+        message: `${g + 1}번째 FAQ: 답변 요소(.watch-faq_desc, .watch-faq_answer-item)를 찾지 못했습니다.`,
+      });
+    }
 
-    const insertionPoint = idx + 1 + p.tagName.length; // "<tagname" 바로 뒤
-    resultHtml += htmlText.slice(lastCut, insertionPoint);
-    resultHtml += ` data-copy-set="${p.value}"`;
-    lastCut = insertionPoint;
+    answerEls.forEach((el) => {
+      const supNumbers = detectTrailingSupFootnote(el);
+      // ⚠️ 여기서는 supNumbers(각주 앵커의 내부 ID 숫자)를 카피 텍스트에 덧붙이지 않는다.
+      //   원본 html의 sup 앵커는 대개 빈 텍스트라 화면에 실제로 보이는 각주 번호와
+      //   data-sup-tag의 ID 숫자가 항상 같다는 보장이 없기 때문 (recoder가 이 값에
+      //   의존하지 않고 온점 순번 기준으로 위치를 복원하도록 이미 바뀌어 있음).
+      //   대신 exclude_sup / enable_text_transform 플래그만 표시해 recoder가
+      //   알아서 원래 위치에 sup을 되살리도록 한다.
+      const midSentenceSup = !supNumbers && hasAnySup(el);
+      const needsSupHandling = !!supNumbers || midSentenceSup;
+
+      const existing = el.getAttribute("data-copy-set");
+      const value = existing && existing.trim() ? existing.trim() : nextDataCopySet();
+      pending.push({ el, value, needsInsertion: !existing });
+
+      exportRows.push({
+        key: value,
+        dataCopySet: value,
+        targetSelector: `data-copy-set="${value}"`,
+        applyType: "innerText",
+        excludeSup: needsSupHandling,
+        enableTextTransform: needsSupHandling,
+        category,
+        item: "Answer",
+        copy: extractElementText(doc, el),
+        remark: "",
+        locales: {},
+      });
+    });
   });
-  resultHtml += htmlText.slice(lastCut);
+
+  const resultHtml = buildTaggedHtml(htmlText, pending, warnings);
 
   return { html: resultHtml, exportRows, warnings };
 };

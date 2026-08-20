@@ -55,7 +55,7 @@ export const exportFaqRefineExcel = (rows: FaqExportRow[], title: string) => {
     "enable_text_transform",
     "Category",
     "Item",
-    "Copy",
+    "original_copy",
     "Remark",
   ];
   const headers = [...fixedHeaders, ...localeCodes];
