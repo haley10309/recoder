@@ -80,8 +80,15 @@ const containsDisclaimerSup = (value: string): boolean => {
 // 문장 중간 sup 위치 보존 (exclude_sup === O 전용)
 // =========================================
 
-// 원본 inner 안의 <sup>...</sup> 블록 (트레일링 각주형 여부와 무관하게 전부 대상)
-const ANY_SUP_BLOCK_REGEX = /<sup\b[^>]*>[\s\S]*?<\/sup>/i;
+// 원본 inner 안의 <sup>...</sup> 블록 전부 (트레일링 각주형 여부와 무관)
+// ⚠️ 내부 콘텐츠([\s\S]*?)가 다른 <sup>/</sup> 경계를 "건너뛰어" 매칭하지 않도록
+//   부정 전방탐색으로 막는다. 이게 없으면 sup이 2개 이상일 때 첫 sup의 lazy
+//   매칭이 백트래킹으로 두 번째 sup까지 통째로 삼켜버리는 문제가 생긴다.
+const ANY_SUP_BLOCK_REGEX_G = /<sup\b[^>]*>(?:(?!<\/?sup\b)[\s\S])*?<\/sup>/gi;
+
+// 디스클레이머 번호에 쓰이는 숫자 / 구분자 (copyTransform.ts와 동일 기준)
+const DIGIT = "0-9\\u0660-\\u0669\\u06F0-\\u06F9";
+const SEPARATOR = "\\s,\\u060C\\uFF0C";
 
 // html에서 태그를 제거한 순수 텍스트 기준으로, index 이전에 등장한 온점(.) 개수를 센다.
 const countPeriodsBeforeIndex = (html: string, index: number): number => {
@@ -103,36 +110,81 @@ const findIndexAfterNthPeriod = (text: string, n: number): number => {
   return -1;
 };
 
-/**
- * exclude_sup === O 인 행 전용: 원본 inner에 있는 sup을,
- * 원본에서 "몇 번째 온점 뒤에 있었는지"와 동일한 위치(번역 카피 기준 몇 번째 온점 뒤)에
- * 그대로 옮겨 붙인다. (문장 중간의 sup이 잘려나가는 문제 방지)
- *
- * - 원본에 sup이 없으면 번역 카피를 그대로 반환한다.
- * - 온점 위치를 카피에서 찾지 못하면(온점 개수가 다름 등) 안전하게 카피 끝에 붙인다.
- */
-const insertSupAtPeriodOccurrence = (
-  originalInner: string,
-  translatedCopy: string
-): string => {
-  const match = originalInner.match(ANY_SUP_BLOCK_REGEX);
-  if (!match || match.index === undefined) return translatedCopy;
-
-  const supHtml = match[0];
-  const periodCount = countPeriodsBeforeIndex(originalInner, match.index);
-
-  // 온점이 없는 경우(문장 앞/전체) → 기존처럼 끝에 붙이는 것이 가장 안전한 폴백
-  if (periodCount === 0) {
-    return `${translatedCopy}${supHtml}`;
-  }
-
-  const insertAt = findIndexAfterNthPeriod(translatedCopy, periodCount);
-  if (insertAt === -1) {
-    return `${translatedCopy}${supHtml}`;
-  }
-
-  return `${translatedCopy.slice(0, insertAt)}${supHtml}${translatedCopy.slice(insertAt)}`;
+// index 위치에서 시작하는 디스클레이머 번호 마커(예: "29", "5,6", " 29")가 있으면
+// 제거하고, 없으면 그대로 둔다. (stripDisclaimerNumber와 동일한 숫자/구분자 규칙을
+// 문자열 "끝"이 아니라 특정 위치에 적용한 버전)
+const stripDigitMarkerAt = (
+  text: string,
+  index: number
+): { text: string; index: number } => {
+  const re = new RegExp(
+    `^[${SEPARATOR}]*[${DIGIT}]+(?:[${SEPARATOR}]+[${DIGIT}]+)*`
+  );
+  const match = text.slice(index).match(re);
+  if (!match) return { text, index };
+  return {
+    text: text.slice(0, index) + text.slice(index + match[0].length),
+    index,
+  };
 };
+
+/**
+ * exclude_sup === O 인 행 전용: 원본 inner에 있는 sup들을, 번역 카피 안에서
+ * "원본과 동일한 번째 온점 뒤" 위치에 그대로 복원한다.
+ *
+ * sup을 끼워 넣을 위치를 찾으면, 그 자리에 이미 남아있는 디스클레이머 번호
+ * 마커(예: "29")가 있는지 확인해 있으면 제거한 뒤 sup을 넣는다.
+ * (원문 HTML의 sup 앵커는 보통 빈 텍스트라 표시 번호가 CSS로 그려지므로,
+ *  카피 안의 숫자 값 자체를 미리 알 수 없다 — 그래서 "값"을 예측하지 않고,
+ *  "삽입 위치에 실제로 놓여 있는 숫자"를 그 자리에서 바로 지운다)
+ *
+ * 온점을 못 찾으면(문장 앞이거나 온점이 없음) 카피 끝에 안전하게 붙이되,
+ * 끝에 남은 번호 마커가 있으면 마찬가지로 제거한다.
+ */
+const insertSupMarkers = (originalInner: string, translatedCopy: string): string => {
+  const supRegex = new RegExp(ANY_SUP_BLOCK_REGEX_G.source, "gi");
+  const sups: { html: string; index: number }[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = supRegex.exec(originalInner)) !== null) {
+    sups.push({ html: m[0], index: m.index });
+  }
+  if (sups.length === 0) return translatedCopy;
+
+  let result = translatedCopy;
+  let cursor = 0;
+  let prevPeriodCount = 0;
+
+  for (const sup of sups) {
+    const periodCount = countPeriodsBeforeIndex(originalInner, sup.index);
+    // 이전 sup 이후로 "새로 등장한" 온점 개수 (cursor 이후 구간 기준 상대값)
+    const relativePeriodCount = periodCount - prevPeriodCount;
+    prevPeriodCount = periodCount;
+
+    const insertAt =
+      relativePeriodCount > 0
+        ? findIndexAfterNthPeriod(result.slice(cursor), relativePeriodCount)
+        : -1;
+
+    if (insertAt === -1) {
+      // 폴백: 카피 끝에 붙이되, 끝에 남은 번호 마커가 있으면 제거
+      result = `${stripDisclaimerNumber(result)}${sup.html}`;
+      cursor = result.length;
+      continue;
+    }
+
+    const absIndex = cursor + insertAt;
+    const stripped = stripDigitMarkerAt(result, absIndex);
+    result =
+      stripped.text.slice(0, stripped.index) +
+      sup.html +
+      stripped.text.slice(stripped.index);
+    cursor = stripped.index + sup.html.length;
+  }
+
+  return result;
+};
+
+
 
 // =========================================
 // Copy Deck 불균형 태그 정리
@@ -313,6 +365,14 @@ const replaceAttribute = (
   });
 };
 
+// 카피 안의 literal 줄바꿈(\n, \r\n)을 <br />로 변환한다.
+// (하나의 태그에 여러 줄이 있던 셀을 분리하지 않고 그대로 보존한 경우,
+//  줄바꿈이 그대로 남아있으면 브라우저에서 공백으로 무시되어 원본의 시각적
+//  줄바꿈(<br />)이 사라지므로 명시적으로 복원해준다)
+const normalizeCopyLineBreaks = (value: string): string => {
+  return value.replace(/\r\n|\r|\n/g, "<br />");
+};
+
 // inner html 변경
 const replaceInnerHtml = (
   html: string,
@@ -323,25 +383,40 @@ const replaceInnerHtml = (
   const parsed = parseTargetSelector(targetSelector);
   if (!parsed) return html;
 
-  const safeCopy = stripUnbalancedCloseTags(copy);
+  const safeCopy = normalizeCopyLineBreaks(stripUnbalancedCloseTags(copy));
 
   return replaceTagInner(html, parsed.attr, parsed.value, (inner) => {
     // 카피에 디스클레이머 sup 포함 → 카피가 완성본이므로 통째로 교체
     if (containsDisclaimerSup(safeCopy)) return safeCopy;
 
-    // HTML의 디스클레이머 sup 위치 (기호용 sup은 건너뜀)
+    if (!/<sup\b/i.test(inner)) return safeCopy;
+
+    // HTML의 디스클레이머(각주형) sup 위치
     const supIndex = inner.search(DISCLAIMER_SUP_REGEX);
 
-    // 디스클레이머(트레일링 각주형) sup 존재 → 번호만 제거하고 sup 보존
+    // sup 이후에 (공백을 제외하고) 다른 sup 블록 외의 내용이 없을 때만
+    // "진짜 트레일링"으로 본다. 문장 중간에 sup이 있고 그 뒤로 <br/>나 다른 문장이
+    // 이어지는 경우는 아래 insertSupMarkers의 온점 기반 위치 복원으로 처리해야 한다.
+    // (정규식 하나로 한 번에 판별하면 [\s\S]*? 의 백트래킹이 sup 경계를 넘어
+    //  두 번째 sup까지 통째로 삼켜버릴 수 있어, 실제로 sup 블록들을 떼어낸 뒤
+    //  남는 게 공백뿐인지로 직접 판별한다)
+    const isTrailing =
+      supIndex !== -1 &&
+      inner
+        .slice(supIndex)
+        .replace(new RegExp(ANY_SUP_BLOCK_REGEX_G.source, "gi"), "")
+        .trim() === "";
+
+    // 진짜 트레일링 각주형 sup → 번호만 제거하고 sup 보존
     // (앞 공백은 normalizeSupFormat에서 일괄 결정)
-    if (supIndex !== -1) {
+    if (isTrailing) {
       return `${stripDisclaimerNumber(safeCopy)}${inner.slice(supIndex)}`;
     }
 
-    // exclude_sup === O: 문장 중간을 포함해 원본에 sup이 있으면, 번역 카피에서도
-    // 같은 번째 온점 뒤에 동일한 sup을 그대로 옮겨 붙인다.
-    if (excludeSup) {
-      return insertSupAtPeriodOccurrence(inner, safeCopy);
+    // 문장 중간(또는 뒤에 다른 내용이 이어지는) sup, 혹은 exclude_sup === O 로 표시된
+    // 기호형 sup → 온점 순번 기반 위치 복원 (그 자리의 남은 번호 마커도 함께 제거)
+    if (supIndex !== -1 || excludeSup) {
+      return insertSupMarkers(inner, safeCopy);
     }
 
     return safeCopy;
@@ -412,7 +487,12 @@ const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
       }
 
       if (applyType === "innerText") {
-        convertedHtml = replaceInnerHtml(convertedHtml, targetSelector, copy, isTrue(row.exclude_sup));
+        convertedHtml = replaceInnerHtml(
+          convertedHtml,
+          targetSelector,
+          copy,
+          isTrue(row.exclude_sup)
+        );
         return;
       }
 
