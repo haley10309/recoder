@@ -1,9 +1,14 @@
 import { useState } from "react";
 
 import { extractFaqCopyDeck } from "@/apis/preCoderFaqApis";
-import { refineFaqHtml } from "../utils/refineFaqHtml";
+import { refineFaqHtml, extractFaqFromHtml } from "../utils/refineFaqHtml";
 import type { FaqExportRow, FaqRefineWarning } from "../utils/refineFaqHtml";
 import { exportFaqRefineExcel } from "../utils/exportFaqRefineExcel";
+import { extractSchemaDeckFromHtml } from "../utils/extractSchemaDeck";
+import { exportSchemaDeckExcel } from "../utils/exportSchemaDeckExcel";
+import type { SchemaDeckRow, SchemaDeckWarning } from "../utils/extractSchemaDeck";
+
+export type FaqRefineMode = "with-excel" | "html-only" | "schema-deck";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -15,10 +20,12 @@ const readFileAsText = (file: File): Promise<string> => {
 };
 
 export function useFaqRefine({
+  mode,
   htmlFile,
   htmlFileName,
   excelFile,
 }: {
+  mode: FaqRefineMode;
   htmlFile: File | null;
   htmlFileName: string;
   excelFile: File | null;
@@ -29,22 +36,60 @@ export function useFaqRefine({
   const [exportRows, setExportRows] = useState<FaqExportRow[]>([]);
   const [warnings, setWarnings] = useState<FaqRefineWarning[]>([]);
   const [localeCodes, setLocaleCodes] = useState<string[]>([]);
+  const [schemaRows, setSchemaRows] = useState<SchemaDeckRow[]>([]);
+  const [schemaWarnings, setSchemaWarnings] = useState<SchemaDeckWarning[]>([]);
 
   const handleRun = async () => {
-    if (!htmlFile || !excelFile) {
+    if (!htmlFile) {
+      alert("FAQ html 파일을 업로드 해주세요.");
+      return;
+    }
+    if (mode === "with-excel" && !excelFile) {
       alert("FAQ html 파일과 카피덱(xlsx) 파일을 모두 업로드 해주세요.");
       return;
     }
-    if (!prefix.trim()) {
+    if (mode !== "schema-deck" && !prefix.trim()) {
       alert('새로 부여할 data-copy-set 접두사를 입력해주세요. (예: "SC1")');
       return;
     }
 
     try {
       setStatus("loading");
+
+      if (mode === "schema-deck") {
+        const htmlText = await readFileAsText(htmlFile);
+        const result = extractSchemaDeckFromHtml(htmlText);
+
+        setRefinedHtml(null);
+        setExportRows([]);
+        setWarnings([]);
+        setLocaleCodes(result.localeCodes);
+        setSchemaRows(result.rows);
+        setSchemaWarnings(result.warnings);
+        setStatus(result.rows.length > 0 ? "success" : "fail");
+
+        if (result.rows.length === 0) {
+          alert("FAQPage 또는 VideoObject schema를 찾지 못했습니다.");
+        }
+        return;
+      }
+
+      if (mode === "html-only") {
+        const htmlText = await readFileAsText(htmlFile);
+        const result = extractFaqFromHtml(htmlText, prefix.trim());
+        setRefinedHtml(result.html);
+        setExportRows(result.exportRows);
+        setWarnings(result.warnings);
+        setLocaleCodes([]);
+        setSchemaRows([]);
+        setSchemaWarnings([]);
+        setStatus("success");
+        return;
+      }
+
       const [htmlText, deckExtract] = await Promise.all([
         readFileAsText(htmlFile),
-        extractFaqCopyDeck(excelFile),
+        extractFaqCopyDeck(excelFile as File),
       ]);
 
       if (!deckExtract.rows || deckExtract.rows.length === 0) {
@@ -84,11 +129,18 @@ export function useFaqRefine({
     exportFaqRefineExcel(exportRows, htmlFileName || "faq");
   };
 
+  const handleDownloadSchemaExcel = () => {
+    if (schemaRows.length === 0) return;
+    exportSchemaDeckExcel(schemaRows, htmlFileName || "index_pim");
+  };
+
   const resetRefine = () => {
     setRefinedHtml(null);
     setExportRows([]);
     setWarnings([]);
     setLocaleCodes([]);
+    setSchemaRows([]);
+    setSchemaWarnings([]);
     setStatus("");
   };
 
@@ -100,9 +152,12 @@ export function useFaqRefine({
     exportRows,
     warnings,
     localeCodes,
+    schemaRows,
+    schemaWarnings,
     handleRun,
     handleDownloadHtml,
     handleDownloadExcel,
+    handleDownloadSchemaExcel,
     resetRefine,
   };
 }
