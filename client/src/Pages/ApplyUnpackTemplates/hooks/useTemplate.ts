@@ -94,17 +94,26 @@ export const useTemplate = ({
         id: it.id,
         rowOrder: it.row_order,
 
+        // SCHEMA 행 식별용 (SCHEMA-001 등)
+        key: it.key || "",
+
         target: it.target_selector,
         applyType: it.apply_type,
 
         excludeSup: it.exclude_sup,
         enableTextTransform: it.enable_text_transform,
 
-        originCopy: it.original_copy,
+        originalCopy: it.original_copy || "",
         deckCopy: it.translated_copy || "",
+        appliedCopy: "",
 
         selectedEnglishCopies: [],
       }));
+
+      // 임시 디버깅
+      console.log("[template] 총", normalized.length, "행");
+      console.log("[template] SCHEMA:", normalized.filter(r => /^SCHEMA/i.test(r.key ?? "")).length, "행");
+      console.log("[template] 첫 SCHEMA 행:", normalized.find(r => /^SCHEMA/i.test(r.key ?? "")));
 
       setTextareas(normalized);
 

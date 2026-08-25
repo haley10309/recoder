@@ -171,6 +171,14 @@ export const getUnpackTemplateDetailsWithExcel = async (
             enable_text_transform: row.enable_text_transform && String(row.enable_text_transform).toUpperCase() === "O" ? true : false,
           }));
 
+          // ===== 임시 디버깅 =====
+          console.log("[excel] 총 행수:", excel_row_list.length);
+          console.log("[excel] 첫 행 필드:", Object.keys(excel_row_list[0] ?? {}));
+          console.log("[excel] 첫 행:", excel_row_list[0]);
+          console.log("[excel] SCHEMA 행수:",
+            excel_row_list.filter((r: any) => /^SCHEMA/i.test(String(r.key ?? ""))).length);
+          // =====================
+
           db_row_list = db_row_list.map((db_row) => {
             // excel_row_list 에서 일치하는 항목을 찾는다.
             const matched = excel_row_list.find(
@@ -185,13 +193,36 @@ export const getUnpackTemplateDetailsWithExcel = async (
             };
           });
 
-          safeSend(200, { success: true, row_list: db_row_list });
-        } catch (parseError) {
-          console.error("JSON parse error:", parseError);
-          console.error("python stdout:", stdout);
-          console.error("python stderr:", stderr);
-          safeSend(500, { success: false, error: "Invalid Python response format." });
-        }
+          // =========================
+          // SCHEMA 행 추가
+          // =========================
+          // SCHEMA 행은 셀렉터가 없어 TemplateUnpackSpecs에 저장되지 않는다.
+          // 따라서 DB 기준 매핑에서 누락되므로 엑셀 데이터를 그대로 이어붙인다.
+          const schema_row_list: UnpackRow[] = excel_row_list
+            .filter((row) => /^SCHEMA-/i.test(row.key ?? ""))
+            .map((row, index) => ({
+              id: -(index + 1),
+              row_order: row.row_order ?? index + 1,
+              key: row.key,
+              target_selector: "",
+              apply_type: "",
+              exclude_sup: false,
+              enable_text_transform: false,
+              category: row.category,
+              item: row.item,
+              original_copy: row.original_copy ?? "",
+              translated_copy: row.translated_copy ?? "",
+            }));
+
+          console.log("[merge] DB 행:", db_row_list.length, "/ SCHEMA 행:", schema_row_list.length);
+
+          safeSend(200, { success: true, row_list: [...db_row_list, ...schema_row_list] });
+          } catch (parseError) {
+            console.error("JSON parse error:", parseError);
+            console.error("python stdout:", stdout);
+            console.error("python stderr:", stderr);
+            safeSend(500, { success: false, error: "Invalid Python response format." });
+          }
       });
 
       py.on("error", (error) => {

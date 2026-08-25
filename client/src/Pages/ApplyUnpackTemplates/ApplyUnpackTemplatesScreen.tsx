@@ -9,6 +9,7 @@ import SiteCode from "@/Components/Common/SiteCode";
 import CheckTemplateBySku from "./components/CheckTemplateBySku";
 import FileUploadSection from "./components/FileUploadSection";
 import ApplyEntryItem from "./components/ApplyEntryItem";
+import SchemaReportPanel from "../../Components/SchemaReportPanel";
 
 import { useTemplate } from "./hooks/useTemplate";
 import { useFileUpload } from "./hooks/useFileUpload";
@@ -20,13 +21,9 @@ const ApplyUnpackTemplatesScreen = () => {
   // =========================
   // 공통 상태
   // =========================
-  const [countryCode, setCountryCode] =
-    useState("");
+  const [countryCode, setCountryCode] = useState("");
 
-  const [
-    englishCopyList,
-    setEnglishCopyList,
-  ] = useState<any[]>([]);
+  const [englishCopyList, setEnglishCopyList] = useState<any[]>([]);
 
   // =========================
   // HTML FILE UPLOAD
@@ -94,6 +91,7 @@ const ApplyUnpackTemplatesScreen = () => {
   const {
     processing,
     downloading,
+    schemaReport,
 
     handleProcessCopy,
     handleLocalizedDownload,
@@ -202,9 +200,7 @@ const ApplyUnpackTemplatesScreen = () => {
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               )}
 
-              {templateLoading
-                ? "불러오는 중..."
-                : "템플릿 불러오기"}
+              {templateLoading ? "불러오는 중..." : "템플릿 불러오기"}
             </button>
           </div>
 
@@ -240,27 +236,35 @@ const ApplyUnpackTemplatesScreen = () => {
           <Gap gap={15} />
 
           {/* ========================= */}
+          {/* SCHEMA REPORT */}
+          {/* ========================= */}
+          {schemaReport && (
+            <>
+              <SchemaReportPanel report={schemaReport} />
+              <Gap gap={30} />
+            </>
+          )}
+
+          {/* ========================= */}
           {/* COPY LIST */}
           {/* ========================= */}
           <WhiteBox>
             <div className="flex flex-col gap-[20px]">
-              {textareas.map(
-                (entry, index) => (
-                  <ApplyEntryItem
-                    key={`apply-entry-${index}`}
-                    entry={entry}
-                    index={index}
-                    totalLength={textareas.length}
-                    onChange={(idx, value) => {
-                      setTextareas((prev) => {
-                        const copy = [...prev];
-                        copy[idx].appliedCopy = value;
-                        return copy;
-                      });
-                    }}
-                  />
-                )
-              )}
+              {textareas.map((entry, index) => (
+                <ApplyEntryItem
+                  key={`apply-entry-${index}`}
+                  entry={entry}
+                  index={index}
+                  totalLength={textareas.length}
+                  onChange={(idx, value) => {
+                    setTextareas((prev) => {
+                      const copy = [...prev];
+                      copy[idx].appliedCopy = value;
+                      return copy;
+                    });
+                  }}
+                />
+              ))}
             </div>
           </WhiteBox>
 
