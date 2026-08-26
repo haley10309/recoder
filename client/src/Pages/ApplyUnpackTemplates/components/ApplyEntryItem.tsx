@@ -28,7 +28,7 @@ const ApplyEntryItem = ({ entry, index, totalLength, onChange }) => {
           <div>
             <p className="text-[12px] font-[600] mb-1">Origin Copy</p>
             <textarea
-              value={entry.originCopy}
+              value={entry.originalCopy}
               readOnly
               className="w-full h-[80px] p-[10px] bg-[#e9e9e9] rounded border text-[13px]"
             />

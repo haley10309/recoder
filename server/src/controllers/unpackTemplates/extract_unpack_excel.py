@@ -11,12 +11,11 @@ def norm(v):
 
 def load_translation_rows(sheet, country_code):
     """
-
     정형화된 헤더 구조:
-    row_order | target_selector | apply_type | exclude_sup | enable_text_transform | original_copy | {country_code} (eg. CA_FR) | ...
+    key | row_order | target_selector | apply_type | exclude_sup | enable_text_transform
+        | category | item | original_copy | {country_code} (eg. CA_FR) | ...
 
-    country_code에 해당하는 번역 컬럼까지 포함하여 각 row를 dict로 반환
-    
+    key가 SCHEMA- 로 시작하는 행은 셀렉터가 없으므로 별도로 취급한다.
     """
     used = sheet.used_range.value
 
@@ -37,10 +36,18 @@ def load_translation_rows(sheet, country_code):
 
     country_key = norm(country_code).lower()
 
-    required_cols = ["target_selector", "apply_type", "exclude_sup", "enable_text_transform", "original_copy", country_key]
+    required_cols = ["target_selector", "apply_type", "exclude_sup",
+                     "enable_text_transform", "original_copy", country_key]
     missing = [col for col in required_cols if col not in header_map]
     if missing:
         raise ValueError(f"필수 컬럼이 없습니다: {', '.join(missing)}")
+
+    def cell(row, name):
+        """헤더명으로 셀 값을 안전하게 읽는다."""
+        if name not in header_map:
+            return ""
+        idx = header_map[name]
+        return norm(row[idx]) if idx < len(row) else ""
 
     rows = []
 
@@ -49,32 +56,36 @@ def load_translation_rows(sheet, country_code):
         if not row:
             continue
 
-        row_order_raw = row[header_map["row_order"]] if "row_order" in header_map and header_map["row_order"] < len(row) else None
-        row_order = norm(row_order_raw) if row_order_raw is not None else None
-        target_selector = norm(row[header_map["target_selector"]] if header_map["target_selector"] < len(row) else None)
-        apply_type = norm(row[header_map["apply_type"]] if header_map["apply_type"] < len(row) else None)
-        exclude_sup = norm(
-            row[header_map["exclude_sup"]]
-            if "exclude_sup" in header_map and header_map["exclude_sup"] < len(row)
-            else None
-        )
-        enable_text_transform = norm(
-            row[header_map["enable_text_transform"]]
-            if "enable_text_transform" in header_map and header_map["enable_text_transform"] < len(row)
-            else None
-        )
-        original_copy = norm(row[header_map["original_copy"]] if header_map["original_copy"] < len(row) else None)
-        translated_copy = norm(row[header_map[country_key]] if header_map[country_key] < len(row) else None)
+        key = cell(row, "key")
+        row_order = cell(row, "row_order")
+        target_selector = cell(row, "target_selector")
+        apply_type = cell(row, "apply_type")
+        exclude_sup = cell(row, "exclude_sup")
+        enable_text_transform = cell(row, "enable_text_transform")
+        category = cell(row, "category")
+        item = cell(row, "item")
+        original_copy = cell(row, "original_copy")
+        translated_copy = cell(row, country_key)
 
-        if not target_selector or not apply_type or not original_copy:
+        is_schema = key.upper().startswith("SCHEMA-")
+
+        # 영문 원문이 없으면 어느 유형이든 처리 대상이 아니다
+        if not original_copy:
+            continue
+
+        # SCHEMA 행은 셀렉터가 없으므로 셀렉터 검사에서 제외한다
+        if not is_schema and (not target_selector or not apply_type):
             continue
 
         rows.append({
-            "row_order": row_order,
+            "key": key,
+            "row_order": row_order if row_order else None,
             "target_selector": target_selector,
             "apply_type": apply_type,
             "exclude_sup": exclude_sup,
             "enable_text_transform": enable_text_transform,
+            "category": category,
+            "item": item,
             "original_copy": original_copy,
             "translated_copy": translated_copy,
         })
