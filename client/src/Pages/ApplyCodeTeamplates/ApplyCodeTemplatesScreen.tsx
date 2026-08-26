@@ -90,7 +90,7 @@ const ApplyCodeTemplatesScreen = () => {
       <Gap gap={50} />
 
       <TitleLabel text="🌐 국가코드 선택" />
-      <Gap gap={15} bg-red-100 />
+      <Gap gap={15} />
       <SiteCode
         countryCode={countryCode}
         handleCountryChange={handleCountryChange}

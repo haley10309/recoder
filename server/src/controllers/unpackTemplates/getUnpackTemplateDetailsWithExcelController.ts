@@ -172,11 +172,11 @@ export const getUnpackTemplateDetailsWithExcel = async (
           }));
 
           // ===== 임시 디버깅 =====
-          console.log("[excel] 총 행수:", excel_row_list.length);
-          console.log("[excel] 첫 행 필드:", Object.keys(excel_row_list[0] ?? {}));
-          console.log("[excel] 첫 행:", excel_row_list[0]);
-          console.log("[excel] SCHEMA 행수:",
-            excel_row_list.filter((r: any) => /^SCHEMA/i.test(String(r.key ?? ""))).length);
+          // console.log("[excel] 총 행수:", excel_row_list.length);
+          // console.log("[excel] 첫 행 필드:", Object.keys(excel_row_list[0] ?? {}));
+          // console.log("[excel] 첫 행:", excel_row_list[0]);
+          // console.log("[excel] SCHEMA 행수:",
+          //   excel_row_list.filter((r: any) => /^SCHEMA/i.test(String(r.key ?? ""))).length);
           // =====================
 
           db_row_list = db_row_list.map((db_row) => {

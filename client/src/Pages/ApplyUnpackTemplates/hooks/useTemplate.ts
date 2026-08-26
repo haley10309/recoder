@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { useFetchTemplate } from "@/hooks/useFetchTemplate";
 
@@ -10,6 +10,35 @@ interface UseTemplateProps {
   excelFile: File | null;
   countryCode: string;
   setCountryCode: React.Dispatch<React.SetStateAction<string>>;
+}
+
+/** 서버(get-details-with-excel) 응답 행 */
+interface ApiRow {
+  id?: number;
+  row_order?: number;
+  key?: string;
+  target_selector?: string;
+  apply_type?: string;
+  exclude_sup?: boolean;
+  enable_text_transform?: boolean;
+  original_copy?: string;
+  translated_copy?: string;
+}
+
+/** 화면에서 사용하는 행 */
+export interface ApplyRow {
+  id?: number;
+  rowOrder?: number;
+  /** SCHEMA 행 식별용 (SCHEMA-001 등) */
+  key: string;
+  target?: string;
+  applyType?: string;
+  excludeSup?: boolean;
+  enableTextTransform?: boolean;
+  originalCopy: string;
+  deckCopy: string;
+  appliedCopy: string;
+  selectedEnglishCopies: string[];
 }
 
 export const useTemplate = ({
@@ -37,15 +66,15 @@ export const useTemplate = ({
     ticketUrl: sku,
   });
 
-  const [textareas, setTextareas] = useState([{ asWasCode: "", toBeCode: "", checked: false, isApplied: null, selectedEnglishCopies: [] }]);
-  const [templateId, setTemplateId] = useState(null);
+  const [textareas, setTextareas] = useState<ApplyRow[]>([]);
+  const [templateId, setTemplateId] = useState<number | null>(null);
   const [templateLoading, setTemplateLoading] = useState(false);
 
-  const isEnglishCountry = countryCode === ""
-                            ? null
-                            : countryOptions.find((c) => c.name === countryCode)
-                              ? !!countryOptions.find((c) => c.name === countryCode)?.isEnglish
-                              : null;
+  const isEnglishCountry = countryCode === "" 
+  ? null 
+  : countryOptions.find((c) => c.name === countryCode)
+  ? !!countryOptions.find((c) => c.name === countryCode)?.isEnglish
+  : null;
 
   // 템플릿 조회
   const handleGetTemplate = async () => {
@@ -88,9 +117,9 @@ export const useTemplate = ({
         }
       );
 
-      const rows = data.row_list || [];
+      const rows: ApiRow[] = data.row_list || [];
 
-      const normalized = rows.map((it) => ({
+      const normalized: ApplyRow[] = rows.map((it) => ({
         id: it.id,
         rowOrder: it.row_order,
 
@@ -110,10 +139,10 @@ export const useTemplate = ({
         selectedEnglishCopies: [],
       }));
 
-      // 임시 디버깅
-      console.log("[template] 총", normalized.length, "행");
-      console.log("[template] SCHEMA:", normalized.filter(r => /^SCHEMA/i.test(r.key ?? "")).length, "행");
-      console.log("[template] 첫 SCHEMA 행:", normalized.find(r => /^SCHEMA/i.test(r.key ?? "")));
+      // // 임시 디버깅
+      // console.log("[template] 총", normalized.length, "행");
+      // console.log("[template] SCHEMA:", normalized.filter(r => /^SCHEMA/i.test(r.key ?? "")).length, "행");
+      // console.log("[template] 첫 SCHEMA 행:", normalized.find(r => /^SCHEMA/i.test(r.key ?? "")));
 
       setTextareas(normalized);
 
@@ -126,32 +155,10 @@ export const useTemplate = ({
     }
   };
 
-  const handleCountryChange = (inputValue) => {
+  const handleCountryChange = (inputValue: string) => {
     setCountryCode(inputValue);
   };
 
-  const handleToBeCodeChange = (index, value) => {
-    const newTextareas = textareas.map((textarea, i) =>
-      i === index ? { ...textarea, toBeCode: value } : textarea
-    );
-    setTextareas(newTextareas);
-  };
-
-  const handleLocalizedToBeCodeChange = (index, value) => {
-    const newTextareas = textareas.map((textarea, i) =>
-      i === index ? { ...textarea, localizedToBeCode: value } : textarea
-    );
-    setTextareas(newTextareas);
-  };
-
-  const handleAddTextarea = () => {
-    const newTextareas = [
-      ...textareas,
-      { toBeCode: "", localizedToBeCode: "" }
-    ]
-    setTextareas(newTextareas);
-  };
-  
   return {
     templateLoading,
     skuOptions,
@@ -166,9 +173,6 @@ export const useTemplate = ({
     setTextareas,
     handleGetTemplate,
     handleCountryChange,
-    handleToBeCodeChange,
-    handleLocalizedToBeCodeChange,
     templateId,
-    handleAddTextarea,
   };
 };

@@ -29,7 +29,13 @@ const CopyCodeButton = styled.button`
   padding: 3px 5px;
 `;
 
-const CopyTextButton = ({ text, value, style={} }) => {
+interface CopyTextButtonProps {
+  text: string;
+  value?: string | null;
+  style?: React.CSSProperties;
+}
+
+const CopyTextButton = ({ text, value, style={} }: CopyTextButtonProps) => {
   const [copyState, setCopyState] = useState('none'); // 'none' | 'copied' | 'error'
 
   const hasText = typeof value === 'string' && value !== '';

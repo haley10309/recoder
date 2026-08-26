@@ -532,12 +532,12 @@ export const applyToHtml = async (
     const countryCode = req.body.country_code ?? "";
 
     // ===== 임시 디버깅 =====
-    console.log("[apply] country_code:", JSON.stringify(countryCode));
-    console.log("[apply] 총 행수:", row_list.length);
-    console.log("[apply] key 있는 행:", row_list.filter((r: any) => r.key).length);
-    console.log("[apply] SCHEMA 행수:",
-      row_list.filter((r: any) => /^SCHEMA-/i.test(String(r.key ?? ""))).length);
-    console.log("[apply] 첫 행:", row_list[0]);
+    // console.log("[apply] country_code:", JSON.stringify(countryCode));
+    // console.log("[apply] 총 행수:", row_list.length);
+    // console.log("[apply] key 있는 행:", row_list.filter((r: any) => r.key).length);
+    // console.log("[apply] SCHEMA 행수:",
+    //   row_list.filter((r: any) => /^SCHEMA-/i.test(String(r.key ?? ""))).length);
+    // console.log("[apply] 첫 행:", row_list[0]);
     // =====================
 
     const schemaResult = localizeSchema(convertedHtml, row_list, countryCode);
@@ -569,46 +569,3 @@ export const applyToHtml = async (
     res.status(500).json({ success: false, error: "Failed to apply to html" });
   }
 };
-
-// export const applyToHtml = async (
-//   req: Request<{}, {}, ApplyToHtmlBody>,
-//   res: Response
-// ): Promise<void> => {
-//   try {
-//     if (!req.file) {
-//       res.status(400).json({ success: false, error: "No file uploaded." });
-//       return;
-//     }
-
-//     if (!req.body.row_list) {
-//       res.status(400).json({ success: false, error: "row_list is required." });
-//       return;
-//     }
-
-//     let row_list: UnpackRow[];
-//     try {
-//       row_list = JSON.parse(req.body.row_list);
-//     } catch {
-//       res.status(400).json({ success: false, error: "row_list must be a valid JSON string." });
-//       return;
-//     }
-
-//     if (!Array.isArray(row_list)) {
-//       res.status(400).json({ success: false, error: "row_list must be an array." });
-//       return;
-//     }
-
-//     const originalHtml = req.file.buffer.toString("utf-8");
-//     const convertedHtml = applyRowsToHtml(originalHtml, row_list);
-
-//     const originalName = path.parse(req.file.originalname).name;
-//     const outputFileName = `${originalName}_converted.html`;
-
-//     res.setHeader("Content-Type", "text/html; charset=utf-8");
-//     res.setHeader("Content-Disposition", `attachment; filename="${outputFileName}"`);
-//     res.send(convertedHtml);
-//   } catch (err) {
-//     console.error("Error applying to html:", err);
-//     res.status(500).json({ success: false, error: "Failed to apply to html" });
-//   }
-// };
