@@ -7,13 +7,13 @@ import { useRecovery, type RecoveryMode } from "../hooks/useRecovery";
 const MODE_OPTIONS: { key: RecoveryMode; label: string; desc: string }[] = [
   {
     key: "remove_unmatched",
-    label: "Excel에 없는 요소 삭제",
-    desc: "HTML에는 있지만 Excel에 등록되지 않은 data-copy-set 요소를 삭제합니다.",
+    label: "Excel에 없는 속성 제거",
+    desc: "HTML에는 있지만 Excel에 등록되지 않은 data-copy-set 속성을 제거합니다.",
   },
   {
     key: "remove_matched",
-    label: "Excel에 있는 요소 삭제",
-    desc: "Excel에 등록된 data-copy-set 요소를 HTML에서 삭제합니다.",
+    label: "Excel에 있는 속성 제거",
+    desc: "Excel에 등록된 data-copy-set 속성을 HTML에서 제거합니다.",
   },
 ];
 
@@ -32,9 +32,7 @@ const RecoveryTab = () => {
 
   return (
     <div>
-      <PageDescriptionText
-        text={"Excel과 비교하여 HTML의 data-copy-set 요소를 삭제"}
-      />
+      <PageDescriptionText text={"Excel과 비교하여 HTML의 data-copy-set 속성을 제거"} />
 
       <Gap gap={50} />
 
@@ -140,21 +138,21 @@ const RecoveryTab = () => {
           </h3>
 
           <div className="mb-[12px] flex flex-wrap gap-[20px] text-gray-600">
-            <span>
-                Excel 번호 {report.excelCount}개
+            <span>Excel 번호 {report.excelCount}개
                 <span className="ml-[6px] text-[11px] text-gray-400">
                 ({report.source.name} · {report.source.column}열)
                 </span>
             </span>
+
             <span>HTML 번호 {report.htmlCount}개</span>
             <span className="font-[600] text-red-600">
-                삭제 {report.removedCount}개
+                제거 {report.removedCount}개
             </span>
-        </div>
+          </div>
 
           {report.removed.length > 0 && (
             <div className="mb-[10px]">
-              <div className="mb-[4px] text-[12px] text-red-600">삭제됨</div>
+              <div className="mb-[4px] text-[12px] text-red-600">제거됨</div>
               <div className="flex flex-wrap gap-[6px]">
                 {report.removed.map((v) => (
                   <span
@@ -168,18 +166,22 @@ const RecoveryTab = () => {
             </div>
           )}
 
+          <Gap gap={20} />
+
           {/* SKIPPED COUNT */}
-          <span>HTML 번호 {report.htmlCount}개</span>
+          <div className="mb-[12px] flex flex-wrap gap-[20px] text-gray-600">
+            <span>HTML 번호 {report.htmlCount}개</span>
 
-          {report.skippedCount > 0 && (
-            <span className="text-amber-600">
-              형식 불일치 {report.skippedCount}개 제외
-            </span>
-          )}
+            {report.skippedCount > 0 && (
+              <span className="text-amber-600">
+                형식 불일치 {report.skippedCount}개 제외
+              </span>
+            )}
 
-          <span className="font-[600] text-red-600">
-            삭제 {report.removedCount}개
-          </span>
+            <span className="font-[600] text-red-600">
+              제거 {report.removedCount}개
+            </span>          
+          </div>
 
           {report.kept.length > 0 && (
             <div>
