@@ -9,7 +9,7 @@ type TabKey = "apply" | "recovery";
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "apply", label: "번역 적용" },
-  { key: "recovery", label: "Recovery" },
+  { key: "recovery", label: "원복" },
 ];
 
 const ApplyUnpackTemplatesScreen = () => {
