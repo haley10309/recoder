@@ -31,7 +31,7 @@ const RecoveryTab = () => {
   } = useRecovery();
 
   return (
-    <div>
+    <div className="bg-[#FFFFFF] p-10">
       <PageDescriptionText text={"Excel과 비교하여 HTML의 data-copy-set 속성을 제거"} />
 
       <Gap gap={50} />

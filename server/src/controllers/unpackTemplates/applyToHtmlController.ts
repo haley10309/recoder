@@ -12,7 +12,7 @@ import { stripDisclaimerNumber, wrapRegSymbol } from "../../utils/copyTransform"
 
 // process-copy에서 가공된 값이 있으면 그것을 사용하며, 없다면 기존 카피값 그대로를 사용
 const getCopy = (row: UnpackRow): string => {
-  return row.processed_translated_copy ?? row.translated_copy ?? "";
+  return row.processed_translated_copy || row.translated_copy || "";
 };
 
 // 시트에서 넘어오는 값이 O인지 o인지 "true"인지 True인지를 단순하게 한번에 판별
@@ -476,7 +476,7 @@ const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
   let convertedHtml = html;
 
   rows.forEach((row) => {
-    // 스키마 행은 별도 파이프라인에서 처리
+    // 스키마 행은 별도 파이프라인(localizeSchema)에서 처리
     if (SCHEMA_KEY_REGEX.test(row.key ?? "")) return;
 
     const targetSelector = row.target_selector;
@@ -485,9 +485,40 @@ const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
 
     if (!targetSelector || !applyType) return;
 
-    // ... 기존 분기 그대로
+    // =========================
+    // feature 영역
+    // =========================
+    if (isCopySetSelector(targetSelector)) {
+      if (applyType === "alt") {
+        convertedHtml = replaceAttribute(convertedHtml, targetSelector, "alt", copy);
+        return;
+      }
+
+      if (applyType === "innerText") {
+        convertedHtml = replaceInnerHtml(
+          convertedHtml,
+          targetSelector,
+          copy,
+          isTrue(row.exclude_sup)
+        );
+        return;
+      }
+
+      if (applyType === "aria-label") {
+        convertedHtml = replaceAttribute(convertedHtml, targetSelector, "aria-label", copy);
+        return;
+      }
+    }
+
+    // =========================
+    // disclaimer 영역
+    // =========================
+    if (isSupSelector(targetSelector) && applyType === "text_disclaimer") {
+      convertedHtml = replaceDisclaimer(convertedHtml, targetSelector, copy);
+    }
   });
 
+  // 치환 완료 후 sup 포맷 정리
   return normalizeSupFormat(convertedHtml);
 };
 
