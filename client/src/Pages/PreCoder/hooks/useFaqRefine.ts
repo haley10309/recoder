@@ -7,8 +7,14 @@ import { exportFaqRefineExcel } from "../utils/exportFaqRefineExcel";
 import { extractSchemaDeckFromHtml } from "../utils/extractSchemaDeck";
 import { exportSchemaDeckExcel } from "../utils/exportSchemaDeckExcel";
 import type { SchemaDeckRow, SchemaDeckWarning } from "../utils/extractSchemaDeck";
+import { extractFeaturesDisclaimerFromHtml } from "../utils/extractFeaturesDisclaimer";
+import { exportFeaturesDisclaimerExcel } from "../utils/exportFeaturesDisclaimerExcel";
+import type {
+  FeatureDisclaimerExportRow,
+  FeatureDisclaimerWarning,
+} from "../utils/extractFeaturesDisclaimer";
 
-export type FaqRefineMode = "with-excel" | "html-only" | "schema-deck";
+export type FaqRefineMode = "with-excel" | "html-only" | "schema-deck" | "features-disclaimer";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -38,10 +44,13 @@ export function useFaqRefine({
   const [localeCodes, setLocaleCodes] = useState<string[]>([]);
   const [schemaRows, setSchemaRows] = useState<SchemaDeckRow[]>([]);
   const [schemaWarnings, setSchemaWarnings] = useState<SchemaDeckWarning[]>([]);
+  const [featureRows, setFeatureRows] = useState<FeatureDisclaimerExportRow[]>([]);
+  const [featureCustomRows, setFeatureCustomRows] = useState<FeatureDisclaimerExportRow[]>([]);
+  const [featureWarnings, setFeatureWarnings] = useState<FeatureDisclaimerWarning[]>([]);
 
   const handleRun = async () => {
     if (!htmlFile) {
-      alert("FAQ html 파일을 업로드 해주세요.");
+      alert("html 파일을 업로드 해주세요.");
       return;
     }
     if (mode === "with-excel" && !excelFile) {
@@ -56,6 +65,27 @@ export function useFaqRefine({
     try {
       setStatus("loading");
 
+      if (mode === "features-disclaimer") {
+        const htmlText = await readFileAsText(htmlFile);
+        const result = extractFeaturesDisclaimerFromHtml(htmlText, prefix.trim());
+
+        setRefinedHtml(result.html);
+        setExportRows([]);
+        setWarnings([]);
+        setLocaleCodes([]);
+        setSchemaRows([]);
+        setSchemaWarnings([]);
+        setFeatureRows(result.exportRows);
+        setFeatureCustomRows(result.customRows);
+        setFeatureWarnings(result.warnings);
+        setStatus(result.exportRows.length > 0 ? "success" : "fail");
+
+        if (result.exportRows.length === 0) {
+          alert("features/disclaimer 후보 요소를 찾지 못했습니다.");
+        }
+        return;
+      }
+
       if (mode === "schema-deck") {
         const htmlText = await readFileAsText(htmlFile);
         const result = extractSchemaDeckFromHtml(htmlText);
@@ -66,6 +96,9 @@ export function useFaqRefine({
         setLocaleCodes(result.localeCodes);
         setSchemaRows(result.rows);
         setSchemaWarnings(result.warnings);
+        setFeatureRows([]);
+        setFeatureCustomRows([]);
+        setFeatureWarnings([]);
         setStatus(result.rows.length > 0 ? "success" : "fail");
 
         if (result.rows.length === 0) {
@@ -83,6 +116,9 @@ export function useFaqRefine({
         setLocaleCodes([]);
         setSchemaRows([]);
         setSchemaWarnings([]);
+        setFeatureRows([]);
+        setFeatureCustomRows([]);
+        setFeatureWarnings([]);
         setStatus("success");
         return;
       }
@@ -103,6 +139,11 @@ export function useFaqRefine({
       setExportRows(result.exportRows);
       setWarnings(result.warnings);
       setLocaleCodes(deckExtract.localeColumns.map((c) => c.code));
+      setSchemaRows([]);
+      setSchemaWarnings([]);
+      setFeatureRows([]);
+      setFeatureCustomRows([]);
+      setFeatureWarnings([]);
       setStatus("success");
     } catch (error) {
       console.error("[useFaqRefine] 에러", error);
@@ -134,6 +175,11 @@ export function useFaqRefine({
     exportSchemaDeckExcel(schemaRows, htmlFileName || "index_pim");
   };
 
+  const handleDownloadFeatureExcel = () => {
+    if (featureRows.length === 0) return;
+    exportFeaturesDisclaimerExcel(featureRows, featureCustomRows, htmlFileName || "index_pim");
+  };
+
   const resetRefine = () => {
     setRefinedHtml(null);
     setExportRows([]);
@@ -141,6 +187,9 @@ export function useFaqRefine({
     setLocaleCodes([]);
     setSchemaRows([]);
     setSchemaWarnings([]);
+    setFeatureRows([]);
+    setFeatureCustomRows([]);
+    setFeatureWarnings([]);
     setStatus("");
   };
 
@@ -154,10 +203,14 @@ export function useFaqRefine({
     localeCodes,
     schemaRows,
     schemaWarnings,
+    featureRows,
+    featureCustomRows,
+    featureWarnings,
     handleRun,
     handleDownloadHtml,
     handleDownloadExcel,
     handleDownloadSchemaExcel,
+    handleDownloadFeatureExcel,
     resetRefine,
   };
 }

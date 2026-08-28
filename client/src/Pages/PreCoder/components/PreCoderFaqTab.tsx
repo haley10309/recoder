@@ -9,10 +9,11 @@ import { usePreCoderFiles } from "../hooks/usePreCoderFiles";
 import { useFaqRefine } from "../hooks/useFaqRefine";
 import type { FaqRefineMode } from "../hooks/useFaqRefine";
 
-// "FAQ 정제" 탭:
+// "html 정제" 탭:
 // ① html + 카피덱(xlsx) 정합성 기반 FAQ 정제
 // ② html만으로 FAQ 자동 인식/추출
 // ③ index_pim html의 JSON-LD(FAQPage / VideoObject) schema deck 추출
+// ④ html만으로 features + disclaimer 영역 자동 인식/추출 (data-copy-set 커스텀 배정)
 const PreCoderFaqTab = () => {
   const [mode, setMode] = useState<FaqRefineMode>("with-excel");
 
@@ -37,17 +38,21 @@ const PreCoderFaqTab = () => {
     localeCodes,
     schemaRows,
     schemaWarnings,
+    featureRows,
+    featureCustomRows,
+    featureWarnings,
     handleRun,
     handleDownloadHtml,
     handleDownloadExcel,
     handleDownloadSchemaExcel,
+    handleDownloadFeatureExcel,
     resetRefine,
   } = useFaqRefine({ mode, htmlFile, htmlFileName, excelFile });
 
   const canRun =
     mode === "schema-deck"
       ? !!htmlFile
-      : mode === "html-only"
+      : mode === "html-only" || mode === "features-disclaimer"
         ? !!htmlFile && !!prefix.trim()
         : !!htmlFile && !!excelFile && !!prefix.trim();
 
@@ -76,10 +81,16 @@ const PreCoderFaqTab = () => {
           ① html + 카피덱(xlsx)
         </ModeButton>
         <ModeButton $active={mode === "html-only"} onClick={() => handleModeChange("html-only")}>
-          ② html만 업로드 (자동 인식)
+          ② FAQ html만 업로드 (자동 인식)
         </ModeButton>
         <ModeButton $active={mode === "schema-deck"} onClick={() => handleModeChange("schema-deck")}>
           ③ schema deck 추출
+        </ModeButton>
+        <ModeButton
+          $active={mode === "features-disclaimer"}
+          onClick={() => handleModeChange("features-disclaimer")}
+        >
+          ④ features + disclaimer 추출
         </ModeButton>
       </ModeToggleRow>
       <Gap gap={15} />
@@ -95,6 +106,14 @@ const PreCoderFaqTab = () => {
           카피덱 엑셀 없이 html 파일 하나만 올려도 돼요. html 안의 FAQ 영역(.watch-faq_item)을
           직접 인식해서 질문/답변을 원본 카피로 추출하고, data-copy-set을 자동 배정한 html과
           recoder 입력 엑셀을 만들어드려요.
+        </InfoBox>
+      ) : mode === "features-disclaimer" ? (
+        <InfoBox>
+          index_pim html 파일 하나만 올리면 FAQ를 제외한 나머지 영역에서 data-copy-set이
+          있어야 하는 곳(<b>내용 텍스트</b>, <b>aria-label</b>, <b>alt</b>,{" "}
+          <b>class="text_disclaimer"</b>)을 찾아, 비어있는 곳에만 새 data-copy-set을 배정해요.
+          결과 엑셀은 전체 항목 시트와, 이번에 새로 배정한 항목만 모은 별도 시트로 나뉘어요.
+          ⚠️ 자동 인식 결과이니 다운로드 전에 미리보기에서 꼭 확인해주세요.
         </InfoBox>
       ) : (
         <InfoBox>
@@ -146,7 +165,7 @@ const PreCoderFaqTab = () => {
       </ActionBox>
       <Gap gap={40} />
 
-      {status === "success" && mode !== "schema-deck" && (
+      {status === "success" && mode !== "schema-deck" && mode !== "features-disclaimer" && (
         <>
           <SummaryBox>
             <SummaryTextGroup>
@@ -268,6 +287,69 @@ const PreCoderFaqTab = () => {
                     <td key={code}>{row.locales?.[code] ?? ""}</td>
                   ))}
                   <td>{row.remark}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </>
+      )}
+
+      {status === "success" && mode === "features-disclaimer" && (
+        <>
+          <SummaryBox>
+            <SummaryTextGroup>
+              <SummaryText>
+                총 <b>{featureRows.length}건</b>의 카피를 추출했고, 그 중{" "}
+                <b>{featureCustomRows.length}건</b>은 새로 data-copy-set을 배정했어요.
+              </SummaryText>
+            </SummaryTextGroup>
+            <DownloadRow>
+              <DownloadButton onClick={handleDownloadHtml}>📄 html 다운로드</DownloadButton>
+              <DownloadButton onClick={handleDownloadFeatureExcel}>
+                📊 recoder 입력 엑셀 다운로드 (전체 + 신규배정 시트)
+              </DownloadButton>
+            </DownloadRow>
+          </SummaryBox>
+          <Gap gap={25} />
+
+          {featureWarnings.length > 0 && (
+            <>
+              <WarningBox>
+                <WarningTitle>⚠️ 확인이 필요한 항목 {featureWarnings.length}건</WarningTitle>
+                <WarningList>
+                  {featureWarnings.map((w, i) => (
+                    <li key={i}>{w.message}</li>
+                  ))}
+                </WarningList>
+              </WarningBox>
+              <Gap gap={25} />
+            </>
+          )}
+
+          <TitleLabel text="🔎 추출 결과 미리보기" />
+          <Gap gap={15} />
+          <Table>
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>data-copy-set</th>
+                <th>apply_type</th>
+                <th>구분</th>
+                <th>Category</th>
+                <th>신규 배정</th>
+                <th>Copy</th>
+              </tr>
+            </thead>
+            <tbody>
+              {featureRows.map((row, i) => (
+                <tr key={i}>
+                  <td>{row.key}</td>
+                  <td>{row.dataCopySet}</td>
+                  <td>{row.applyType}</td>
+                  <td>{row.item}</td>
+                  <td>{row.category}</td>
+                  <td>{row.isCustom ? "O" : ""}</td>
+                  <td>{row.copy}</td>
                 </tr>
               ))}
             </tbody>

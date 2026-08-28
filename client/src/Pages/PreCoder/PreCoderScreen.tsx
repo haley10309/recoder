@@ -12,7 +12,9 @@ import ScrollToTopButton from "./components/ScrollToTopButton";
 type PreCoderTabKey = "run" | "history" | "faq";
 
 // pre-coder: wwpd 작업 전 recoder에 넣기 위한 파일(html) 최적화 검사 화면.
-// "검사 실행" / "결과 열람" / "FAQ 정제" 세 탭으로 분리해, 검사 결과가 한 화면에 계속 쌓이지 않도록 한다.
+// "검사 실행" / "결과 열람" / "html 정제" 세 탭으로 분리해, 검사 결과가 한 화면에 계속 쌓이지 않도록 한다.
+// ("html 정제" 탭은 과거 "FAQ 정제"에서 이름이 바뀐 것으로, FAQ 정제 외에
+//  features + disclaimer 영역 정제 옵션도 함께 포함한다.)
 const PreCoderScreen = () => {
   const [activeTab, setActiveTab] = useState<PreCoderTabKey>("run");
 
@@ -35,7 +37,7 @@ const PreCoderScreen = () => {
           결과 열람
         </TabButton>
         <TabButton $active={activeTab === "faq"} onClick={() => setActiveTab("faq")}>
-          FAQ 정제
+          html 정제
         </TabButton>
       </TabBar>
       <Gap gap={30} />
