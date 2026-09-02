@@ -6,12 +6,15 @@ import { Request, Response } from "express";
 import { RowDataPacket } from "mysql2/promise";
 
 import initDB from "../../config/initDB";
-import { GetUnpackTemplateDetailsWithExcelBody, GetUnpackTemplateDetailsWithExcelResponse, UnpackRow } from "../../types/unpack.types";
+import {
+  GetUnpackTemplateDetailsWithExcelBody,
+  GetUnpackTemplateDetailsWithExcelResponse,
+  UnpackRow,
+} from "../../types/unpack.types";
 
 type PythonResult =
   | { row_list: UnpackRow[] }
   | { errorMsg: string; statusCode: number };
-
 
 export const getUnpackTemplateDetailsWithExcel = async (
   req: Request<{}, {}, GetUnpackTemplateDetailsWithExcelBody>,
@@ -63,7 +66,7 @@ export const getUnpackTemplateDetailsWithExcel = async (
     );
 
     // 3. 응답 구조 변환
-    let db_row_list: UnpackRow[] = rows.map((row: any) => ({
+    const db_row_list: UnpackRow[] = rows.map((row: any) => ({
       id: row.id,
       row_order: row.row_order ?? undefined,
       target_selector: row.target_selector,
@@ -73,13 +76,13 @@ export const getUnpackTemplateDetailsWithExcel = async (
       original_copy: row.original_copy ?? undefined,
     }));
 
-
-
     try {
       const uniqueFileName = `${Date.now()}_${req.file.originalname}`;
       const tempPath = path.join(os.tmpdir(), uniqueFileName);
 
-      fs.writeFileSync(tempPath, req.file.buffer); // 파일을 해당 tempPath에 생성한다. 업로드 된 파일 내용을 넣고
+      // 파일을 해당 tempPath에 생성한다. 업로드 된 파일 내용을 넣고
+      fs.writeFileSync(tempPath, req.file.buffer);
+
       const pythonScriptPath = path.join(
         process.cwd(),
         "src",
@@ -95,11 +98,10 @@ export const getUnpackTemplateDetailsWithExcel = async (
       const args = isPkg
         ? [tempPath, countryCode]
         : [pythonScriptPath, tempPath, countryCode];
-      
-      console.log("[extract] cwd:", process.cwd());
-      console.log("[extract] execPath:", process.execPath);
-      console.log("[extract] pythonScriptPath:", pythonScriptPath);
-      console.log("[extract] script exists:", fs.existsSync(pythonScriptPath));
+
+      if (!isPkg && !fs.existsSync(pythonScriptPath)) {
+        console.error("[extract] python script not found:", pythonScriptPath);
+      }
 
       const py = spawn(command, args, {
         cwd: process.cwd(),
@@ -119,7 +121,10 @@ export const getUnpackTemplateDetailsWithExcel = async (
         }
       };
 
-      const safeSend = (statusCode: number, body: GetUnpackTemplateDetailsWithExcelResponse) => {
+      const safeSend = (
+        statusCode: number,
+        body: GetUnpackTemplateDetailsWithExcelResponse
+      ) => {
         if (responseSent) return;
         responseSent = true;
         res.status(statusCode).json(body);
@@ -134,10 +139,10 @@ export const getUnpackTemplateDetailsWithExcel = async (
       });
 
       py.on("close", (code) => {
-        console.log("[extract] python exit code:", code); 
         cleanupTempFile();
 
         if (code !== 0) {
+          console.error("[extract] python exit code:", code);
           console.error("python stderr:", stderr);
           console.error("python stdout:", stdout);
 
@@ -145,14 +150,17 @@ export const getUnpackTemplateDetailsWithExcel = async (
             const result: PythonResult = JSON.parse(stdout);
 
             if ("errorMsg" in result) {
-              safeSend(result.statusCode || 500, { success: false, error: result.errorMsg });
+              safeSend(result.statusCode || 500, {
+                success: false,
+                error: result.errorMsg,
+              });
               return;
             }
           } catch {
             // stdout이 JSON이 아니면 아래 공통 에러 처리
           }
 
-          safeSend(500, { success: false,error: "Internal Server Error" });
+          safeSend(500, { success: false, error: "Internal Server Error" });
           return;
         }
 
@@ -160,33 +168,50 @@ export const getUnpackTemplateDetailsWithExcel = async (
           const result: PythonResult = JSON.parse(stdout);
 
           if ("errorMsg" in result) {
-            safeSend(result.statusCode || 500, { success: false, error: result.errorMsg });
+            safeSend(result.statusCode || 500, {
+              success: false,
+              error: result.errorMsg,
+            });
             return;
           }
 
           const excel_row_list = result.row_list.map((row) => ({
             ...row,
             row_order: row.row_order ? Number(row.row_order) : undefined,
-            exclude_sup: row.exclude_sup && String(row.exclude_sup).toUpperCase() === "O" ? true : false,
-            enable_text_transform: row.enable_text_transform && String(row.enable_text_transform).toUpperCase() === "O" ? true : false,
+            exclude_sup:
+              row.exclude_sup && String(row.exclude_sup).toUpperCase() === "O"
+                ? true
+                : false,
+            enable_text_transform:
+              row.enable_text_transform &&
+              String(row.enable_text_transform).toUpperCase() === "O"
+                ? true
+                : false,
           }));
 
-          // ===== 임시 디버깅 =====
-          // console.log("[excel] 총 행수:", excel_row_list.length);
-          // console.log("[excel] 첫 행 필드:", Object.keys(excel_row_list[0] ?? {}));
-          // console.log("[excel] 첫 행:", excel_row_list[0]);
-          // console.log("[excel] SCHEMA 행수:",
-          //   excel_row_list.filter((r: any) => /^SCHEMA/i.test(String(r.key ?? ""))).length);
-          // =====================
+          // =========================
+          // 1) 셀렉터 기반 행 매핑
+          // =========================
+          // 셀렉터가 없는 DB 행은 스키마 행이다.
+          // 스키마 행은 아래 2)에서 엑셀 데이터로 다시 구성하므로 여기서 제외한다.
+          // (제외하지 않으면 빈 셀렉터끼리 서로 일치해 모든 행이 첫 번째 값으로 매칭되고,
+          //  2)의 결과와 합쳐져 행이 두 배로 늘어난다)
+          const selector_db_rows = db_row_list.filter(
+            (db_row) => db_row.target_selector && db_row.apply_type
+          );
 
-          db_row_list = db_row_list.map((db_row) => {
+          const selector_excel_rows = excel_row_list.filter(
+            (excel_row) => excel_row.target_selector && excel_row.apply_type
+          );
+
+          const mapped_row_list: UnpackRow[] = selector_db_rows.map((db_row) => {
             // excel_row_list 에서 일치하는 항목을 찾는다.
-            const matched = excel_row_list.find(
-              (excel_row) => {
-                return excel_row.target_selector === db_row.target_selector &&
+            const matched = selector_excel_rows.find(
+              (excel_row) =>
+                excel_row.target_selector === db_row.target_selector &&
                 excel_row.apply_type === db_row.apply_type
-              }
             );
+
             return {
               ...db_row,
               translated_copy: matched?.translated_copy ?? "",
@@ -194,10 +219,11 @@ export const getUnpackTemplateDetailsWithExcel = async (
           });
 
           // =========================
-          // SCHEMA 행 추가
+          // 2) SCHEMA 행 추가
           // =========================
-          // SCHEMA 행은 셀렉터가 없어 TemplateUnpackSpecs에 저장되지 않는다.
-          // 따라서 DB 기준 매핑에서 누락되므로 엑셀 데이터를 그대로 이어붙인다.
+          // 스키마 행은 key로 식별되며, 엑셀이 유일한 원본이다.
+          // DB에 저장되어 있더라도 key/original_copy/translated_copy를 갖지 않으므로
+          // 엑셀 데이터로 구성한다.
           const schema_row_list: UnpackRow[] = excel_row_list
             .filter((row) => /^SCHEMA-/i.test(row.key ?? ""))
             .map((row, index) => ({
@@ -214,29 +240,44 @@ export const getUnpackTemplateDetailsWithExcel = async (
               translated_copy: row.translated_copy ?? "",
             }));
 
-          console.log("[merge] DB 행:", db_row_list.length, "/ SCHEMA 행:", schema_row_list.length);
+          console.log(
+            `[merge] DB ${db_row_list.length}행 → 셀렉터 ${mapped_row_list.length}행` +
+              ` / SCHEMA ${schema_row_list.length}행` +
+              ` / 합계 ${mapped_row_list.length + schema_row_list.length}행`
+          );
 
-          safeSend(200, { success: true, row_list: [...db_row_list, ...schema_row_list] });
-          } catch (parseError) {
-            console.error("JSON parse error:", parseError);
-            console.error("python stdout:", stdout);
-            console.error("python stderr:", stderr);
-            safeSend(500, { success: false, error: "Invalid Python response format." });
-          }
+          safeSend(200, {
+            success: true,
+            row_list: [...mapped_row_list, ...schema_row_list],
+          });
+        } catch (parseError) {
+          console.error("JSON parse error:", parseError);
+          console.error("python stdout:", stdout);
+          console.error("python stderr:", stderr);
+          safeSend(500, {
+            success: false,
+            error: "Invalid Python response format.",
+          });
+        }
       });
 
       py.on("error", (error) => {
         cleanupTempFile();
         console.error("python spawn error:", error);
-        safeSend(500, { success: false, error: "Failed to start Python process." });
+        safeSend(500, {
+          success: false,
+          error: "Failed to start Python process.",
+        });
       });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, error: "Internal Server Error" });
     }
-
   } catch (err) {
     console.error("Error fetching unpack template details with excel:", err);
-    res.status(500).json({ success: false, error: "Failed to fetch unpack template details with excel" });
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch unpack template details with excel",
+    });
   }
 };
