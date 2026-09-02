@@ -105,6 +105,8 @@ export type PreCoderAnalysisResult = {
   untaggedCopyIssues: UntaggedCopyIssue[];
 };
 
+export type PreCoderAnalysisScope = "features-disclaimer" | "faq" | "all";
+
 // ────────────────────────────────────────────────────────────────────────────
 // 공통 유틸
 // ────────────────────────────────────────────────────────────────────────────
@@ -269,13 +271,44 @@ const validateApplyTypeForTag = (
 
 export const analyzePreCoder = (
   htmlText: string,
-  copyDeckRows: CopyDeckRow[]
+  copyDeckRows: CopyDeckRow[],
+  scope: PreCoderAnalysisScope = "all"
 ): PreCoderAnalysisResult => {
   const offsets = buildLineOffsets(htmlText);
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(htmlText, "text/html");
   const domEls = Array.from(doc.querySelectorAll("[data-copy-set]"));
+
+  // ── 모드(scope) 필터: "html 정제" 탭의 ①features+disclaimer / ②FAQ 구분과 동일한 기준으로
+  // .watch-faq_item 안/밖을 구분한다. line 번호 정합성을 위해 domEls/nodes 자체는 전체를
+  // 그대로 계산하고, 이슈를 만들 때만 scope에 맞춰 걸러낸다.
+  const isFaqElement = (el: Element): boolean => !!el.closest(".watch-faq_item");
+  const elementInScope = (el: Element): boolean => {
+    if (scope === "all") return true;
+    const inFaq = isFaqElement(el);
+    return scope === "faq" ? inFaq : !inFaq;
+  };
+  const nodeInScopeFlags: boolean[] = domEls.map((el) => elementInScope(el));
+
+  // 카피덱 행이 scope에 속하는지: target_selector로 실제 html 엘리먼트를 찾아 판단한다.
+  // html에서 아예 못 찾은 행("카피덱-html 불일치")은 어느 scope에서든 항상 노출한다.
+  const deckRowInScope = (row: CopyDeckRow): boolean => {
+    if (scope === "all") return true;
+    const parsed = parseTargetSelector(row.target_selector);
+    if (!parsed) return true;
+    let matched: Element[] = [];
+    try {
+      matched = Array.from(
+        doc.querySelectorAll(`[${parsed.attr}="${parsed.value.replace(/"/g, '\\"')}"]`)
+      );
+    } catch {
+      return true;
+    }
+    if (matched.length === 0) return true;
+    return matched.some((el) => elementInScope(el));
+  };
+  const scopedCopyDeckRows = scope === "all" ? copyDeckRows : copyDeckRows.filter(deckRowInScope);
 
   // 소스 원문에서 data-copy-set 등장 위치를 순서대로 수집해 line number를 붙인다.
   // (DOM 순회 순서 == 원문 등장 순서라고 가정하고 index로 매칭)
@@ -303,7 +336,8 @@ export const analyzePreCoder = (
     };
   });
 
-  // value -> node[] 맵 (빈 값 제외)
+  // value -> node[] 맵 (빈 값 제외). scope와 무관하게 항상 전체로 유지한다
+  // ("카피덱-html 불일치" 판단 등 다른 검사에서 전체 값 존재 여부가 필요하기 때문).
   const valueMap = new Map<string, HtmlCopySetNode[]>();
   nodes.forEach((n) => {
     if (!n.value) return;
@@ -311,11 +345,19 @@ export const analyzePreCoder = (
     valueMap.get(n.value)!.push(n);
   });
 
+  // scope에 속하는 값들만 모은 집합 (duplicateIssues 등 이슈 필터링용)
+  const scopedValueSet = new Set<string>();
+  domEls.forEach((el, i) => {
+    const v = el.getAttribute("data-copy-set");
+    if (v && nodeInScopeFlags[i]) scopedValueSet.add(v);
+  });
+
   // ── ① 고유성 검사 (동일 data-copy-set이 서로 다른 카피를 가리키는 경우만 위반)
   // 내용이 동일한 중복은 어차피 같은 값으로 치환되므로 fail로 잡지 않는다.
   const duplicateIssues: DuplicateIssue[] = [];
   valueMap.forEach((group, value) => {
     if (value === "disclaimer") return; // disclaimer는 예약값 (여러 곳에서 재사용되는 정책)
+    if (scope !== "all" && !scopedValueSet.has(value)) return;
     if (group.length <= 1) return;
 
     const texts = group.map((g) => g.extractedText);
@@ -331,7 +373,7 @@ export const analyzePreCoder = (
     });
   });
 
-  const unassigned = nodes.filter((n) => !n.value);
+  const unassigned = nodes.filter((n, i) => !n.value && nodeInScopeFlags[i]);
   const unassignedIssues: UnassignedTagIssue[] = unassigned.map((n) => ({
     tagName: n.tagName,
     line: n.line,
@@ -341,6 +383,7 @@ export const analyzePreCoder = (
   // ── ② 태그 스코프 검사 (부모/자식 태그에 중첩된 data-copy-set이 있는지 + 카피덱 값이 html에 존재하는지)
   const scopeIssues: ScopeIssue[] = [];
   domEls.forEach((el) => {
+    if (!elementInScope(el)) return;
     const value = el.getAttribute("data-copy-set");
     if (!value || value === "disclaimer") return;
 
@@ -397,6 +440,7 @@ export const analyzePreCoder = (
   });
 
   copyDeckRows.forEach((row) => {
+    // "카피덱-html 불일치"는 scope와 무관하게 모두 노출한다 (deckRowInScope도 이 경우 항상 true).
     const parsed = parseTargetSelector(row.target_selector);
     if (!parsed || parsed.attr !== "data-copy-set") return;
     if (valueMap.has(parsed.value)) return;
@@ -410,13 +454,14 @@ export const analyzePreCoder = (
 
   // ── ③ 카피 종류 자동 분류 검사
   const deckByValue = new Map<string, CopyDeckRow>();
-  copyDeckRows.forEach((row) => {
+  scopedCopyDeckRows.forEach((row) => {
     const parsed = parseTargetSelector(row.target_selector);
     if (parsed) deckByValue.set(parsed.value, row);
   });
 
   const typeMismatchIssues: TypeMismatchIssue[] = [];
-  nodes.forEach((n) => {
+  nodes.forEach((n, i) => {
+    if (!nodeInScopeFlags[i]) return;
     if (!n.value || n.value === "disclaimer") return;
     const deckRow = deckByValue.get(n.value);
     const declaredType = deckRow?.apply_type || n.detectedType;
@@ -458,7 +503,7 @@ export const analyzePreCoder = (
   });
 
   // ── ④ 영문 카피덱 순서 vs HTML 노출 순서 비교
-  const deckSequence = copyDeckRows
+  const deckSequence = scopedCopyDeckRows
     .map((row) => {
       const parsed = parseTargetSelector(row.target_selector);
       const value = parsed?.value;
@@ -594,6 +639,7 @@ export const analyzePreCoder = (
   const rawItems: RawUntaggedItem[] = [];
 
   candidates.forEach((el) => {
+    if (!elementInScope(el)) return;
     const attrTexts = ["title", "alt", "aria-label"]
       .map((a) => el.getAttribute(a))
       .filter((v) => v && v.trim());
@@ -656,8 +702,8 @@ export const analyzePreCoder = (
   );
 
   return {
-    totalHtmlCopySetCount: nodes.filter((n) => n.value).length,
-    totalDeckRowCount: copyDeckRows.length,
+    totalHtmlCopySetCount: nodes.filter((n, i) => n.value && nodeInScopeFlags[i]).length,
+    totalDeckRowCount: scopedCopyDeckRows.length,
     unassignedCount: unassigned.length,
     unassignedLines: unassigned.map((n) => n.line),
     unassignedIssues,

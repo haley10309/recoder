@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import { extractFaqCopyDeck } from "@/apis/preCoderFaqApis";
-import { refineFaqHtml, extractFaqFromHtml } from "../utils/refineFaqHtml";
+import { extractFaqFromHtml } from "../utils/refineFaqHtml";
 import type { FaqExportRow, FaqRefineWarning } from "../utils/refineFaqHtml";
 import { exportFaqRefineExcel } from "../utils/exportFaqRefineExcel";
 import { extractSchemaDeckFromHtml } from "../utils/extractSchemaDeck";
@@ -14,7 +13,8 @@ import type {
   FeatureDisclaimerWarning,
 } from "../utils/extractFeaturesDisclaimer";
 
-export type FaqRefineMode = "with-excel" | "html-only" | "schema-deck" | "features-disclaimer";
+// ① features+disclaimer 추출 / ② FAQ 추출 / ③ schema 추출 / ④ 전체 추출(①+②+③을 한 번에)
+export type FaqRefineMode = "features-disclaimer" | "faq" | "schema-deck" | "all";
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -29,12 +29,10 @@ export function useFaqRefine({
   mode,
   htmlFile,
   htmlFileName,
-  excelFile,
 }: {
   mode: FaqRefineMode;
   htmlFile: File | null;
   htmlFileName: string;
-  excelFile: File | null;
 }) {
   const [prefix, setPrefix] = useState("");
   const [status, setStatus] = useState<"" | "loading" | "success" | "fail">("");
@@ -48,13 +46,21 @@ export function useFaqRefine({
   const [featureCustomRows, setFeatureCustomRows] = useState<FeatureDisclaimerExportRow[]>([]);
   const [featureWarnings, setFeatureWarnings] = useState<FeatureDisclaimerWarning[]>([]);
 
+  const resetAllResultState = () => {
+    setRefinedHtml(null);
+    setExportRows([]);
+    setWarnings([]);
+    setLocaleCodes([]);
+    setSchemaRows([]);
+    setSchemaWarnings([]);
+    setFeatureRows([]);
+    setFeatureCustomRows([]);
+    setFeatureWarnings([]);
+  };
+
   const handleRun = async () => {
     if (!htmlFile) {
       alert("html 파일을 업로드 해주세요.");
-      return;
-    }
-    if (mode === "with-excel" && !excelFile) {
-      alert("FAQ html 파일과 카피덱(xlsx) 파일을 모두 업로드 해주세요.");
       return;
     }
     if (mode !== "schema-deck" && !prefix.trim()) {
@@ -64,17 +70,13 @@ export function useFaqRefine({
 
     try {
       setStatus("loading");
+      const htmlText = await readFileAsText(htmlFile);
 
       if (mode === "features-disclaimer") {
-        const htmlText = await readFileAsText(htmlFile);
         const result = extractFeaturesDisclaimerFromHtml(htmlText, prefix.trim());
 
+        resetAllResultState();
         setRefinedHtml(result.html);
-        setExportRows([]);
-        setWarnings([]);
-        setLocaleCodes([]);
-        setSchemaRows([]);
-        setSchemaWarnings([]);
         setFeatureRows(result.exportRows);
         setFeatureCustomRows(result.customRows);
         setFeatureWarnings(result.warnings);
@@ -87,18 +89,12 @@ export function useFaqRefine({
       }
 
       if (mode === "schema-deck") {
-        const htmlText = await readFileAsText(htmlFile);
         const result = extractSchemaDeckFromHtml(htmlText);
 
-        setRefinedHtml(null);
-        setExportRows([]);
-        setWarnings([]);
+        resetAllResultState();
         setLocaleCodes(result.localeCodes);
         setSchemaRows(result.rows);
         setSchemaWarnings(result.warnings);
-        setFeatureRows([]);
-        setFeatureCustomRows([]);
-        setFeatureWarnings([]);
         setStatus(result.rows.length > 0 ? "success" : "fail");
 
         if (result.rows.length === 0) {
@@ -107,44 +103,41 @@ export function useFaqRefine({
         return;
       }
 
-      if (mode === "html-only") {
-        const htmlText = await readFileAsText(htmlFile);
+      if (mode === "faq") {
         const result = extractFaqFromHtml(htmlText, prefix.trim());
+
+        resetAllResultState();
         setRefinedHtml(result.html);
         setExportRows(result.exportRows);
         setWarnings(result.warnings);
-        setLocaleCodes([]);
-        setSchemaRows([]);
-        setSchemaWarnings([]);
-        setFeatureRows([]);
-        setFeatureCustomRows([]);
-        setFeatureWarnings([]);
         setStatus("success");
         return;
       }
 
-      const [htmlText, deckExtract] = await Promise.all([
-        readFileAsText(htmlFile),
-        extractFaqCopyDeck(excelFile as File),
-      ]);
+      // mode === "all": FAQ → features+disclaimer 순으로 같은 html에 이어서 태깅하고,
+      // schema는 태깅과 무관하게(JSON-LD 읽기 전용) 별도로 함께 추출한다.
+      const faqResult = extractFaqFromHtml(htmlText, prefix.trim());
+      const featureResult = extractFeaturesDisclaimerFromHtml(faqResult.html, prefix.trim());
+      const schemaResult = extractSchemaDeckFromHtml(htmlText);
 
-      if (!deckExtract.rows || deckExtract.rows.length === 0) {
-        setStatus("fail");
-        alert("카피덱(xlsx)에서 데이터를 읽어오지 못했습니다. 파일 형식을 확인해주세요.");
-        return;
+      setRefinedHtml(featureResult.html);
+      setExportRows(faqResult.exportRows);
+      setWarnings(faqResult.warnings);
+      setLocaleCodes(schemaResult.localeCodes);
+      setFeatureRows(featureResult.exportRows);
+      setFeatureCustomRows(featureResult.customRows);
+      setFeatureWarnings(featureResult.warnings);
+      setSchemaRows(schemaResult.rows);
+      setSchemaWarnings(schemaResult.warnings);
+
+      const hasAny =
+        faqResult.exportRows.length > 0 ||
+        featureResult.exportRows.length > 0 ||
+        schemaResult.rows.length > 0;
+      setStatus(hasAny ? "success" : "fail");
+      if (!hasAny) {
+        alert("FAQ / features / disclaimer / schema 어느 것도 찾지 못했습니다.");
       }
-
-      const result = refineFaqHtml(htmlText, deckExtract.rows, prefix.trim());
-      setRefinedHtml(result.html);
-      setExportRows(result.exportRows);
-      setWarnings(result.warnings);
-      setLocaleCodes(deckExtract.localeColumns.map((c) => c.code));
-      setSchemaRows([]);
-      setSchemaWarnings([]);
-      setFeatureRows([]);
-      setFeatureCustomRows([]);
-      setFeatureWarnings([]);
-      setStatus("success");
     } catch (error) {
       console.error("[useFaqRefine] 에러", error);
       setStatus("fail");
@@ -157,7 +150,7 @@ export function useFaqRefine({
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    const baseName = (htmlFileName || "faq").replace(/\.html?$/i, "");
+    const baseName = (htmlFileName || "index_pim").replace(/\.html?$/i, "");
     link.download = `${baseName}_tagged.html`;
     document.body.appendChild(link);
     link.click();
@@ -181,15 +174,7 @@ export function useFaqRefine({
   };
 
   const resetRefine = () => {
-    setRefinedHtml(null);
-    setExportRows([]);
-    setWarnings([]);
-    setLocaleCodes([]);
-    setSchemaRows([]);
-    setSchemaWarnings([]);
-    setFeatureRows([]);
-    setFeatureCustomRows([]);
-    setFeatureWarnings([]);
+    resetAllResultState();
     setStatus("");
   };
 

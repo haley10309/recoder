@@ -10,6 +10,7 @@ import type {
   UntaggedCopyIssue,
   UnassignedTagIssue,
 } from "../utils/analyzePreCoder";
+import type { SchemaCheckIssue } from "../utils/analyzeSchemaDeck";
 
 const SectionTitle = styled.h3`
   font-size: 14px;
@@ -87,6 +88,7 @@ export const PRE_CODER_SECTION_ANCHORS = {
   order: "precoder-section-order",
   untagged: "precoder-section-untagged",
   unassigned: "precoder-section-unassigned",
+  schema: "precoder-section-schema",
 } as const;
 
 const SectionAnchor = styled.div`
@@ -406,4 +408,44 @@ const SequenceSummary = styled.summary`
 
 const Gap8 = styled.div`
   height: 8px;
+`;
+
+// ────────────────────────────────────────────────────────────────────────────
+// Schema 검사 (JSON-LD FAQPage / VideoObject)
+// ────────────────────────────────────────────────────────────────────────────
+export const SchemaCheckSection = ({
+  issues,
+  totalCount,
+  faqCount,
+  videoCount,
+}: {
+  issues: SchemaCheckIssue[];
+  totalCount: number;
+  faqCount: number;
+  videoCount: number;
+}) => (
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.schema}>
+    <SectionTitle>Schema 검사 (JSON-LD FAQPage / VideoObject)</SectionTitle>
+    <SchemaCountRow>
+      <Pill $tone="neutral">전체 {totalCount}건</Pill>
+      <Pill $tone="neutral">FAQ {faqCount}건</Pill>
+      <Pill $tone="neutral">Video Object {videoCount}건</Pill>
+    </SchemaCountRow>
+    <Gap8 />
+    {issues.length === 0 ? (
+      <EmptyState>schema 관련 이상이 발견되지 않았습니다.</EmptyState>
+    ) : (
+      <IssueList>
+        {issues.map((issue, i) => (
+          <li key={i}>{issue.message}</li>
+        ))}
+      </IssueList>
+    )}
+  </SectionAnchor>
+);
+
+const SchemaCountRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 `;

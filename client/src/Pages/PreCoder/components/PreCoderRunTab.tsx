@@ -13,15 +13,23 @@ import {
   OrderSection,
   UntaggedCopySection,
   UnassignedSection,
+  SchemaCheckSection,
 } from "./PreCoderResultSections";
 
 import { usePreCoderFiles } from "../hooks/usePreCoderFiles";
 import { usePreCoderAnalysis } from "../hooks/usePreCoderAnalysis";
+import type { PreCoderRunMode } from "../hooks/usePreCoderAnalysis";
 import { usePreCoderSave } from "../hooks/usePreCoderSave";
 import { exportPreCoderResultToExcel } from "../utils/exportPreCoderExcel";
 
-// "검사 실행" 탭: html + 카피덱을 업로드해 검사를 돌리고, 결과를 팀 공유용으로 저장한다.
+// "검사 실행" 탭: html(+카피덱)을 업로드해 검사를 돌리고, 결과를 팀 공유용으로 저장한다.
+// ① features+disclaimer 검사 / ② FAQ 검사 / ③ Schema 검사 / ④ 전체 검사 네 모드로 나뉜다.
+// ①②④는 html+카피덱(xlsx) 대조 방식(analyzePreCoder)을 쓰고, ③Schema는 카피덱 대조가
+// 아니라 html의 JSON-LD를 직접 검사한다(카피덱 업로드 불필요). ④는 ①②를 합친 대조검사에
+// Schema 검사도 함께 보여준다.
 const PreCoderRunTab = () => {
+  const [mode, setMode] = useState<PreCoderRunMode>("features-disclaimer");
+
   const {
     htmlFile,
     htmlFileName,
@@ -36,11 +44,12 @@ const PreCoderRunTab = () => {
 
   const {
     result,
+    schemaResult,
     copyDeckRows,
     analyzeStatus,
     handleAnalyze,
     resetAnalysis,
-  } = usePreCoderAnalysis({ htmlFile, excelFile });
+  } = usePreCoderAnalysis({ htmlFile, excelFile, mode });
 
   const { saveStatus, handleSave } = usePreCoderSave({
     htmlFile,
@@ -51,7 +60,12 @@ const PreCoderRunTab = () => {
 
   const [saveTitle, setSaveTitle] = useState("");
 
-  const canAnalyze = !!htmlFile && !!excelFile;
+  const canAnalyze = mode === "schema" ? !!htmlFile : !!htmlFile && !!excelFile;
+
+  const handleModeChange = (next: PreCoderRunMode) => {
+    setMode(next);
+    resetAnalysis();
+  };
 
   const handleResetAll = () => {
     handleResetFiles();
@@ -83,6 +97,41 @@ const PreCoderRunTab = () => {
 
   return (
     <div>
+      <ModeToggleRow>
+        <ModeButton
+          $active={mode === "features-disclaimer"}
+          onClick={() => handleModeChange("features-disclaimer")}
+        >
+          ① features+disclaimer 검사
+        </ModeButton>
+        <ModeButton $active={mode === "faq"} onClick={() => handleModeChange("faq")}>
+          ② FAQ 검사
+        </ModeButton>
+        <ModeButton $active={mode === "schema"} onClick={() => handleModeChange("schema")}>
+          ③ Schema 검사
+        </ModeButton>
+        <ModeButton $active={mode === "all"} onClick={() => handleModeChange("all")}>
+          ④ 전체 검사
+        </ModeButton>
+      </ModeToggleRow>
+      <Gap gap={15} />
+
+      {mode === "schema" ? (
+        <InfoBox>
+          Schema 검사는 html 안의 JSON-LD(FAQPage / VideoObject)를 직접 검사해요. 카피덱(xlsx)
+          없이 html 파일만 올리면 돼요.
+        </InfoBox>
+      ) : (
+        <InfoBox>
+          {mode === "faq"
+            ? "FAQ 영역(.watch-faq_item)의 data-copy-set만 골라 카피덱과 대조해요."
+            : mode === "features-disclaimer"
+              ? "FAQ 영역을 제외한 나머지(features/disclaimer) 영역의 data-copy-set만 골라 카피덱과 대조해요."
+              : "html 전체의 data-copy-set을 카피덱과 대조하고, Schema 검사도 함께 보여줘요."}
+        </InfoBox>
+      )}
+      <Gap gap={25} />
+
       <TitleLabel text="📤 파일 업로드" />
       <Gap gap={15} />
       <PreCoderFileUploadSection
@@ -106,43 +155,71 @@ const PreCoderRunTab = () => {
       </ActionBox>
       <Gap gap={50} />
 
-      {result && (
-        <>
-          <SaveBox>
-            <SaveInput
-              type="text"
-              placeholder="저장할 결과 제목 (예: Fresh9_index_pim_260730)"
-              value={saveTitle}
-              onChange={(e) => setSaveTitle(e.target.value)}
-            />
-            <SaveButton onClick={handleClickSave} disabled={saveStatus === "loading"}>
-              {saveStatus === "loading" ? "저장 중..." : "결과 저장 (팀 공유)"}
-            </SaveButton>
-            {saveStatus === "success" && <SavedText>✅ 저장 완료 — "결과 열람" 탭에서 확인할 수 있어요.</SavedText>}
-            {saveStatus === "fail" && <FailedText>❌ 저장 실패</FailedText>}
-            <ExportButton onClick={handleExportExcel}>📊 엑셀로 내보내기</ExportButton>
-          </SaveBox>
-          <Gap gap={25} />
+      {mode === "schema" ? (
+        schemaResult && (
+          <>
+            <TitleLabel text="🔎 Schema 검사 결과" />
+            <Gap gap={15} />
+            <WhiteBox>
+              <SchemaCheckSection
+                issues={schemaResult.issues}
+                totalCount={schemaResult.totalCount}
+                faqCount={schemaResult.faqCount}
+                videoCount={schemaResult.videoCount}
+              />
+            </WhiteBox>
+          </>
+        )
+      ) : (
+        result && (
+          <>
+            <SaveBox>
+              <SaveInput
+                type="text"
+                placeholder="저장할 결과 제목 (예: Fresh9_index_pim_260730)"
+                value={saveTitle}
+                onChange={(e) => setSaveTitle(e.target.value)}
+              />
+              <SaveButton onClick={handleClickSave} disabled={saveStatus === "loading"}>
+                {saveStatus === "loading" ? "저장 중..." : "결과 저장 (팀 공유)"}
+              </SaveButton>
+              {saveStatus === "success" && <SavedText>✅ 저장 완료 — "결과 열람" 탭에서 확인할 수 있어요.</SavedText>}
+              {saveStatus === "fail" && <FailedText>❌ 저장 실패</FailedText>}
+              <ExportButton onClick={handleExportExcel}>📊 엑셀로 내보내기</ExportButton>
+            </SaveBox>
+            <Gap gap={25} />
 
-          <TitleLabel text="🔎 검사 결과 요약" />
-          <Gap gap={15} />
-          <PreCoderSummary result={result} />
-          <Gap gap={50} />
+            <TitleLabel text="🔎 검사 결과 요약" />
+            <Gap gap={15} />
+            <PreCoderSummary result={result} />
+            <Gap gap={50} />
 
-          <WhiteBox>
-            <DuplicateSection issues={result.duplicateIssues} />
-            <Gap gap={40} />
-            <ScopeSection issues={result.scopeIssues} />
-            <Gap gap={40} />
-            <TypeMismatchSection issues={result.typeMismatchIssues} />
-            <Gap gap={40} />
-            <OrderSection issues={result.orderIssues} sequence={result.orderSequence} />
-            <Gap gap={40} />
-            <UntaggedCopySection issues={result.untaggedCopyIssues} />
-            <Gap gap={40} />
-            <UnassignedSection issues={result.unassignedIssues} count={result.unassignedCount} />
-          </WhiteBox>
-        </>
+            <WhiteBox>
+              <DuplicateSection issues={result.duplicateIssues} />
+              <Gap gap={40} />
+              <ScopeSection issues={result.scopeIssues} />
+              <Gap gap={40} />
+              <TypeMismatchSection issues={result.typeMismatchIssues} />
+              <Gap gap={40} />
+              <OrderSection issues={result.orderIssues} sequence={result.orderSequence} />
+              <Gap gap={40} />
+              <UntaggedCopySection issues={result.untaggedCopyIssues} />
+              <Gap gap={40} />
+              <UnassignedSection issues={result.unassignedIssues} count={result.unassignedCount} />
+              {mode === "all" && schemaResult && (
+                <>
+                  <Gap gap={40} />
+                  <SchemaCheckSection
+                    issues={schemaResult.issues}
+                    totalCount={schemaResult.totalCount}
+                    faqCount={schemaResult.faqCount}
+                    videoCount={schemaResult.videoCount}
+                  />
+                </>
+              )}
+            </WhiteBox>
+          </>
+        )
       )}
     </div>
   );
@@ -154,6 +231,37 @@ const WhiteBox = styled.div`
   display: flex;
   flex-direction: column;
   color: #32383e;
+`;
+
+const ModeToggleRow = styled.div`
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+`;
+
+const ModeButton = styled.button<{ $active: boolean }>`
+  height: 2.25rem;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  border: 1px solid ${({ $active }) => ($active ? "#ff782f" : "#d1d5db")};
+  background: ${({ $active }) => ($active ? "#fff1e8" : "#ffffff")};
+  color: ${({ $active }) => ($active ? "#ff782f" : "#4b5563")};
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: #ff782f;
+  }
+`;
+
+const InfoBox = styled.div`
+  padding: 0.9rem 1.1rem;
+  border-radius: 0.5rem;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 0.8rem;
+  line-height: 1.5;
 `;
 
 const ResetButtonsRow = styled.div`

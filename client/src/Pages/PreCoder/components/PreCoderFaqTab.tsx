@@ -9,23 +9,19 @@ import { usePreCoderFiles } from "../hooks/usePreCoderFiles";
 import { useFaqRefine } from "../hooks/useFaqRefine";
 import type { FaqRefineMode } from "../hooks/useFaqRefine";
 
-// "html 정제" 탭:
-// ① html + 카피덱(xlsx) 정합성 기반 FAQ 정제
-// ② html만으로 FAQ 자동 인식/추출
+// "html 정제" 탭 (html 파일 하나만으로 동작, 카피덱 엑셀 업로드 불필요):
+// ① features + disclaimer 영역 자동 인식/추출 (data-copy-set 커스텀 배정)
+// ② FAQ 영역(.watch-faq_item) 자동 인식/추출
 // ③ index_pim html의 JSON-LD(FAQPage / VideoObject) schema deck 추출
-// ④ html만으로 features + disclaimer 영역 자동 인식/추출 (data-copy-set 커스텀 배정)
+// ④ ①+②+③을 한 번에 실행하는 전체 추출
 const PreCoderFaqTab = () => {
-  const [mode, setMode] = useState<FaqRefineMode>("with-excel");
+  const [mode, setMode] = useState<FaqRefineMode>("features-disclaimer");
 
   const {
     htmlFile,
     htmlFileName,
     htmlUploadStatus,
     handleHtmlFileUpload,
-    excelFile,
-    excelFileName,
-    excelUploadStatus,
-    handleExcelFileUpload,
     handleResetFiles,
   } = usePreCoderFiles();
 
@@ -47,14 +43,9 @@ const PreCoderFaqTab = () => {
     handleDownloadSchemaExcel,
     handleDownloadFeatureExcel,
     resetRefine,
-  } = useFaqRefine({ mode, htmlFile, htmlFileName, excelFile });
+  } = useFaqRefine({ mode, htmlFile, htmlFileName });
 
-  const canRun =
-    mode === "schema-deck"
-      ? !!htmlFile
-      : mode === "html-only" || mode === "features-disclaimer"
-        ? !!htmlFile && !!prefix.trim()
-        : !!htmlFile && !!excelFile && !!prefix.trim();
+  const canRun = mode === "schema-deck" ? !!htmlFile : !!htmlFile && !!prefix.trim();
 
   const handleResetAll = () => {
     handleResetFiles();
@@ -74,40 +65,35 @@ const PreCoderFaqTab = () => {
     return null;
   };
 
+  const runButtonLabel =
+    mode === "schema-deck"
+      ? "Schema deck 추출"
+      : mode === "all"
+        ? "전체 추출 실행"
+        : "정제 실행";
+
   return (
     <div>
       <ModeToggleRow>
-        <ModeButton $active={mode === "with-excel"} onClick={() => handleModeChange("with-excel")}>
-          ① html + 카피덱(xlsx)
-        </ModeButton>
-        <ModeButton $active={mode === "html-only"} onClick={() => handleModeChange("html-only")}>
-          ② FAQ html만 업로드 (자동 인식)
-        </ModeButton>
-        <ModeButton $active={mode === "schema-deck"} onClick={() => handleModeChange("schema-deck")}>
-          ③ schema deck 추출
-        </ModeButton>
         <ModeButton
           $active={mode === "features-disclaimer"}
           onClick={() => handleModeChange("features-disclaimer")}
         >
-          ④ features + disclaimer 추출
+          ① features + disclaimer 추출
+        </ModeButton>
+        <ModeButton $active={mode === "faq"} onClick={() => handleModeChange("faq")}>
+          ② FAQ 추출
+        </ModeButton>
+        <ModeButton $active={mode === "schema-deck"} onClick={() => handleModeChange("schema-deck")}>
+          ③ schema 추출
+        </ModeButton>
+        <ModeButton $active={mode === "all"} onClick={() => handleModeChange("all")}>
+          ④ 전체 추출
         </ModeButton>
       </ModeToggleRow>
       <Gap gap={15} />
 
-      {mode === "with-excel" ? (
-        <InfoBox>
-          FAQ 영역은 아직 data-copy-set이 없어 recoder를 바로 사용할 수 없어요. FAQ html과
-          카피덱(Key/Category/Item/Copy/Remark + 로컬 국가 컬럼)을 업로드하면 html에
-          data-copy-set을 자동 배정하고 recoder 입력 엑셀을 만들어드려요.
-        </InfoBox>
-      ) : mode === "html-only" ? (
-        <InfoBox>
-          카피덱 엑셀 없이 html 파일 하나만 올려도 돼요. html 안의 FAQ 영역(.watch-faq_item)을
-          직접 인식해서 질문/답변을 원본 카피로 추출하고, data-copy-set을 자동 배정한 html과
-          recoder 입력 엑셀을 만들어드려요.
-        </InfoBox>
-      ) : mode === "features-disclaimer" ? (
+      {mode === "features-disclaimer" ? (
         <InfoBox>
           index_pim html 파일 하나만 올리면 FAQ를 제외한 나머지 영역에서 data-copy-set이
           있어야 하는 곳(<b>내용 텍스트</b>, <b>aria-label</b>, <b>alt</b>,{" "}
@@ -115,12 +101,25 @@ const PreCoderFaqTab = () => {
           결과 엑셀은 전체 항목 시트와, 이번에 새로 배정한 항목만 모은 별도 시트로 나뉘어요.
           ⚠️ 자동 인식 결과이니 다운로드 전에 미리보기에서 꼭 확인해주세요.
         </InfoBox>
-      ) : (
+      ) : mode === "faq" ? (
+        <InfoBox>
+          html 파일 하나만 올리면 돼요. html 안의 FAQ 영역(.watch-faq_item)을 직접 인식해서
+          질문/답변을 원본 카피로 추출하고, data-copy-set을 자동 배정한 html과 recoder 입력
+          엑셀을 만들어드려요.
+        </InfoBox>
+      ) : mode === "schema-deck" ? (
         <InfoBox>
           index_pim html 안의 JSON-LD schema에서 <b>FAQPage</b>와 <b>VideoObject</b>를 자동
           인식해 Questions / Answer / Name / Description 카피를 추출해요. inLanguage의
           BCP47 값은 CA_FR, US_EN 같은 로컬 국가 컬럼으로 변환해 해당 컬럼에 넣고,
           inLanguage 원본 값은 Remark에도 기록해요.
+        </InfoBox>
+      ) : (
+        <InfoBox>
+          ①features+disclaimer, ②FAQ, ③schema를 같은 html에 한 번에 실행해요. FAQ를 먼저
+          태깅한 뒤 그 결과 위에 features+disclaimer를 이어서 태깅하기 때문에 서로 겹치지
+          않아요. 다운로드는 태깅이 모두 반영된 html 1개와, 항목별 recoder 입력 엑셀
+          3개(FAQ / features+disclaimer / schema)로 나뉘어요.
         </InfoBox>
       )}
       <Gap gap={25} />
@@ -131,10 +130,7 @@ const PreCoderFaqTab = () => {
         htmlFileName={htmlFileName}
         htmlUploadStatus={htmlUploadStatus}
         handleHtmlFileUpload={handleHtmlFileUpload}
-        excelFileName={excelFileName}
-        excelUploadStatus={excelUploadStatus}
-        handleExcelFileUpload={handleExcelFileUpload}
-        showExcel={mode === "with-excel"}
+        showExcel={false}
       />
       <Gap gap={15} />
 
@@ -159,24 +155,19 @@ const PreCoderFaqTab = () => {
 
       <ActionBox>
         <RunButton $active={canRun} disabled={!canRun} onClick={handleRun}>
-          {mode === "schema-deck" ? "Schema deck 추출" : "FAQ 정제 실행"}
+          {runButtonLabel}
         </RunButton>
         <StatusText>{getStatusText()}</StatusText>
       </ActionBox>
       <Gap gap={40} />
 
-      {status === "success" && mode !== "schema-deck" && mode !== "features-disclaimer" && (
+      {status === "success" && mode === "faq" && (
         <>
           <SummaryBox>
             <SummaryTextGroup>
               <SummaryText>
                 총 <b>{exportRows.length}건</b>의 카피에 data-copy-set을 새로 배정했어요.
               </SummaryText>
-              {localeCodes.length > 0 && (
-                <LocaleText>
-                  감지된 로컬 국가 컬럼: {localeCodes.join(", ")}
-                </LocaleText>
-              )}
             </SummaryTextGroup>
             <DownloadRow>
               <DownloadButton onClick={handleDownloadHtml}>📄 html 다운로드</DownloadButton>
@@ -199,7 +190,7 @@ const PreCoderFaqTab = () => {
             </>
           )}
 
-          <TitleLabel text="🔎 배정 결과 미리보기" />
+          <TitleLabel text="🔎 FAQ 배정 결과 미리보기" />
           <Gap gap={15} />
           <Table>
             <thead>
@@ -356,6 +347,143 @@ const PreCoderFaqTab = () => {
           </Table>
         </>
       )}
+
+      {status === "success" && mode === "all" && (
+        <>
+          <SummaryBox>
+            <SummaryTextGroup>
+              <SummaryText>
+                FAQ <b>{exportRows.length}건</b> · features+disclaimer{" "}
+                <b>{featureRows.length}건</b>(신규 {featureCustomRows.length}건) · schema{" "}
+                <b>{schemaRows.length}건</b>을 추출했어요.
+              </SummaryText>
+              {localeCodes.length > 0 && (
+                <LocaleText>감지된 locale column: {localeCodes.join(", ")}</LocaleText>
+              )}
+            </SummaryTextGroup>
+            <DownloadRow>
+              <DownloadButton onClick={handleDownloadHtml}>
+                📄 html 다운로드 (FAQ+features+disclaimer 태깅 반영)
+              </DownloadButton>
+            </DownloadRow>
+          </SummaryBox>
+          <Gap gap={25} />
+
+          {(warnings.length > 0 || featureWarnings.length > 0 || schemaWarnings.length > 0) && (
+            <>
+              <WarningBox>
+                <WarningTitle>
+                  ⚠️ 확인이 필요한 항목{" "}
+                  {warnings.length + featureWarnings.length + schemaWarnings.length}건
+                </WarningTitle>
+                <WarningList>
+                  {warnings.map((w, i) => (
+                    <li key={`faq-${i}`}>[FAQ] {w.message}</li>
+                  ))}
+                  {featureWarnings.map((w, i) => (
+                    <li key={`feat-${i}`}>[features+disclaimer] {w.message}</li>
+                  ))}
+                  {schemaWarnings.map((w, i) => (
+                    <li key={`schema-${i}`}>[schema] {w.message}</li>
+                  ))}
+                </WarningList>
+              </WarningBox>
+              <Gap gap={25} />
+            </>
+          )}
+
+          <TitleLabel text="🔎 FAQ 추출 결과" />
+          <Gap gap={15} />
+          <DownloadRow>
+            <DownloadButton onClick={handleDownloadExcel}>📊 FAQ 엑셀 다운로드</DownloadButton>
+          </DownloadRow>
+          <Gap gap={10} />
+          <Table>
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>data-copy-set</th>
+                <th>구분</th>
+                <th>Copy</th>
+              </tr>
+            </thead>
+            <tbody>
+              {exportRows.map((row, i) => (
+                <tr key={i}>
+                  <td>{row.key}</td>
+                  <td>{row.dataCopySet}</td>
+                  <td>{row.item}</td>
+                  <td>{row.copy}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Gap gap={40} />
+
+          <TitleLabel text="🔎 features + disclaimer 추출 결과" />
+          <Gap gap={15} />
+          <DownloadRow>
+            <DownloadButton onClick={handleDownloadFeatureExcel}>
+              📊 features+disclaimer 엑셀 다운로드 (전체 + 신규배정 시트)
+            </DownloadButton>
+          </DownloadRow>
+          <Gap gap={10} />
+          <Table>
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>data-copy-set</th>
+                <th>apply_type</th>
+                <th>구분</th>
+                <th>신규 배정</th>
+                <th>Copy</th>
+              </tr>
+            </thead>
+            <tbody>
+              {featureRows.map((row, i) => (
+                <tr key={i}>
+                  <td>{row.key}</td>
+                  <td>{row.dataCopySet}</td>
+                  <td>{row.applyType}</td>
+                  <td>{row.item}</td>
+                  <td>{row.isCustom ? "O" : ""}</td>
+                  <td>{row.copy}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Gap gap={40} />
+
+          <TitleLabel text="🔎 Schema 추출 결과" />
+          <Gap gap={15} />
+          <DownloadRow>
+            <DownloadButton onClick={handleDownloadSchemaExcel}>
+              📊 schema 엑셀 다운로드
+            </DownloadButton>
+          </DownloadRow>
+          <Gap gap={10} />
+          <Table>
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Category</th>
+                <th>Item</th>
+                <th>original_copy</th>
+              </tr>
+            </thead>
+            <tbody>
+              {schemaRows.map((row) => (
+                <tr key={row.key}>
+                  <td>{row.key}</td>
+                  <td>{row.category}</td>
+                  <td>{row.item}</td>
+                  <td>{row.originalCopy}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </>
+      )}
     </div>
   );
 };
@@ -365,6 +493,7 @@ export default PreCoderFaqTab;
 const ModeToggleRow = styled.div`
   display: flex;
   gap: 0.6rem;
+  flex-wrap: wrap;
 `;
 
 const ModeButton = styled.button<{ $active: boolean }>`
