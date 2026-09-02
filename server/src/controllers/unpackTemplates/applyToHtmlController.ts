@@ -474,6 +474,7 @@ const normalizeSupFormat = (html: string): string => {
 
 const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
   let convertedHtml = html;
+  let skipped = 0;
 
   rows.forEach((row) => {
     // 스키마 행은 별도 파이프라인(localizeSchema)에서 처리
@@ -484,6 +485,13 @@ const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
     const copy = getCopy(row);
 
     if (!targetSelector || !applyType) return;
+
+    // 번역 카피가 없는 행은 치환하지 않는다.
+    // (카피덱에 매칭되지 않은 행까지 빈 값으로 덮어써 원본이 지워지는 것을 방지)
+    if (!copy.trim()) {
+      skipped += 1;
+      return;
+    }
 
     // =========================
     // feature 영역
@@ -517,6 +525,10 @@ const applyRowsToHtml = (html: string, rows: UnpackRow[]): string => {
       convertedHtml = replaceDisclaimer(convertedHtml, targetSelector, copy);
     }
   });
+
+  if (skipped > 0) {
+    console.warn(`[apply] 카피가 비어 치환하지 않은 행: ${skipped}건`);
+  }
 
   // 치환 완료 후 sup 포맷 정리
   return normalizeSupFormat(convertedHtml);
