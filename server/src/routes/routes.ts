@@ -32,6 +32,7 @@ import { getPreCoderResultDetail } from '../controllers/preCoder/getPreCoderResu
 import { downloadPreCoderExcel } from '../controllers/preCoder/downloadPreCoderExcelController';
 import { updatePreCoderResultTitle } from '../controllers/preCoder/updatePreCoderResultTitleController';
 import { extractFaqCopyDeck } from '../controllers/preCoder/extractFaqCopyDeckController';
+import { recoveryHtml } from "../controllers/unpackTemplates/recoveryHtmlController";
 
 router.use('/auth', authRoutes);
 
@@ -66,6 +67,15 @@ router.post("/unpack-templates/save", cors(), authenticate, authorize("author", 
 router.post("/unpack-templates/get-details-with-excel", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), getUnpackTemplateDetailsWithExcel);
 router.post("/unpack-templates/process-copy", cors(), authenticate, authorize("author", "qaer", "pm"), processCopy);
 router.post("/unpack-templates/apply-to-html", upload.single('file'), cors(), authenticate, authorize("author", "qaer", "pm"), applyToHtml);
+router.post("/unpack-templates/recovery",upload.fields([
+    { name: "html_file", maxCount: 1 },
+    { name: "excel_file", maxCount: 1 },
+  ]),
+  cors(),
+  authenticate,
+  authorize("author", "qaer", "pm"),
+  recoveryHtml
+);
 
 /** 6) Translation QA (언팩 번역이 after.html에 잘 반영됐는지 검사) */
 router.post(

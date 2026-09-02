@@ -1,5 +1,38 @@
 type JsonStringified<T> = string & { __type: T };
 
+// =======================
+// 원복
+// =======================
+export type RecoveryMode = "remove_matched" | "remove_unmatched";
+export type RecoveryHtmlBody = {
+  /** remove_matched: Excel에 있는 것을 삭제 / remove_unmatched: Excel에 없는 것을 삭제 */
+  mode: RecoveryMode;
+};
+
+export type RecoveryReport = {
+  mode: RecoveryMode;
+  /** Excel에서 추출한 번호 수 */
+  excelCount: number;
+  /** HTML에서 발견한 번호 수 */
+  htmlCount: number;
+  /** 실제 삭제된 요소 수 */
+  removedCount: number;
+  /** 삭제된 번호 목록 */
+  removed: string[];
+  /** 유지된 번호 목록 */
+  kept: string[];
+  /** Excel에서 번호를 읽은 위치 (검증용) */
+  source: {
+    name: string;      // "data-copy-set" | "target_selector"
+    row: number;       // 헤더 행 (1-based)
+    column: string;    // 엑셀 열 문자
+  };
+  /** 형식에 맞지 않아 건너뛴 셀 수 */
+  skippedCount: number;
+};
+
+// =======================
+
 export type UnpackRow = {
   /** DB의 PK값 */
   id?: number;
