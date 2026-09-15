@@ -13,6 +13,9 @@ import {
   OrderSection,
   UntaggedCopySection,
   UnassignedSection,
+  ContentMismatchSection,
+  SupFlagSection,
+  FaqItemSection,
   SchemaCheckSection,
 } from "./PreCoderResultSections";
 
@@ -118,8 +121,9 @@ const PreCoderRunTab = () => {
 
       {mode === "schema" ? (
         <InfoBox>
-          Schema 검사는 html 안의 JSON-LD(FAQPage / VideoObject)를 직접 검사해요. 카피덱(xlsx)
-          없이 html 파일만 올리면 돼요.
+          Schema 검사는 html 안의 JSON-LD(FAQPage / VideoObject)를 검사해요. schema
+          카피덱(xlsx)을 함께 올리면 고유값 위반 · category/item 분류 · 카피 문자열 일치 여부까지
+          대조하고, html만 올리면 schema 자체 구조만 점검해요.
         </InfoBox>
       ) : (
         <InfoBox>
@@ -166,6 +170,10 @@ const PreCoderRunTab = () => {
                 totalCount={schemaResult.totalCount}
                 faqCount={schemaResult.faqCount}
                 videoCount={schemaResult.videoCount}
+                hasDeck={schemaResult.hasDeck}
+                deckRowCount={schemaResult.deckRowCount}
+                duplicateKeyIssues={schemaResult.duplicateKeyIssues}
+                compareIssues={schemaResult.compareIssues}
               />
             </WhiteBox>
           </>
@@ -206,6 +214,16 @@ const PreCoderRunTab = () => {
               <UntaggedCopySection issues={result.untaggedCopyIssues} />
               <Gap gap={40} />
               <UnassignedSection issues={result.unassignedIssues} count={result.unassignedCount} />
+              <Gap gap={40} />
+              <ContentMismatchSection issues={result.contentMismatchIssues} />
+              {(mode === "faq" || mode === "all") && (
+                <>
+                  <Gap gap={40} />
+                  <SupFlagSection issues={result.supFlagMismatchIssues} />
+                  <Gap gap={40} />
+                  <FaqItemSection issues={result.faqItemMismatchIssues} />
+                </>
+              )}
               {mode === "all" && schemaResult && (
                 <>
                   <Gap gap={40} />

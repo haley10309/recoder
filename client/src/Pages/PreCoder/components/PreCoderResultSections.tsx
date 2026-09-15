@@ -9,8 +9,15 @@ import type {
   OrderSequenceItem,
   UntaggedCopyIssue,
   UnassignedTagIssue,
+  ContentMismatchIssue,
+  SupFlagMismatchIssue,
+  FaqItemMismatchIssue,
 } from "../utils/analyzePreCoder";
-import type { SchemaCheckIssue } from "../utils/analyzeSchemaDeck";
+import type {
+  SchemaCheckIssue,
+  SchemaDeckCompareIssue,
+  SchemaDuplicateKeyIssue,
+} from "../utils/analyzeSchemaDeck";
 
 const SectionTitle = styled.h3`
   font-size: 14px;
@@ -88,6 +95,9 @@ export const PRE_CODER_SECTION_ANCHORS = {
   order: "precoder-section-order",
   untagged: "precoder-section-untagged",
   unassigned: "precoder-section-unassigned",
+  contentMismatch: "precoder-section-content-mismatch",
+  supFlag: "precoder-section-sup-flag",
+  faqItem: "precoder-section-faq-item",
   schema: "precoder-section-schema",
 } as const;
 
@@ -285,23 +295,29 @@ export const OrderSection = ({
 // ────────────────────────────────────────────────────────────────────────────
 export const UntaggedCopySection = ({ issues }: { issues: UntaggedCopyIssue[] }) => (
   <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.untagged}>
-    <SectionTitle>⑤ 카피덱에 없지만 번역이 필요해 보이는 카피 (title / alt / aria-label)</SectionTitle>
+    <SectionTitle>
+      ⑤ 카피덱에 없지만 번역이 필요해 보이는 카피 (alt / aria-label / disclaimer / title / innerText)
+    </SectionTitle>
     {issues.length === 0 ? (
       <EmptyState>카피덱에 누락된 번역 대상 카피가 없습니다.</EmptyState>
     ) : (
       <Table>
         <thead>
           <tr>
+            <th>카피 종류</th>
             <th>태그</th>
             <th>data-copy-set</th>
             <th>줄 번호</th>
-            <th>속성값</th>
+            <th>속성값 / 카피</th>
             <th>설명</th>
           </tr>
         </thead>
         <tbody>
           {issues.map((issue, i) => (
             <tr key={i}>
+              <td>
+                <Pill>{issue.copyKind}</Pill>
+              </td>
               <td>{issue.tagNames.map((t) => `<${t}>`).join(", ")}</td>
               <td>
                 {issue.values.filter(Boolean).length > 0
@@ -399,6 +415,120 @@ const IssueList = styled.ul`
   gap: 0.3rem;
 `;
 
+// ────────────────────────────────────────────────────────────────────────────
+// ⑦ 카피덱 <-> HTML 문자열 일치 검사 (글자 단위 불일치 지점 강조)
+// ────────────────────────────────────────────────────────────────────────────
+const DiffText = ({ text, diffIndex }: { text: string; diffIndex: number }) => (
+  <DiffWrap>
+    <span>{text.slice(0, diffIndex)}</span>
+    <DiffMark>{text.slice(diffIndex, diffIndex + 1) || "∅"}</DiffMark>
+    <span>{text.slice(diffIndex + 1)}</span>
+  </DiffWrap>
+);
+
+export const ContentMismatchSection = ({ issues = [] }: { issues?: ContentMismatchIssue[] }) => (
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.contentMismatch}>
+    <SectionTitle>⑦ 카피덱 ↔ HTML 문자열 일치 검사</SectionTitle>
+    {issues.length === 0 ? (
+      <EmptyState>카피덱과 HTML의 카피가 모두 일치합니다.</EmptyState>
+    ) : (
+      <Table>
+        <thead>
+          <tr>
+            <th>data-copy-set</th>
+            <th>줄 번호</th>
+            <th style={{ minWidth: "7rem" }}>불일치 위치</th>
+            <th>카피덱</th>
+            <th>HTML</th>
+          </tr>
+        </thead>
+        <tbody>
+          {issues.map((issue, i) => (
+            <tr key={i}>
+              <td>{issue.value}</td>
+              <td>
+                <LineBadge>{issue.line >= 0 ? issue.line : "-"}</LineBadge>
+              </td>
+              <td>
+                <Pill>{issue.diffIndex + 1}번째 글자</Pill>
+              </td>
+              <td>
+                <DiffText text={issue.deckCopy} diffIndex={issue.diffIndex} />
+              </td>
+              <td>
+                <DiffText text={issue.htmlCopy} diffIndex={issue.diffIndex} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    )}
+  </SectionAnchor>
+);
+
+const DiffWrap = styled.div`
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  word-break: break-all;
+  white-space: pre-wrap;
+`;
+
+const DiffMark = styled.span`
+  background: #ffd8ad;
+  color: #b35c00;
+  font-weight: 700;
+  border-radius: 2px;
+  padding: 0 1px;
+`;
+
+// ────────────────────────────────────────────────────────────────────────────
+// ⑧ exclude_sup / enable_text_transform 일치 검사
+// ────────────────────────────────────────────────────────────────────────────
+export const SupFlagSection = ({ issues = [] }: { issues?: SupFlagMismatchIssue[] }) => (
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.supFlag}>
+    <SectionTitle>⑧ exclude_sup / enable_text_transform 일치 검사</SectionTitle>
+    {issues.length === 0 ? (
+      <EmptyState>카피덱의 각주 설정과 HTML의 각주(sup) 유무가 모두 일치합니다.</EmptyState>
+    ) : (
+      <Table>
+        <thead>
+          <tr>
+            <th>data-copy-set</th>
+            <th>태그</th>
+            <th>줄 번호</th>
+            <th style={{ minWidth: "7rem" }}>카피덱</th>
+            <th style={{ minWidth: "7rem" }}>HTML</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          {issues.map((issue, i) => (
+            <tr key={i}>
+              <td>{issue.value}</td>
+              <td>&lt;{issue.tagName}&gt;</td>
+              <td>
+                <LineBadge>{issue.line >= 0 ? issue.line : "-"}</LineBadge>
+              </td>
+              <td>
+                <Pill $tone={issue.declaredExcludeSup ? "neutral" : undefined}>
+                  {issue.declaredExcludeSup ? "exclude_sup = O" : "표시 없음"}
+                </Pill>
+              </td>
+              <td>
+                <Pill $tone={issue.hasSupInHtml ? "neutral" : undefined}>
+                  {issue.hasSupInHtml ? "각주 있음" : "각주 없음"}
+                </Pill>
+              </td>
+              <td>{issue.message}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    )}
+  </SectionAnchor>
+);
+
 const SequenceSummary = styled.summary`
   cursor: pointer;
   font-size: 0.78rem;
@@ -418,31 +548,199 @@ export const SchemaCheckSection = ({
   totalCount,
   faqCount,
   videoCount,
+  hasDeck = false,
+  deckRowCount = 0,
+  duplicateKeyIssues = [],
+  compareIssues = [],
 }: {
   issues: SchemaCheckIssue[];
   totalCount: number;
   faqCount: number;
   videoCount: number;
-}) => (
-  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.schema}>
-    <SectionTitle>Schema 검사 (JSON-LD FAQPage / VideoObject)</SectionTitle>
-    <SchemaCountRow>
-      <Pill $tone="neutral">전체 {totalCount}건</Pill>
-      <Pill $tone="neutral">FAQ {faqCount}건</Pill>
-      <Pill $tone="neutral">Video Object {videoCount}건</Pill>
-    </SchemaCountRow>
-    <Gap8 />
+  hasDeck?: boolean;
+  deckRowCount?: number;
+  duplicateKeyIssues?: SchemaDuplicateKeyIssue[];
+  compareIssues?: SchemaDeckCompareIssue[];
+}) => {
+  // 카피덱 대조 이슈는 표로 따로 보여주므로, 하단 목록에서는 중복 노출하지 않는다.
+  const compareTypes = new Set([
+    "duplicate-key",
+    "category-mismatch",
+    "item-mismatch",
+    "content-mismatch",
+    "deck-not-in-html",
+    "html-not-in-deck",
+  ]);
+  const structuralIssues = issues.filter((i) => !compareTypes.has(i.type));
+
+  const typeLabel: Record<SchemaDeckCompareIssue["type"], string> = {
+    "category-mismatch": "category 불일치",
+    "item-mismatch": "item 불일치",
+    "content-mismatch": "문자열 불일치",
+    "deck-not-in-html": "html에 없음",
+    "html-not-in-deck": "카피덱에 없음",
+  };
+
+  return (
+    <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.schema}>
+      <SectionTitle>Schema 검사 (JSON-LD FAQPage / VideoObject)</SectionTitle>
+      <SchemaCountRow>
+        <Pill $tone="neutral">html schema {totalCount}건</Pill>
+        <Pill $tone="neutral">FAQ {faqCount}건</Pill>
+        <Pill $tone="neutral">Video Object {videoCount}건</Pill>
+        {hasDeck && <Pill $tone="neutral">카피덱 {deckRowCount}행</Pill>}
+      </SchemaCountRow>
+      <Gap8 />
+
+      {!hasDeck && (
+        <>
+          <StaleState>
+            ℹ️ schema 카피덱(xlsx)을 함께 업로드하면 고유값 위반 / category·item 분류 / 카피 문자열
+            일치 여부까지 대조 검사합니다. 지금은 html 자체 구조 점검만 수행했습니다.
+          </StaleState>
+          <Gap8 />
+        </>
+      )}
+
+      {hasDeck && (
+        <>
+          <SubTitle>(1) 고유값 위반 (카피덱 Key 중복)</SubTitle>
+          {duplicateKeyIssues.length === 0 ? (
+            <EmptyState>중복된 Key가 없습니다.</EmptyState>
+          ) : (
+            <Table>
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th>중복 횟수</th>
+                  <th>설명</th>
+                </tr>
+              </thead>
+              <tbody>
+                {duplicateKeyIssues.map((issue, i) => (
+                  <tr key={i}>
+                    <td>{issue.key}</td>
+                    <td>{issue.count}</td>
+                    <td>{issue.message}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+          <Gap8 />
+
+          <SubTitle>(2)~(4) 카피덱 ↔ html schema 대조</SubTitle>
+          {compareIssues.length === 0 ? (
+            <EmptyState>
+              category / item 분류와 카피 문자열이 html schema와 모두 일치합니다.
+            </EmptyState>
+          ) : (
+            <Table>
+              <thead>
+                <tr>
+                  <th>Key</th>
+                  <th style={{ minWidth: "7rem" }}>유형</th>
+                  <th>카피덱</th>
+                  <th>html schema</th>
+                </tr>
+              </thead>
+              <tbody>
+                {compareIssues.map((issue, i) => (
+                  <tr key={i}>
+                    <td>{issue.key}</td>
+                    <td>
+                      <Pill>{typeLabel[issue.type]}</Pill>
+                      {issue.type === "content-mismatch" && issue.diffIndex !== undefined && (
+                        <>
+                          <br />
+                          <LineBadge>{issue.diffIndex + 1}번째 글자</LineBadge>
+                        </>
+                      )}
+                    </td>
+                    <td>
+                      {issue.type === "content-mismatch" && issue.diffIndex !== undefined ? (
+                        <DiffText text={issue.deckValue} diffIndex={issue.diffIndex} />
+                      ) : (
+                        issue.deckValue || "-"
+                      )}
+                    </td>
+                    <td>
+                      {issue.type === "content-mismatch" && issue.diffIndex !== undefined ? (
+                        <DiffText text={issue.htmlValue} diffIndex={issue.diffIndex} />
+                      ) : (
+                        issue.htmlValue || "-"
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+          <Gap8 />
+        </>
+      )}
+
+      <SubTitle>html schema 자체 점검</SubTitle>
+      {structuralIssues.length === 0 ? (
+        <EmptyState>schema 구조 관련 이상이 발견되지 않았습니다.</EmptyState>
+      ) : (
+        <IssueList>
+          {structuralIssues.map((issue, i) => (
+            <li key={i}>{issue.message}</li>
+          ))}
+        </IssueList>
+      )}
+    </SectionAnchor>
+  );
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// ⑨ FAQ item 종류(Questions / Answer) 일치 검사
+// ────────────────────────────────────────────────────────────────────────────
+export const FaqItemSection = ({ issues = [] }: { issues?: FaqItemMismatchIssue[] }) => (
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.faqItem}>
+    <SectionTitle>⑨ FAQ item 종류 일치 검사 (Questions / Answer)</SectionTitle>
     {issues.length === 0 ? (
-      <EmptyState>schema 관련 이상이 발견되지 않았습니다.</EmptyState>
+      <EmptyState>카피덱의 item 분류가 HTML 구조와 모두 일치합니다.</EmptyState>
     ) : (
-      <IssueList>
-        {issues.map((issue, i) => (
-          <li key={i}>{issue.message}</li>
-        ))}
-      </IssueList>
+      <Table>
+        <thead>
+          <tr>
+            <th>data-copy-set</th>
+            <th>줄 번호</th>
+            <th style={{ minWidth: "7rem" }}>카피덱</th>
+            <th style={{ minWidth: "7rem" }}>HTML 구조</th>
+            <th>카피</th>
+          </tr>
+        </thead>
+        <tbody>
+          {issues.map((issue, i) => (
+            <tr key={i}>
+              <td>{issue.value}</td>
+              <td>
+                <LineBadge>{issue.line >= 0 ? issue.line : "-"}</LineBadge>
+              </td>
+              <td>
+                <Pill>{issue.deckItem}</Pill>
+              </td>
+              <td>
+                <Pill $tone="ok">{issue.detectedItem}</Pill>
+              </td>
+              <td>{issue.copyPreview}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     )}
   </SectionAnchor>
 );
+
+const SubTitle = styled.h4`
+  font-size: 12px;
+  font-weight: 700;
+  color: #4b5563;
+  margin: 0.6rem 0 0.4rem;
+`;
 
 const SchemaCountRow = styled.div`
   display: flex;

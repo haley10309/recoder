@@ -1,10 +1,11 @@
 import { useState } from "react";
 
 import { parseExcelFile } from "@/apis/apis";
+import { extractFaqCopyDeck } from "@/apis/preCoderFaqApis";
 import { analyzePreCoder } from "../utils/analyzePreCoder";
 import type { CopyDeckRow, PreCoderAnalysisResult } from "../utils/analyzePreCoder";
 import { analyzeSchemaDeck } from "../utils/analyzeSchemaDeck";
-import type { SchemaCheckResult } from "../utils/analyzeSchemaDeck";
+import type { SchemaCheckResult, SchemaCopyDeckRow } from "../utils/analyzeSchemaDeck";
 
 export type PreCoderRunMode = "features-disclaimer" | "faq" | "schema" | "all";
 
@@ -45,10 +46,28 @@ export function usePreCoderAnalysis({
       setAnalyzeStatus("loading");
       const htmlText = await readFileAsText(htmlFile);
 
-      // Schema는 data-copy-set 태그 체계를 쓰지 않아 카피덱 대조 방식이 아니라
-      // html의 JSON-LD를 직접 검사한다 (카피덱 업로드 불필요).
+      // Schema는 data-copy-set 태그 체계를 쓰지 않아, html의 JSON-LD에서 추출한 "정답 카피덱"과
+      // 업로드된 schema 카피덱을 Key 기준으로 대조한다. (카피덱은 선택 - 없으면 html 자체 점검만)
       if (mode === "schema") {
-        const schemaAnalyzed = analyzeSchemaDeck(htmlText);
+        let schemaDeckRows: SchemaCopyDeckRow[] | undefined;
+
+        if (excelFile) {
+          // schema 카피덱도 Key/Category/Item/Copy 구조라 FAQ 카피덱 파서를 그대로 재사용한다.
+          const extracted = await extractFaqCopyDeck(excelFile);
+          if (!extracted.rows || extracted.rows.length === 0) {
+            setAnalyzeStatus("fail");
+            alert("schema 카피덱(xlsx)에서 데이터를 읽어오지 못했습니다. 파일 형식을 확인해주세요.");
+            return;
+          }
+          schemaDeckRows = extracted.rows.map((r) => ({
+            key: r.key,
+            category: r.category,
+            item: r.item,
+            copy: r.copy,
+          }));
+        }
+
+        const schemaAnalyzed = analyzeSchemaDeck(htmlText, schemaDeckRows);
         setSchemaResult(schemaAnalyzed);
         setResult(null);
         setCopyDeckRows(null);

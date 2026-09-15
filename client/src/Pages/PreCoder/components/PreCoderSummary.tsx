@@ -10,12 +10,21 @@ const scrollToAnchor = (anchorId: string) => {
 };
 
 const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
+  // contentMismatchIssues/supFlagMismatchIssues는 나중에 추가된 필드라,
+  // 그 이전에 저장된 결과에는 없을 수 있다.
+  const contentMismatchCount = result.contentMismatchIssues?.length ?? 0;
+  const supFlagCount = result.supFlagMismatchIssues?.length ?? 0;
+  const faqItemCount = result.faqItemMismatchIssues?.length ?? 0;
+
   const totalIssueCount =
     result.duplicateIssues.length +
     result.scopeIssues.length +
     result.typeMismatchIssues.length +
     result.orderIssues.length +
-    result.untaggedCopyIssues.length;
+    result.untaggedCopyIssues.length +
+    contentMismatchCount +
+    supFlagCount +
+    faqItemCount;
 
   const cards = [
     { label: "HTML 내 data-copy-set", value: result.totalHtmlCopySetCount },
@@ -55,6 +64,24 @@ const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
       value: result.unassignedCount,
       warn: result.unassignedCount > 0,
       anchorId: PRE_CODER_SECTION_ANCHORS.unassigned,
+    },
+    {
+      label: "⑦ 카피 문자열 불일치",
+      value: contentMismatchCount,
+      warn: contentMismatchCount > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.contentMismatch,
+    },
+    {
+      label: "⑧ exclude_sup 불일치",
+      value: supFlagCount,
+      warn: supFlagCount > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.supFlag,
+    },
+    {
+      label: "⑨ FAQ item 분류 불일치",
+      value: faqItemCount,
+      warn: faqItemCount > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.faqItem,
     },
   ];
 

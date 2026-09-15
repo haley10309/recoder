@@ -107,7 +107,7 @@ const extractElementText = (doc: Document, el: Element): string => {
 // - 내부에 원본 html에서 이미 data-copy-set이 붙어있는 하위 요소가 없는 경우
 //   (있다면 그 하위 요소가 이미 독립된 카피 단위이므로, 바깥 요소를 통째로 leaf로
 //    잡아 이중으로 태깅하지 않도록 건너뛴다)
-const isTextLeaf = (el: Element): boolean => {
+export const isTextLeaf = (el: Element): boolean => {
   const childEls = Array.from(el.children);
   const onlyInline = childEls.every((c) => INLINE_TAGS.has(c.tagName.toLowerCase()));
   if (!onlyInline) return false;

@@ -110,12 +110,19 @@ const buildSummarySheet = (result: PreCoderAnalysisResult, meta: PreCoderExportM
   });
   r += 1;
 
+  const contentMismatchCount = result.contentMismatchIssues?.length ?? 0;
+  const supFlagCount = result.supFlagMismatchIssues?.length ?? 0;
+  const faqItemCount = result.faqItemMismatchIssues?.length ?? 0;
+
   const totalIssueCount =
     result.duplicateIssues.length +
     result.scopeIssues.length +
     result.typeMismatchIssues.length +
     result.orderIssues.length +
-    result.untaggedCopyIssues.length;
+    result.untaggedCopyIssues.length +
+    contentMismatchCount +
+    supFlagCount +
+    faqItemCount;
 
   setCell(
     ws,
@@ -140,6 +147,9 @@ const buildSummarySheet = (result: PreCoderAnalysisResult, meta: PreCoderExportM
     ["④ 순서 불일치", result.orderIssues.length, result.orderIssues.length > 0],
     ["⑤ 카피덱 누락 카피", result.untaggedCopyIssues.length, result.untaggedCopyIssues.length > 0],
     ["⑥ 미할당(빈 값) 태그", result.unassignedCount, result.unassignedCount > 0],
+    ["⑦ 카피 문자열 불일치", contentMismatchCount, contentMismatchCount > 0],
+    ["⑧ exclude_sup 불일치", supFlagCount, supFlagCount > 0],
+    ["⑨ FAQ item 분류 불일치", faqItemCount, faqItemCount > 0],
   ];
   kpis.forEach(([label, value, warn]) => {
     setCell(ws, `A${r + 1}`, label, kpiLabelStyle);
@@ -294,9 +304,10 @@ export const exportPreCoderResultToExcel = (
   XLSX.utils.book_append_sheet(
     wb,
     buildTableSheet({
-      headers: ["태그", "data-copy-set", "줄 번호", "속성값(카피)", "설명"],
-      colWidths: [10, 16, 20, 50, 60],
+      headers: ["카피 종류", "태그", "data-copy-set", "줄 번호", "속성값(카피)", "설명"],
+      colWidths: [12, 10, 16, 20, 50, 60],
       rows: result.untaggedCopyIssues.map((i) => [
+        i.copyKind,
         `<${i.tagNames.join(", ")}>`,
         i.values.filter(Boolean).join(", ") || "없음",
         i.lines.map((l) => (l >= 0 ? l : "-")).join(", "),
@@ -319,6 +330,61 @@ export const exportPreCoderResultToExcel = (
       emptyMessage: "✅ data-copy-set 값이 비어있는 태그가 없습니다.",
     }),
     "⑥ 미할당 태그"
+  );
+
+  XLSX.utils.book_append_sheet(
+    wb,
+    buildTableSheet({
+      headers: ["data-copy-set", "줄 번호", "불일치 위치", "카피덱", "HTML"],
+      colWidths: [16, 10, 14, 55, 55],
+      rows: (result.contentMismatchIssues ?? []).map((i) => [
+        i.value,
+        i.line >= 0 ? i.line : "-",
+        `${i.diffIndex + 1}번째 글자`,
+        i.deckCopy,
+        i.htmlCopy,
+      ]),
+      rowStyler: (row, i) => row.map(() => bodyCellStyle({ warn: true, alt: i % 2 === 1 })),
+      emptyMessage: "✅ 카피덱과 HTML의 카피가 모두 일치합니다.",
+    }),
+    "⑦ 문자열 불일치"
+  );
+
+  XLSX.utils.book_append_sheet(
+    wb,
+    buildTableSheet({
+      headers: ["data-copy-set", "태그", "줄 번호", "카피덱", "HTML", "설명"],
+      colWidths: [16, 10, 10, 16, 14, 60],
+      rows: (result.supFlagMismatchIssues ?? []).map((i) => [
+        i.value,
+        `<${i.tagName}>`,
+        i.line >= 0 ? i.line : "-",
+        i.declaredExcludeSup ? "exclude_sup = O" : "표시 없음",
+        i.hasSupInHtml ? "각주 있음" : "각주 없음",
+        i.message,
+      ]),
+      rowStyler: (row, i) => row.map(() => bodyCellStyle({ warn: true, alt: i % 2 === 1 })),
+      emptyMessage: "✅ 각주(sup) 설정이 모두 일치합니다.",
+    }),
+    "⑧ exclude_sup 불일치"
+  );
+
+  XLSX.utils.book_append_sheet(
+    wb,
+    buildTableSheet({
+      headers: ["data-copy-set", "줄 번호", "카피덱 item", "HTML 구조상 item", "카피"],
+      colWidths: [16, 10, 16, 18, 60],
+      rows: (result.faqItemMismatchIssues ?? []).map((i) => [
+        i.value,
+        i.line >= 0 ? i.line : "-",
+        i.deckItem,
+        i.detectedItem,
+        i.copyPreview,
+      ]),
+      rowStyler: (row, i) => row.map(() => bodyCellStyle({ warn: true, alt: i % 2 === 1 })),
+      emptyMessage: "✅ 카피덱의 item 분류가 HTML 구조와 모두 일치합니다.",
+    }),
+    "⑨ FAQ item 불일치"
   );
 
   const safeTitle = meta.title.replace(/[\\/:*?"<>|]/g, "_").slice(0, 80);
