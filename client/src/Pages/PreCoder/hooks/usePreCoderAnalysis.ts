@@ -115,11 +115,29 @@ export function usePreCoderAnalysis({
 
       // 전체 검사: 카피덱 3종을 각각 ①②③ 검사에 넣어, 개별 모드로 돌린 것과 같은 결과를 한 번에 만든다.
       if (mode === "all") {
-        const [featuresRows, faqRows, schemaDeckRows] = await Promise.all([
-          parseExcelFile(featuresExcelFile),
-          parseExcelFile(faqExcelFile),
-          schemaExcelFile ? loadSchemaDeckRows(schemaExcelFile) : Promise.resolve(undefined),
-        ]);
+        // 카피덱마다 엑셀 파싱(python/xlwings)을 하나씩 순서대로 돌리고, 실패하면 어느 카피덱인지 알려준다.
+        let featuresRows: CopyDeckRow[];
+        let faqRows: CopyDeckRow[];
+        let schemaDeckRows: SchemaCopyDeckRow[] | null | undefined;
+        let parsingDeck = "features 카피덱";
+        try {
+          featuresRows = await parseExcelFile(featuresExcelFile);
+          parsingDeck = "FAQ 카피덱";
+          faqRows = await parseExcelFile(faqExcelFile);
+          parsingDeck = "schema 카피덱";
+          schemaDeckRows = schemaExcelFile ? await loadSchemaDeckRows(schemaExcelFile) : undefined;
+        } catch (error: any) {
+          const serverMessage = error?.response?.data?.error || error?.response?.data?.message || "";
+          console.error(`[usePreCoderAnalysis] ${parsingDeck} 파싱 에러`, error);
+          setAnalyzeStatus("fail");
+          alert(
+            `${parsingDeck}(xlsx)를 읽지 못했습니다.${serverMessage ? `\n- ${serverMessage}` : ""}\n` +
+              (parsingDeck === "schema 카피덱"
+                ? "schema 카피덱은 Key / Category / Item / Copy(original_copy) 컬럼이 있어야 합니다."
+                : "features / FAQ 카피덱은 target_selector, apply_type, exclude_sup, enable_text_transform, original_copy, CA_FR 컬럼이 1행 헤더에 있어야 합니다.")
+          );
+          return;
+        }
 
         const emptyDecks = [
           (!featuresRows || featuresRows.length === 0) && "features 카피덱",
