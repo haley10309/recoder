@@ -13,13 +13,14 @@ function useExcelSlot() {
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
+    // 다시 업로드 중 파일 선택창을 취소한 경우: 기존 파일을 그대로 둔다.
     if (!selectedFile) {
-      setUploadStatus("fail");
+      if (!file) setUploadStatus("fail");
       return;
     }
     if (!isExcelFileName(selectedFile.name)) {
       alert("엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.");
-      setUploadStatus("fail");
+      if (!file) setUploadStatus("fail");
       return;
     }
     setFile(selectedFile);
@@ -50,13 +51,14 @@ export function usePreCoderFiles() {
 
   const handleHtmlFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
+    // 다시 업로드 중 파일 선택창을 취소한 경우: 기존 파일을 그대로 둔다.
     if (!selectedFile) {
-      setHtmlUploadStatus("fail");
+      if (!htmlFile) setHtmlUploadStatus("fail");
       return;
     }
     if (!selectedFile.name.toLowerCase().endsWith(".html") && !selectedFile.name.toLowerCase().endsWith(".htm")) {
       alert("html 파일(.html)만 업로드 가능합니다.");
-      setHtmlUploadStatus("fail");
+      if (!htmlFile) setHtmlUploadStatus("fail");
       return;
     }
     setHtmlFile(selectedFile);

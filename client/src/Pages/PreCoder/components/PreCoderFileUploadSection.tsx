@@ -5,6 +5,11 @@ import FileUploadIcon from "@/assets/shift-fill.svg";
 import HtmlFileIcon from "@/assets/union.svg";
 
 const UploadSlot = ({ label, fileName, status, accept, inputId, onChange }: any) => {
+  // 같은 파일을 다시 골라도 onChange가 발생하도록 선택 직전에 input 값을 비운다.
+  const clearInputValue = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.currentTarget.value = "";
+  };
+
   return (
     <div>
       {status ? (
@@ -19,6 +24,9 @@ const UploadSlot = ({ label, fileName, status, accept, inputId, onChange }: any)
               {status === "success" ? "✅ 업로드 성공!" : "❌ 업로드 실패"}
             </UploadStatus>
           </div>
+          {/* 이 슬롯의 파일만 다시 올린다 (다른 슬롯 파일은 그대로 유지) */}
+          <ReuploadLabel htmlFor={inputId}>다시 업로드</ReuploadLabel>
+          <input id={inputId} type="file" accept={accept} onChange={onChange} onClick={clearInputValue} hidden />
         </PreviewHeader>
       ) : (
         <FileDropLabel htmlFor={inputId}>
@@ -26,7 +34,7 @@ const UploadSlot = ({ label, fileName, status, accept, inputId, onChange }: any)
             <img src={FileUploadIcon} alt="Upload" />
             <p>{label}</p>
           </FileDropInner>
-          <input id={inputId} type="file" accept={accept} onChange={onChange} hidden />
+          <input id={inputId} type="file" accept={accept} onChange={onChange} onClick={clearInputValue} hidden />
         </FileDropLabel>
       )}
     </div>
@@ -148,6 +156,26 @@ const PreviewHeader = styled.div`
   img {
     width: 1.875rem;
     height: 1.875rem;
+  }
+`;
+
+const ReuploadLabel = styled.label`
+  flex-shrink: 0;
+  height: 1.9rem;
+  padding: 0 0.8rem;
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #ff782f;
+    color: #ff782f;
   }
 `;
 

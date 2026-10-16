@@ -108,27 +108,40 @@ const PreCoderRunTab = () => {
           ? !!htmlFile && !!faqExcelFile
           : !!htmlFile && !!excelFile;
 
+  // 파일을 새로 올리면(다시 업로드 포함) 이전 파일로 낸 검사 결과는 지운다.
+  // (화면의 결과와 저장 시 함께 올라가는 파일이 서로 달라지지 않도록)
+  const withResultReset =
+    (handler: (e: React.ChangeEvent<HTMLInputElement>) => void) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const hasFile = !!e.target.files?.[0];
+      handler(e);
+      if (hasFile) {
+        resetAnalysis();
+        resetSaveStatus();
+      }
+    };
+
   // 카피덱 종류별 업로드 슬롯. 모드마다 필요한 슬롯만 보여주고, 종류가 같은 슬롯은 모드끼리 공유한다.
   const featuresSlot = {
     label: "features 영문 카피덱(xlsx)을 업로드 해주세요",
     fileName: excelFileName,
     status: excelUploadStatus,
     inputId: "dropzone-precoder-excel",
-    onChange: handleExcelFileUpload,
+    onChange: withResultReset(handleExcelFileUpload),
   };
   const faqSlot = {
     label: "FAQ 영문 카피덱(xlsx)을 업로드 해주세요",
     fileName: faqExcelFileName,
     status: faqExcelUploadStatus,
     inputId: "dropzone-precoder-excel-faq",
-    onChange: handleFaqExcelFileUpload,
+    onChange: withResultReset(handleFaqExcelFileUpload),
   };
   const schemaSlot = {
     label: "Schema 카피덱(xlsx)을 업로드 해주세요 (선택)",
     fileName: schemaExcelFileName,
     status: schemaExcelUploadStatus,
     inputId: "dropzone-precoder-excel-schema",
-    onChange: handleSchemaExcelFileUpload,
+    onChange: withResultReset(handleSchemaExcelFileUpload),
   };
   const excelSlots =
     mode === "features-disclaimer"
@@ -326,7 +339,7 @@ const PreCoderRunTab = () => {
       <PreCoderFileUploadSection
         htmlFileName={htmlFileName}
         htmlUploadStatus={htmlUploadStatus}
-        handleHtmlFileUpload={handleHtmlFileUpload}
+        handleHtmlFileUpload={withResultReset(handleHtmlFileUpload)}
         showExcel={false}
         extraExcelSlots={excelSlots}
       />
