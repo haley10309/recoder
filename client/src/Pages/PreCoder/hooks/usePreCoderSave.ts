@@ -43,5 +43,7 @@ export function usePreCoderSave({
     }
   };
 
-  return { saveStatus, handleSave };
+  const resetSaveStatus = () => setSaveStatus("");
+
+  return { saveStatus, handleSave, resetSaveStatus };
 }

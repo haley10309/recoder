@@ -9,6 +9,17 @@ const scrollToAnchor = (anchorId: string) => {
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
+// 요약 배너에 보여주는 총 이슈 수 (④ 전체 검사의 검사별 개요에서도 같은 기준으로 쓴다).
+export const countPreCoderIssues = (result: PreCoderAnalysisResult) =>
+  result.duplicateIssues.length +
+  result.scopeIssues.length +
+  result.typeMismatchIssues.length +
+  result.orderIssues.length +
+  result.untaggedCopyIssues.length +
+  (result.contentMismatchIssues?.length ?? 0) +
+  (result.supFlagMismatchIssues?.length ?? 0) +
+  (result.faqItemMismatchIssues?.length ?? 0);
+
 const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
   // contentMismatchIssues/supFlagMismatchIssues는 나중에 추가된 필드라,
   // 그 이전에 저장된 결과에는 없을 수 있다.
@@ -16,15 +27,7 @@ const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
   const supFlagCount = result.supFlagMismatchIssues?.length ?? 0;
   const faqItemCount = result.faqItemMismatchIssues?.length ?? 0;
 
-  const totalIssueCount =
-    result.duplicateIssues.length +
-    result.scopeIssues.length +
-    result.typeMismatchIssues.length +
-    result.orderIssues.length +
-    result.untaggedCopyIssues.length +
-    contentMismatchCount +
-    supFlagCount +
-    faqItemCount;
+  const totalIssueCount = countPreCoderIssues(result);
 
   const cards = [
     { label: "HTML 내 data-copy-set", value: result.totalHtmlCopySetCount },

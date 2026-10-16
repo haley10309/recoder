@@ -11,9 +11,10 @@ def norm(v):
 
 def load_translation_rows(sheet, country_code):
     """
-    정형화된 헤더 구조:
+    정형화된 헤더 구조 (1행, 1행에 없으면 2행):
     key | row_order | target_selector | apply_type | exclude_sup | enable_text_transform
         | category | item | original_copy | {country_code} (eg. CA_FR) | ...
+    (category / item 대신 Copy1 / Copy2 컬럼을 쓰는 카피덱도 있다)
 
     key가 SCHEMA- 로 시작하는 행은 셀렉터가 없으므로 별도로 취급한다.
     """
@@ -31,16 +32,28 @@ def load_translation_rows(sheet, country_code):
     if len(used) < 2:
         raise ValueError("헤더 또는 데이터가 부족합니다.")
 
-    header = [norm(v).lower() for v in used[0]]
-    header_map = {name: idx for idx, name in enumerate(header) if name}
-
     country_key = norm(country_code).lower()
 
     required_cols = ["target_selector", "apply_type", "exclude_sup",
                      "enable_text_transform", "original_copy", country_key]
+
+    def build_header_map(row):
+        header = [norm(v).lower() for v in row]
+        return {name: idx for idx, name in enumerate(header) if name}
+
+    # 헤더는 1행이 기본이지만, 1행에서 필수 컬럼을 못 찾으면 2행까지만 한 번 더 확인한다.
+    # (카피덱 맨 위에 제목 행이 한 줄 붙어 있는 경우)
+    header_row_idx = 0
+    header_map = build_header_map(used[0])
     missing = [col for col in required_cols if col not in header_map]
+    if missing and len(used) >= 3:
+        second_header_map = build_header_map(used[1])
+        if all(col in second_header_map for col in required_cols):
+            header_row_idx = 1
+            header_map = second_header_map
+            missing = []
     if missing:
-        raise ValueError(f"필수 컬럼이 없습니다: {', '.join(missing)}")
+        raise ValueError(f"필수 컬럼이 없습니다 (1~2행 확인): {', '.join(missing)}")
 
     def cell(row, name):
         """헤더명으로 셀 값을 안전하게 읽는다."""
@@ -49,9 +62,13 @@ def load_translation_rows(sheet, country_code):
         idx = header_map[name]
         return norm(row[idx]) if idx < len(row) else ""
 
+    # category / item 컬럼이 없는 카피덱은 Copy1(예: "FAQ 1") / Copy2(예: "Questions")에 같은 값이 들어 있다.
+    category_col = "category" if "category" in header_map else "copy1"
+    item_col = "item" if "item" in header_map else "copy2"
+
     rows = []
 
-    for r in range(1, len(used)):
+    for r in range(header_row_idx + 1, len(used)):
         row = used[r]
         if not row:
             continue
@@ -62,8 +79,8 @@ def load_translation_rows(sheet, country_code):
         apply_type = cell(row, "apply_type")
         exclude_sup = cell(row, "exclude_sup")
         enable_text_transform = cell(row, "enable_text_transform")
-        category = cell(row, "category")
-        item = cell(row, "item")
+        category = cell(row, category_col)
+        item = cell(row, item_col)
         original_copy = cell(row, "original_copy")
         translated_copy = cell(row, country_key)
 

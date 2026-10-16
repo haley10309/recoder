@@ -1,24 +1,64 @@
 import { useState } from "react";
 
-// html 파일 / 카피덱 xlsx 파일 2개의 업로드 상태를 관리한다.
+const isExcelFileName = (name: string) => {
+  const lower = name.toLowerCase();
+  return lower.endsWith(".xlsx") || lower.endsWith(".xls");
+};
+
+// 카피덱 xlsx 슬롯 하나의 업로드 상태를 관리한다.
+function useExcelSlot() {
+  const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState("");
+  const [uploadStatus, setUploadStatus] = useState("");
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    // 다시 업로드 중 파일 선택창을 취소한 경우: 기존 파일을 그대로 둔다.
+    if (!selectedFile) {
+      if (!file) setUploadStatus("fail");
+      return;
+    }
+    if (!isExcelFileName(selectedFile.name)) {
+      alert("엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.");
+      if (!file) setUploadStatus("fail");
+      return;
+    }
+    setFile(selectedFile);
+    setFileName(selectedFile.name);
+    setUploadStatus("success");
+  };
+
+  const reset = () => {
+    setFile(null);
+    setFileName("");
+    setUploadStatus("");
+  };
+
+  return { file, fileName, uploadStatus, handleUpload, reset };
+}
+
+// html 파일 / 카피덱 xlsx 파일의 업로드 상태를 관리한다.
+// excel* 는 기본 카피덱 슬롯("html 정제" 탭, "검사 실행" 탭의 features 카피덱)이고,
+// faqExcel* / schemaExcel* 는 "검사 실행" 탭의 FAQ / Schema 카피덱 슬롯이다.
 export function usePreCoderFiles() {
   const [htmlFile, setHtmlFile] = useState<File | null>(null);
   const [htmlFileName, setHtmlFileName] = useState("");
   const [htmlUploadStatus, setHtmlUploadStatus] = useState("");
 
-  const [excelFile, setExcelFile] = useState<File | null>(null);
-  const [excelFileName, setExcelFileName] = useState("");
-  const [excelUploadStatus, setExcelUploadStatus] = useState("");
+  const excel = useExcelSlot();
+  const faqExcel = useExcelSlot();
+  const schemaExcel = useExcelSlot();
 
   const handleHtmlFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
+    // 다시 업로드 중 파일 선택창을 취소한 경우: 기존 파일을 그대로 둔다.
     if (!selectedFile) {
-      setHtmlUploadStatus("fail");
+      if (!htmlFile) setHtmlUploadStatus("fail");
       return;
     }
     if (!selectedFile.name.toLowerCase().endsWith(".html") && !selectedFile.name.toLowerCase().endsWith(".htm")) {
       alert("html 파일(.html)만 업로드 가능합니다.");
-      setHtmlUploadStatus("fail");
+      if (!htmlFile) setHtmlUploadStatus("fail");
       return;
     }
     setHtmlFile(selectedFile);
@@ -26,29 +66,13 @@ export function usePreCoderFiles() {
     setHtmlUploadStatus("success");
   };
 
-  const handleExcelFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (!selectedFile) {
-      setExcelUploadStatus("fail");
-      return;
-    }
-    if (!selectedFile.name.toLowerCase().endsWith(".xlsx") && !selectedFile.name.toLowerCase().endsWith(".xls")) {
-      alert("엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.");
-      setExcelUploadStatus("fail");
-      return;
-    }
-    setExcelFile(selectedFile);
-    setExcelFileName(selectedFile.name);
-    setExcelUploadStatus("success");
-  };
-
   const handleResetFiles = () => {
     setHtmlFile(null);
     setHtmlFileName("");
     setHtmlUploadStatus("");
-    setExcelFile(null);
-    setExcelFileName("");
-    setExcelUploadStatus("");
+    excel.reset();
+    faqExcel.reset();
+    schemaExcel.reset();
   };
 
   return {
@@ -56,10 +80,18 @@ export function usePreCoderFiles() {
     htmlFileName,
     htmlUploadStatus,
     handleHtmlFileUpload,
-    excelFile,
-    excelFileName,
-    excelUploadStatus,
-    handleExcelFileUpload,
+    excelFile: excel.file,
+    excelFileName: excel.fileName,
+    excelUploadStatus: excel.uploadStatus,
+    handleExcelFileUpload: excel.handleUpload,
+    faqExcelFile: faqExcel.file,
+    faqExcelFileName: faqExcel.fileName,
+    faqExcelUploadStatus: faqExcel.uploadStatus,
+    handleFaqExcelFileUpload: faqExcel.handleUpload,
+    schemaExcelFile: schemaExcel.file,
+    schemaExcelFileName: schemaExcel.fileName,
+    schemaExcelUploadStatus: schemaExcel.uploadStatus,
+    handleSchemaExcelFileUpload: schemaExcel.handleUpload,
     handleResetFiles,
   };
 }
