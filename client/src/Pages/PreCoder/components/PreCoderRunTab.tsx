@@ -8,6 +8,7 @@ import PreCoderFileUploadSection from "./PreCoderFileUploadSection";
 import PreCoderSummary, { countPreCoderIssues } from "./PreCoderSummary";
 import {
   DuplicateSection,
+  DeckDuplicateSection,
   ScopeSection,
   TypeMismatchSection,
   OrderSection,
@@ -225,6 +226,8 @@ const PreCoderRunTab = () => {
 
       <WhiteBox>
         <DuplicateSection issues={deckResult.duplicateIssues} />
+        <Gap gap={40} />
+        <DeckDuplicateSection issues={deckResult.deckDuplicateIssues ?? []} />
         <Gap gap={40} />
         <ScopeSection issues={deckResult.scopeIssues} />
         <Gap gap={40} />

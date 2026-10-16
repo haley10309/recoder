@@ -39,6 +39,9 @@ export type SchemaDeckCompareIssue = {
   deckValue: string;
   htmlValue: string;
   diffIndex?: number; // content-mismatch일 때만
+  // category-mismatch / item-mismatch일 때, 카피덱 값이 아예 허용 값(FAQ / Video Object,
+  // Name / Description / Questions / Answer)이 아닌 경우 (오타·랜덤 문자열 등)
+  invalidValue?: boolean;
   message: string;
 };
 
@@ -75,6 +78,15 @@ const normalize = (v: string | null | undefined): string =>
 // 비교용: 대소문자/공백 차이는 무시 (category, item 같은 분류값 비교에 사용)
 const normalizeLoose = (v: string | null | undefined): string =>
   normalize(v).toLowerCase().replace(/[\s_-]/g, "");
+
+// item 비교용: "Question" / "Questions"처럼 단수·복수 표기 차이도 허용
+const normalizeItem = (v: string | null | undefined): string => normalizeLoose(v).replace(/s$/, "");
+
+// schema(JSON-LD)에서 나올 수 있는 category / item 값 (extractSchemaDeckFromHtml 기준)
+const VALID_CATEGORIES = ["FAQ", "Video Object"];
+const VALID_ITEMS = ["Name", "Description", "Questions", "Answer"];
+const isValidCategory = (v: string) => VALID_CATEGORIES.some((c) => normalizeLoose(c) === normalizeLoose(v));
+const isValidItem = (v: string) => VALID_ITEMS.some((c) => normalizeItem(c) === normalizeItem(v));
 
 const findFirstDiffIndex = (a: string, b: string): number => {
   const len = Math.min(a.length, b.length);
@@ -174,27 +186,35 @@ export const analyzeSchemaDeck = (
         return;
       }
 
-      // ── (2) category 불일치 (Video Object / FAQ)
+      // ── (2) category 불일치 (Video Object / FAQ / 그 외 허용되지 않은 값)
       if (normalizeLoose(row.category) !== normalizeLoose(htmlRow.category)) {
-        const msg = `${key}: category가 카피덱에는 "${row.category}"로 되어 있지만, html schema 기준으로는 "${htmlRow.category}"입니다.`;
+        const invalidValue = !isValidCategory(row.category);
+        const msg = invalidValue
+          ? `${key}: category "${normalize(row.category) || "(빈 값)"}"은(는) 허용되지 않은 값입니다. (${VALID_CATEGORIES.join(" / ")} 중 하나여야 하며, html schema 기준으로는 "${htmlRow.category}"입니다.)`
+          : `${key}: category가 카피덱에는 "${row.category}"로 되어 있지만, html schema 기준으로는 "${htmlRow.category}"입니다.`;
         compareIssues.push({
           key,
           type: "category-mismatch",
           deckValue: normalize(row.category),
           htmlValue: htmlRow.category,
+          invalidValue,
           message: msg,
         });
         issues.push({ type: "category-mismatch", message: msg });
       }
 
-      // ── (3) item 종류 불일치 (Name / Description / Questions / Answer)
-      if (normalizeLoose(row.item) !== normalizeLoose(htmlRow.item)) {
-        const msg = `${key}: item이 카피덱에는 "${row.item}"로 되어 있지만, html schema 기준으로는 "${htmlRow.item}"입니다.`;
+      // ── (3) item 종류 불일치 (Name / Description / Questions / Answer, 단수·복수 표기 차이는 허용)
+      if (normalizeItem(row.item) !== normalizeItem(htmlRow.item)) {
+        const invalidValue = !isValidItem(row.item);
+        const msg = invalidValue
+          ? `${key}: item "${normalize(row.item) || "(빈 값)"}"은(는) 허용되지 않은 값입니다. (${VALID_ITEMS.join(" / ")} 중 하나여야 하며, html schema 기준으로는 "${htmlRow.item}"입니다.)`
+          : `${key}: item이 카피덱에는 "${row.item}"로 되어 있지만, html schema 기준으로는 "${htmlRow.item}"입니다.`;
         compareIssues.push({
           key,
           type: "item-mismatch",
           deckValue: normalize(row.item),
           htmlValue: htmlRow.item,
+          invalidValue,
           message: msg,
         });
         issues.push({ type: "item-mismatch", message: msg });
