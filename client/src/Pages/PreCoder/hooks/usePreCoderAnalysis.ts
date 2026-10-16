@@ -134,7 +134,7 @@ export function usePreCoderAnalysis({
             `${parsingDeck}(xlsx)를 읽지 못했습니다.${serverMessage ? `\n- ${serverMessage}` : ""}\n` +
               (parsingDeck === "schema 카피덱"
                 ? "schema 카피덱은 Key / Category / Item / Copy(original_copy) 컬럼이 있어야 합니다."
-                : "features / FAQ 카피덱은 target_selector, apply_type, exclude_sup, enable_text_transform, original_copy, CA_FR 컬럼이 1행 헤더에 있어야 합니다.")
+                : "features / FAQ 카피덱은 target_selector, apply_type, exclude_sup, enable_text_transform, original_copy, CA_FR 컬럼이 1행(또는 2행) 헤더에 있어야 합니다.")
           );
           return;
         }
