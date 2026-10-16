@@ -123,21 +123,24 @@ const PreCoderRunTab = () => {
 
   // 카피덱 종류별 업로드 슬롯. 모드마다 필요한 슬롯만 보여주고, 종류가 같은 슬롯은 모드끼리 공유한다.
   const featuresSlot = {
-    label: "features 영문 카피덱(xlsx)을 업로드 해주세요",
+    title: "features 카피덱",
+    label: "features 영문 카피덱(.xlsx) 업로드",
     fileName: excelFileName,
     status: excelUploadStatus,
     inputId: "dropzone-precoder-excel",
     onChange: withResultReset(handleExcelFileUpload),
   };
   const faqSlot = {
-    label: "FAQ 영문 카피덱(xlsx)을 업로드 해주세요",
+    title: "FAQ 카피덱",
+    label: "FAQ 영문 카피덱(.xlsx) 업로드",
     fileName: faqExcelFileName,
     status: faqExcelUploadStatus,
     inputId: "dropzone-precoder-excel-faq",
     onChange: withResultReset(handleFaqExcelFileUpload),
   };
   const schemaSlot = {
-    label: "Schema 카피덱(xlsx)을 업로드 해주세요 (선택)",
+    title: "Schema 카피덱 (선택)",
+    label: "Schema 카피덱(.xlsx) 업로드",
     fileName: schemaExcelFileName,
     status: schemaExcelUploadStatus,
     inputId: "dropzone-precoder-excel-schema",
