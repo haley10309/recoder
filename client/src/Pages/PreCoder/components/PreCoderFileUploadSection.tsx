@@ -41,10 +41,9 @@ const PreCoderFileUploadSection = ({
   excelUploadStatus,
   handleExcelFileUpload,
   showExcel = true,
-  excelLabel = "영문 카피덱(xlsx)을 업로드 해주세요",
   extraExcelSlots = [],
 }: any) => {
-  // extraExcelSlots: ④ 전체 검사처럼 카피덱을 여러 개 받을 때 추가로 그릴 슬롯
+  // extraExcelSlots: 카피덱 종류별로 따로 받을 때 추가로 그릴 슬롯
   // ({ label, fileName, status, inputId, onChange }[]).
   return (
     <ConvertSection>
@@ -59,7 +58,7 @@ const PreCoderFileUploadSection = ({
         />
         {showExcel && (
           <UploadSlot
-            label={excelLabel}
+            label="영문 카피덱(xlsx)을 업로드 해주세요"
             fileName={excelFileName}
             status={excelUploadStatus}
             accept=".xlsx,.xls"

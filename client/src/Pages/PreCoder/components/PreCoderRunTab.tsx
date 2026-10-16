@@ -73,14 +73,22 @@ const PreCoderRunTab = () => {
     analyzeStatus,
     handleAnalyze,
     resetAnalysis,
-  } = usePreCoderAnalysis({ htmlFile, excelFile, faqExcelFile, schemaExcelFile, mode });
+  } = usePreCoderAnalysis({
+    htmlFile,
+    featuresExcelFile: excelFile,
+    faqExcelFile,
+    schemaExcelFile,
+    mode,
+  });
 
-  // ④ 전체 검사에서는 지금 보고 있는 ①/② 결과와 그 카피덱을 저장/내보내기 대상으로 삼는다.
+  // 저장/내보내기 대상: ②FAQ 모드, 또는 ④ 전체 검사에서 ② 결과를 보고 있을 때는 FAQ 카피덱,
+  // 그 밖에는 features 카피덱. (④에서는 지금 보고 있는 ①/② 결과를 대상으로 삼는다.)
   const allDeckTab = allResultTab === "faq" ? "faq" : "features";
+  const isFaqDeckActive = mode === "faq" || (mode === "all" && allDeckTab === "faq");
   const activeResult = mode === "all" ? (allResult?.[allDeckTab].result ?? null) : result;
   const activeCopyDeckRows = mode === "all" ? (allResult?.[allDeckTab].copyDeckRows ?? null) : copyDeckRows;
-  const activeExcelFile = mode === "all" && allDeckTab === "faq" ? faqExcelFile : excelFile;
-  const activeExcelFileName = mode === "all" && allDeckTab === "faq" ? faqExcelFileName : excelFileName;
+  const activeExcelFile = isFaqDeckActive ? faqExcelFile : excelFile;
+  const activeExcelFileName = isFaqDeckActive ? faqExcelFileName : excelFileName;
 
   const { saveStatus, handleSave, resetSaveStatus } = usePreCoderSave({
     htmlFile,
@@ -96,7 +104,40 @@ const PreCoderRunTab = () => {
       ? !!htmlFile
       : mode === "all"
         ? !!htmlFile && !!excelFile && !!faqExcelFile
-        : !!htmlFile && !!excelFile;
+        : mode === "faq"
+          ? !!htmlFile && !!faqExcelFile
+          : !!htmlFile && !!excelFile;
+
+  // 카피덱 종류별 업로드 슬롯. 모드마다 필요한 슬롯만 보여주고, 종류가 같은 슬롯은 모드끼리 공유한다.
+  const featuresSlot = {
+    label: "features 영문 카피덱(xlsx)을 업로드 해주세요",
+    fileName: excelFileName,
+    status: excelUploadStatus,
+    inputId: "dropzone-precoder-excel",
+    onChange: handleExcelFileUpload,
+  };
+  const faqSlot = {
+    label: "FAQ 영문 카피덱(xlsx)을 업로드 해주세요",
+    fileName: faqExcelFileName,
+    status: faqExcelUploadStatus,
+    inputId: "dropzone-precoder-excel-faq",
+    onChange: handleFaqExcelFileUpload,
+  };
+  const schemaSlot = {
+    label: "Schema 카피덱(xlsx)을 업로드 해주세요 (선택)",
+    fileName: schemaExcelFileName,
+    status: schemaExcelUploadStatus,
+    inputId: "dropzone-precoder-excel-schema",
+    onChange: handleSchemaExcelFileUpload,
+  };
+  const excelSlots =
+    mode === "features-disclaimer"
+      ? [featuresSlot]
+      : mode === "faq"
+        ? [faqSlot]
+        : mode === "schema"
+          ? [schemaSlot]
+          : [featuresSlot, faqSlot, schemaSlot];
 
   const handleModeChange = (next: PreCoderRunMode) => {
     setMode(next);
@@ -286,34 +327,8 @@ const PreCoderRunTab = () => {
         htmlFileName={htmlFileName}
         htmlUploadStatus={htmlUploadStatus}
         handleHtmlFileUpload={handleHtmlFileUpload}
-        excelFileName={excelFileName}
-        excelUploadStatus={excelUploadStatus}
-        handleExcelFileUpload={handleExcelFileUpload}
-        excelLabel={
-          mode === "all"
-            ? "① features 영문 카피덱(xlsx)을 업로드 해주세요"
-            : "영문 카피덱(xlsx)을 업로드 해주세요"
-        }
-        extraExcelSlots={
-          mode === "all"
-            ? [
-                {
-                  label: "② FAQ 영문 카피덱(xlsx)을 업로드 해주세요",
-                  fileName: faqExcelFileName,
-                  status: faqExcelUploadStatus,
-                  inputId: "dropzone-precoder-excel-faq",
-                  onChange: handleFaqExcelFileUpload,
-                },
-                {
-                  label: "③ Schema 카피덱(xlsx)을 업로드 해주세요 (선택)",
-                  fileName: schemaExcelFileName,
-                  status: schemaExcelUploadStatus,
-                  inputId: "dropzone-precoder-excel-schema",
-                  onChange: handleSchemaExcelFileUpload,
-                },
-              ]
-            : []
-        }
+        showExcel={false}
+        extraExcelSlots={excelSlots}
       />
       <Gap gap={15} />
       <ResetButtonsRow>

@@ -42,17 +42,20 @@ const loadSchemaDeckRows = async (file: File): Promise<SchemaCopyDeckRow[] | nul
   }));
 };
 
+// 카피덱은 종류별(features / FAQ / schema)로 따로 받는다. 종류마다 파서가 달라서
+// (features·FAQ: target_selector 등 unpack 포맷 / schema: Key·Category·Item·Copy 포맷)
+// 한 슬롯을 모드끼리 공유하면, 모드를 바꿨을 때 다른 종류의 카피덱이 엉뚱한 파서로 들어간다.
 export function usePreCoderAnalysis({
   htmlFile,
-  excelFile,
-  faqExcelFile = null,
-  schemaExcelFile = null,
+  featuresExcelFile,
+  faqExcelFile,
+  schemaExcelFile,
   mode,
 }: {
   htmlFile: File | null;
-  excelFile: File | null;
-  faqExcelFile?: File | null;
-  schemaExcelFile?: File | null;
+  featuresExcelFile: File | null;
+  faqExcelFile: File | null;
+  schemaExcelFile: File | null;
   mode: PreCoderRunMode;
 }) {
   const [result, setResult] = useState<PreCoderAnalysisResult | null>(null);
@@ -66,12 +69,16 @@ export function usePreCoderAnalysis({
       alert("html 파일을 업로드 해주세요.");
       return;
     }
-    if (mode === "all" && (!excelFile || !faqExcelFile)) {
+    if (mode === "all" && (!featuresExcelFile || !faqExcelFile)) {
       alert("html 파일과 features 카피덱, FAQ 카피덱(xlsx)을 모두 업로드 해주세요.");
       return;
     }
-    if (mode !== "schema" && !excelFile) {
-      alert("html 파일과 카피덱(xlsx) 파일을 모두 업로드 해주세요.");
+    if (mode === "features-disclaimer" && !featuresExcelFile) {
+      alert("html 파일과 features 카피덱(xlsx) 파일을 모두 업로드 해주세요.");
+      return;
+    }
+    if (mode === "faq" && !faqExcelFile) {
+      alert("html 파일과 FAQ 카피덱(xlsx) 파일을 모두 업로드 해주세요.");
       return;
     }
 
@@ -84,8 +91,8 @@ export function usePreCoderAnalysis({
       if (mode === "schema") {
         let schemaDeckRows: SchemaCopyDeckRow[] | undefined;
 
-        if (excelFile) {
-          const rows = await loadSchemaDeckRows(excelFile);
+        if (schemaExcelFile) {
+          const rows = await loadSchemaDeckRows(schemaExcelFile);
           if (!rows) {
             setAnalyzeStatus("fail");
             alert("schema 카피덱(xlsx)에서 데이터를 읽어오지 못했습니다. 파일 형식을 확인해주세요.");
@@ -109,7 +116,7 @@ export function usePreCoderAnalysis({
       // 전체 검사: 카피덱 3종을 각각 ①②③ 검사에 넣어, 개별 모드로 돌린 것과 같은 결과를 한 번에 만든다.
       if (mode === "all") {
         const [featuresRows, faqRows, schemaDeckRows] = await Promise.all([
-          parseExcelFile(excelFile),
+          parseExcelFile(featuresExcelFile),
           parseExcelFile(faqExcelFile),
           schemaExcelFile ? loadSchemaDeckRows(schemaExcelFile) : Promise.resolve(undefined),
         ]);
@@ -142,7 +149,8 @@ export function usePreCoderAnalysis({
         return;
       }
 
-      const row_list = excelFile ? await parseExcelFile(excelFile) : [];
+      const deckFile = mode === "faq" ? faqExcelFile : featuresExcelFile;
+      const row_list = deckFile ? await parseExcelFile(deckFile) : [];
       if (!row_list || row_list.length === 0) {
         setAnalyzeStatus("fail");
         alert("카피덱(xlsx)에서 데이터를 읽어오지 못했습니다. 파일 형식을 확인해주세요.");

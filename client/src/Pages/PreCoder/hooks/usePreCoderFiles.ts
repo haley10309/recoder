@@ -37,8 +37,8 @@ function useExcelSlot() {
 }
 
 // html 파일 / 카피덱 xlsx 파일의 업로드 상태를 관리한다.
-// excel* 는 기본 카피덱(① features / ② FAQ / ③ Schema 개별 검사, ④ 전체 검사의 features 카피덱)이고,
-// faqExcel* / schemaExcel* 는 ④ 전체 검사에서만 쓰는 FAQ / Schema 카피덱이다.
+// excel* 는 기본 카피덱 슬롯("html 정제" 탭, "검사 실행" 탭의 features 카피덱)이고,
+// faqExcel* / schemaExcel* 는 "검사 실행" 탭의 FAQ / Schema 카피덱 슬롯이다.
 export function usePreCoderFiles() {
   const [htmlFile, setHtmlFile] = useState<File | null>(null);
   const [htmlFileName, setHtmlFileName] = useState("");
