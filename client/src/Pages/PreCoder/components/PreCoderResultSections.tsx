@@ -650,6 +650,12 @@ export const SchemaCheckSection = ({
                     <td>{issue.key}</td>
                     <td>
                       <Pill>{typeLabel[issue.type]}</Pill>
+                      {issue.invalidValue && (
+                        <>
+                          <br />
+                          <LineBadge>허용되지 않은 값</LineBadge>
+                        </>
+                      )}
                       {issue.type === "content-mismatch" && issue.diffIndex !== undefined && (
                         <>
                           <br />
