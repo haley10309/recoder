@@ -12,6 +12,7 @@ import type {
   ContentMismatchIssue,
   SupFlagMismatchIssue,
   FaqItemMismatchIssue,
+  DeckDuplicateIssue,
 } from "../utils/analyzePreCoder";
 import type {
   SchemaCheckIssue,
@@ -90,6 +91,7 @@ const CodeSnippet = styled.code`
 // 요약 카드에서 클릭했을 때 해당 섹션으로 스크롤 이동하기 위한 앵커 id.
 export const PRE_CODER_SECTION_ANCHORS = {
   duplicate: "precoder-section-duplicate",
+  deckDuplicate: "precoder-section-deck-duplicate",
   scope: "precoder-section-scope",
   type: "precoder-section-type",
   order: "precoder-section-order",
@@ -132,6 +134,45 @@ export const DuplicateSection = ({ issues }: { issues: DuplicateIssue[] }) => (
                 {issue.lines
                   .map((l) => (l >= 0 ? l : "-"))
                   .join(", ")}
+              </td>
+              <td>{issue.message}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    )}
+  </SectionAnchor>
+);
+
+// ────────────────────────────────────────────────────────────────────────────
+// ①-2 카피덱 고유값 위반 (같은 target_selector가 카피덱 여러 행에 쓰인 경우)
+// ────────────────────────────────────────────────────────────────────────────
+export const DeckDuplicateSection = ({ issues = [] }: { issues?: DeckDuplicateIssue[] }) => (
+  <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.deckDuplicate}>
+    <SectionTitle>①-2 카피덱 고유값 위반 (같은 target_selector가 여러 행에 지정된 경우)</SectionTitle>
+    {issues.length === 0 ? (
+      <EmptyState>카피덱의 target_selector가 모두 고유합니다.</EmptyState>
+    ) : (
+      <Table>
+        <thead>
+          <tr>
+            <th>target_selector</th>
+            <th>중복 횟수</th>
+            <th>row_order</th>
+            <th style={{ minWidth: "7rem" }}>카피</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          {issues.map((issue) => (
+            <tr key={issue.targetSelector}>
+              <td>{issue.targetSelector}</td>
+              <td>{issue.count}</td>
+              <td>{issue.rowOrders.map((o) => o ?? "-").join(", ")}</td>
+              <td>
+                <Pill $tone={issue.copiesDiffer ? "warn" : "neutral"}>
+                  {issue.copiesDiffer ? "서로 다른 카피" : "같은 카피"}
+                </Pill>
               </td>
               <td>{issue.message}</td>
             </tr>
@@ -489,7 +530,9 @@ export const SupFlagSection = ({ issues = [] }: { issues?: SupFlagMismatchIssue[
   <SectionAnchor id={PRE_CODER_SECTION_ANCHORS.supFlag}>
     <SectionTitle>⑧ exclude_sup / enable_text_transform 일치 검사</SectionTitle>
     {issues.length === 0 ? (
-      <EmptyState>카피덱의 각주 설정과 HTML의 각주(sup) 유무가 모두 일치합니다.</EmptyState>
+      <EmptyState>
+        카피덱의 각주 설정(exclude_sup / enable_text_transform)과 HTML의 각주(sup) 유무가 모두 일치합니다.
+      </EmptyState>
     ) : (
       <Table>
         <thead>
@@ -497,7 +540,7 @@ export const SupFlagSection = ({ issues = [] }: { issues?: SupFlagMismatchIssue[
             <th>data-copy-set</th>
             <th>태그</th>
             <th>줄 번호</th>
-            <th style={{ minWidth: "7rem" }}>카피덱</th>
+            <th style={{ minWidth: "9rem" }}>카피덱</th>
             <th style={{ minWidth: "7rem" }}>HTML</th>
             <th>설명</th>
           </tr>
@@ -511,9 +554,7 @@ export const SupFlagSection = ({ issues = [] }: { issues?: SupFlagMismatchIssue[
                 <LineBadge>{issue.line >= 0 ? issue.line : "-"}</LineBadge>
               </td>
               <td>
-                <Pill $tone={issue.declaredExcludeSup ? "neutral" : undefined}>
-                  {issue.declaredExcludeSup ? "exclude_sup = O" : "표시 없음"}
-                </Pill>
+                <SupFlagPill issue={issue} />
               </td>
               <td>
                 <Pill $tone={issue.hasSupInHtml ? "neutral" : undefined}>
@@ -528,6 +569,15 @@ export const SupFlagSection = ({ issues = [] }: { issues?: SupFlagMismatchIssue[
     )}
   </SectionAnchor>
 );
+
+// flag/declared는 나중에 추가된 필드라, 이전에 저장된 결과는 exclude_sup 기준으로 본다.
+const SupFlagPill = ({ issue }: { issue: SupFlagMismatchIssue }) => {
+  const flag = issue.flag ?? "exclude_sup";
+  const declared = issue.declared ?? issue.declaredExcludeSup;
+  return (
+    <Pill $tone={declared ? "neutral" : "warn"}>{declared ? `${flag} = O` : `${flag} 표시 없음`}</Pill>
+  );
+};
 
 const SequenceSummary = styled.summary`
   cursor: pointer;

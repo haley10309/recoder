@@ -118,6 +118,19 @@ export type SupFlagMismatchIssue = {
   line: number;
   declaredExcludeSup: boolean;
   hasSupInHtml: boolean;
+  // 어떤 플래그의 불일치인지 (이 필드가 추가되기 전에 저장된 결과는 모두 exclude_sup)
+  flag?: "exclude_sup" | "enable_text_transform";
+  declared?: boolean; // 카피덱에 해당 플래그가 O로 지정됐는지
+  message: string;
+};
+
+// 카피덱 안에서 같은 target_selector(data-copy-set)가 여러 행에 쓰인 경우
+export type DeckDuplicateIssue = {
+  targetSelector: string;
+  count: number;
+  rowOrders: (number | null)[];
+  copies: string[];
+  copiesDiffer: boolean;
   message: string;
 };
 
@@ -145,6 +158,8 @@ export type PreCoderAnalysisResult = {
   contentMismatchIssues: ContentMismatchIssue[];
   supFlagMismatchIssues: SupFlagMismatchIssue[];
   faqItemMismatchIssues: FaqItemMismatchIssue[];
+  // 나중에 추가된 필드라 이전에 저장된 결과에는 없을 수 있다.
+  deckDuplicateIssues?: DeckDuplicateIssue[];
 };
 
 export type PreCoderAnalysisScope = "features-disclaimer" | "faq" | "all";
@@ -542,6 +557,34 @@ export const analyzePreCoder = (
     if (parsed) deckByValue.set(parsed.value, row);
   });
 
+  // ── ①-2 카피덱 고유값 위반: 같은 target_selector가 카피덱 여러 행에 쓰인 경우
+  // (위 deckByValue처럼 뒤 행이 앞 행을 조용히 덮어써서, 앞 행의 카피는 검사·적용에서 빠진다)
+  const deckRowsBySelector = new Map<string, CopyDeckRow[]>();
+  scopedCopyDeckRows.forEach((row) => {
+    const parsed = parseTargetSelector(row.target_selector);
+    if (!parsed || parsed.value === "disclaimer") return; // disclaimer는 재사용 정책 예약값
+    const selector = `${parsed.attr}="${parsed.value}"`;
+    const group = deckRowsBySelector.get(selector) ?? [];
+    group.push(row);
+    deckRowsBySelector.set(selector, group);
+  });
+  const deckDuplicateIssues: DeckDuplicateIssue[] = [];
+  deckRowsBySelector.forEach((group, selector) => {
+    if (group.length <= 1) return;
+    const copies = group.map((r) => normalize(r.original_copy ?? ""));
+    const copiesDiffer = copies.some((c) => c !== copies[0]);
+    deckDuplicateIssues.push({
+      targetSelector: selector,
+      count: group.length,
+      rowOrders: group.map((r) => r.row_order ?? null),
+      copies,
+      copiesDiffer,
+      message: copiesDiffer
+        ? `${selector}가 카피덱 ${group.length}개 행에 서로 다른 카피로 중복 지정되었습니다. 마지막 행만 적용되고 나머지 카피는 빠집니다.`
+        : `${selector}가 카피덱 ${group.length}개 행에 같은 카피로 중복 지정되었습니다. 중복 행을 정리해주세요.`,
+    });
+  });
+
   const typeMismatchIssues: TypeMismatchIssue[] = [];
   nodes.forEach((n, i) => {
     if (!nodeInScopeFlags[i]) return;
@@ -908,17 +951,37 @@ export const analyzePreCoder = (
     const hasSupInHtml = hasClickSupAnywhere(el);
     const declaredExcludeSup = !!deckRow.exclude_sup;
 
-    if (declaredExcludeSup === hasSupInHtml) return;
+    if (declaredExcludeSup !== hasSupInHtml) {
+      supFlagMismatchIssues.push({
+        value: n.value,
+        tagName: n.tagName,
+        line: n.line,
+        declaredExcludeSup,
+        hasSupInHtml,
+        flag: "exclude_sup",
+        declared: declaredExcludeSup,
+        message: declaredExcludeSup
+          ? `data-copy-set="${n.value}": 카피덱에는 exclude_sup=O로 지정되어 있지만, HTML에는 각주(sup) 태그가 없습니다.`
+          : `data-copy-set="${n.value}": HTML에 각주(sup) 태그가 있지만, 카피덱에는 exclude_sup이 지정되어 있지 않습니다. recoder 적용 시 각주가 유실될 수 있습니다.`,
+      });
+    }
 
+    // enable_text_transform: innerText 카피는 각주(sup)가 있을 때 exclude_sup과 함께 O여야 한다.
+    // ("html 정제"의 카피덱 생성 규칙 및 recoder 변환 규칙과 동일)
+    if (normalize(deckRow.apply_type).toLowerCase() !== "innertext") return;
+    const declaredTextTransform = !!deckRow.enable_text_transform;
+    if (declaredTextTransform === hasSupInHtml) return;
     supFlagMismatchIssues.push({
       value: n.value,
       tagName: n.tagName,
       line: n.line,
       declaredExcludeSup,
       hasSupInHtml,
-      message: declaredExcludeSup
-        ? `data-copy-set="${n.value}": 카피덱에는 exclude_sup=O로 지정되어 있지만, HTML에는 각주(sup) 태그가 없습니다.`
-        : `data-copy-set="${n.value}": HTML에 각주(sup) 태그가 있지만, 카피덱에는 exclude_sup이 지정되어 있지 않습니다. recoder 적용 시 각주가 유실될 수 있습니다.`,
+      flag: "enable_text_transform",
+      declared: declaredTextTransform,
+      message: declaredTextTransform
+        ? `data-copy-set="${n.value}": 카피덱에는 enable_text_transform=O로 지정되어 있지만, HTML에는 각주(sup) 태그가 없습니다.`
+        : `data-copy-set="${n.value}": HTML에 각주(sup) 태그가 있지만, 카피덱에는 enable_text_transform이 지정되어 있지 않습니다. recoder 적용 시 각주 위치가 어긋날 수 있습니다.`,
     });
   });
 
@@ -980,5 +1043,6 @@ export const analyzePreCoder = (
     contentMismatchIssues,
     supFlagMismatchIssues,
     faqItemMismatchIssues,
+    deckDuplicateIssues,
   };
 };
