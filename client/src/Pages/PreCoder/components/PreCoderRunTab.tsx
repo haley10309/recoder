@@ -5,7 +5,7 @@ import Gap from "@/Components/Common/Gap";
 import TitleLabel from "@/Components/Common/TitleLabel";
 
 import PreCoderFileUploadSection from "./PreCoderFileUploadSection";
-import PreCoderSummary from "./PreCoderSummary";
+import PreCoderSummary, { countPreCoderIssues } from "./PreCoderSummary";
 import {
   DuplicateSection,
   ScopeSection,
@@ -24,14 +24,26 @@ import { usePreCoderAnalysis } from "../hooks/usePreCoderAnalysis";
 import type { PreCoderRunMode } from "../hooks/usePreCoderAnalysis";
 import { usePreCoderSave } from "../hooks/usePreCoderSave";
 import { exportPreCoderResultToExcel } from "../utils/exportPreCoderExcel";
+import type { PreCoderAnalysisResult } from "../utils/analyzePreCoder";
+import type { SchemaCheckResult } from "../utils/analyzeSchemaDeck";
+
+// ④ 전체 검사 결과에서 지금 보고 있는 검사 (요약 카드의 앵커 id가 겹치지 않도록 한 번에 하나만 그린다)
+type AllResultTabKey = "features" | "faq" | "schema";
+
+const ALL_RESULT_TAB_LABELS: Record<AllResultTabKey, string> = {
+  features: "① features+disclaimer",
+  faq: "② FAQ",
+  schema: "③ Schema",
+};
 
 // "검사 실행" 탭: html(+카피덱)을 업로드해 검사를 돌리고, 결과를 팀 공유용으로 저장한다.
 // ① features+disclaimer 검사 / ② FAQ 검사 / ③ Schema 검사 / ④ 전체 검사 네 모드로 나뉜다.
-// ①②④는 html+카피덱(xlsx) 대조 방식(analyzePreCoder)을 쓰고, ③Schema는 카피덱 대조가
-// 아니라 html의 JSON-LD를 직접 검사한다(카피덱 업로드 불필요). ④는 ①②를 합친 대조검사에
-// Schema 검사도 함께 보여준다.
+// ①②는 html+카피덱(xlsx) 대조 방식(analyzePreCoder)을 쓰고, ③Schema는 html의 JSON-LD를
+// 직접 검사한다(schema 카피덱은 선택). ④는 features / FAQ / Schema 카피덱을 각각 받아
+// ①②③을 개별 모드와 같은 방식으로 한 번에 돌리고, 결과를 검사별로 나눠 보여준다.
 const PreCoderRunTab = () => {
   const [mode, setMode] = useState<PreCoderRunMode>("features-disclaimer");
+  const [allResultTab, setAllResultTab] = useState<AllResultTabKey>("features");
 
   const {
     htmlFile,
@@ -42,37 +54,66 @@ const PreCoderRunTab = () => {
     excelFileName,
     excelUploadStatus,
     handleExcelFileUpload,
+    faqExcelFile,
+    faqExcelFileName,
+    faqExcelUploadStatus,
+    handleFaqExcelFileUpload,
+    schemaExcelFile,
+    schemaExcelFileName,
+    schemaExcelUploadStatus,
+    handleSchemaExcelFileUpload,
     handleResetFiles,
   } = usePreCoderFiles();
 
   const {
     result,
+    allResult,
     schemaResult,
     copyDeckRows,
     analyzeStatus,
     handleAnalyze,
     resetAnalysis,
-  } = usePreCoderAnalysis({ htmlFile, excelFile, mode });
+  } = usePreCoderAnalysis({ htmlFile, excelFile, faqExcelFile, schemaExcelFile, mode });
 
-  const { saveStatus, handleSave } = usePreCoderSave({
+  // ④ 전체 검사에서는 지금 보고 있는 ①/② 결과와 그 카피덱을 저장/내보내기 대상으로 삼는다.
+  const allDeckTab = allResultTab === "faq" ? "faq" : "features";
+  const activeResult = mode === "all" ? (allResult?.[allDeckTab].result ?? null) : result;
+  const activeCopyDeckRows = mode === "all" ? (allResult?.[allDeckTab].copyDeckRows ?? null) : copyDeckRows;
+  const activeExcelFile = mode === "all" && allDeckTab === "faq" ? faqExcelFile : excelFile;
+  const activeExcelFileName = mode === "all" && allDeckTab === "faq" ? faqExcelFileName : excelFileName;
+
+  const { saveStatus, handleSave, resetSaveStatus } = usePreCoderSave({
     htmlFile,
-    excelFile,
-    copyDeckRows,
-    result,
+    excelFile: activeExcelFile,
+    copyDeckRows: activeCopyDeckRows,
+    result: activeResult,
   });
 
   const [saveTitle, setSaveTitle] = useState("");
 
-  const canAnalyze = mode === "schema" ? !!htmlFile : !!htmlFile && !!excelFile;
+  const canAnalyze =
+    mode === "schema"
+      ? !!htmlFile
+      : mode === "all"
+        ? !!htmlFile && !!excelFile && !!faqExcelFile
+        : !!htmlFile && !!excelFile;
 
   const handleModeChange = (next: PreCoderRunMode) => {
     setMode(next);
+    setAllResultTab("features");
     resetAnalysis();
+    resetSaveStatus();
+  };
+
+  const handleAllResultTabChange = (next: AllResultTabKey) => {
+    setAllResultTab(next);
+    resetSaveStatus();
   };
 
   const handleResetAll = () => {
     handleResetFiles();
     resetAnalysis();
+    resetSaveStatus();
     setSaveTitle("");
   };
 
@@ -81,11 +122,11 @@ const PreCoderRunTab = () => {
   };
 
   const handleExportExcel = () => {
-    if (!result) return;
-    exportPreCoderResultToExcel(result, {
+    if (!activeResult) return;
+    exportPreCoderResultToExcel(activeResult, {
       title: saveTitle || htmlFileName || "PreCoder_결과",
       htmlFilename: htmlFileName,
-      excelFilename: excelFileName,
+      excelFilename: activeExcelFileName,
       createdByName: null,
       createdAt: null,
     });
@@ -96,6 +137,115 @@ const PreCoderRunTab = () => {
     if (analyzeStatus === "success") return "검사 완료!";
     if (analyzeStatus === "fail") return "검사 실패";
     return null;
+  };
+
+  // ①②(카피덱 대조) 결과 화면: 저장/내보내기 + 요약 + 상세 섹션
+  const renderDeckResult = (
+    deckResult: PreCoderAnalysisResult,
+    scope: "features-disclaimer" | "faq"
+  ) => (
+    <>
+      <SaveBox>
+        <SaveInput
+          type="text"
+          placeholder="저장할 결과 제목 (예: Fresh9_index_pim_260730)"
+          value={saveTitle}
+          onChange={(e) => setSaveTitle(e.target.value)}
+        />
+        <SaveButton onClick={handleClickSave} disabled={saveStatus === "loading"}>
+          {saveStatus === "loading" ? "저장 중..." : "결과 저장 (팀 공유)"}
+        </SaveButton>
+        {saveStatus === "success" && <SavedText>✅ 저장 완료 — "결과 열람" 탭에서 확인할 수 있어요.</SavedText>}
+        {saveStatus === "fail" && <FailedText>❌ 저장 실패</FailedText>}
+        <ExportButton onClick={handleExportExcel}>📊 엑셀로 내보내기</ExportButton>
+      </SaveBox>
+      <Gap gap={25} />
+
+      <TitleLabel text="🔎 검사 결과 요약" />
+      <Gap gap={15} />
+      <PreCoderSummary result={deckResult} />
+      <Gap gap={50} />
+
+      <WhiteBox>
+        <DuplicateSection issues={deckResult.duplicateIssues} />
+        <Gap gap={40} />
+        <ScopeSection issues={deckResult.scopeIssues} />
+        <Gap gap={40} />
+        <TypeMismatchSection issues={deckResult.typeMismatchIssues} />
+        <Gap gap={40} />
+        <OrderSection issues={deckResult.orderIssues} sequence={deckResult.orderSequence} />
+        <Gap gap={40} />
+        <UntaggedCopySection issues={deckResult.untaggedCopyIssues} />
+        <Gap gap={40} />
+        <UnassignedSection issues={deckResult.unassignedIssues} count={deckResult.unassignedCount} />
+        <Gap gap={40} />
+        <ContentMismatchSection issues={deckResult.contentMismatchIssues} />
+        {scope === "faq" && (
+          <>
+            <Gap gap={40} />
+            <SupFlagSection issues={deckResult.supFlagMismatchIssues} />
+            <Gap gap={40} />
+            <FaqItemSection issues={deckResult.faqItemMismatchIssues} />
+          </>
+        )}
+      </WhiteBox>
+    </>
+  );
+
+  const renderSchemaResult = (schema: SchemaCheckResult) => (
+    <>
+      <TitleLabel text="🔎 Schema 검사 결과" />
+      <Gap gap={15} />
+      <WhiteBox>
+        <SchemaCheckSection
+          issues={schema.issues}
+          totalCount={schema.totalCount}
+          faqCount={schema.faqCount}
+          videoCount={schema.videoCount}
+          hasDeck={schema.hasDeck}
+          deckRowCount={schema.deckRowCount}
+          duplicateKeyIssues={schema.duplicateKeyIssues}
+          compareIssues={schema.compareIssues}
+        />
+      </WhiteBox>
+    </>
+  );
+
+  const renderAllResult = () => {
+    if (!allResult || !schemaResult) return null;
+
+    const issueCounts: Record<AllResultTabKey, number> = {
+      features: countPreCoderIssues(allResult.features.result),
+      faq: countPreCoderIssues(allResult.faq.result),
+      schema: schemaResult.issues.length,
+    };
+
+    return (
+      <>
+        <TitleLabel text="🧾 전체 검사 결과" />
+        <Gap gap={15} />
+        <OverviewRow>
+          {(Object.keys(ALL_RESULT_TAB_LABELS) as AllResultTabKey[]).map((key) => (
+            <OverviewCard
+              key={key}
+              $active={allResultTab === key}
+              $warn={issueCounts[key] > 0}
+              onClick={() => handleAllResultTabChange(key)}
+            >
+              <OverviewLabel>{ALL_RESULT_TAB_LABELS[key]} 검사</OverviewLabel>
+              <OverviewValue $warn={issueCounts[key] > 0}>
+                {issueCounts[key] === 0 ? "✅ 이슈 없음" : `⚠️ ${issueCounts[key]}건`}
+              </OverviewValue>
+            </OverviewCard>
+          ))}
+        </OverviewRow>
+        <Gap gap={30} />
+
+        {allResultTab === "features" && renderDeckResult(allResult.features.result, "features-disclaimer")}
+        {allResultTab === "faq" && renderDeckResult(allResult.faq.result, "faq")}
+        {allResultTab === "schema" && renderSchemaResult(schemaResult)}
+      </>
+    );
   };
 
   return (
@@ -119,21 +269,15 @@ const PreCoderRunTab = () => {
       </ModeToggleRow>
       <Gap gap={15} />
 
-      {mode === "schema" ? (
-        <InfoBox>
-          Schema 검사는 html 안의 JSON-LD(FAQPage / VideoObject)를 검사해요. schema
-          카피덱(xlsx)을 함께 올리면 고유값 위반 · category/item 분류 · 카피 문자열 일치 여부까지
-          대조하고, html만 올리면 schema 자체 구조만 점검해요.
-        </InfoBox>
-      ) : (
-        <InfoBox>
-          {mode === "faq"
+      <InfoBox>
+        {mode === "schema"
+          ? "Schema 검사는 html 안의 JSON-LD(FAQPage / VideoObject)를 검사해요. schema 카피덱(xlsx)을 함께 올리면 고유값 위반 · category/item 분류 · 카피 문자열 일치 여부까지 대조하고, html만 올리면 schema 자체 구조만 점검해요."
+          : mode === "faq"
             ? "FAQ 영역(.watch-faq_item)의 data-copy-set만 골라 카피덱과 대조해요."
             : mode === "features-disclaimer"
               ? "FAQ 영역을 제외한 나머지(features/disclaimer) 영역의 data-copy-set만 골라 카피덱과 대조해요."
-              : "html 전체의 data-copy-set을 카피덱과 대조하고, Schema 검사도 함께 보여줘요."}
-        </InfoBox>
-      )}
+              : "features / FAQ / Schema 카피덱을 각각 올리면 ①②③ 검사를 한 번에 실행하고, 결과를 검사별로 나눠 보여줘요. (Schema 카피덱은 선택 - 없으면 html schema 자체 구조만 점검해요.)"}
+      </InfoBox>
       <Gap gap={25} />
 
       <TitleLabel text="📤 파일 업로드" />
@@ -145,6 +289,31 @@ const PreCoderRunTab = () => {
         excelFileName={excelFileName}
         excelUploadStatus={excelUploadStatus}
         handleExcelFileUpload={handleExcelFileUpload}
+        excelLabel={
+          mode === "all"
+            ? "① features 영문 카피덱(xlsx)을 업로드 해주세요"
+            : "영문 카피덱(xlsx)을 업로드 해주세요"
+        }
+        extraExcelSlots={
+          mode === "all"
+            ? [
+                {
+                  label: "② FAQ 영문 카피덱(xlsx)을 업로드 해주세요",
+                  fileName: faqExcelFileName,
+                  status: faqExcelUploadStatus,
+                  inputId: "dropzone-precoder-excel-faq",
+                  onChange: handleFaqExcelFileUpload,
+                },
+                {
+                  label: "③ Schema 카피덱(xlsx)을 업로드 해주세요 (선택)",
+                  fileName: schemaExcelFileName,
+                  status: schemaExcelUploadStatus,
+                  inputId: "dropzone-precoder-excel-schema",
+                  onChange: handleSchemaExcelFileUpload,
+                },
+              ]
+            : []
+        }
       />
       <Gap gap={15} />
       <ResetButtonsRow>
@@ -159,86 +328,9 @@ const PreCoderRunTab = () => {
       </ActionBox>
       <Gap gap={50} />
 
-      {mode === "schema" ? (
-        schemaResult && (
-          <>
-            <TitleLabel text="🔎 Schema 검사 결과" />
-            <Gap gap={15} />
-            <WhiteBox>
-              <SchemaCheckSection
-                issues={schemaResult.issues}
-                totalCount={schemaResult.totalCount}
-                faqCount={schemaResult.faqCount}
-                videoCount={schemaResult.videoCount}
-                hasDeck={schemaResult.hasDeck}
-                deckRowCount={schemaResult.deckRowCount}
-                duplicateKeyIssues={schemaResult.duplicateKeyIssues}
-                compareIssues={schemaResult.compareIssues}
-              />
-            </WhiteBox>
-          </>
-        )
-      ) : (
-        result && (
-          <>
-            <SaveBox>
-              <SaveInput
-                type="text"
-                placeholder="저장할 결과 제목 (예: Fresh9_index_pim_260730)"
-                value={saveTitle}
-                onChange={(e) => setSaveTitle(e.target.value)}
-              />
-              <SaveButton onClick={handleClickSave} disabled={saveStatus === "loading"}>
-                {saveStatus === "loading" ? "저장 중..." : "결과 저장 (팀 공유)"}
-              </SaveButton>
-              {saveStatus === "success" && <SavedText>✅ 저장 완료 — "결과 열람" 탭에서 확인할 수 있어요.</SavedText>}
-              {saveStatus === "fail" && <FailedText>❌ 저장 실패</FailedText>}
-              <ExportButton onClick={handleExportExcel}>📊 엑셀로 내보내기</ExportButton>
-            </SaveBox>
-            <Gap gap={25} />
-
-            <TitleLabel text="🔎 검사 결과 요약" />
-            <Gap gap={15} />
-            <PreCoderSummary result={result} />
-            <Gap gap={50} />
-
-            <WhiteBox>
-              <DuplicateSection issues={result.duplicateIssues} />
-              <Gap gap={40} />
-              <ScopeSection issues={result.scopeIssues} />
-              <Gap gap={40} />
-              <TypeMismatchSection issues={result.typeMismatchIssues} />
-              <Gap gap={40} />
-              <OrderSection issues={result.orderIssues} sequence={result.orderSequence} />
-              <Gap gap={40} />
-              <UntaggedCopySection issues={result.untaggedCopyIssues} />
-              <Gap gap={40} />
-              <UnassignedSection issues={result.unassignedIssues} count={result.unassignedCount} />
-              <Gap gap={40} />
-              <ContentMismatchSection issues={result.contentMismatchIssues} />
-              {(mode === "faq" || mode === "all") && (
-                <>
-                  <Gap gap={40} />
-                  <SupFlagSection issues={result.supFlagMismatchIssues} />
-                  <Gap gap={40} />
-                  <FaqItemSection issues={result.faqItemMismatchIssues} />
-                </>
-              )}
-              {mode === "all" && schemaResult && (
-                <>
-                  <Gap gap={40} />
-                  <SchemaCheckSection
-                    issues={schemaResult.issues}
-                    totalCount={schemaResult.totalCount}
-                    faqCount={schemaResult.faqCount}
-                    videoCount={schemaResult.videoCount}
-                  />
-                </>
-              )}
-            </WhiteBox>
-          </>
-        )
-      )}
+      {mode === "schema" && schemaResult && renderSchemaResult(schemaResult)}
+      {(mode === "features-disclaimer" || mode === "faq") && result && renderDeckResult(result, mode)}
+      {mode === "all" && renderAllResult()}
     </div>
   );
 };
@@ -389,4 +481,37 @@ const ExportButton = styled.button`
   &:hover {
     background: #fff5eb;
   }
+`;
+const OverviewRow = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.8rem;
+`;
+
+const OverviewCard = styled.button<{ $active: boolean; $warn: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 0.625rem;
+  border: 2px solid ${({ $active }) => ($active ? "#ff782f" : "#e5e7eb")};
+  background: ${({ $active }) => ($active ? "#fff1e8" : "#ffffff")};
+  text-align: left;
+
+  &:hover {
+    border-color: #ff782f;
+  }
+`;
+
+const OverviewLabel = styled.span`
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4b5563;
+`;
+
+const OverviewValue = styled.span<{ $warn: boolean }>`
+  font-size: 1rem;
+  font-weight: 700;
+  color: ${({ $warn }) => ($warn ? "#d1691a" : "#1a7f4b")};
 `;

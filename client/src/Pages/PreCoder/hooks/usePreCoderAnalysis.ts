@@ -9,6 +9,17 @@ import type { SchemaCheckResult, SchemaCopyDeckRow } from "../utils/analyzeSchem
 
 export type PreCoderRunMode = "features-disclaimer" | "faq" | "schema" | "all";
 
+// ④ 전체 검사에서 카피덱별로 돌린 ①features+disclaimer / ②FAQ 대조 결과.
+export type PreCoderDeckCheck = {
+  result: PreCoderAnalysisResult;
+  copyDeckRows: CopyDeckRow[];
+};
+
+export type PreCoderAllCheckResult = {
+  features: PreCoderDeckCheck;
+  faq: PreCoderDeckCheck;
+};
+
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -18,16 +29,34 @@ const readFileAsText = (file: File): Promise<string> => {
   });
 };
 
+// schema 카피덱도 Key/Category/Item/Copy 구조라 FAQ 카피덱 파서를 그대로 재사용한다.
+// 읽어온 행이 없으면 null을 돌려준다.
+const loadSchemaDeckRows = async (file: File): Promise<SchemaCopyDeckRow[] | null> => {
+  const extracted = await extractFaqCopyDeck(file);
+  if (!extracted.rows || extracted.rows.length === 0) return null;
+  return extracted.rows.map((r) => ({
+    key: r.key,
+    category: r.category,
+    item: r.item,
+    copy: r.copy,
+  }));
+};
+
 export function usePreCoderAnalysis({
   htmlFile,
   excelFile,
+  faqExcelFile = null,
+  schemaExcelFile = null,
   mode,
 }: {
   htmlFile: File | null;
   excelFile: File | null;
+  faqExcelFile?: File | null;
+  schemaExcelFile?: File | null;
   mode: PreCoderRunMode;
 }) {
   const [result, setResult] = useState<PreCoderAnalysisResult | null>(null);
+  const [allResult, setAllResult] = useState<PreCoderAllCheckResult | null>(null);
   const [schemaResult, setSchemaResult] = useState<SchemaCheckResult | null>(null);
   const [copyDeckRows, setCopyDeckRows] = useState<CopyDeckRow[] | null>(null);
   const [analyzeStatus, setAnalyzeStatus] = useState<"" | "loading" | "success" | "fail">("");
@@ -35,6 +64,10 @@ export function usePreCoderAnalysis({
   const handleAnalyze = async () => {
     if (!htmlFile) {
       alert("html 파일을 업로드 해주세요.");
+      return;
+    }
+    if (mode === "all" && (!excelFile || !faqExcelFile)) {
+      alert("html 파일과 features 카피덱, FAQ 카피덱(xlsx)을 모두 업로드 해주세요.");
       return;
     }
     if (mode !== "schema" && !excelFile) {
@@ -52,29 +85,60 @@ export function usePreCoderAnalysis({
         let schemaDeckRows: SchemaCopyDeckRow[] | undefined;
 
         if (excelFile) {
-          // schema 카피덱도 Key/Category/Item/Copy 구조라 FAQ 카피덱 파서를 그대로 재사용한다.
-          const extracted = await extractFaqCopyDeck(excelFile);
-          if (!extracted.rows || extracted.rows.length === 0) {
+          const rows = await loadSchemaDeckRows(excelFile);
+          if (!rows) {
             setAnalyzeStatus("fail");
             alert("schema 카피덱(xlsx)에서 데이터를 읽어오지 못했습니다. 파일 형식을 확인해주세요.");
             return;
           }
-          schemaDeckRows = extracted.rows.map((r) => ({
-            key: r.key,
-            category: r.category,
-            item: r.item,
-            copy: r.copy,
-          }));
+          schemaDeckRows = rows;
         }
 
         const schemaAnalyzed = analyzeSchemaDeck(htmlText, schemaDeckRows);
         setSchemaResult(schemaAnalyzed);
         setResult(null);
+        setAllResult(null);
         setCopyDeckRows(null);
         setAnalyzeStatus(schemaAnalyzed.totalCount > 0 ? "success" : "fail");
         if (schemaAnalyzed.totalCount === 0) {
           alert("html에서 FAQPage / VideoObject schema를 찾지 못했습니다.");
         }
+        return;
+      }
+
+      // 전체 검사: 카피덱 3종을 각각 ①②③ 검사에 넣어, 개별 모드로 돌린 것과 같은 결과를 한 번에 만든다.
+      if (mode === "all") {
+        const [featuresRows, faqRows, schemaDeckRows] = await Promise.all([
+          parseExcelFile(excelFile),
+          parseExcelFile(faqExcelFile),
+          schemaExcelFile ? loadSchemaDeckRows(schemaExcelFile) : Promise.resolve(undefined),
+        ]);
+
+        const emptyDecks = [
+          (!featuresRows || featuresRows.length === 0) && "features 카피덱",
+          (!faqRows || faqRows.length === 0) && "FAQ 카피덱",
+          schemaDeckRows === null && "schema 카피덱",
+        ].filter(Boolean);
+        if (emptyDecks.length > 0) {
+          setAnalyzeStatus("fail");
+          alert(`${emptyDecks.join(", ")}(xlsx)에서 데이터를 읽어오지 못했습니다. 파일 형식을 확인해주세요.`);
+          return;
+        }
+
+        setAllResult({
+          features: {
+            result: analyzePreCoder(htmlText, featuresRows, "features-disclaimer"),
+            copyDeckRows: featuresRows,
+          },
+          faq: {
+            result: analyzePreCoder(htmlText, faqRows, "faq"),
+            copyDeckRows: faqRows,
+          },
+        });
+        setSchemaResult(analyzeSchemaDeck(htmlText, schemaDeckRows ?? undefined));
+        setResult(null);
+        setCopyDeckRows(null);
+        setAnalyzeStatus("success");
         return;
       }
 
@@ -85,13 +149,11 @@ export function usePreCoderAnalysis({
         return;
       }
 
-      const scope = mode === "all" ? "all" : mode; // "features-disclaimer" | "faq"
-      const analyzed = analyzePreCoder(htmlText, row_list, scope);
+      const analyzed = analyzePreCoder(htmlText, row_list, mode); // "features-disclaimer" | "faq"
       setResult(analyzed);
       setCopyDeckRows(row_list);
-
-      // 전체 검사에서는 schema도 함께 보여준다 (카피덱 대조가 아니라 html 자체 검사).
-      setSchemaResult(mode === "all" ? analyzeSchemaDeck(htmlText) : null);
+      setAllResult(null);
+      setSchemaResult(null);
 
       setAnalyzeStatus("success");
     } catch (error) {
@@ -102,6 +164,7 @@ export function usePreCoderAnalysis({
 
   const resetAnalysis = () => {
     setResult(null);
+    setAllResult(null);
     setSchemaResult(null);
     setCopyDeckRows(null);
     setAnalyzeStatus("");
@@ -109,6 +172,7 @@ export function usePreCoderAnalysis({
 
   return {
     result,
+    allResult,
     schemaResult,
     copyDeckRows,
     analyzeStatus,
