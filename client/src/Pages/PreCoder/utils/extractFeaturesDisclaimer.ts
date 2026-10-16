@@ -152,6 +152,42 @@ const buildDataCopySetGenerator = (prefix: string, existingValues: Set<string>) 
 
 type PendingInsertion = { el: Element; value: string; needsInsertion: boolean };
 
+// <script>/<style> 블록은 JS 템플릿 리터럴 등에 "<span class=...>" 같은 태그 모양의
+// 문자열을 얼마든지 담고 있을 수 있다. 진짜 대상 요소의 여는 태그와 우연히 똑같이 생긴
+// 텍스트가 그 안에 있으면, 아래 raw 문자열 검색(indexOf)이 실제 DOM 위치가 아니라
+// 그 script/style 블록 안의 문자열을 잘못 찾아 삽입해버릴 수 있다. 그래서 검색 시
+// 이 블록들의 범위를 완전히 건너뛴다.
+type Range = [number, number]; // [start, end)
+
+const findScriptStyleRanges = (html: string): Range[] => {
+  const ranges: Range[] = [];
+  const regex = /<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = regex.exec(html))) {
+    ranges.push([m.index, m.index + m[0].length]);
+  }
+  return ranges;
+};
+
+const findRangeContaining = (index: number, ranges: Range[]): Range | null => {
+  for (const r of ranges) {
+    if (index >= r[0] && index < r[1]) return r;
+  }
+  return null;
+};
+
+// html.indexOf와 동일하지만, script/style 블록 안에서 발견된 매치는 건너뛰고
+// 그 블록 바깥에서 처음 발견되는 위치를 반환한다.
+const indexOfOutsideRanges = (html: string, needle: string, fromIndex: number, ranges: Range[]): number => {
+  let idx = html.indexOf(needle, fromIndex);
+  while (idx !== -1) {
+    const hit = findRangeContaining(idx, ranges);
+    if (!hit) return idx;
+    idx = html.indexOf(needle, hit[1]); // 블록 전체를 건너뛰고 그 뒤에서 다시 검색
+  }
+  return -1;
+};
+
 // pending 요소들의 여는 태그 위치를 원문 htmlText에서 순서대로 찾아
 // data-copy-set 속성을 삽입한다 (DOM 재직렬화 없이 원문 문자열 그대로 보존).
 // alt/aria-label 대상도 어차피 "같은 태그에 data-copy-set 속성을 추가"하는 것이라
@@ -161,6 +197,8 @@ const buildTaggedHtml = (
   pending: PendingInsertion[],
   warnings: FeatureDisclaimerWarning[]
 ): string => {
+  const scriptStyleRanges = findScriptStyleRanges(htmlText);
+
   const orderedPending = pending
     .map((p) => {
       const openTagMatch = (p.el.outerHTML || "").match(/^<([a-zA-Z][a-zA-Z0-9-]*)[^>]*>/);
@@ -173,7 +211,7 @@ const buildTaggedHtml = (
   let lastCut = 0;
 
   orderedPending.forEach((p) => {
-    const idx = htmlText.indexOf(p.needle, cursor);
+    const idx = indexOfOutsideRanges(htmlText, p.needle, cursor, scriptStyleRanges);
     if (idx === -1) {
       warnings.push({
         type: "element-not-found",
