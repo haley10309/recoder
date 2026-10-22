@@ -240,10 +240,12 @@ const PreCoderRunTab = () => {
         <UnassignedSection issues={deckResult.unassignedIssues} count={deckResult.unassignedCount} />
         <Gap gap={40} />
         <ContentMismatchSection issues={deckResult.contentMismatchIssues} />
+        {/* ⑧ 각주 설정은 features/disclaimer 카피에도 해당하므로 모드와 상관없이 보여준다. */}
+        <Gap gap={40} />
+        <SupFlagSection issues={deckResult.supFlagMismatchIssues} />
+        {/* ⑨는 FAQ 영역(.watch-faq_item)만 검사하므로 FAQ 검사에서만 보여준다. */}
         {scope === "faq" && (
           <>
-            <Gap gap={40} />
-            <SupFlagSection issues={deckResult.supFlagMismatchIssues} />
             <Gap gap={40} />
             <FaqItemSection issues={deckResult.faqItemMismatchIssues} />
           </>
