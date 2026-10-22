@@ -12,6 +12,7 @@ const scrollToAnchor = (anchorId: string) => {
 // 요약 배너에 보여주는 총 이슈 수 (④ 전체 검사의 검사별 개요에서도 같은 기준으로 쓴다).
 export const countPreCoderIssues = (result: PreCoderAnalysisResult) =>
   result.duplicateIssues.length +
+  (result.deckDuplicateIssues?.length ?? 0) +
   result.scopeIssues.length +
   result.typeMismatchIssues.length +
   result.orderIssues.length +
@@ -26,6 +27,7 @@ const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
   const contentMismatchCount = result.contentMismatchIssues?.length ?? 0;
   const supFlagCount = result.supFlagMismatchIssues?.length ?? 0;
   const faqItemCount = result.faqItemMismatchIssues?.length ?? 0;
+  const deckDuplicateCount = result.deckDuplicateIssues?.length ?? 0;
 
   const totalIssueCount = countPreCoderIssues(result);
 
@@ -37,6 +39,12 @@ const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
       value: result.duplicateIssues.length,
       warn: result.duplicateIssues.length > 0,
       anchorId: PRE_CODER_SECTION_ANCHORS.duplicate,
+    },
+    {
+      label: "①-2 카피덱 고유값 위반",
+      value: deckDuplicateCount,
+      warn: deckDuplicateCount > 0,
+      anchorId: PRE_CODER_SECTION_ANCHORS.deckDuplicate,
     },
     {
       label: "② 태그 스코프 이슈",
@@ -75,7 +83,7 @@ const PreCoderSummary = ({ result }: { result: PreCoderAnalysisResult }) => {
       anchorId: PRE_CODER_SECTION_ANCHORS.contentMismatch,
     },
     {
-      label: "⑧ exclude_sup 불일치",
+      label: "⑧ exclude_sup / text_transform 불일치",
       value: supFlagCount,
       warn: supFlagCount > 0,
       anchorId: PRE_CODER_SECTION_ANCHORS.supFlag,
