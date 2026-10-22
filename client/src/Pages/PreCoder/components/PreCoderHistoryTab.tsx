@@ -8,11 +8,15 @@ import PreCoderHistoryPanel from "./PreCoderHistoryPanel";
 import PreCoderSummary from "./PreCoderSummary";
 import {
   DuplicateSection,
+  DeckDuplicateSection,
   ScopeSection,
   TypeMismatchSection,
   OrderSection,
   UntaggedCopySection,
   UnassignedSection,
+  ContentMismatchSection,
+  SupFlagSection,
+  FaqItemSection,
 } from "./PreCoderResultSections";
 
 import { usePreCoderHistory } from "../hooks/usePreCoderHistory";
@@ -153,6 +157,8 @@ const PreCoderHistoryTab = () => {
           <WhiteBox>
             <DuplicateSection issues={loadedResult.result.duplicateIssues} />
             <Gap gap={40} />
+            <DeckDuplicateSection issues={loadedResult.result.deckDuplicateIssues ?? []} />
+            <Gap gap={40} />
             <ScopeSection issues={loadedResult.result.scopeIssues} />
             <Gap gap={40} />
             <TypeMismatchSection issues={loadedResult.result.typeMismatchIssues} />
@@ -168,6 +174,17 @@ const PreCoderHistoryTab = () => {
               issues={loadedResult.result.unassignedIssues}
               count={loadedResult.result.unassignedCount}
             />
+            {/* ⑦⑧⑨는 나중에 추가된 검사라, 이전에 저장된 결과에는 값이 없을 수 있다(빈 목록으로 표시). */}
+            <Gap gap={40} />
+            <ContentMismatchSection issues={loadedResult.result.contentMismatchIssues ?? []} />
+            <Gap gap={40} />
+            <SupFlagSection issues={loadedResult.result.supFlagMismatchIssues ?? []} />
+            {(loadedResult.result.faqItemMismatchIssues?.length ?? 0) > 0 && (
+              <>
+                <Gap gap={40} />
+                <FaqItemSection issues={loadedResult.result.faqItemMismatchIssues} />
+              </>
+            )}
           </WhiteBox>
         </>
       )}
