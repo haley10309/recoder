@@ -29,7 +29,10 @@ export type HtmlCopySetNode = {
   value: string; // data-copy-set 값 ("" 이면 미할당)
   tagName: string;
   detectedType: DetectedCopyType;
-  extractedText: string;
+  extractedText: string; // 비교용 카피 (<sup>과 그 안의 각주 숫자는 뺀 값)
+  // <sup>이 있던 자리에 SUP_MARK를 남긴 카피. 카피덱에 각주 숫자가 일반 글자로 적힌 경우
+  // (예: "battery.1") 그 자리의 숫자만 허용해서 비교하는 데 쓴다.
+  textWithSupMarks?: string;
   line: number; // 원본 html 기준 몇 번째 줄인지 (못 찾으면 -1)
   outerHtmlPreview: string;
 };
@@ -292,8 +295,15 @@ const TEXT_CONTAINER_TAGS = [
   "th",
 ];
 
+// <sup>(각주)이 있던 자리 표시용 문자. 비교할 때는 지우고, 카피덱의 각주 숫자를 허용할 위치로만 쓴다.
+const SUP_MARK = "\uE000";
+
+const stripSupMarks = (text: string): string => normalize(text.split(SUP_MARK).join(""));
+
 // el.textContent는 <br>을 무시하고 앞뒤 문장을 그대로 붙여버린다(예: "문장1문장2").
 // 카피 비교/표시 정확도를 위해 <br>이 있는 위치에는 공백을 넣어 추출한다.
+// <strong> 등 인라인 태그는 안의 글자만 그대로 이어 붙이고, <sup>(각주)은 html과 카피덱의
+// 표기가 달라(html: 각주 앵커 / 카피덱: 화면에 보이는 숫자) 내용을 빼고 자리만 SUP_MARK로 남긴다.
 const extractTextRespectingBr = (el: Element): string => {
   let result = "";
   const walk = (node: ChildNode) => {
@@ -303,6 +313,8 @@ const extractTextRespectingBr = (el: Element): string => {
       const tag = (node as Element).tagName.toLowerCase();
       if (tag === "br") {
         result += " ";
+      } else if (tag === "sup") {
+        result += SUP_MARK;
       } else {
         Array.from(node.childNodes).forEach(walk);
       }
@@ -312,10 +324,39 @@ const extractTextRespectingBr = (el: Element): string => {
   return result;
 };
 
+// 카피덱 카피를 html 카피와 같은 기준으로 맞춘다.
+// - <sup>…</sup>은 태그와 안의 각주 숫자까지 제거
+// - <br>은 공백으로
+// - <strong>, <b>, <em> 등 서식 태그는 태그만 지우고 글자는 남김
+const normalizeDeckCopy = (copy: string | null | undefined): string =>
+  normalize(
+    (copy ?? "")
+      .replace(/<sup\b[^>]*>[\s\S]*?<\/sup>/gi, "")
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/<\/?(?:strong|b|em|i|u|sub|small|span)\b[^>]*>/gi, "")
+  );
+
+const escapeRegExp = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// html의 <sup> 자리에 카피덱이 각주 숫자를 일반 글자로 적은 경우(예: "battery.1", "battery.1,2")까지
+// 같은 카피로 본다. <sup> 자리에서만 숫자(와 , - – ~)를 허용한다.
+const matchesIgnoringSupNumbers = (deckCopy: string, htmlTextWithSupMarks: string): boolean => {
+  if (!htmlTextWithSupMarks.includes(SUP_MARK)) return false;
+  const pattern = normalize(htmlTextWithSupMarks)
+    .split(SUP_MARK)
+    .map((segment) => escapeRegExp(normalize(segment)))
+    .join("\\s*[\\d,\\-–~]*\\s*");
+  return new RegExp(`^${pattern}$`).test(deckCopy);
+};
+
+// 카피 안에서 서식·줄바꿈·각주용으로 쓰이는 인라인 태그.
+// data-copy-set 태그(또는 카피 한 덩어리) 안에 있으면 부모 카피의 일부일 뿐 별도 카피가 아니다.
+const INLINE_COPY_TAGS = new Set(["br", "sup", "sub", "b", "i", "em", "strong", "u"]);
+
 const detectCopyType = (el: Element): { type: DetectedCopyType; text: string } => {
   const value = el.getAttribute("data-copy-set") || "";
   if (value === "disclaimer") {
-    return { type: "disclaimer", text: normalize(extractTextRespectingBr(el)) };
+    return { type: "disclaimer", text: normalize(extractTextRespectingBr(el)) }; // SUP_MARK 포함
   }
   if (el.hasAttribute("alt")) {
     return { type: "alt", text: normalize(el.getAttribute("alt")) };
@@ -327,7 +368,7 @@ const detectCopyType = (el: Element): { type: DetectedCopyType; text: string } =
     return { type: "title", text: normalize(el.getAttribute("title")) };
   }
   if (normalize(el.textContent)) {
-    return { type: "innerText", text: normalize(extractTextRespectingBr(el)) };
+    return { type: "innerText", text: normalize(extractTextRespectingBr(el)) }; // SUP_MARK 포함
   }
   return { type: "unknown", text: "" };
 };
@@ -428,7 +469,8 @@ export const analyzePreCoder = (
       value,
       tagName: el.tagName.toLowerCase(),
       detectedType: type,
-      extractedText: text,
+      extractedText: stripSupMarks(text),
+      textWithSupMarks: text,
       line,
       outerHtmlPreview,
     };
@@ -571,7 +613,7 @@ export const analyzePreCoder = (
   const deckDuplicateIssues: DeckDuplicateIssue[] = [];
   deckRowsBySelector.forEach((group, selector) => {
     if (group.length <= 1) return;
-    const copies = group.map((r) => normalize(r.original_copy ?? ""));
+    const copies = group.map((r) => normalizeDeckCopy(r.original_copy));
     const copiesDiffer = copies.some((c) => c !== copies[0]);
     deckDuplicateIssues.push({
       targetSelector: selector,
@@ -757,7 +799,7 @@ export const analyzePreCoder = (
   // 카피덱 원문 내용 인덱스 (값이 아니라 "내용"으로 존재 여부를 판단하기 위함)
   const deckContentSet = new Set<string>();
   scopedCopyDeckRows.forEach((row) => {
-    const c = normalize(row.original_copy);
+    const c = normalizeDeckCopy(row.original_copy);
     if (c) deckContentSet.add(c);
   });
 
@@ -863,7 +905,7 @@ export const analyzePreCoder = (
 
     // 우선순위: disclaimer > alt > aria-label > title > innerText (한 요소당 한 종류만 매칭)
     if (el.classList.contains("text_disclaimer")) {
-      pushUntaggedCandidate(el, "disclaimer", el.textContent || "");
+      pushUntaggedCandidate(el, "disclaimer", stripSupMarks(extractTextRespectingBr(el)));
       return;
     }
     const alt = el.getAttribute("alt");
@@ -882,7 +924,15 @@ export const analyzePreCoder = (
       return;
     }
     if (isTextLeaf(el)) {
-      pushUntaggedCandidate(el, "innerText", el.textContent || "");
+      // <strong>/<br>/<sup> 등이 data-copy-set 태그(또는 다른 카피 덩어리) 안에 있으면
+      // 부모 카피의 일부일 뿐이므로 따로 "카피덱 누락 카피"로 잡지 않는다.
+      const parent = el.parentElement;
+      const isPartOfParentCopy =
+        INLINE_COPY_TAGS.has(el.tagName.toLowerCase()) &&
+        !!parent &&
+        (!!parent.closest("[data-copy-set]") || isTextLeaf(parent));
+      if (isPartOfParentCopy) return;
+      pushUntaggedCandidate(el, "innerText", stripSupMarks(extractTextRespectingBr(el)));
     }
   });
 
@@ -920,10 +970,12 @@ export const analyzePreCoder = (
     const deckRow = deckByValue.get(n.value);
     if (!deckRow || deckRow.original_copy === undefined) return;
 
-    const deckCopy = normalize(deckRow.original_copy);
+    // 양쪽 모두 <sup>(각주)과 그 안의 숫자는 빼고, <strong>/<br> 등은 같은 기준으로 맞춰서 비교한다.
+    const deckCopy = normalizeDeckCopy(deckRow.original_copy);
     const htmlCopy = n.extractedText;
     if (!deckCopy || !htmlCopy) return;
     if (deckCopy === htmlCopy) return;
+    if (n.textWithSupMarks && matchesIgnoringSupNumbers(deckCopy, n.textWithSupMarks)) return;
 
     const diffIndex = findFirstDiffIndex(deckCopy, htmlCopy);
     contentMismatchIssues.push({
