@@ -2,8 +2,6 @@
 // 사업부 제공 .html 파일 + 영문 카피덱(xlsx → row_list)을 대조하여
 // data-copy-set 고유성 / 태그 스코프 / 카피 종류 자동분류 / 순서 / 누락카피 를 검사한다.
 
-import { isTextLeaf } from "./extractFeaturesDisclaimer";
-
 export type CopyDeckRow = {
   row_order?: number;
   target_selector: string; // 예: data-copy-set="F02-004"
@@ -298,25 +296,47 @@ const TEXT_CONTAINER_TAGS = [
 // <sup>(각주)이 있던 자리 표시용 문자. 비교할 때는 지우고, 카피덱의 각주 숫자를 허용할 위치로만 쓴다.
 const SUP_MARK = "\uE000";
 
-// <br> 태그를 비교용 표준 표기로 만든다. 속성(class="cm-br-mo" 등)은 순서대로 그대로 두고,
-// <br> / <br/> / <br /> 같은 닫는 방식 차이만 "<br .../>"로 통일한다.
-const formatBrTag = (attrs: [string, string][]): string =>
-  `<br${attrs.map(([name, value]) => ` ${name.toLowerCase()}="${value}"`).join("")}/>`;
+// 카피 안에서 태그 문자열까지 그대로 비교하는 태그 (카피덱에도 태그째 적혀 있다)
+const KEPT_COPY_TAGS = new Set(["br", "strong", "span"]);
+
+// 태그를 비교용 표준 표기로 만든다. 속성(class="cm-br-mo" 등)은 순서대로 그대로 두고,
+// 따옴표·공백·닫는 방식(<br> / <br/> / <br />) 차이만 통일한다.
+// - <br>: "<br class=\"...\"/>"
+// - <strong>, <span>: 여는 태그 "<strong class=\"...\">", 닫는 태그 "</strong>"
+const formatAttrs = (attrs: [string, string][]): string =>
+  attrs.map(([name, value]) => ` ${name.toLowerCase()}="${value}"`).join("");
+const formatOpenTag = (tag: string, attrs: [string, string][]): string =>
+  tag === "br" ? `<br${formatAttrs(attrs)}/>` : `<${tag}${formatAttrs(attrs)}>`;
+
+const parseAttrText = (attrText: string): [string, string][] => {
+  const attrs: [string, string][] = [];
+  const attrRegex = /([\w:-]+)\s*=\s*(["'])([\s\S]*?)\2/g;
+  let m: RegExpExecArray | null;
+  while ((m = attrRegex.exec(attrText))) attrs.push([m[1] as string, m[3] as string]);
+  return attrs;
+};
 
 // &reg; / &trade;(및 숫자 엔티티)는 ® / ™와 같은 값으로 본다.
 const unifySymbolEntities = (text: string): string =>
   text.replace(/&reg;|&#174;|&#x0*ae;/gi, "®").replace(/&trade;|&#8482;|&#x0*2122;/gi, "™");
 
-// html·카피덱 카피 공통 정리: 공백 정리, ®/™ 엔티티 통일, <br/> 앞뒤 공백 제거
-// (소스 줄바꿈·들여쓰기 때문에 "문장 <br/> 문장"처럼 생기는 공백 차이는 무시한다)
+// html·카피덱 카피 공통 정리 (소스 줄바꿈·들여쓰기 때문에 생기는 공백 차이는 무시한다)
+// - 공백 정리, ®/™ 엔티티 통일
+// - <br/> 앞뒤 공백 제거 ("문장 <br/> 문장" → "문장<br/>문장")
+// - <strong>/<span> 안쪽 경계의 공백은 태그 바깥으로 옮김 ("<strong> 40 </strong>" → " <strong>40</strong> ")
 const cleanCopy = (text: string): string =>
-  normalize(unifySymbolEntities(text)).replace(/\s*(<br\b[^>]*\/>)\s*/g, "$1");
+  normalize(
+    normalize(unifySymbolEntities(text))
+      .replace(/(<(?:strong|span)\b[^>]*>)\s+/g, " $1")
+      .replace(/\s+(<\/(?:strong|span)>)/g, "$1 ")
+  ).replace(/\s*(<br\b[^>]*\/>)\s*/g, "$1");
 
 const stripSupMarks = (text: string): string => cleanCopy(text.split(SUP_MARK).join(""));
 
-// 카피 비교/표시용 텍스트를 추출한다.
-// - <br>은 카피덱에도 그대로 적혀 있으므로 속성까지 포함한 태그 문자열(<br class="cm-br-mo"/>)로 남긴다.
-// - <strong> 등 인라인 태그는 안의 글자만 그대로 이어 붙인다.
+// 카피 비교/표시용 텍스트를 추출한다. (data-copy-set 태그 자신이 아니라 그 안쪽만 본다)
+// - <br>, <strong>, <span>은 카피덱에도 태그째 적혀 있으므로 속성까지 포함한 태그 문자열로 남긴다.
+//   (예: <br class="cm-br-mo"/>, <strong class="bold">…</strong>)
+// - <b>, <em> 등 그 밖의 인라인 태그는 안의 글자만 그대로 이어 붙인다.
 // - <sup>(각주)은 html과 카피덱의 표기가 달라(html: 각주 앵커 / 카피덱: 화면에 보이는 숫자)
 //   내용을 빼고 자리만 SUP_MARK로 남긴다.
 const extractTextRespectingBr = (el: Element): string => {
@@ -326,11 +346,15 @@ const extractTextRespectingBr = (el: Element): string => {
       result += node.textContent || "";
     } else if (node.nodeType === 1) {
       const tag = (node as Element).tagName.toLowerCase();
-      if (tag === "br") {
+      if (KEPT_COPY_TAGS.has(tag)) {
         const attrs = Array.from((node as Element).attributes).map(
           (a) => [a.name, a.value] as [string, string]
         );
-        result += formatBrTag(attrs);
+        result += formatOpenTag(tag, attrs);
+        if (tag !== "br") {
+          Array.from(node.childNodes).forEach(walk);
+          result += `</${tag}>`;
+        }
       } else if (tag === "sup") {
         result += SUP_MARK;
       } else {
@@ -344,20 +368,17 @@ const extractTextRespectingBr = (el: Element): string => {
 
 // 카피덱 카피를 html 카피와 같은 기준으로 맞춘다.
 // - <sup>…</sup>은 태그와 안의 각주 숫자까지 제거
-// - <br>은 속성을 그대로 둔 채 표준 표기(<br class="..."/>)로 통일
-// - <strong>, <b>, <em> 등 서식 태그는 태그만 지우고 글자는 남김
+// - <br>, <strong>, <span>은 속성을 그대로 둔 채 표준 표기로 통일 (태그째 비교)
+// - <b>, <em> 등 그 밖의 서식 태그는 태그만 지우고 글자는 남김
 const normalizeDeckCopy = (copy: string | null | undefined): string =>
   cleanCopy(
     (copy ?? "")
       .replace(/<sup\b[^>]*>[\s\S]*?<\/sup>/gi, "")
-      .replace(/<br\b([^>]*?)\s*\/?>/gi, (_match, attrText: string) => {
-        const attrs: [string, string][] = [];
-        const attrRegex = /([\w:-]+)\s*=\s*(["'])([\s\S]*?)\2/g;
-        let m: RegExpExecArray | null;
-        while ((m = attrRegex.exec(attrText))) attrs.push([m[1] as string, m[3] as string]);
-        return formatBrTag(attrs);
-      })
-      .replace(/<\/?(?:strong|b|em|i|u|sub|small|span)\b[^>]*>/gi, "")
+      .replace(/<(br|strong|span)\b([^>]*?)\s*\/?>/gi, (_match, tag: string, attrText: string) =>
+        formatOpenTag(tag.toLowerCase(), parseAttrText(attrText))
+      )
+      .replace(/<\/(strong|span)\s*>/gi, (_match, tag: string) => `</${tag.toLowerCase()}>`)
+      .replace(/<\/?(?:b|em|i|u|sub|small)\b[^>]*>/gi, "")
   );
 
 const escapeRegExp = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -375,7 +396,16 @@ const matchesIgnoringSupNumbers = (deckCopy: string, htmlTextWithSupMarks: strin
 
 // 카피 안에서 서식·줄바꿈·각주용으로 쓰이는 인라인 태그.
 // data-copy-set 태그(또는 카피 한 덩어리) 안에 있으면 부모 카피의 일부일 뿐 별도 카피가 아니다.
-const INLINE_COPY_TAGS = new Set(["br", "sup", "sub", "b", "i", "em", "strong", "u"]);
+const INLINE_COPY_TAGS = new Set(["br", "sup", "sub", "b", "i", "em", "strong", "u", "span"]);
+
+// "카피 한 덩어리"인 요소인지 (자식이 모두 INLINE_COPY_TAGS이고 글자가 있으며, 안에 data-copy-set이 없음).
+// (extractFeaturesDisclaimer의 isTextLeaf와 같지만 <span>도 카피 안의 인라인 태그로 본다.)
+const isCopyLeaf = (el: Element): boolean => {
+  const onlyInline = Array.from(el.children).every((c) => INLINE_COPY_TAGS.has(c.tagName.toLowerCase()));
+  if (!onlyInline) return false;
+  if (!normalize(el.textContent)) return false;
+  return !el.querySelector("[data-copy-set]");
+};
 
 const detectCopyType = (el: Element): { type: DetectedCopyType; text: string } => {
   const value = el.getAttribute("data-copy-set") || "";
@@ -943,14 +973,14 @@ export const analyzePreCoder = (
       return;
     }
     // title 속성은 번역 검수 대상이 아니라서 "카피덱 누락 카피"에서 제외한다.
-    if (isTextLeaf(el)) {
-      // <strong>/<br>/<sup> 등이 data-copy-set 태그(또는 다른 카피 덩어리) 안에 있으면
+    if (isCopyLeaf(el)) {
+      // <strong>/<span>/<br>/<sup> 등이 data-copy-set 태그(또는 다른 카피 덩어리) 안에 있으면
       // 부모 카피의 일부일 뿐이므로 따로 "카피덱 누락 카피"로 잡지 않는다.
       const parent = el.parentElement;
       const isPartOfParentCopy =
         INLINE_COPY_TAGS.has(el.tagName.toLowerCase()) &&
         !!parent &&
-        (!!parent.closest("[data-copy-set]") || isTextLeaf(parent));
+        (!!parent.closest("[data-copy-set]") || isCopyLeaf(parent));
       if (isPartOfParentCopy) return;
       pushUntaggedCandidate(el, "innerText", stripSupMarks(extractTextRespectingBr(el)));
     }
